@@ -4,12 +4,16 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 39 items
+testpaths: tests
+collecting ... collected 53 items
 
 tests/test_lint_cli.py::test_lint_no_groups_ok PASSED
 tests/test_lint_cli.py::test_lint_bad_group_item PASSED
 tests/test_lint_cli.py::test_no_toml_failure PASSED
 tests/test_lint_cli.py::test_dependency_groups_list_format PASSED
+tests/test_main_cli.py::test_list_to_stdout PASSED
+tests/test_main_cli.py::test_list_respects_output_file PASSED
+tests/test_pip_wrapper_cli.py::test_empty_group_skips_pip PASSED
 tests/test_resolve_func.py::test_empty_group PASSED
 tests/test_resolve_func.py::test_str_list_group PASSED
 tests/test_resolve_func.py::test_single_include_group PASSED
@@ -28,6 +32,17 @@ tests/test_resolve_func.py::test_unknown_object_shape[item0] PASSED
 tests/test_resolve_func.py::test_unknown_object_shape[item1] PASSED
 tests/test_resolve_func.py::test_unknown_object_shape[item2] PASSED
 tests/test_resolve_func.py::test_unknown_object_shape[item3] PASSED
+tests/test_resolve_func.py::test_non_str_include_group_value PASSED
+tests/test_resolve_func.py::test_mapping_include_group_item PASSED
+tests/test_resolve_func.py::test_resolve_all_empty PASSED
+tests/test_resolve_func.py::test_resolve_all_single_group PASSED
+tests/test_resolve_func.py::test_resolve_all_multiple_groups PASSED
+tests/test_resolve_func.py::test_resolve_all_with_normalize_false PASSED
+tests/test_resolve_func.py::test_resolve_all_with_normalize_true PASSED
+tests/test_resolve_func.py::test_resolve_all_default_preserves_names PASSED
+tests/test_resolve_func.py::test_resolve_all_shared_includes PASSED
+tests/test_resolve_func.py::test_resolve_all_uses_cache PASSED
+tests/test_resolve_func.py::test_resolve_all_vs_individual_resolve PASSED
 tests/test_resolver_class.py::test_resolver_init_handles_bad_type PASSED
 tests/test_resolver_class.py::test_resolver_init_catches_normalization_conflict PASSED
 tests/test_resolver_class.py::test_lookup_catches_bad_type PASSED
@@ -46,6 +61,6 @@ tests/test_resolver_class.py::test_normalized_name_is_used_for_include_group_loo
 tests/test_resolver_class.py::test_normalized_name_is_used_for_include_group_lookups[foo..bar-foo_bar] PASSED
 tests/test_resolver_class.py::test_normalized_name_is_used_for_include_group_lookups[foo..bar-foo..bar] PASSED
 
-======== 39 passed ========
+======== 53 passed ========
   py$(PYV): OK
   congratulations :)

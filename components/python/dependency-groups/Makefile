@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dependency_groups
-HUMAN_VERSION =			1.3.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.3.2
 COMPONENT_SUMMARY =		A tool for resolving PEP 735 Dependency Group data
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:78078301090517fd938c19f64a53ce98c32834dfe0dee6b88004a569a6adfefd
+	sha256:c81831f43828dbc3987ee247eb198241a0152b8e7ceab10977cc3808eb388ac7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
