@@ -1,0 +1,27 @@
+#!/bin/sh
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of the CDDL.
+# A copy is available at http://www.illumos.org/license/CDDL.
+
+# Copyright 2026 Till Wegmueller
+
+case "$1" in
+phoromatic-client)
+    DISPLAY=:0
+    export DISPLAY
+    set -- phoromatic.connect
+    ;;
+phoromatic-server)
+    set -- start-phoromatic-server
+    ;;
+result-viewer)
+    set -- start-result-viewer daemon
+    ;;
+*)
+    echo "Unknown Phoronix Test Suite service: $1" >&2
+    exit 2
+    ;;
+esac
+
+exec /usr/bin/phoronix-test-suite "$@"
