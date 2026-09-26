@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		chardet
-HUMAN_VERSION =			7.5.1
+HUMAN_VERSION =			7.6.0
 COMPONENT_SUMMARY =		Universal character encoding detector
 COMPONENT_PROJECT_URL =		https://github.com/chardet/chardet
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0df08f2b2f6ac04b3e7f9e8ad1b1559c2e8497338ff9dfa1e0922335ff9dfe8d
+	sha256:93d9df6089ded42ed1fe9f57e272c0b74bd0464d45c0c7d50f09f26f31105c3c
 COMPONENT_LICENSE =		0BSD
 COMPONENT_LICENSE_FILE =	LICENSE
 
