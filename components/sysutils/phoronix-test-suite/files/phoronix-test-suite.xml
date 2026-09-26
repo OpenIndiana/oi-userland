@@ -1,0 +1,85 @@
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<!--
+  This file and its contents are supplied under the terms of the
+  Common Development and Distribution License ("CDDL"), version 1.0.
+  You may only use this file in accordance with the terms of the CDDL.
+  A copy is available at http://www.illumos.org/license/CDDL.
+
+  Copyright 2026 Till Wegmueller
+
+  Phoromatic services are optional and need configuration before activation.
+-->
+<service_bundle type='manifest' name='phoronix-test-suite'>
+  <service name='application/phoronix-test-suite/phoromatic-client'
+           type='service' version='1'>
+    <dependency name='filesystem' grouping='require_all'
+                restart_on='none' type='service'>
+      <service_fmri value='svc:/system/filesystem/local'/>
+    </dependency>
+    <dependency name='network' grouping='require_all'
+                restart_on='none' type='service'>
+      <service_fmri value='svc:/milestone/network'/>
+    </dependency>
+    <instance name='default' enabled='false'>
+      <exec_method type='method' name='start'
+                   exec='/lib/svc/method/phoronix-test-suite phoromatic-client'
+                   timeout_seconds='300'/>
+      <exec_method type='method' name='stop' exec=':kill'
+                   timeout_seconds='60'/>
+      <template>
+        <common_name>
+          <loctext xml:lang='C'>Phoronix Test Suite Phoromatic client</loctext>
+        </common_name>
+      </template>
+    </instance>
+  </service>
+
+  <service name='application/phoronix-test-suite/phoromatic-server'
+           type='service' version='1'>
+    <dependency name='filesystem' grouping='require_all'
+                restart_on='none' type='service'>
+      <service_fmri value='svc:/system/filesystem/local'/>
+    </dependency>
+    <dependency name='network' grouping='require_all'
+                restart_on='none' type='service'>
+      <service_fmri value='svc:/milestone/network'/>
+    </dependency>
+    <instance name='default' enabled='false'>
+      <exec_method type='method' name='start'
+                   exec='/lib/svc/method/phoronix-test-suite phoromatic-server'
+                   timeout_seconds='300'/>
+      <exec_method type='method' name='stop' exec=':kill'
+                   timeout_seconds='60'/>
+      <template>
+        <common_name>
+          <loctext xml:lang='C'>Phoronix Test Suite Phoromatic server</loctext>
+        </common_name>
+      </template>
+    </instance>
+  </service>
+
+  <service name='application/phoronix-test-suite/result-viewer'
+           type='service' version='1'>
+    <dependency name='filesystem' grouping='require_all'
+                restart_on='none' type='service'>
+      <service_fmri value='svc:/system/filesystem/local'/>
+    </dependency>
+    <dependency name='network' grouping='require_all'
+                restart_on='none' type='service'>
+      <service_fmri value='svc:/milestone/network'/>
+    </dependency>
+    <instance name='default' enabled='false'>
+      <exec_method type='method' name='start'
+                   exec='/lib/svc/method/phoronix-test-suite result-viewer'
+                   timeout_seconds='300'/>
+      <exec_method type='method' name='stop' exec=':kill'
+                   timeout_seconds='60'/>
+      <template>
+        <common_name>
+          <loctext xml:lang='C'>Phoronix Test Suite result viewer</loctext>
+        </common_name>
+      </template>
+    </instance>
+  </service>
+</service_bundle>

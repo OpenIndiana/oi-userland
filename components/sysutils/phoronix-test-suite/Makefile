@@ -35,7 +35,11 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_BUILD_ACTION=:
 COMPONENT_INSTALL_ACTION=cd $(@D) && DESTDIR=$(PROTO_DIR) sh ./install-sh /usr
 
+# The SMF manifest and method are packaged directly from files/.
+PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
+
 # Build dependencies
 REQUIRED_PACKAGES+=web/php-84/php-cli
 # Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/ksh93
