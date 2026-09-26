@@ -1,0 +1,293 @@
+--- a/src/hotspot/os/solaris/gc/z/zLargePages_solaris.cpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os/solaris/gc/z/zLargePages_solaris.cpp	2024-11-20 14:18:07.654674076 +0000
+@@ -0,0 +1,33 @@
++/*
++ * Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ */
++
++#include "gc/z/zLargePages.hpp"
++#include "runtime/globals.hpp"
++
++void ZLargePages::pd_initialize() {
++  if (UseLargePages) {
++    _state = Explicit;
++  } else {
++    _state = Disabled;
++  }
++}
+--- a/src/hotspot/os/solaris/gc/z/zNUMA_solaris.cpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os/solaris/gc/z/zNUMA_solaris.cpp	2024-11-20 14:18:07.654815731 +0000
+@@ -0,0 +1,42 @@
++/*
++ * Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ */
++
++#include "gc/z/zNUMA.hpp"
++#include "utilities/globalDefinitions.hpp"
++
++void ZNUMA::pd_initialize() {
++  _enabled = false;
++}
++
++uint32_t ZNUMA::count() {
++  return 1;
++}
++
++uint32_t ZNUMA::id() {
++  return 0;
++}
++
++uint32_t ZNUMA::memory_id(uintptr_t addr) {
++  // NUMA support not enabled, assume everything belongs to node zero
++  return 0;
++}
+--- a/src/hotspot/os/solaris/gc/z/zPhysicalMemoryBacking_solaris.cpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os/solaris/gc/z/zPhysicalMemoryBacking_solaris.cpp	2024-11-20 14:19:19.132400496 +0000
+@@ -0,0 +1,146 @@
++/*
++ * Copyright (c) 2019, 2023, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ */
++
++#include "gc/z/zAddress.inline.hpp"
++#include "gc/z/zErrno.hpp"
++#include "gc/z/zGlobals.hpp"
++#include "gc/z/zInitialize.hpp"
++#include "gc/z/zLargePages.inline.hpp"
++#include "gc/z/zPhysicalMemoryBacking_solaris.hpp"
++#include "logging/log.hpp"
++#include "runtime/globals.hpp"
++#include "runtime/os.hpp"
++#include "utilities/align.hpp"
++#include "utilities/debug.hpp"
++
++#include <sys/mman.h>
++#include <sys/types.h>
++
++ZPhysicalMemoryBacking::ZPhysicalMemoryBacking(size_t max_capacity)
++  : _base(0),
++    _initialized(false) {
++
++  // Reserve address space for backing memory
++  _base = (uintptr_t)os::reserve_memory(max_capacity, mtJavaHeap);
++  if (_base == 0) {
++    // Failed
++    ZInitialize::error("Failed to reserve address space for backing memory");
++    return;
++  }
++
++  // Successfully initialized
++  _initialized = true;
++}
++
++bool ZPhysicalMemoryBacking::is_initialized() const {
++  return _initialized;
++}
++
++void ZPhysicalMemoryBacking::warn_commit_limits(size_t max_capacity) const {
++  // Does nothing
++}
++
++bool ZPhysicalMemoryBacking::commit_inner(zbacking_offset offset, size_t length) const {
++  assert(is_aligned(untype(offset), os::vm_page_size()), "Invalid offset");
++  assert(is_aligned(length, os::vm_page_size()), "Invalid length");
++
++  log_trace(gc, heap)("Committing memory: %zuM-%zuM (%zuM)",
++                      untype(offset) / M, untype(to_zbacking_offset_end(offset, length)) / M, length / M);
++
++  const uintptr_t addr = _base + untype(offset);
++  const void* const res = mmap((void*)addr, length, PROT_READ | PROT_WRITE, MAP_FIXED | MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
++  if (res == MAP_FAILED) {
++    ZErrno err;
++    log_error(gc)("Failed to commit memory (%s)", err.to_string());
++    return false;
++  }
++
++  // Success
++  return true;
++}
++
++size_t ZPhysicalMemoryBacking::commit(zbacking_offset offset, size_t length, uint32_t /* numa_id - ignored */) const {
++  // Try to commit the whole region
++  if (commit_inner(offset, length)) {
++    // Success
++    return length;
++  }
++
++  // Failed, try to commit as much as possible
++  zbacking_offset start = offset;
++  zbacking_offset end = offset + length;
++
++  for (;;) {
++    length = align_down((end - start) / 2, ZGranuleSize);
++    if (length == 0) {
++      // Done, don't commit more
++      return start - offset;
++    }
++
++    if (commit_inner(start, length)) {
++      // Success, try commit more
++      start += length;
++    } else {
++      // Failed, try commit less
++      end -= length;
++    }
++  }
++}
++
++size_t ZPhysicalMemoryBacking::uncommit(zbacking_offset offset, size_t length) const {
++  assert(is_aligned(untype(offset), os::vm_page_size()), "Invalid offset");
++  assert(is_aligned(length, os::vm_page_size()), "Invalid length");
++
++  log_trace(gc, heap)("Uncommitting memory: %zuM-%zuM (%zuM)",
++                      untype(offset) / M, untype(to_zbacking_offset_end(offset, length)) / M, length / M);
++
++  const uintptr_t start = _base + untype(offset);
++  const void* const res = mmap((void*)start, length, PROT_NONE, MAP_FIXED | MAP_ANONYMOUS | MAP_PRIVATE | MAP_NORESERVE, -1, 0);
++  if (res == MAP_FAILED) {
++    ZErrno err;
++    log_error(gc)("Failed to uncommit memory (%s)", err.to_string());
++    return 0;
++  }
++
++  return length;
++}
++
++void ZPhysicalMemoryBacking::map(zaddress_unsafe addr, size_t size, zbacking_offset offset) const {
++  const void* const res = mmap((void*)untype(addr), size, PROT_READ|PROT_WRITE, 
++MAP_FIXED|MAP_SHARED|MAP_ANONYMOUS, -1, untype(offset));
++  if (res == MAP_FAILED) {
++    ZErrno err;
++    fatal("Failed to map memory (%s)", err.to_string());
++  }
++}
++
++void ZPhysicalMemoryBacking::unmap(zaddress_unsafe addr, size_t size) const {
++  // Note that we must keep the address space reservation intact and just detach
++  // the backing memory. For this reason we map a new anonymous, non-accessible
++  // and non-reserved page over the mapping instead of actually unmapping.
++  const void* const res = mmap((void*)untype(addr), size, PROT_NONE, MAP_FIXED | MAP_ANONYMOUS | MAP_PRIVATE | MAP_NORESERVE, -1, 0);
++  if (res == MAP_FAILED) {
++    ZErrno err;
++    fatal("Failed to map memory (%s)", err.to_string());
++  }
++}
+--- a/src/hotspot/os/solaris/gc/z/zPhysicalMemoryBacking_solaris.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os/solaris/gc/z/zPhysicalMemoryBacking_solaris.hpp	2024-11-20 14:18:07.655201364 +0000
+@@ -0,0 +1,50 @@
++/*
++ * Copyright (c) 2019, 2023, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ */
++
++#ifndef OS_SOLARIS_GC_Z_ZPHYSICALMEMORYBACKING_SOLARIS_HPP
++#define OS_SOLARIS_GC_Z_ZPHYSICALMEMORYBACKING_SOLARIS_HPP
++
++#include "gc/z/zAddress.hpp"
++
++class ZPhysicalMemoryBacking {
++private:
++  uintptr_t _base;
++  bool      _initialized;
++
++  bool commit_inner(zbacking_offset offset, size_t length) const;
++
++public:
++  ZPhysicalMemoryBacking(size_t max_capacity);
++
++  bool is_initialized() const;
++
++  void warn_commit_limits(size_t max_capacity) const;
++
++  size_t commit(zbacking_offset offset, size_t length, uint32_t numa_id) const;
++  size_t uncommit(zbacking_offset offset, size_t length) const;
++
++  void map(zaddress_unsafe addr, size_t size, zbacking_offset offset) const;
++  void unmap(zaddress_unsafe addr, size_t size) const;
++};
++
++#endif // OS_SOLARIS_GC_Z_ZPHYSICALMEMORYBACKING_SOLARIS_HPP
+--- a/make/autoconf/jvm-features.m4	Wed Nov  6 16:41:41 2024
++++ b/make/autoconf/jvm-features.m4	Wed Nov 20 14:20:08 2024
+@@ -318,6 +318,7 @@
+     if test "x$OPENJDK_TARGET_CPU" = "xx86_64"; then
+       if test "x$OPENJDK_TARGET_OS" = "xlinux" || \
+           test "x$OPENJDK_TARGET_OS" = "xwindows" || \
++          test "x$OPENJDK_TARGET_OS" = "xsolaris" || \
+           test "x$OPENJDK_TARGET_OS" = "xmacosx"; then
+         AC_MSG_RESULT([yes])
+       else
