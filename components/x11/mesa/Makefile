@@ -58,8 +58,9 @@ CONFIGURE_OPTIONS += -Dgbm=enabled
 CONFIGURE_OPTIONS += -Dglvnd=false
 # Wayland currently requires linux specific socket options and epoll for events.
 CONFIGURE_OPTIONS += -Dplatforms='x11'
-# llvm is disabled due to requiring llvm 16 we do not have 16
-CONFIGURE_OPTIONS += -Dllvm=false
+# Mesa 21.3 does not build with the LLVM releases we ship (18 and newer), so
+# llvmpipe needs a newer Mesa.
+CONFIGURE_OPTIONS += -Dllvm=disabled
 CONFIGURE_OPTIONS += -Dglx='auto'
 CONFIGURE_OPTIONS += -Degl=enabled
 CONFIGURE_OPTIONS += -Dgles1=enabled
@@ -70,8 +71,11 @@ CONFIGURE_OPTIONS += -Dshared-glapi=enabled
 CONFIGURE_OPTIONS += -Dgallium-xvmc=disabled
 CONFIGURE_OPTIONS += -Dgallium-vdpau=disabled
 CONFIGURE_OPTIONS += -Dgallium-xa=enabled
+# Classic i965 for gen4 to gen7.5.
 CONFIGURE_OPTIONS += -Ddri-drivers='i965'
-CONFIGURE_OPTIONS += -Dshader-cache=false
+# The Intel drivers key their on-disk shader cache on a GNU build-id note,
+# which the illumos link-editor does not emit.
+CONFIGURE_OPTIONS += -Dshader-cache=disabled
 CONFIGURE_OPTIONS += -Ddri-drivers-path='$(X11_SERVERMODS_DIR)/dri$(SERVERMOD_SUBDIR)'
 CONFIGURE_OPTIONS += -Delf-tls=false
 
@@ -98,8 +102,10 @@ COMPONENT_POST_INSTALL_ACTION.64 += \
 	elfedit -e "dyn:runpath /usr/lib/mesa/$(MACH64):/usr/lib/xorg/$(MACH64):$(GCC_LIBDIR)" \
 	  $(PROTOUSRLIBDIR)/mesa/$(MACH64)/$$f ; \
 	done ; \
+	for f in i915_dri.so i965_dri.so; do \
 	elfedit -e "dyn:runpath /usr/lib/mesa/$(MACH64):/usr/lib/xorg/$(MACH64):$(GCC_LIBDIR)" \
-	  $(PROTOUSRLIBDIR)/xorg/modules/dri/$(MACH64)/i915_dri.so ; \
+	  $(PROTOUSRLIBDIR)/xorg/modules/dri/$(MACH64)/$$f ; \
+	done ; \
 	mv $(PROTOUSRDIR)/include/GL $(PROTOUSRDIR)/include/mesa
 
 # Manually added build dependencies
