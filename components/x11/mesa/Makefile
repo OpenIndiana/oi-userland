@@ -24,8 +24,8 @@ COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:91fe6f20339884e37a7c47bfba42fb1cd397512c9ed5ad423de369f047cd8b5c
-COMPONENT_ARCHIVE_URL= https://archive.mesa3d.org/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.mesa3d.org/
+COMPONENT_ARCHIVE_URL= https://archive.mesa3d.org/older-versions/21.x/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.mesa3d.org/
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
