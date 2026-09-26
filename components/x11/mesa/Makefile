@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
 COMPONENT_VERSION= 21.3.9
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
@@ -40,15 +40,19 @@ SERVERMOD_SUBDIR= $(SERVERMOD_SUBDIR.$(BITS))
 X11_SERVERMODS_DIR= /usr/lib/xorg/modules
 X11_SERVERLIBS_DIR= /usr/lib/xorg
 
-# Identify source_file files in hard links for manifest generator.
-#PKG_HARDLINKS +=	usr/lib/xorg/modules/dri/radeon_dri.so
-
 CONFIGURE_OPTIONS += --libdir='lib/mesa/amd64'
 
-PKG_HARDLINKS += usr/lib/xorg/modules/dri/$(MACH64)/kms_swrast_dri.so
+# All Gallium DRI drivers are hard links to one megadriver; identify the
+# source file for the manifest generator.
+PKG_HARDLINKS += usr/lib/xorg/modules/dri/$(MACH64)/i915_dri.so
 
-# Command line options to GNU autoconf configure script
-CONFIGURE_OPTIONS += -Dgallium-drivers='swrast, i915, r600'
+# swrast: softpipe (llvmpipe needs LLVM, see below), also kms_swrast.
+# i915: Gallium i915g for gen3.
+# The gfx-drm i915 kernel driver supports gen2 to gen7.5 only and lacks
+# syncobj, execbuf fence arrays and I915_EXEC_BATCH_FIRST, which crocus
+# (gen4 to gen7.5) uses unconditionally; iris needs gen8 or newer.
+# r600 is not built: illumos has no radeon kernel DRM driver.
+CONFIGURE_OPTIONS += -Dgallium-drivers='swrast,i915'
 CONFIGURE_OPTIONS += -Dvulkan-drivers=''
 CONFIGURE_OPTIONS += -Dgbm=enabled
 CONFIGURE_OPTIONS += -Dglvnd=false
@@ -62,7 +66,9 @@ CONFIGURE_OPTIONS += -Dgles1=enabled
 CONFIGURE_OPTIONS += -Dgles2=enabled
 CONFIGURE_OPTIONS += -Dosmesa=true
 CONFIGURE_OPTIONS += -Dshared-glapi=enabled
-CONFIGURE_OPTIONS += -Dgallium-xvmc=enabled
+# XvMC and VDPAU were only provided for r600.
+CONFIGURE_OPTIONS += -Dgallium-xvmc=disabled
+CONFIGURE_OPTIONS += -Dgallium-vdpau=disabled
 CONFIGURE_OPTIONS += -Dgallium-xa=enabled
 CONFIGURE_OPTIONS += -Ddri-drivers='i965'
 CONFIGURE_OPTIONS += -Dshader-cache=false
@@ -88,7 +94,7 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 # Add RPATH to xorg lib directory where is libdrm.
 
 COMPONENT_POST_INSTALL_ACTION.64 += \
-	for f in libgbm.so.1.0.0 libEGL.so.1.0.0 libGL.so.1.2.0 libxatracker.so.2.5.0 libXvMCr600.so.1.0.0 vdpau/libvdpau_r600.so.1.0.0; do \
+	for f in libgbm.so.1.0.0 libEGL.so.1.0.0 libGL.so.1.2.0 libxatracker.so.2.5.0; do \
 	elfedit -e "dyn:runpath /usr/lib/mesa/$(MACH64):/usr/lib/xorg/$(MACH64):$(GCC_LIBDIR)" \
 	  $(PROTOUSRLIBDIR)/mesa/$(MACH64)/$$f ; \
 	done ; \
@@ -100,7 +106,6 @@ COMPONENT_POST_INSTALL_ACTION.64 += \
 REQUIRED_PACKAGES += x11/header/x11-protocols
 REQUIRED_PACKAGES += x11/library/libpthread-stubs
 REQUIRED_PACKAGES += system/header/header-drm
-REQUIRED_PACKAGES += library/graphics/libvdpau
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -118,6 +123,4 @@ REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxshmfence
-REQUIRED_PACKAGES += x11/library/libxv
-REQUIRED_PACKAGES += x11/library/libxvmc
 REQUIRED_PACKAGES += x11/library/libxxf86vm
