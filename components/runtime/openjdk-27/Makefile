@@ -146,7 +146,7 @@ REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += system/library/c++/sunpro
 
 # Manually added boot JDK
-REQUIRED_PACKAGES += runtime/java/openjdk25
+REQUIRED_PACKAGES += runtime/java/openjdk26
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
