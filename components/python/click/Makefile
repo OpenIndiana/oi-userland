@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		click
-HUMAN_VERSION =			8.4.1
+HUMAN_VERSION =			8.5.0
 COMPONENT_SUMMARY =		Composable command line interface toolkit
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:918b5633eddf6b41c32d4f454bf0de810065c74e3f7dbf8ee5452f8be88d3e96
+	sha256:ba0d2089de75ea0310e2dde03160e6ca10009947fb95a182f9b54021bb272e34
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 

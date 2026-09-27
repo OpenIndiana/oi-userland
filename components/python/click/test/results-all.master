@@ -5,7 +5,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 31657 items / 30000 deselected / 1657 selected
+collecting ... collected 33016 items / 31000 deselected / 2016 selected
 
 tests/test_arguments.py::test_nargs_star PASSED
 tests/test_arguments.py::test_nargs_tup PASSED
@@ -43,7 +43,25 @@ tests/test_arguments.py::test_required_argument[value10-False-{}] PASSED
 tests/test_arguments.py::test_required_argument[None-False-None] PASSED
 tests/test_arguments.py::test_required_argument[Sentinel.UNSET-True-None] PASSED
 tests/test_arguments.py::test_implicit_non_required PASSED
+tests/test_arguments.py::test_argument_help PASSED
+tests/test_arguments.py::test_argument_help_options_only_no_arguments_section PASSED
+tests/test_arguments.py::test_argument_help_optional_metavar PASSED
 tests/test_arguments.py::test_deprecated_usage PASSED
+tests/test_arguments.py::test_argument_metavar_marks_optional[kwargs0-FOO] PASSED
+tests/test_arguments.py::test_argument_metavar_marks_optional[kwargs1-FOO] PASSED
+tests/test_arguments.py::test_argument_metavar_marks_optional[kwargs2-[FOO]] PASSED
+tests/test_arguments.py::test_argument_metavar_marks_optional[kwargs3-[FOO]] PASSED
+tests/test_arguments.py::test_argument_metavar_marks_optional[kwargs4-[FOO]...] PASSED
+tests/test_arguments.py::test_argument_metavar_marks_optional[kwargs5-FOO...] PASSED
+tests/test_arguments.py::test_argument_metavar_marks_optional[kwargs6-FOO...] PASSED
+tests/test_arguments.py::test_argument_metavar_marks_optional[kwargs7-[FOO]...] PASSED
+tests/test_arguments.py::test_deprecated_usage_help_record[True-(DEPRECATED)] PASSED
+tests/test_arguments.py::test_deprecated_usage_help_record[use g instead-(DEPRECATED: use g instead)] PASSED
+tests/test_arguments.py::test_deprecated_usage_help_record_without_help PASSED
+tests/test_arguments.py::test_deprecated_empty_help_no_leading_space[-True-(DEPRECATED)] PASSED
+tests/test_arguments.py::test_deprecated_empty_help_no_leading_space[-USE B INSTEAD-(DEPRECATED: USE B INSTEAD)] PASSED
+tests/test_arguments.py::test_deprecated_empty_help_no_leading_space[None-True-(DEPRECATED)] PASSED
+tests/test_arguments.py::test_deprecated_empty_help_no_leading_space[None-USE B INSTEAD-(DEPRECATED: USE B INSTEAD)] PASSED
 tests/test_arguments.py::test_deprecated_warning[True] PASSED
 tests/test_arguments.py::test_deprecated_warning[USE B INSTEAD] PASSED
 tests/test_arguments.py::test_deprecated_required PASSED
@@ -99,6 +117,12 @@ tests/test_arguments.py::test_argument_custom_class_can_override_type_cast_value
 tests/test_arguments.py::test_argument_custom_class_can_override_type_cast_value_and_never_sees_unset[argument_kwargs4-pass_argv4] PASSED
 tests/test_arguments.py::test_argument_custom_class_can_override_type_cast_value_and_never_sees_unset[argument_kwargs5-pass_argv5] PASSED
 tests/test_basic.py::test_basic_functionality PASSED
+tests/test_basic.py::test_param_named_help[no-collision] PASSED
+tests/test_basic.py::test_param_named_help[argument] PASSED
+tests/test_basic.py::test_param_named_help[option] PASSED
+tests/test_basic.py::test_param_named_help[custom-flags] PASSED
+tests/test_basic.py::test_param_squatting_help_option_name PASSED
+tests/test_basic.py::test_option_reusing_help_flag PASSED
 tests/test_basic.py::test_repr PASSED
 tests/test_basic.py::test_return_values PASSED
 tests/test_basic.py::test_basic_group PASSED
@@ -177,6 +201,8 @@ tests/test_basic.py::test_choice_argument PASSED
 tests/test_basic.py::test_choice_argument_enum PASSED
 tests/test_basic.py::test_choice_argument_custom_type PASSED
 tests/test_basic.py::test_choice_argument_none PASSED
+tests/test_basic.py::test_choice_argument_optional_metavar PASSED
+tests/test_basic.py::test_datetime_argument_optional_metavar PASSED
 tests/test_basic.py::test_datetime_option_default PASSED
 tests/test_basic.py::test_datetime_option_custom PASSED
 tests/test_basic.py::test_required_option PASSED
@@ -186,6 +212,12 @@ tests/test_basic.py::test_hidden_command PASSED
 tests/test_basic.py::test_hidden_group PASSED
 tests/test_basic.py::test_summary_line PASSED
 tests/test_basic.py::test_help_invalid_default PASSED
+tests/test_basic.py::test_version_option_resolves_import_name_to_distribution PASSED
+tests/test_basic.py::test_version_option_ambiguous_import_name_errors PASSED
+tests/test_basic.py::test_version_option_unknown_package_errors PASSED
+tests/test_basic.py::test_custom_version_option[args0] PASSED
+tests/test_basic.py::test_custom_version_option[args1] PASSED
+tests/test_basic.py::test_custom_version_option_receives_context PASSED
 tests/test_chain.py::test_basic_chaining PASSED
 tests/test_chain.py::test_chaining_help[args0-COMMAND1 [ARGS]... [COMMAND2 [ARGS]...]...] PASSED
 tests/test_chain.py::test_chaining_help[args1-ROOT HELP] PASSED
@@ -241,6 +273,10 @@ tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params14-Tru
 tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params15-0] PASSED
 tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params16-secret] PASSED
 tests/test_commands.py::test_invoked_subcommand PASSED
+tests/test_commands.py::test_subcommand_metavar_marks_optional[False-False-COMMAND [ARGS]...] PASSED
+tests/test_commands.py::test_subcommand_metavar_marks_optional[False-True-[COMMAND] [ARGS]...] PASSED
+tests/test_commands.py::test_subcommand_metavar_marks_optional[True-False-COMMAND1 [ARGS]... [COMMAND2 [ARGS]...]...] PASSED
+tests/test_commands.py::test_subcommand_metavar_marks_optional[True-True-[COMMAND1] [ARGS]... [COMMAND2 [ARGS]...]...] PASSED
 tests/test_commands.py::test_aliased_command_canonical_name PASSED
 tests/test_commands.py::test_group_add_command_name PASSED
 tests/test_commands.py::test_iter_params_for_processing[invocation_order0-declaration_order0-expected_order0] PASSED
@@ -277,12 +313,29 @@ tests/test_commands.py::test_iter_params_for_processing[invocation_order30-decla
 tests/test_commands.py::test_iter_params_for_processing[invocation_order31-declaration_order31-expected_order31] PASSED
 tests/test_commands.py::test_iter_params_for_processing[invocation_order32-declaration_order32-expected_order32] PASSED
 tests/test_commands.py::test_iter_params_for_processing[invocation_order33-declaration_order33-expected_order33] PASSED
+tests/test_commands.py::test_get_help_option_names[default] PASSED
+tests/test_commands.py::test_get_help_option_names[order-short-long] PASSED
+tests/test_commands.py::test_get_help_option_names[order-long-short] PASSED
+tests/test_commands.py::test_get_help_option_names[order-three] PASSED
+tests/test_commands.py::test_get_help_option_names[order-three-shuffled] PASSED
+tests/test_commands.py::test_get_help_option_names[dedupe-adjacent] PASSED
+tests/test_commands.py::test_get_help_option_names[dedupe-spread] PASSED
+tests/test_commands.py::test_get_help_option_names[conflict-long] PASSED
+tests/test_commands.py::test_get_help_option_names[conflict-short] PASSED
+tests/test_commands.py::test_get_help_option_names[conflict-flag-on] PASSED
+tests/test_commands.py::test_get_help_option_names[conflict-flag-off] PASSED
+tests/test_commands.py::test_get_help_option_names[all-removed] PASSED
+tests/test_commands.py::test_get_help_option_names[dedupe-and-conflict] PASSED
 tests/test_commands.py::test_help_param_priority PASSED
 tests/test_commands.py::test_unprocessed_options PASSED
 tests/test_commands.py::test_deprecated_in_help_messages[True-CLI HELP] PASSED
 tests/test_commands.py::test_deprecated_in_help_messages[True-None] PASSED
 tests/test_commands.py::test_deprecated_in_help_messages[USE OTHER COMMAND INSTEAD-CLI HELP] PASSED
 tests/test_commands.py::test_deprecated_in_help_messages[USE OTHER COMMAND INSTEAD-None] PASSED
+tests/test_commands.py::test_deprecated_empty_help_no_leading_space[-True] PASSED
+tests/test_commands.py::test_deprecated_empty_help_no_leading_space[-USE OTHER COMMAND INSTEAD] PASSED
+tests/test_commands.py::test_deprecated_empty_help_no_leading_space[None-True] PASSED
+tests/test_commands.py::test_deprecated_empty_help_no_leading_space[None-USE OTHER COMMAND INSTEAD] PASSED
 tests/test_commands.py::test_deprecated_in_invocation[True] PASSED
 tests/test_commands.py::test_deprecated_in_invocation[USE OTHER COMMAND INSTEAD] PASSED
 tests/test_commands.py::test_command_parse_args_collects_option_prefixes PASSED
@@ -330,6 +383,144 @@ tests/test_compat.py::test_should_strip_ansi[False-False-True-None-None-None] PA
 tests/test_compat.py::test_should_strip_ansi[False-False-True-None-None-stream1] PASSED
 tests/test_compat.py::test_should_strip_ansi[False-False-True-None-None-stream2] PASSED
 tests/test_compat.py::test_should_strip_ansi[False-False-True-None-None-stream3] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[30m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[37m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[40m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[47m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[38;5;200m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[48;5;91m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[38;2;255;12;128m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[48;2;135;0;175m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[1m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[22m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[4m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[24m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[53m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[55m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[9m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[29m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[0m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[2J] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[1;1H] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[?25l] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[?25h] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[38:2:255:0:0m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[38:5:200m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[1;38:2::255:0:0m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[<0;30;40M] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[<0;30;40m] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[?1049h] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[?1049l] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[0 q] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[2 q] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[1;24r] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[3~] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[200~] PASSED
+tests/test_compat.py::test_strip_ansi_removes_full_sequence[\x1b[m] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[-m] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[-H] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[-J] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[-A] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[-z] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[0-m] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[0-H] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[0-J] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[0-A] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[0-z] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[1;2-m] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[1;2-H] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[1;2-J] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[1;2-A] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[1;2-z] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[;-m] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[;-H] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[;-J] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[;-A] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[;-z] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[?25-m] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[?25-H] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[?25-J] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[?25-A] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[?25-z] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[0;0;0-m] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[0;0;0-H] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[0;0;0-J] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[0;0;0-A] PASSED
+tests/test_compat.py::test_strip_ansi_is_superset_of_legacy[0;0;0-z] PASSED
+tests/test_compat.py::test_strip_ansi_mixed_content[\x1b[31mred\x1b[0m-red] PASSED
+tests/test_compat.py::test_strip_ansi_mixed_content[a\x1b[38:2:1:2:3mb\x1b[0mc-abc] PASSED
+tests/test_compat.py::test_strip_ansi_mixed_content[\x1b[?25l\x1b[2Jhidden\x1b[?25h-hidden] PASSED
+tests/test_compat.py::test_strip_ansi_mixed_content[\x1b[<0;1;1Mclick\x1b[<0;1;1m-click] PASSED
+tests/test_compat.py::test_strip_ansi_mixed_content[\x1b[1m\x1b[31mA\x1b[0m \x1b[32mB\x1b[0m-A B] PASSED
+tests/test_compat.py::test_strip_ansi_mixed_content[\x1b[0m\x1b[1;36mart\x1b[46;34m\xdc-art\xdc] PASSED
+tests/test_compat.py::test_strip_ansi_mixed_content[ls\r\n\x1b[00m\x1b[01;31mfile.zip\x1b[00m\r\n\x1b[01;31m-ls\r\nfile.zip\r\n] PASSED
+tests/test_compat.py::test_strip_ansi_mixed_content[\t\x1b[0;35mIP\x1b[0m\t\x1b[0;36m192.1.0.2\x1b[0m-\tIP\t192.1.0.2] PASSED
+tests/test_compat.py::test_strip_ansi_mixed_content[\u2552\u2550\u2550\u2550\u2550\u2550\u2550\u2555\n\u2502 \x1b[1mCell\x1b[0m \u2502\n\u2558\u2550\u2550\u2550\u2550\u2550\u2550\u255b-\u2552\u2550\u2550\u2550\u2550\u2550\u2550\u2555\n\u2502 Cell \u2502\n\u2558\u2550\u2550\u2550\u2550\u2550\u2550\u255b] PASSED
+tests/test_compat.py::test_strip_ansi_mixed_content[(\u256f\xb0\u25a1\xb0)\u256f\ufe35 \x1b[1m\u253b\u2501\u253b\x1b[0m-(\u256f\xb0\u25a1\xb0)\u256f\ufe35 \u253b\u2501\u253b] PASSED
+tests/test_compat.py::test_strip_ansi_stops_at_final_byte PASSED
+tests/test_compat.py::test_strip_ansi_leaves_plain_text[] PASSED
+tests/test_compat.py::test_strip_ansi_leaves_plain_text[plain text] PASSED
+tests/test_compat.py::test_strip_ansi_leaves_plain_text[100% [done]] PASSED
+tests/test_compat.py::test_strip_ansi_leaves_plain_text[array[0] = 1] PASSED
+tests/test_compat.py::test_strip_ansi_leaves_plain_text[a;b;c] PASSED
+tests/test_compat.py::test_strip_ansi_leaves_plain_text[[38;5;200m not an escape] PASSED
+tests/test_compat.py::test_strip_ansi_leaves_plain_text[[0m] PASSED
+tests/test_compat.py::test_strip_ansi_leaves_incomplete_sequences[\x1b] PASSED
+tests/test_compat.py::test_strip_ansi_leaves_incomplete_sequences[\x1b[] PASSED
+tests/test_compat.py::test_strip_ansi_leaves_incomplete_sequences[\x1b[31] PASSED
+tests/test_compat.py::test_strip_ansi_leaves_incomplete_sequences[\x1b[38:2:1] PASSED
+tests/test_compat.py::test_strip_ansi_leaves_incomplete_sequences[\x1b[0 ] PASSED
+tests/test_compat.py::test_strip_ansi_is_idempotent PASSED
+tests/test_compat.py::test_term_len[-0] PASSED
+tests/test_compat.py::test_term_len[plain-5] PASSED
+tests/test_compat.py::test_term_len[\x1b[31mred\x1b[0m-3] PASSED
+tests/test_compat.py::test_term_len[\x1b[38;2;1;2;3mrgb\x1b[0m-3] PASSED
+tests/test_compat.py::test_term_len[\x1b[38:2:1:2:3mrgb\x1b[0m-3] PASSED
+tests/test_compat.py::test_term_len[\x1b[<0;1;1Mx\x1b[<0;1;1m-1] PASSED
+tests/test_compat.py::test_term_len[\x1b[0 qq-1] PASSED
+tests/test_compat.py::test_term_len[\x1b[?25lvisible\x1b[?25h-7] PASSED
+tests/test_compat.py::test_term_len[\x1b[1m\x1b[4m\x1b[31mhello\x1b[0m-5] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[30m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[37m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[40m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[47m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[38;5;200m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[48;5;91m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[38;2;255;12;128m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[48;2;135;0;175m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[1m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[22m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[4m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[24m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[53m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[55m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[9m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[29m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[0m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[2J] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[1;1H] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[?25l] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[?25h] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[38:2:255:0:0m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[38:5:200m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[1;38:2::255:0:0m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[<0;30;40M] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[<0;30;40m] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[?1049h] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[?1049l] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[0 q] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[2 q] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[1;24r] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[3~] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[200~] PASSED
+tests/test_compat.py::test_ansi_re_matches_whole_sequence[\x1b[m] PASSED
+tests/test_compat.py::test_truncate_visible[abcdef-3-abc] PASSED
+tests/test_compat.py::test_truncate_visible[abc-10-abc] PASSED
+tests/test_compat.py::test_truncate_visible[abc-0-] PASSED
+tests/test_compat.py::test_truncate_visible[abc--1-] PASSED
+tests/test_compat.py::test_truncate_visible[\x1b[31mabcdef\x1b[0m-3-\x1b[31mabc] PASSED
+tests/test_compat.py::test_truncate_visible[\x1b[38:2:1:2:3mabcdef-3-\x1b[38:2:1:2:3mabc] PASSED
+tests/test_compat.py::test_truncate_visible[\x1b[31mabc\x1b[0m-3-\x1b[31mabc] PASSED
 tests/test_context.py::test_ensure_context_objects PASSED
 tests/test_context.py::test_get_context_objects PASSED
 tests/test_context.py::test_get_context_objects_no_ensuring PASSED
@@ -409,6 +600,34 @@ tests/test_defaults.py::test_default_map_nargs[default_map2-option_kwargs2-cli_a
 tests/test_defaults.py::test_default_map_nargs[default_map3-option_kwargs3-cli_args3-expected3] PASSED
 tests/test_defaults.py::test_default_map_nargs[default_map4-option_kwargs4-cli_args4-expected4] PASSED
 tests/test_defaults.py::test_unset_in_default_map PASSED
+tests/test_deprecations.py::test_attr_deprecated[click-get_binary_stream-_get_binary_stream] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click-get_text_stream-_get_text_stream] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.utils-get_binary_stream-_get_binary_stream] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.utils-get_text_stream-_get_text_stream] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click-BaseCommand-_BaseCommand] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click-MultiCommand-_MultiCommand] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.core-BaseCommand-_BaseCommand] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.core-MultiCommand-_MultiCommand] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click-OptionParser-_OptionParser] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.parser-OptionParser-_OptionParser] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.parser-Argument-_Argument] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.parser-Option-_Option] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.parser-split_opt-_split_opt] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.parser-normalize_opt-_normalize_opt] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.parser-ParsingState-_ParsingState] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.parser-split_arg_string-split_arg_string] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.utils-LazyFile-_LazyFile] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.utils-KeepOpenFile-_KeepOpenFile] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.utils-make_default_short_help-_make_default_short_help] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.utils-PacifyFlushWrapper-_PacifyFlushWrapper] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click.utils-safecall-_safecall] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click-__version__-8.5.0] PASSED
+tests/test_deprecations.py::test_unknown_attribute_raises[click] PASSED
+tests/test_deprecations.py::test_unknown_attribute_raises[click.core] PASSED
+tests/test_deprecations.py::test_unknown_attribute_raises[click.parser] PASSED
+tests/test_deprecations.py::test_unknown_attribute_raises[click.utils] PASSED
+tests/test_deprecations.py::test_context_protected_args_deprecated PASSED
+tests/test_deprecations.py::test_isolated_filesystem_deprecated PASSED
 tests/test_formatting.py::test_basic_functionality PASSED
 tests/test_formatting.py::test_wrapping_long_options_strings PASSED
 tests/test_formatting.py::test_wrapping_long_command_name PASSED
@@ -435,6 +654,8 @@ tests/test_formatting.py::test_help_formatter_write_text PASSED
 tests/test_formatting.py::test_wrap_text_visible_width[styled-initial-indent-does-not-break-body] PASSED
 tests/test_formatting.py::test_wrap_text_visible_width[styled-body-wraps-on-visible-width] PASSED
 tests/test_formatting.py::test_wrap_text_visible_width[styled-long-word-breaks-on-visible-width] PASSED
+tests/test_formatting.py::test_wrap_text_visible_width[colon-truecolor-body-wraps-on-visible-width] PASSED
+tests/test_formatting.py::test_wrap_text_visible_width[mouse-sequence-is-zero-width] PASSED
 tests/test_formatting.py::test_write_usage_styled_prefix_keeps_options_on_one_line PASSED
 tests/test_formatting.py::test_help_formatter_write_usage[empty-args-default-prefix] PASSED
 tests/test_formatting.py::test_help_formatter_write_usage[empty-args-custom-prefix] PASSED
@@ -467,6 +688,12 @@ tests/test_info_dict.py::test_command[Group] PASSED
 tests/test_info_dict.py::test_command[Nested Group] PASSED
 tests/test_info_dict.py::test_context PASSED
 tests/test_info_dict.py::test_paramtype_no_name PASSED
+tests/test_info_dict.py::test_argument_to_info_dict_help[None] PASSED
+tests/test_info_dict.py::test_argument_to_info_dict_help[empty] PASSED
+tests/test_info_dict.py::test_argument_to_info_dict_help[single-line] PASSED
+tests/test_info_dict.py::test_argument_to_info_dict_help[multi-line] PASSED
+tests/test_info_dict.py::test_argument_to_info_dict_nargs PASSED
+tests/test_info_dict.py::test_command_to_info_dict_multiple_arguments PASSED
 tests/test_normalization.py::test_option_normalization PASSED
 tests/test_normalization.py::test_choice_normalization PASSED
 tests/test_normalization.py::test_command_normalization PASSED
@@ -474,6 +701,10 @@ tests/test_options.py::test_prefixes PASSED
 tests/test_options.py::test_invalid_option PASSED
 tests/test_options.py::test_deprecated_usage[True] PASSED
 tests/test_options.py::test_deprecated_usage[USE B INSTEAD] PASSED
+tests/test_options.py::test_deprecated_empty_help_no_leading_space[-True-(DEPRECATED)] PASSED
+tests/test_options.py::test_deprecated_empty_help_no_leading_space[-USE B INSTEAD-(DEPRECATED: USE B INSTEAD)] PASSED
+tests/test_options.py::test_deprecated_empty_help_no_leading_space[None-True-(DEPRECATED)] PASSED
+tests/test_options.py::test_deprecated_empty_help_no_leading_space[None-USE B INSTEAD-(DEPRECATED: USE B INSTEAD)] PASSED
 tests/test_options.py::test_deprecated_warning[True] PASSED
 tests/test_options.py::test_deprecated_warning[USE B INSTEAD] PASSED
 tests/test_options.py::test_deprecated_required PASSED
@@ -1092,6 +1323,8 @@ tests/test_options.py::test_flag_group_unset_vs_none_vs_explicit[Sentinel.UNSET-
 tests/test_options.py::test_flag_group_unset_vs_none_vs_explicit[None-True-args7-None] PASSED
 tests/test_options.py::test_flag_group_unset_vs_none_vs_explicit[True-None-args8-True] PASSED
 tests/test_options.py::test_flag_group_competition_duplicate_option_name PASSED
+tests/test_options.py::test_argument_sharing_param_name_warning PASSED
+tests/test_options.py::test_options_sharing_name_no_warning PASSED
 tests/test_options.py::test_flag_group_competition_repeated_cmdline[args0-True] PASSED
 tests/test_options.py::test_flag_group_competition_repeated_cmdline[args1-False] PASSED
 tests/test_options.py::test_flag_group_competition_repeated_cmdline[args2-True] PASSED
@@ -1152,13 +1385,16 @@ tests/test_shell_completion.py::test_completion_item_data PASSED
 tests/test_shell_completion.py::test_full_source[bash] PASSED
 tests/test_shell_completion.py::test_full_source[zsh] PASSED
 tests/test_shell_completion.py::test_full_source[fish] PASSED
+tests/test_shell_completion.py::test_full_source_powershell PASSED
 tests/test_shell_completion.py::test_full_complete[bash-env0-plain,a\nplain,b\n] PASSED
 tests/test_shell_completion.py::test_full_complete[bash-env1-plain,b\n] PASSED
 tests/test_shell_completion.py::test_full_complete[zsh-env2-plain\na\n_\nplain\nb\nbee\n] PASSED
 tests/test_shell_completion.py::test_full_complete[zsh-env3-plain\nb\nbee\n] PASSED
-tests/test_shell_completion.py::test_full_complete[fish-env4-plain\na\n_\nplain\nb\nbee\n] PASSED
-tests/test_shell_completion.py::test_full_complete[fish-env5-plain\nb\nbee\n] PASSED
-tests/test_shell_completion.py::test_full_complete[fish-env6-plain\nb\nbee\n] PASSED
+tests/test_shell_completion.py::test_full_complete[fish-env4-plain,a\nplain,b\tbee\n] PASSED
+tests/test_shell_completion.py::test_full_complete[fish-env5-plain,b\tbee\n] PASSED
+tests/test_shell_completion.py::test_full_complete[fish-env6-plain,b\tbee\n] PASSED
+tests/test_shell_completion.py::test_full_complete[powershell-env7-plain\na\n_\nplain\nb\nbee\n] PASSED
+tests/test_shell_completion.py::test_full_complete[powershell-env8-plain\nb\nbee\n] PASSED
 tests/test_shell_completion.py::test_source_uses_lf_line_endings PASSED
 tests/test_shell_completion.py::test_zsh_full_complete_with_colons[env0-plain\na\n_\nplain\nb\nbee\nplain\nc\\:d\ncee:dee\nplain\nc:e\n_\n] PASSED
 tests/test_shell_completion.py::test_zsh_full_complete_with_colons[env1-plain\nc\\:d\ncee:dee\nplain\nc:e\n_\n] PASSED
@@ -1170,7 +1406,8 @@ tests/test_shell_completion.py::test_add_completion_class PASSED
 tests/test_shell_completion.py::test_add_completion_class_with_name PASSED
 tests/test_shell_completion.py::test_add_completion_class_decorator PASSED
 tests/test_shell_completion.py::test_files_closed PASSED
-tests/test_shell_completion.py::test_fish_multiline_help_complete PASSED
+tests/test_shell_completion.py::test_fish_format_completion_escapes_help PASSED
+tests/test_shell_completion.py::test_powershell_format_completion_escapes_help PASSED
 tests/test_stream_lifecycle.py::test_wrapper_close_does_not_close_underlying_buffer PASSED
 tests/test_stream_lifecycle.py::test_wrapper_del_does_not_close_underlying_buffer PASSED
 tests/test_stream_lifecycle.py::test_multiple_wrappers_same_buffer PASSED
@@ -1199,6 +1436,18 @@ tests/test_termui.py::test_progressbar_strip_regression PASSED
 tests/test_termui.py::test_progressbar_length_hint PASSED
 tests/test_termui.py::test_progressbar_no_tty PASSED
 tests/test_termui.py::test_progressbar_hidden_manual PASSED
+tests/test_termui.py::test_progressbar_lands_on_final_position[iterate-1] PASSED
+tests/test_termui.py::test_progressbar_lands_on_final_position[iterate-2] PASSED
+tests/test_termui.py::test_progressbar_lands_on_final_position[iterate-3] PASSED
+tests/test_termui.py::test_progressbar_lands_on_final_position[iterate-7] PASSED
+tests/test_termui.py::test_progressbar_lands_on_final_position[iterate-20] PASSED
+tests/test_termui.py::test_progressbar_lands_on_final_position[iterate-25] PASSED
+tests/test_termui.py::test_progressbar_lands_on_final_position[update-1] PASSED
+tests/test_termui.py::test_progressbar_lands_on_final_position[update-2] PASSED
+tests/test_termui.py::test_progressbar_lands_on_final_position[update-3] PASSED
+tests/test_termui.py::test_progressbar_lands_on_final_position[update-7] PASSED
+tests/test_termui.py::test_progressbar_lands_on_final_position[update-20] PASSED
+tests/test_termui.py::test_progressbar_lands_on_final_position[update-25] PASSED
 tests/test_termui.py::test_progressbar_time_per_iteration[avg0-0.0] PASSED
 tests/test_termui.py::test_progressbar_time_per_iteration[avg1-2.5] PASSED
 tests/test_termui.py::test_progressbar_eta[False-5] PASSED
@@ -1278,6 +1527,8 @@ tests/test_termui.py::test_getchar_windows_exceptions[\x03-KeyboardInterrupt] SK
 tests/test_termui.py::test_getchar_windows_exceptions[\x1a-EOFError] SKIPPED
 tests/test_termui.py::test_fast_edit PASSED
 tests/test_termui.py::test_edit PASSED
+tests/test_termui.py::test_edit_pathlib[single] PASSED
+tests/test_termui.py::test_edit_pathlib[iterable] PASSED
 tests/test_termui.py::test_editor_path_normalization[editor with args] PASSED
 tests/test_termui.py::test_editor_path_normalization[shell metacharacters in filename] PASSED
 tests/test_termui.py::test_editor_path_normalization[quoted windows path with spaces] PASSED
@@ -1317,12 +1568,39 @@ tests/test_termui.py::test_get_pager_file_with_real_pager_binary_stream[preserve
 tests/test_termui.py::test_get_pager_file_with_real_pager_binary_stream[empty string] PASSED
 tests/test_termui.py::test_echo_via_pager_real_pager_handles_ansi[strip ansi] PASSED
 tests/test_termui.py::test_echo_via_pager_real_pager_handles_ansi[preserve ansi] PASSED
+tests/test_termui.py::test_pipepager_less_detection_matches_stem[less] PASSED
+tests/test_termui.py::test_pipepager_less_detection_matches_stem[less.exe] PASSED
+tests/test_termui.py::test_pipepager_less_detection_matches_stem[upper case stays unmatched on POSIX] PASSED
+tests/test_termui.py::test_pipepager_less_detection_matches_stem[not less] PASSED
+tests/test_termui.py::test_pipepager_less_detection_case_insensitive_on_windows PASSED
+tests/test_termui.py::test_pipepager_less_raw_mode_detection[no flags: inject LESS=-R] PASSED
+tests/test_termui.py::test_pipepager_less_raw_mode_detection[explicit -R] PASSED
+tests/test_termui.py::test_pipepager_less_raw_mode_detection[bundled short flags] PASSED
+tests/test_termui.py::test_pipepager_less_raw_mode_detection[LESS env var] PASSED
+tests/test_termui.py::test_pipepager_less_raw_mode_detection[long option] PASSED
+tests/test_termui.py::test_pipepager_less_raw_mode_detection[unrelated flag] PASSED
+tests/test_termui.py::test_pipepager_less_raw_mode_detection[long option with r substring] PASSED
+tests/test_termui.py::test_pipepager_less_raw_mode_detection[filename with R] PASSED
+tests/test_termui.py::test_pipepager_less_raw_mode_detection[filename with r] PASSED
+tests/test_termui.py::test_pipepager_less_raw_mode_detection[option terminator shields filenames] PASSED
+tests/test_termui.py::test_pipepager_less_raw_mode_detection[long option with value] PASSED
+tests/test_termui.py::test_pipepager_less_raw_mode_detection[unparsable LESS] PASSED
+tests/test_termui.py::test_echo_via_pager_streams_each_write PASSED
 tests/test_termui.py::test_get_pager_file_pager_missing_binary_falls_back PASSED
 tests/test_termui.py::test_get_pager_file_pager_unset_falls_back_when_no_default PASSED
+tests/test_termui.py::test_get_pager_file_missing_pager_keeps_borrowed_stream_open PASSED
+tests/test_termui.py::test_echo_via_pager_tty_pager_missing PASSED
 tests/test_termui.py::test_get_pager_file_nullpager_wraps_textio_stream[strip ansi] PASSED
 tests/test_termui.py::test_get_pager_file_nullpager_wraps_textio_stream[preserve ansi] PASSED
 tests/test_termui.py::test_get_pager_file_nullpager_keeps_stringio_stream PASSED
 tests/test_termui.py::test_get_pager_file_flushes_stream_on_exception PASSED
+tests/test_termui.py::test_get_pager_file_close_does_not_close_borrowed_stream PASSED
+tests/test_termui.py::test_tempfile_pager_accepts_text[get_pager_file] PASSED
+tests/test_termui.py::test_tempfile_pager_accepts_text[echo_via_pager] PASSED
+tests/test_termui.py::test_tempfile_pager_handles_ansi[strip ansi] PASSED
+tests/test_termui.py::test_tempfile_pager_handles_ansi[preserve ansi] PASSED
+tests/test_termui.py::test_tempfile_pager_passes_pager_params PASSED
+tests/test_termui.py::test_tempfile_pager_closes_file_before_unlink PASSED
 tests/test_termui.py::test_editor_unclosed_quote PASSED
 tests/test_termui.py::test_prompt_required_with_required[True-False-None-prompt] PASSED
 tests/test_termui.py::test_prompt_required_with_required[True-False-args1-Option '-v' requires an argument.] PASSED
@@ -1340,6 +1618,10 @@ tests/test_termui.py::test_confirmation_prompt[True-password\npassword-None-pass
 tests/test_termui.py::test_confirmation_prompt[Confirm Password-password\npassword\n-None-password] PASSED
 tests/test_termui.py::test_confirmation_prompt[True-\n\n--] PASSED
 tests/test_termui.py::test_confirmation_prompt[False-None-None-None] PASSED
+tests/test_termui.py::test_prompt_and_confirm_ansi_respects_color[confirm-no-color] PASSED
+tests/test_termui.py::test_prompt_and_confirm_ansi_respects_color[confirm-color] PASSED
+tests/test_termui.py::test_prompt_and_confirm_ansi_respects_color[prompt-no-color] PASSED
+tests/test_termui.py::test_prompt_and_confirm_ansi_respects_color[prompt-color] PASSED
 tests/test_termui.py::test_false_show_default_cause_no_default_display_in_prompt PASSED
 tests/test_termui.py::test_string_show_default_in_prompt[simple-string] PASSED
 tests/test_termui.py::test_string_show_default_in_prompt[string-with-spaces] PASSED
@@ -1473,6 +1755,8 @@ tests/test_testing.py::test_command_standalone_mode_returns_value PASSED
 tests/test_testing.py::test_file_stdin_attrs PASSED
 tests/test_testing.py::test_isolated_runner PASSED
 tests/test_testing.py::test_isolated_runner_custom_tempdir PASSED
+tests/test_testing.py::test_tempdir_replacement_pattern PASSED
+tests/test_testing.py::test_tempdir_isolation_is_thread_safe PASSED
 tests/test_testing.py::test_isolation_stderr_errors PASSED
 tests/test_testing.py::test_isolation_flushes_unflushed_stderr PASSED
 tests/test_testing.py::test_pdb_uses_real_streams PASSED
@@ -1527,6 +1811,7 @@ tests/test_types.py::test_path_type[None-a/b/c.txt] PASSED
 tests/test_types.py::test_path_type[str-a/b/c.txt] PASSED
 tests/test_types.py::test_path_type[bytes-a/b/c.txt] PASSED
 tests/test_types.py::test_path_type[Path-expect3] PASSED
+tests/test_types.py::test_path_dash_no_byteswarning PASSED
 tests/test_types.py::test_path_resolve_symlink PASSED
 tests/test_types.py::test_path_surrogates PASSED
 tests/test_types.py::test_file_surrogates[type0] PASSED
@@ -1534,154 +1819,228 @@ tests/test_types.py::test_file_surrogates[type1] PASSED
 tests/test_types.py::test_file_error_surrogates PASSED
 tests/test_types.py::test_invalid_path_with_esc_sequence PASSED
 tests/test_types.py::test_choice_get_invalid_choice_message PASSED
-tests/test_utils.py::test_unset_sentinel PASSED
-tests/test_utils.py::test_echo PASSED
-tests/test_utils.py::test_echo_custom_file PASSED
-tests/test_utils.py::test_echo_no_streams PASSED
-tests/test_utils.py::test_styling[styles0-\x1b[30mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles1-\x1b[31mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles2-\x1b[32mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles3-\x1b[33mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles4-\x1b[34mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles5-\x1b[35mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles6-\x1b[36mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles7-\x1b[37mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles8-\x1b[40mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles9-\x1b[41mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles10-\x1b[42mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles11-\x1b[43mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles12-\x1b[44mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles13-\x1b[45mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles14-\x1b[46mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles15-\x1b[47mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles16-\x1b[48;5;91mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles17-\x1b[48;2;135;0;175mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles18-\x1b[1mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles19-\x1b[2mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles20-\x1b[4mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles21-\x1b[53mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles22-\x1b[3mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles23-\x1b[5mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles24-\x1b[7mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles25-\x1b[9mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles26-\x1b[22mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles27-\x1b[22mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles28-\x1b[24mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles29-\x1b[55mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles30-\x1b[23mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles31-\x1b[25mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles32-\x1b[27mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles33-\x1b[29mx y\x1b[0m] PASSED
-tests/test_utils.py::test_styling[styles34-\x1b[30mx y] PASSED
-tests/test_utils.py::test_unstyle_other_ansi[\x1b[?25lx y\x1b[?25h-x y] PASSED
-tests/test_utils.py::test_filename_formatting PASSED
-tests/test_utils.py::test_prompts PASSED
-tests/test_utils.py::test_confirm_repeat PASSED
-tests/test_utils.py::test_prompts_abort PASSED
-tests/test_utils.py::test_full_prompt_passed_to_readline[prompt] PASSED
-tests/test_utils.py::test_full_prompt_passed_to_readline[prompt-hidden] PASSED
-tests/test_utils.py::test_full_prompt_passed_to_readline[prompt-custom-suffix] PASSED
-tests/test_utils.py::test_full_prompt_passed_to_readline[confirm] PASSED
-tests/test_utils.py::test_prompts_eof PASSED
-tests/test_utils.py::test_echo_via_pager[test0-cat] PASSED
-tests/test_utils.py::test_echo_via_pager[test0-cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test0- cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test0-less] PASSED
-tests/test_utils.py::test_echo_via_pager[test0- less] PASSED
-tests/test_utils.py::test_echo_via_pager[test0- less ] PASSED
-tests/test_utils.py::test_echo_via_pager[test1-cat] PASSED
-tests/test_utils.py::test_echo_via_pager[test1-cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test1- cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test1-less] PASSED
-tests/test_utils.py::test_echo_via_pager[test1- less] PASSED
-tests/test_utils.py::test_echo_via_pager[test1- less ] PASSED
-tests/test_utils.py::test_echo_via_pager[test2-cat] PASSED
-tests/test_utils.py::test_echo_via_pager[test2-cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test2- cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test2-less] PASSED
-tests/test_utils.py::test_echo_via_pager[test2- less] PASSED
-tests/test_utils.py::test_echo_via_pager[test2- less ] PASSED
-tests/test_utils.py::test_echo_via_pager[test3-cat] PASSED
-tests/test_utils.py::test_echo_via_pager[test3-cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test3- cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test3-less] PASSED
-tests/test_utils.py::test_echo_via_pager[test3- less] PASSED
-tests/test_utils.py::test_echo_via_pager[test3- less ] PASSED
-tests/test_utils.py::test_echo_via_pager[test4-cat] PASSED
-tests/test_utils.py::test_echo_via_pager[test4-cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test4- cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test4-less] PASSED
-tests/test_utils.py::test_echo_via_pager[test4- less] PASSED
-tests/test_utils.py::test_echo_via_pager[test4- less ] PASSED
-tests/test_utils.py::test_echo_via_pager[test5-cat] PASSED
-tests/test_utils.py::test_echo_via_pager[test5-cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test5- cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test5-less] PASSED
-tests/test_utils.py::test_echo_via_pager[test5- less] PASSED
-tests/test_utils.py::test_echo_via_pager[test5- less ] PASSED
-tests/test_utils.py::test_echo_via_pager[test6-cat] PASSED
-tests/test_utils.py::test_echo_via_pager[test6-cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test6- cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test6-less] PASSED
-tests/test_utils.py::test_echo_via_pager[test6- less] PASSED
-tests/test_utils.py::test_echo_via_pager[test6- less ] PASSED
-tests/test_utils.py::test_echo_via_pager[test7-cat] PASSED
-tests/test_utils.py::test_echo_via_pager[test7-cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test7- cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test7-less] PASSED
-tests/test_utils.py::test_echo_via_pager[test7- less] PASSED
-tests/test_utils.py::test_echo_via_pager[test7- less ] PASSED
-tests/test_utils.py::test_echo_via_pager[test8-cat] PASSED
-tests/test_utils.py::test_echo_via_pager[test8-cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test8- cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test8-less] PASSED
-tests/test_utils.py::test_echo_via_pager[test8- less] PASSED
-tests/test_utils.py::test_echo_via_pager[test8- less ] PASSED
-tests/test_utils.py::test_echo_via_pager[test9-cat] PASSED
-tests/test_utils.py::test_echo_via_pager[test9-cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test9- cat ] PASSED
-tests/test_utils.py::test_echo_via_pager[test9-less] PASSED
-tests/test_utils.py::test_echo_via_pager[test9- less] PASSED
-tests/test_utils.py::test_echo_via_pager[test9- less ] PASSED
-tests/test_utils.py::test_echo_color_flag PASSED
-tests/test_utils.py::test_prompt_cast_default PASSED
-tests/test_utils.py::test_echo_writing_to_standard_error PASSED
-tests/test_utils.py::test_echo_with_capsys PASSED
-tests/test_utils.py::test_open_file PASSED
-tests/test_utils.py::test_open_file_pathlib_dash PASSED
-tests/test_utils.py::test_open_file_ignore_errors_stdin PASSED
-tests/test_utils.py::test_open_file_respects_ignore PASSED
-tests/test_utils.py::test_open_file_ignore_invalid_utf8 PASSED
-tests/test_utils.py::test_open_file_ignore_no_encoding PASSED
-tests/test_utils.py::test_open_file_atomic_permissions_existing_file[256] PASSED
-tests/test_utils.py::test_open_file_atomic_permissions_existing_file[292] PASSED
-tests/test_utils.py::test_open_file_atomic_permissions_existing_file[384] PASSED
-tests/test_utils.py::test_open_file_atomic_permissions_existing_file[420] PASSED
-tests/test_utils.py::test_open_file_atomic_permissions_new_file PASSED
-tests/test_utils.py::test_iter_keepopenfile PASSED
-tests/test_utils.py::test_iter_lazyfile PASSED
-tests/test_utils.py::test_detect_program_name[example.py-None-example.py] PASSED
-tests/test_utils.py::test_detect_program_name[/foo/bar/example.py-None-example.py] PASSED
-tests/test_utils.py::test_detect_program_name[example-None-example] PASSED
-tests/test_utils.py::test_detect_program_name[example/__main__.py-example-python -m example] PASSED
-tests/test_utils.py::test_detect_program_name[example/cli.py-example-python -m example.cli] PASSED
-tests/test_utils.py::test_detect_program_name[example--example] PASSED
-tests/test_utils.py::test_expand_args PASSED
-tests/test_utils.py::test_make_default_short_help[-empty] PASSED
-tests/test_utils.py::test_make_default_short_help[-equal length, no dot] PASSED
-tests/test_utils.py::test_make_default_short_help[-sentence < max] PASSED
-tests/test_utils.py::test_make_default_short_help[-paragraph < max] PASSED
-tests/test_utils.py::test_make_default_short_help[-truncate] PASSED
-tests/test_utils.py::test_make_default_short_help[-length includes suffix] PASSED
-tests/test_utils.py::test_make_default_short_help[-ignore dot in word] PASSED
-tests/test_utils.py::test_make_default_short_help[no-wrap mark-empty] PASSED
-tests/test_utils.py::test_make_default_short_help[no-wrap mark-equal length, no dot] PASSED
-tests/test_utils.py::test_make_default_short_help[no-wrap mark-sentence < max] PASSED
-tests/test_utils.py::test_make_default_short_help[no-wrap mark-paragraph < max] PASSED
-tests/test_utils.py::test_make_default_short_help[no-wrap mark-truncate] PASSED
-tests/test_utils.py::test_make_default_short_help[no-wrap mark-length includes suffix] PASSED
-tests/test_utils.py::test_make_default_short_help[no-wrap mark-ignore dot in word] PASSED
+tests/test_types.py::test_param_type_input_parameter_defaults_at_runtime PASSED
+tests/test_types.py::test_param_type_subclass_omitting_input_parameter PASSED
+tests/test_utils/test_KeepOpenFile.py::test_iter_keepopenfile PASSED
+tests/test_utils/test_LazyFile.py::test_iter_lazyfile PASSED
+tests/test_utils/test__detect_program_name.py::test_detect_program_name[example.py-None-example.py] PASSED
+tests/test_utils/test__detect_program_name.py::test_detect_program_name[/foo/bar/example.py-None-example.py] PASSED
+tests/test_utils/test__detect_program_name.py::test_detect_program_name[example-None-example] PASSED
+tests/test_utils/test__detect_program_name.py::test_detect_program_name[example/__main__.py-example-python -m example] PASSED
+tests/test_utils/test__detect_program_name.py::test_detect_program_name[example/cli.py-example-python -m example.cli] PASSED
+tests/test_utils/test__detect_program_name.py::test_detect_program_name[example--example] PASSED
+tests/test_utils/test__expand_args.py::test_expand_args PASSED
+tests/test_utils/test_confirm.py::test_prompts PASSED
+tests/test_utils/test_confirm.py::test_confirm_repeat PASSED
+tests/test_utils/test_echo.py::test_echo PASSED
+tests/test_utils/test_echo.py::test_echo_custom_file PASSED
+tests/test_utils/test_echo.py::test_echo_no_streams PASSED
+tests/test_utils/test_echo.py::test_echo_with_capsys PASSED
+tests/test_utils/test_echo.py::test_echo_color_flag PASSED
+tests/test_utils/test_echo.py::test_echo_writing_to_standard_error PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test0-cat] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test0-cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test0- cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test0-less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test0- less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test0- less ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test1-cat] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test1-cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test1- cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test1-less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test1- less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test1- less ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test2-cat] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test2-cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test2- cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test2-less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test2- less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test2- less ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test3-cat] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test3-cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test3- cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test3-less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test3- less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test3- less ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test4-cat] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test4-cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test4- cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test4-less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test4- less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test4- less ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test5-cat] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test5-cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test5- cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test5-less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test5- less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test5- less ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test6-cat] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test6-cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test6- cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test6-less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test6- less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test6- less ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test7-cat] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test7-cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test7- cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test7-less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test7- less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test7- less ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test8-cat] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test8-cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test8- cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test8-less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test8- less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test8- less ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test9-cat] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test9-cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test9- cat ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test9-less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test9- less] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager[test9- less ] PASSED
+tests/test_utils/test_echo_via_pager.py::test_echo_via_pager_yields_before_exception PASSED
+tests/test_utils/test_format_filename.py::test_filename_formatting PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-empty] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-equal length, no dot] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-sentence < max] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-paragraph < max] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-truncate] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-length includes suffix] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-ignore dot in word] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-empty] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-equal length, no dot] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-sentence < max] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-paragraph < max] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-truncate] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-length includes suffix] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-ignore dot in word] PASSED
+tests/test_utils/test_open_file.py::test_open_file PASSED
+tests/test_utils/test_open_file.py::test_open_file_pathlib_dash PASSED
+tests/test_utils/test_open_file.py::test_open_file_ignore_errors_stdin PASSED
+tests/test_utils/test_open_file.py::test_open_file_respects_ignore PASSED
+tests/test_utils/test_open_file.py::test_open_file_ignore_invalid_utf8 PASSED
+tests/test_utils/test_open_file.py::test_open_file_ignore_no_encoding PASSED
+tests/test_utils/test_open_file.py::test_open_file_atomic_permissions_existing_file[256] PASSED
+tests/test_utils/test_open_file.py::test_open_file_atomic_permissions_existing_file[292] PASSED
+tests/test_utils/test_open_file.py::test_open_file_atomic_permissions_existing_file[384] PASSED
+tests/test_utils/test_open_file.py::test_open_file_atomic_permissions_existing_file[420] PASSED
+tests/test_utils/test_open_file.py::test_open_file_atomic_permissions_new_file PASSED
+tests/test_utils/test_prompt.py::test_prompt_cast_default PASSED
+tests/test_utils/test_prompt.py::test_prompt_default_round_trips_through_type PASSED
+tests/test_utils/test_prompt.py::test_prompt_default_validated_by_type PASSED
+tests/test_utils/test_prompt.py::test_prompts_abort PASSED
+tests/test_utils/test_prompt.py::test_full_prompt_passed_to_readline[prompt] PASSED
+tests/test_utils/test_prompt.py::test_full_prompt_passed_to_readline[prompt-hidden] PASSED
+tests/test_utils/test_prompt.py::test_full_prompt_passed_to_readline[prompt-custom-suffix] PASSED
+tests/test_utils/test_prompt.py::test_full_prompt_passed_to_readline[confirm] PASSED
+tests/test_utils/test_prompt.py::test_prompts_eof PASSED
+tests/test_utils/test_sentinel.py::test_unset_sentinel PASSED
+tests/test_utils/test_style.py::test_styling[styles0-x y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles1-\x1b[30mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles2-\x1b[31mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles3-\x1b[32mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles4-\x1b[33mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles5-\x1b[34mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles6-\x1b[35mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles7-\x1b[36mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles8-\x1b[37mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles9-\x1b[90mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles10-\x1b[91mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles11-\x1b[92mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles12-\x1b[93mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles13-\x1b[94mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles14-\x1b[95mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles15-\x1b[96mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles16-\x1b[97mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles17-\x1b[39mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles18-\x1b[40mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles19-\x1b[41mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles20-\x1b[42mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles21-\x1b[43mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles22-\x1b[44mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles23-\x1b[45mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles24-\x1b[46mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles25-\x1b[47mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles26-\x1b[100mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles27-\x1b[101mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles28-\x1b[102mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles29-\x1b[103mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles30-\x1b[104mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles31-\x1b[105mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles32-\x1b[106mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles33-\x1b[107mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles34-\x1b[49mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles35-\x1b[38;5;91mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles36-\x1b[48;5;91mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles37-\x1b[38;5;255mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles38-\x1b[48;5;255mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles39-\x1b[38;2;135;0;175mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles40-\x1b[48;2;135;0;175mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles41-\x1b[48;2;135;0;175mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles42-\x1b[38;2;0;0;0mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles43-\x1b[38;2;255;255;255mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles44-\x1b[38;5;0mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles45-\x1b[48;5;0mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles46-\x1b[1mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles47-\x1b[2mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles48-\x1b[4mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles49-\x1b[53mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles50-\x1b[3mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles51-\x1b[5mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles52-\x1b[7mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles53-\x1b[9mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles54-\x1b[22mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles55-\x1b[22mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles56-\x1b[24mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles57-\x1b[55mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles58-\x1b[23mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles59-\x1b[25mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles60-\x1b[27mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles61-\x1b[29mx y\x1b[0m] PASSED
+tests/test_utils/test_style.py::test_styling[styles62-\x1b[30mx y] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[banana-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[banana-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[BLACK-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[BLACK-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[red-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[red-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[True-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[True-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[False-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[False-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[-1-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[-1-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[256-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[256-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[0.0-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[0.0-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value9-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value9-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value10-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value10-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value11-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value11-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value12-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value12-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value13-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value13-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value14-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value14-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value15-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value15-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value16-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value16-bg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value17-fg] PASSED
+tests/test_utils/test_style.py::test_styling_invalid_color[value17-bg] PASSED
+tests/test_utils/test_style.py::test_unstyle_other_ansi[\x1b[?25lx y\x1b[?25h-x y] PASSED
+tests/test_utils/test_style.py::test_unstyle_other_ansi[\x1b[38:2:255:0:0mx y\x1b[0m-x y] PASSED
+tests/test_utils/test_style.py::test_unstyle_other_ansi[\x1b[38:5:200mx y\x1b[0m-x y] PASSED
+tests/test_utils/test_style.py::test_unstyle_other_ansi[\x1b[<0;1;1Mx y\x1b[<0;1;1m-x y] PASSED
+tests/test_utils/test_style.py::test_unstyle_other_ansi[\x1b[0 qx y-x y] PASSED
+tests/test_utils/test_style.py::test_unstyle_other_ansi[x\x1b[3~y-xy] PASSED
 
-======== 1632 passed, 24 skipped, 30000 deselected, 1 xfailed ========
+======== 1991 passed, 24 skipped, 31000 deselected, 1 xfailed ========
   py$(PYV): OK
   congratulations :)
