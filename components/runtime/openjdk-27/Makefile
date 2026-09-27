@@ -19,8 +19,8 @@
 include ../../../make-rules/shared-macros.mk
 
 OPENJDK_VERSION=	27
-OPENJDK_UPDATE=        0
-OPENJDK_BUILD= 0
+OPENJDK_UPDATE=		0
+OPENJDK_BUILD=		0
 COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
@@ -87,7 +87,7 @@ CONFIGURE_OPTIONS+=        SORT=/usr/bin/gsort
 CONFIGURE_ENV+= LD=/usr/bin/gld
 COMPONENT_BUILD_ENV+= LD=/usr/bin/gld
 
-COMPONENT_POST_BUILD_ACTION=	($(LN) -s server/libjvm.so $(@D)/images/jdk/lib/libjvm.so)
+COMPONENT_POST_BUILD_ACTION =	( $(LN) -s server/libjvm.so $(@D)/images/jdk/lib/libjvm.so )
 
 COMPONENT_BUILD_TARGETS = images
 
