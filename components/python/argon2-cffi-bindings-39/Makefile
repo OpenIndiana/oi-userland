@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/argon2-cffi-bindings argon2_cffi_bindings
+#   $WS_TOOLS/python-integrate-project -d python/argon2-cffi-bindings-39 argon2_cffi_bindings
 #
 
 BUILD_STYLE = pyproject
@@ -19,22 +19,23 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		argon2_cffi_bindings
-HUMAN_VERSION =			26.1.0
+HUMAN_VERSION =			25.1.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Low-level CFFI bindings for Argon2
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:63505c71542a44b68b1e38060450fb006404170da375feb31af153e7f9c6205d
+	sha256:b957f3e6ea4d55d820e40ff76f450952807013d361a65d7f28acc0acbf29229d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by argon2-cffi-bindings >= 26.1.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# argon2-cffi-bindings >= 26.1.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES.python += library/python/cffi
-REQUIRED_PACKAGES.python += library/python/scikit-build-core
+REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/setuptools-scm
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
