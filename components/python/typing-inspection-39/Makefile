@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/typing-inspection typing_inspection
+#   $WS_TOOLS/python-integrate-project -d python/typing-inspection-39 typing_inspection
 #
 
 BUILD_STYLE = pyproject
@@ -19,18 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typing_inspection
-HUMAN_VERSION =			0.4.4
+HUMAN_VERSION =			0.4.2
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Runtime typing introspection tools
 COMPONENT_PROJECT_URL =		https://github.com/pydantic/typing-inspection
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:547274fa6b0a561ccf549cc9524b999a578e737d015d8709d021f9d0d13bea47
+	sha256:ba561c48a67c5958007083d386c3295464928b01faa735ab8547c5692e87f464
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
-# Python 3.9 is not supported by typing-inspection >= 0.4.3
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# typing-inspection >= 0.4.3 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
