@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		btrees
-HUMAN_VERSION =			6.3
+HUMAN_VERSION =			6.5
 COMPONENT_SUMMARY =		Scalable persistent object containers
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1606bdffa7ab28c6800984540b695eee848f6e15b0145d858ff4b0c6264e8ed2
+	sha256:1876cad0ebcac3f68dadcdca8018ea6cb76b334f9991a73aa85cbb0cb8fd8cf0
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
