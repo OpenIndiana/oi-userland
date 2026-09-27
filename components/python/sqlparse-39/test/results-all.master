@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 509 items
+collecting ... collected 482 items
 
 tests/test_cli.py::test_cli_main_empty PASSED
 tests/test_cli.py::test_parser_empty PASSED
@@ -31,8 +31,6 @@ tests/test_cli.py::test_cli_error_handling_continues PASSED
 tests/test_dos_prevention.py::TestDoSPrevention::test_large_tuple_list_performance PASSED
 tests/test_dos_prevention.py::TestDoSPrevention::test_deeply_nested_groups_limited PASSED
 tests/test_dos_prevention.py::TestDoSPrevention::test_very_large_token_list_limited PASSED
-tests/test_dos_prevention.py::TestDoSPrevention::test_nested_paren_within_cap_under_1s PASSED
-tests/test_dos_prevention.py::TestDoSPrevention::test_nested_case_within_cap_under_1s PASSED
 tests/test_dos_prevention.py::TestDoSPrevention::test_normal_sql_still_works PASSED
 tests/test_dos_prevention.py::TestDoSPrevention::test_reasonable_tuple_list_works PASSED
 tests/test_format.py::TestFormat::test_keywordcase PASSED
@@ -84,8 +82,6 @@ tests/test_format.py::TestOutputFormat::test_python PASSED
 tests/test_format.py::TestOutputFormat::test_python_multiple_statements PASSED
 tests/test_format.py::TestOutputFormat::test_python_multiple_statements_with_formatting XFAIL
 tests/test_format.py::TestOutputFormat::test_php PASSED
-tests/test_format.py::TestOutputFormat::test_python_escapes_backslashes PASSED
-tests/test_format.py::TestOutputFormat::test_php_escapes_backslashes PASSED
 tests/test_format.py::TestOutputFormat::test_sql PASSED
 tests/test_format.py::TestOutputFormat::test_invalid_option PASSED
 tests/test_format.py::test_format_column_ordering PASSED
@@ -155,7 +151,6 @@ tests/test_grouping.py::test_grouping_typecast[select (current_database())::info
 tests/test_grouping.py::test_grouping_alias PASSED
 tests/test_grouping.py::test_grouping_alias_case PASSED
 tests/test_grouping.py::test_grouping_alias_ctas PASSED
-tests/test_grouping.py::test_grouping_alias_ctas_lowercase_as PASSED
 tests/test_grouping.py::test_grouping_subquery_no_parens PASSED
 tests/test_grouping.py::test_grouping_alias_returns_none[foo.bar] PASSED
 tests/test_grouping.py::test_grouping_alias_returns_none[x, y] PASSED
@@ -280,7 +275,6 @@ tests/test_parse.py::test_dbldollar_as_literal[$_$ foo $token$bar$token$ baz$_$-
 tests/test_parse.py::test_dbldollar_as_literal[$A$ foo $B$-False] PASSED
 tests/test_parse.py::test_non_ascii PASSED
 tests/test_parse.py::test_get_real_name PASSED
-tests/test_parse.py::test_get_real_name_multi_part_dotted PASSED
 tests/test_parse.py::test_from_subquery PASSED
 tests/test_parse.py::test_parenthesis PASSED
 tests/test_parse.py::test_configurable_keywords PASSED
@@ -384,11 +378,6 @@ tests/test_regressions.py::test_splitting_at_and_backticks_issue588 PASSED
 tests/test_regressions.py::test_comment_between_cte_clauses_issue632 PASSED
 tests/test_regressions.py::test_copy_issue672 PASSED
 tests/test_regressions.py::test_primary_key_issue740 PASSED
-tests/test_regressions.py::test_alter_table_row_format_issue773 PASSED
-tests/test_regressions.py::test_materialized_view_issue752 PASSED
-tests/test_regressions.py::test_between_leading_dot_float_issue601[a BETWEEN .03 AND .06] PASSED
-tests/test_regressions.py::test_between_leading_dot_float_issue601[a between .03 and .06] PASSED
-tests/test_regressions.py::test_keyword_before_qualified_name_still_grouped PASSED
 tests/test_regressions.py::test_max_recursion PASSED
 tests/test_split.py::test_split_semicolon PASSED
 tests/test_split.py::test_split_backslash PASSED
@@ -433,12 +422,6 @@ tests/test_split.py::test_split_begin_end_semicolons PASSED
 tests/test_split.py::test_split_begin_end_procedure PASSED
 tests/test_split.py::test_split_begin_transaction PASSED
 tests/test_split.py::test_split_begin_transaction_formatted PASSED
-tests/test_split.py::test_split_anonymous_begin_end_for PASSED
-tests/test_split.py::test_split_anonymous_begin_end_case_inline PASSED
-tests/test_split.py::test_split_for_update_in_begin_end PASSED
-tests/test_split.py::test_split_multiple_for_loops_in_begin_end PASSED
-tests/test_split.py::test_split_procedural_case_end_case PASSED
-tests/test_split.py::test_split_standalone_for_update PASSED
 tests/test_tokenize.py::test_tokenize_simple PASSED
 tests/test_tokenize.py::test_tokenize_backticks PASSED
 tests/test_tokenize.py::test_tokenize_linebreaks[foo\nbar\n] PASSED
@@ -500,19 +483,9 @@ tests/test_tokenize.py::test_near_like_and_ilike_parsed_appropriately[NOTLIKE] P
 tests/test_tokenize.py::test_near_like_and_ilike_parsed_appropriately[NOTILIKE] PASSED
 tests/test_tokenize.py::test_parse_tzcast[AT TIME ZONE 'UTC'] PASSED
 tests/test_tokenize.py::test_cli_commands PASSED
-tests/test_tokenize.py::test_delimiters_in_strings_and_comments[SELECT '/*' FROM t; /* c */ SELECT 1-expected0] PASSED
-tests/test_tokenize.py::test_delimiters_in_strings_and_comments[SELECT '*/' FROM t; /* c */ SELECT 1-expected1] PASSED
-tests/test_tokenize.py::test_delimiters_in_strings_and_comments[SELECT '/*+' FROM t; /*+ h */ SELECT 1-expected2] PASSED
-tests/test_tokenize.py::test_delimiters_in_strings_and_comments[-- /*\n/* c */ SELECT 1-expected3] PASSED
-tests/test_tokenize.py::test_delimiters_in_strings_and_comments[SELECT "/*" FROM t; /* c */ SELECT 1-expected4] PASSED
-tests/test_tokenize.py::test_delimiters_in_strings_and_comments[SELECT '$$' FROM t, $$x$$-expected5] PASSED
-tests/test_tokenize.py::test_delimiters_in_strings_and_comments[-- $$\nDO $$ BEGIN NULL; END $$-expected6] PASSED
-tests/test_tokenize.py::test_delimiters_in_strings_and_comments[SELECT '$t$' FROM t, $t$x$t$-expected7] PASSED
-tests/test_tokenize.py::test_delimiters_in_strings_and_comments[SELECT $$$$-expected8] PASSED
-tests/test_tokenize.py::test_delimiters_in_strings_and_comments[SELECT $$$a$$-expected9] PASSED
 tests/test_utils.py::test_remove_quotes[None-None] PASSED
 tests/test_utils.py::test_remove_quotes['foo'-foo] PASSED
 tests/test_utils.py::test_remove_quotes["foo"-foo] PASSED
 tests/test_utils.py::test_remove_quotes[`foo`-foo] PASSED
 
-======== 506 passed, 2 xfailed, 1 xpassed ========
+======== 479 passed, 2 xfailed, 1 xpassed ========

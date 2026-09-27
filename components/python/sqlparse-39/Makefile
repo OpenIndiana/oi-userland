@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project sqlparse
+#   $WS_TOOLS/python-integrate-project -d python/sqlparse-39 sqlparse
 #
 
 BUILD_STYLE = pyproject
@@ -19,17 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sqlparse
-HUMAN_VERSION =			0.6.0
+HUMAN_VERSION =			0.5.5
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A non-validating SQL parser.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:113c35c75365ab9cc9c7231d68c6428fb11c085fc8e9eb1ad659b7ddbf6cd2b9
+	sha256:e20d4a9b0b8585fdf63b10d30066c7c94c5d7a7ec47c889a2d83a3caa93ff28e
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
-# Python 3.9 is not supported by sqlparse >= 0.6.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# sqlparse >= 0.6.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
