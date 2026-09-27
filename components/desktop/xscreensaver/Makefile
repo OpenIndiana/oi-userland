@@ -13,17 +13,18 @@
 # Copyright 2017 Gary Mills
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2018-2019 Michal Nowak
-# Copyright 2025 Klaus Ziegler
+# Copyright 2025-2026 Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
+USE_PARALLEL_BUILD = yes
 
 COMPONENT_NAME=         xscreensaver
-COMPONENT_VERSION=      6.10
+COMPONENT_VERSION=      6.16
 COMPONENT_PROJECT_URL=  https://www.jwz.org/xscreensaver/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:ffe599f9cf77afa46efb8dbb7b561e8da0c3156dea64b635e0b7e2c20f4bb3ed
+COMPONENT_ARCHIVE_HASH= sha256:91153c7c5b996761606dd7962c9f4bd4005a25874eac02776d0cf0026e6454e4
 COMPONENT_ARCHIVE_URL=  https://www.jwz.org/xscreensaver/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         desktop/xscreensaver
 
@@ -34,12 +35,10 @@ PATH= $(PATH.gnu)
 
 CONFIGURE_SCRIPT= $(@D)/configure
 
-CFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL  -std=c99 -D_FILE_OFFSET_BITS=64
+CFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL  -std=c99
 # needed for 99-logo.patch
 CFLAGS+=	-Wno-incompatible-pointer-types
-CXXFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL -D_FILE_OFFSET_BITS=64
-
-LDFLAGS+=	-I$(@D)/mesa/GL
+CXXFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
@@ -55,7 +54,6 @@ CONFIGURE_OPTIONS += --without-shadow
 CONFIGURE_OPTIONS += --without-kerberos 
 CONFIGURE_OPTIONS += --with-xinput-ext
 CONFIGURE_OPTIONS += --with-randr-ext
-CONFIGURE_OPTIONS += --enable-root-passwd
 CONFIGURE_OPTIONS += --with-gl=/usr
 CONFIGURE_OPTIONS += --without-motif
 CONFIGURE_OPTIONS += --with-app-defaults=/usr/share/X11/app-defaults
@@ -105,7 +103,9 @@ REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/glu
 REQUIRED_PACKAGES += x11/library/libx11
@@ -114,5 +114,4 @@ REQUIRED_PACKAGES += x11/library/libxft
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += x11/library/libxrandr
-REQUIRED_PACKAGES += x11/library/libxxf86vm
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
