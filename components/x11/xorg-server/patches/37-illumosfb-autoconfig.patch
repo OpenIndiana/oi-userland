@@ -1,0 +1,82 @@
+Autoconfigure the illumosfb driver on illumos framebuffer consoles.
+
+When the kernel console is gfxp_bitmap (VIS identifier "illumos_fb", e.g. a
+UEFI GOP framebuffer), list illumosfb after any driver matched for the
+primary PCI device and do not list vesa. vesa needs a video BIOS, which UEFI
+systems do not have, and a vesa PCI claim together with illumosfb's
+framebuffer claim makes xf86PostProbe() abort. A specific PCI driver that
+claims the device still wins, because illumosfb then cannot claim the
+framebuffer slot.
+
+Not suitable for upstream as is: it depends on OpenIndiana's Solaris autoconfig
+changes and the out-of-tree illumosfb driver.
+
+--- a/hw/xfree86/common/xf86AutoConfig.c
++++ b/hw/xfree86/common/xf86AutoConfig.c
+@@ -238,7 +238,35 @@
+         xf86Msg(X_ERROR, "Error parsing the built-in default configuration.\n");
+ 
+     return ret == CONFIG_OK;
++}
++
++#if defined(__sun) && (defined(__i386__) || defined(__amd64__))
++/*
++ * On illumos a linear framebuffer console (UEFI GOP, or a VESA mode set by
++ * the loader) is provided by gfxp_bitmap, which identifies itself as
++ * "illumos_fb". The illumosfb driver can drive it; vesa cannot without a
++ * video BIOS, and its PCI claim would conflict with illumosfb's framebuffer
++ * claim.
++ */
++static Bool
++sunBitmapConsole(void)
++{
++    struct vis_identifier visid;
++    int fd, iret = -1;
++
++    if (xf86Info.consoleFd >= 0)
++        SYSCALL(iret = ioctl(xf86Info.consoleFd, VIS_GETIDENTIFIER, &visid));
++    if (iret < 0 && (fd = open(xf86SolarisFbDev, O_RDONLY)) >= 0) {
++        SYSCALL(iret = ioctl(fd, VIS_GETIDENTIFIER, &visid));
++        close(fd);
++    }
++    if (iret < 0)
++        return FALSE;
++
++    xf86Msg(X_PROBED, "console driver: %s\n", visid.name);
++    return strcmp(visid.name, "illumos_fb") == 0;
+ }
++#endif
+ 
+ static void
+ listPossibleVideoDrivers(char *matches[], int nmatches)
+@@ -263,6 +291,30 @@
+     matches[i++] = xnfstrdup("modesetting");
+ #endif
+ 
++#if defined(__sun) && (defined(__i386__) || defined(__amd64__))
++    /*
++     * Try any specific PCI driver first; if it claims the device, illumosfb
++     * cannot claim the framebuffer slot and stays unused. Otherwise
++     * illumosfb replaces vesa.
++     */
++    if (sunBitmapConsole()) {
++        int j, k;
++
++        for (j = k = 0; j < i; j++) {
++            if (strcmp(matches[j], "vesa") == 0)
++                free(matches[j]);
++            else
++                matches[k++] = matches[j];
++        }
++        for (j = k; j < i; j++)
++            matches[j] = NULL;
++        i = k;
++        if (i < (nmatches - 1))
++            matches[i++] = xnfstrdup("illumosfb");
++        return;
++    }
++#endif
++
+ #if !defined(__sun)
+     /* Fallback to platform default frame buffer driver */
+     if (i < (nmatches - 1)) {

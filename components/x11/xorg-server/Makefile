@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         xorg-server
 COMPONENT_VERSION=      1.19.7
-COMPONENT_REVISION=     14
+COMPONENT_REVISION=     15
 COMPONENT_SUMMARY=      Xorg - X11R7 X server
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
@@ -59,6 +59,9 @@ LD_B_DIRECT=
 LD_Z_IGNORE=
 
 # Disable epoll on illumos
+# autoconf 2.72+ selects -std=gnu23, where bool is a keyword; xf86Opt.h uses
+# bool as a member name.
+CONFIGURE_ENV+= ac_cv_prog_cc_c23=no
 CONFIGURE_ENV+= ac_cv_func_epoll_ctl=no
 CONFIGURE_ENV+= ac_cv_func_epoll_create1=no
 
