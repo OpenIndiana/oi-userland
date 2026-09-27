@@ -55,15 +55,32 @@ stage_setup() {
 # we try to be smart and assume that all updates will always touch
 # the components Makefile also (to update COMPONENT_REVISION, etc)
 stage_build_changed() {
+	# Jenkins may merge a pinned target revision while the remote-tracking
+	# branch already points at a newer revision.  Comparing that branch with
+	# the merge checkout would select unrelated target changes.  Select from
+	# the PR head instead, but build the files in Jenkins' checkout.
+	head=$(git rev-parse --verify HEAD) || return 1
+	target="refs/remotes/origin/${CHANGE_TARGET:-oi/hipster}"
+	if [ -n "${CHANGE_ID}" ]; then
+		head=$(git rev-parse --verify "refs/remotes/origin/PR-${CHANGE_ID}^{commit}") || return 1
+		# The selected PR head must be included in Jenkins' checkout.
+		git merge-base --is-ancestor "$head" HEAD || return 1
+	fi
+	base=$(git merge-base "$target" "$head") || return 1
+	echo "jenkinshelper: selecting components from ${base}..${head}"
+	# Keep Git failures out of a pipeline/substitution that masks their status.
+	# Deleted Makefiles cannot be built; renames are treated as delete/add.
+	files=$(git diff --name-only --no-renames --diff-filter=AM "$base" "$head" -- 'components/**/Makefile') || return 1
 	worst=0
-	for f in $(git diff --name-only HEAD..origin/oi/hipster | grep Makefile; exit 0); do
+	for f in $files; do
+		[ -f "$f" ] || continue
 		echo "jenkinshelper: building for ${f%/*}..."
 		curpwd=$(pwd)
 		cd "${f%/*}" && gmake clean && gmake PARALLEL_JOBS=$(psrinfo -t -c) publish
 		rc=$?
 		cd "${curpwd}"
 		echo "jenkinshelper: done with ${f%/*} return code ${rc}"
-		if [ rc -ne 0 ] ; then
+		if [ "$rc" -ne 0 ] ; then
 			worst=$rc
 		fi
 	done
