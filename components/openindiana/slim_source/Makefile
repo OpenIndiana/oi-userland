@@ -22,8 +22,8 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=	slim_source
 COMPONENT_SRC=	$(COMPONENT_NAME)
 
-# Source refresh: ec475721f6ebb1e3751b431ff4f60aec6f7190ff (revision 1132).
-# Fixes fresh-disk validation and duplicate curses cleanup in the text installer.
+# Source refresh: c19616d32a3e1f7424c2024173507e53656f9c1a (revision 1134).
+# Adds the illumosfb Xorg driver to the Live image.
 COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
 
 GIT=git
