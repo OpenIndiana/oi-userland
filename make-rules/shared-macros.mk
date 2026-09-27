@@ -887,6 +887,7 @@ QT6_PKG_CONFIG_PATH = $(QT6_LIBDIR)/pkgconfig
 # +--------------+----------------+
 # |     5.40     |   2027-06-09   |
 # |     5.42     |   2028-07-03   |
+# |     5.44     |   2029-07-15   |
 # +--------------+----------------+
 #
 # See https://www.cpan.org/src/README.html
@@ -895,8 +896,8 @@ QT6_PKG_CONFIG_PATH = $(QT6_LIBDIR)/pkgconfig
 # This is the default version of Perl
 PERL_VERSION = 5.42
 
-# The PERL_VERSIONS list should always be in ascending order (newest version
-# last)
+# List of all Perl versions we fully support (i.e. build Perl modules for).
+# The list should always be in ascending order (newest version last).
 PERL_VERSIONS = 5.40 5.42
 # Perl up to 5.22 was built 32-bit only.  Starting with 5.24 the perl package
 # is built 64-bit only.  So now all PERL_VERSIONS are 64-bit only.

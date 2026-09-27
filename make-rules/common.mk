@@ -35,6 +35,9 @@ BUILD_STYLE ?= configure
 # Some build styles might want to set some defaults before prep.mk is included.
 -include $(WS_MAKE_RULES)/$(strip $(BUILD_STYLE))-defaults.mk
 
+# Save the list of our fully supported Perl versions before we override it.
+_PERL_VERSIONS := $(PERL_VERSIONS)
+
 # The SINGLE_PERL_VERSION variable is used to select building a component for
 # single or multiple Perl versions.  By default we build for single Perl
 # version only unless the component is a Perl module.  If the default value of
