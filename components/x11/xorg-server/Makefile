@@ -59,6 +59,9 @@ LD_B_DIRECT=
 LD_Z_IGNORE=
 
 # Disable epoll on illumos
+# autoconf 2.72+ selects -std=gnu23, where bool is a keyword; xf86Opt.h uses
+# bool as a member name.
+CONFIGURE_ENV+= ac_cv_prog_cc_c23=no
 CONFIGURE_ENV+= ac_cv_func_epoll_ctl=no
 CONFIGURE_ENV+= ac_cv_func_epoll_create1=no
 
