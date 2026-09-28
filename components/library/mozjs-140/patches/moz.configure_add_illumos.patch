@@ -1,0 +1,54 @@
+diff --git a/build/autoconf/config.sub b/build/autoconf/config.sub
+index 3d9a8dc..2d958b2 100755
+--- a/build/autoconf/config.sub
++++ b/build/autoconf/config.sub
+@@ -1728,6 +1728,8 @@ case $os in
+ 	sco3.2v2 | sco3.2v[4-9]* | sco5v6*)
+ 		# Don't forget version if it is 3.2v4 or newer.
+ 		;;
++        illumos)
++                ;;
+ 	none)
+ 		;;
+ 	*)
+diff --git a/build/moz.configure/init.configure b/build/moz.configure/init.configure
+index 3a164c6..f287f5c 100644
+--- a/build/moz.configure/init.configure
++++ b/build/moz.configure/init.configure
+@@ -716,6 +716,8 @@ def split_triplet(triplet, allow_msvc=False, allow_wasi=False):
+         canonical_os = canonical_kernel = "OpenBSD"
+     elif os.startswith("solaris"):
+         canonical_os = canonical_kernel = "SunOS"
++    elif os.startswith("illumos"):
++        canonical_os = canonical_kernel = "SunOS"
+     elif os.startswith("wasi") and allow_wasi:
+         canonical_os = canonical_kernel = "WASI"
+     else:
+diff --git a/python/mozbuild/mozbuild/configure/constants.py b/python/mozbuild/mozbuild/configure/constants.py
+index 9f7a977..610121f 100644
+--- a/python/mozbuild/mozbuild/configure/constants.py
++++ b/python/mozbuild/mozbuild/configure/constants.py
+@@ -24,6 +24,7 @@ OS = EnumString.subclass(
+         "OpenBSD",
+         "OSX",
+         "SunOS",
++        "Illumos",
+         "WINNT",
+         "WASI",
+ )
+@@ -37,6 +38,7 @@ Kernel = EnumString.subclass(
+         "NetBSD",
+         "OpenBSD",
+         "SunOS",
++        "Illumos",
+         "WINNT",
+         "WASI",
+ )
+@@ -113,6 +113,7 @@ kernel_preprocessor_checks = {
+     "NetBSD": "__NetBSD__",
+     "OpenBSD": "__OpenBSD__",
+     "SunOS": "__sun__",
++    "Illumos": "__sun__",
+     "WINNT": "_WIN32 || __CYGWIN__",
+     "WASI": "__wasi__",
+ }

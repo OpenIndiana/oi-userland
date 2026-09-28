@@ -1,0 +1,10 @@
+--- firefox-100.0/js/src/wasm/WasmSignalHandlers.cpp.old	2022-04-05 18:22:41.871023034 +0000
++++ firefox-100.0/js/src/wasm/WasmSignalHandlers.cpp	2022-04-05 18:23:09.842259202 +0000
+@@ -112,6 +112,7 @@
+ #      define R32_sig(p) ((p)->sc_frame.srr0)
+ #    endif
+ #  elif defined(__linux__) || defined(__sun)
++#    include <sys/regset.h>
+ #    if defined(__linux__)
+ #      define EIP_sig(p) ((p)->uc_mcontext.gregs[REG_EIP])
+ #      define EBP_sig(p) ((p)->uc_mcontext.gregs[REG_EBP])
