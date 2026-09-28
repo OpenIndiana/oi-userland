@@ -1,10 +1,13 @@
+docs-serve: environment docs-serve marked as unavailable, runner 'uv-venv-runner' is not available
+readme-serve: environment readme-serve marked as unavailable, runner 'uv-venv-runner' is not available
+benchmark: environment benchmark marked as unavailable, runner 'uv-venv-runner' is not available
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1178 items
+collecting ... collected 1188 items
 
 tests/test_context.py::TestContext::test_context_load_dump PASSED
 tests/test_context.py::TestContext::test_context_method PASSED
@@ -84,6 +87,7 @@ tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_des
 tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[FieldClass19] PASSED
 tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[FieldClass20] PASSED
 tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[FieldClass21] PASSED
+tests/test_deserialization.py::TestDeserializingNone::test_fields_allow_none_deserialize_to_none[FieldClass22] PASSED
 tests/test_deserialization.py::TestDeserializingNone::test_fields_dont_allow_none_by_default[String] PASSED
 tests/test_deserialization.py::TestDeserializingNone::test_fields_dont_allow_none_by_default[Integer] PASSED
 tests/test_deserialization.py::TestDeserializingNone::test_fields_dont_allow_none_by_default[Boolean] PASSED
@@ -106,6 +110,7 @@ tests/test_deserialization.py::TestDeserializingNone::test_fields_dont_allow_non
 tests/test_deserialization.py::TestDeserializingNone::test_fields_dont_allow_none_by_default[FieldClass19] PASSED
 tests/test_deserialization.py::TestDeserializingNone::test_fields_dont_allow_none_by_default[FieldClass20] PASSED
 tests/test_deserialization.py::TestDeserializingNone::test_fields_dont_allow_none_by_default[FieldClass21] PASSED
+tests/test_deserialization.py::TestDeserializingNone::test_fields_dont_allow_none_by_default[FieldClass22] PASSED
 tests/test_deserialization.py::TestDeserializingNone::test_allow_none_is_true_if_missing_is_true PASSED
 tests/test_deserialization.py::TestDeserializingNone::test_list_field_deserialize_none_to_none PASSED
 tests/test_deserialization.py::TestDeserializingNone::test_tuple_field_deserialize_none_to_none PASSED
@@ -306,6 +311,7 @@ tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_valu
 tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_field_invalid_value PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_true_wrong_type PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_field_wrong_type PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_enum_by_value_allow_none_default PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_deserialization_function_must_be_callable PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_method_field_deserialization_is_noop_by_default PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_deserialization_method PASSED
@@ -433,6 +439,7 @@ tests/test_deserialization.py::test_required_field_failure[IPv6Interface] PASSED
 tests/test_deserialization.py::test_required_field_failure[FieldClass19] PASSED
 tests/test_deserialization.py::test_required_field_failure[FieldClass20] PASSED
 tests/test_deserialization.py::test_required_field_failure[FieldClass21] PASSED
+tests/test_deserialization.py::test_required_field_failure[FieldClass22] PASSED
 tests/test_deserialization.py::test_required_message_can_be_changed[My custom required message] PASSED
 tests/test_deserialization.py::test_required_message_can_be_changed[message1] PASSED
 tests/test_deserialization.py::test_required_message_can_be_changed[message2] PASSED
@@ -537,6 +544,7 @@ tests/test_fields.py::TestMetadata::test_extra_metadata_may_be_added_to_field[IP
 tests/test_fields.py::TestMetadata::test_extra_metadata_may_be_added_to_field[FieldClass19] PASSED
 tests/test_fields.py::TestMetadata::test_extra_metadata_may_be_added_to_field[FieldClass20] PASSED
 tests/test_fields.py::TestMetadata::test_extra_metadata_may_be_added_to_field[FieldClass21] PASSED
+tests/test_fields.py::TestMetadata::test_extra_metadata_may_be_added_to_field[FieldClass22] PASSED
 tests/test_fields.py::TestErrorMessages::test_default_error_messages_get_merged_with_parent_error_messages_cstm_msg PASSED
 tests/test_fields.py::TestErrorMessages::test_default_error_messages_get_merged_with_parent_error_messages PASSED
 tests/test_fields.py::TestErrorMessages::test_make_error[required-Missing data for required field.] PASSED
@@ -941,6 +949,7 @@ tests/test_serialization.py::TestFieldSerialization::test_all_fields_serialize_n
 tests/test_serialization.py::TestFieldSerialization::test_all_fields_serialize_none_to_none[FieldClass19] PASSED
 tests/test_serialization.py::TestFieldSerialization::test_all_fields_serialize_none_to_none[FieldClass20] PASSED
 tests/test_serialization.py::TestFieldSerialization::test_all_fields_serialize_none_to_none[FieldClass21] PASSED
+tests/test_serialization.py::TestFieldSerialization::test_all_fields_serialize_none_to_none[FieldClass22] PASSED
 tests/test_serialization.py::TestSchemaSerialization::test_serialize_with_missing_param_value PASSED
 tests/test_serialization.py::TestSchemaSerialization::test_serialize_with_missing_param_callable PASSED
 tests/test_serialization.py::test_serializing_named_tuple PASSED
@@ -989,6 +998,8 @@ tests/test_validate.py::test_url_absolute_valid[http://user:pass@example.com] PA
 tests/test_validate.py::test_url_absolute_valid[http://:pass@example.com] PASSED
 tests/test_validate.py::test_url_absolute_valid[http://@example.com] PASSED
 tests/test_validate.py::test_url_absolute_valid[http://AZaz09-._~%2A!$&'()*+,;=:@example.com] PASSED
+tests/test_validate.py::test_url_absolute_valid[http://example.org#fragment] PASSED
+tests/test_validate.py::test_url_absolute_valid[http://user@example.com#fragment] PASSED
 tests/test_validate.py::test_url_absolute_invalid[http:///example.com/] PASSED
 tests/test_validate.py::test_url_absolute_invalid[https:///example.com/] PASSED
 tests/test_validate.py::test_url_absolute_invalid[https://example.org\\] PASSED
@@ -1024,6 +1035,7 @@ tests/test_validate.py::test_url_relative_valid[http://example.com/g?y/./x] PASS
 tests/test_validate.py::test_url_relative_valid[/foo/bar] PASSED
 tests/test_validate.py::test_url_relative_valid[/foo?bar] PASSED
 tests/test_validate.py::test_url_relative_valid[/foo?bar#baz] PASSED
+tests/test_validate.py::test_url_relative_valid[#frag] PASSED
 tests/test_validate.py::test_url_relative_invalid[http//example.org] PASSED
 tests/test_validate.py::test_url_relative_invalid[http://example.org\n] PASSED
 tests/test_validate.py::test_url_relative_invalid[suppliers.html] PASSED
@@ -1039,6 +1051,7 @@ tests/test_validate.py::test_url_relative_only_valid[/foo/bar] PASSED
 tests/test_validate.py::test_url_relative_only_valid[/foo?bar] PASSED
 tests/test_validate.py::test_url_relative_only_valid[?bar] PASSED
 tests/test_validate.py::test_url_relative_only_valid[/foo?bar#baz] PASSED
+tests/test_validate.py::test_url_relative_only_valid[#frag] PASSED
 tests/test_validate.py::test_url_relative_only_invalid[http//example.org] PASSED
 tests/test_validate.py::test_url_relative_only_invalid[http://example.org\n] PASSED
 tests/test_validate.py::test_url_relative_only_invalid[suppliers.html] PASSED
@@ -1185,6 +1198,9 @@ tests/test_validate.py::test_containsnoneof_custom_message PASSED
 tests/test_validate.py::test_containsnoneof_mixing_types PASSED
 tests/test_validate.py::test_and PASSED
 
-======== 1178 passed ========
+======== 1188 passed ========
   py$(PYV): OK
+  docs-serve: NOT AVAILABLE (0.01 seconds)
+  readme-serve: NOT AVAILABLE (0.01 seconds)
+  benchmark: NOT AVAILABLE (0.01 seconds)
   congratulations :)
