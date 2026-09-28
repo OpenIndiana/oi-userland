@@ -11,31 +11,34 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/pytest-forked pytest_forked
+#   $WS_TOOLS/python-integrate-project -d python/pytest-forked-39 pytest-forked
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest_forked
-HUMAN_VERSION =			1.7.5
+COMPONENT_NAME =		pytest-forked
+HUMAN_VERSION =			1.6.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		run tests in isolated forked subprocesses
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-forked
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:00f2bee51612f29b8e6b81eed2c3b2975e824c2693394f5bdaf7a1369078ba5f
+	sha256:4dafd46a9a600f65d822b8f605133ecf5b3e1941ebb3588e943b4e3eb71a5a3f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by pytest-forked >= 1.7.5
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# pytest-forked >= 1.7.5 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES.python += library/python/py
 REQUIRED_PACKAGES.python += library/python/pytest
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/wheel
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools-scm
