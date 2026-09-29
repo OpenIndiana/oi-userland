@@ -1,0 +1,16 @@
+/usr/gcc/14/bin/g++ -o ../../../dist/bin/js -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -fstrict-flex-arrays=1 -fno-rtti -pthread -fno-sized-deallocation -fno-aligned-new -ffunction-sections -fdata-sections -fno-math-errno -fno-exceptions -pipe -fPIC -m64 -O3 -Wno-invalid-offsetof -fpermissive -gdwarf-4 -O -fomit-frame-pointer -funwind-tables -Wl,@/export/home/gweiss/git/oi-userland/components/library/mozjs-135/build/amd64/js/src/shell/js.list    -Wl,-z,text -Wl,-z,now -fstack-protector-strong -L/export/home/gweiss/git/oi-userland/components/library/mozjs-135/build/amd64/dist/bin  ../../../js/src/build/libjs_static.a ../../../build/pure_virtual/libpure_virtual.a ../../../x86_64-unknown-illumos/release/libjsrust.a -pie  -lffi -licui18n -L/usr/lib/mps/amd64 -R/usr/lib/mps/amd64 -lplds4 -lplc4 -lnspr4 -lpthread -ldl -lposix4 -lz -lm -lnsl -lsocket -lreadline
+g++: error: -pie is not supported in this configuration
+--- gecko-dev-16a5f0e868a01d3f3a4a7364206bef2a64e80735/build/moz.configure/flags.configure.old	2024-06-30 12:42:44.175625854 -0400
++++ gecko-dev-16a5f0e868a01d3f3a4a7364206bef2a64e80735/build/moz.configure/flags.configure	2024-06-30 12:43:46.927628117 -0400
+@@ -509,9 +509,10 @@
+ 
+ # MOZ_PROGRAM_LDFLAGS
+ # ---------------------------------
++# On Illumos, there was an error using -pie with g++ for Firefox 68+
+ @depends(building_with_gnu_compatible_cc, target)
+ def moz_program_ldflags(building_with_gnu_compatible_cc, target):
+-    if building_with_gnu_compatible_cc and target.kernel not in ("Darwin", "WASI"):
++    if building_with_gnu_compatible_cc and target.kernel not in ("Darwin", "WASI", "SunOS"):
+         return ["-pie"]
+ 
+ 

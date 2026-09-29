@@ -1,0 +1,17 @@
+--- a/js/moz.configure  2025-09-25 20:47:53.629073725 -0700
++++ b/js/moz.configure  2025-09-25 20:48:47.230708410 -0700
+@@ -1142,12 +1142,12 @@
+ 
+ has_readline = check_symbol(
+     "readline",
+-    flags=["-lreadline"],
++    flags=["-lreadline", "-lcurses"],
+     when="--enable-readline",
+     onerror=lambda: die("No system readline library found"),
+ )
+ 
+-set_config("EDITLINE_LIBS", ["-lreadline"], when=has_readline)
++set_config("EDITLINE_LIBS", ["-lreadline", "-lcurses"], when=has_readline)
+ 
+ 
+ @depends("--enable-readline", editline, when=editline)
