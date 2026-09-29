@@ -30,13 +30,13 @@ ESR = esr
 # CANDIDATE_NIGHTLY is the nightly release hosted on github
 # USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
-# CANDIDATE_BUILD=2
+# CANDIDATE_BUILD=1
 # CANDIDATE_BETA=9
 # CANDIDATE_NIGHTLY=1
 # USE_HG_REPO=1
 
 COMPONENT_NAME =        mozjs
-COMPONENT_VERSION =     140.16.0
+COMPONENT_VERSION =     140.17.0
 COMPONENT_SUMMARY=      JavaScript interpreter and libraries
 COMPONENT_PROJECT_URL = https://spidermonkey.dev/
 COMPONENT_SRC_NAME =    firefox-$(COMPONENT_VERSION)
@@ -74,11 +74,10 @@ COMPONENT_SRC =         $(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL = $(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:15d2d359b8571ecd0898faa6e05aa902b0de7cb34aadfc4d94adf6c8428f84df
+COMPONENT_ARCHIVE_HASH= sha256:4d6ed3b18b2069c55bab12d8ba95da6013ac0b036d8a031df8b9f39a25d05c33
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=         library/desktop/mozjs-140
 COMPONENT_CLASSIFICATION = System/Libraries
-COMPONENT_LICENSE_FILE= mozjs.license
 
 RUST_VERSION = 1.86.0
 
