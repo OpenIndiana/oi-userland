@@ -1,0 +1,53 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2026 Geoff Weiss
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# prevents "64bit file in 32bit path" errors
+<transform file path=usr/libexec/installed-tests/gjs/.*\.so -> add pkg.linted.userland.action001.2 true>
+
+link path=usr/bin/gjs target=gjs-console
+file path=usr/bin/gjs-console
+file path=usr/include/gjs-1.0/gjs/context.h
+file path=usr/include/gjs-1.0/gjs/coverage.h
+file path=usr/include/gjs-1.0/gjs/error-types.h
+file path=usr/include/gjs-1.0/gjs/gjs.h
+file path=usr/include/gjs-1.0/gjs/macros.h
+file path=usr/include/gjs-1.0/gjs/mem.h
+file path=usr/include/gjs-1.0/gjs/profiler.h
+file path=usr/lib/$(MACH64)/gjs/girepository-1.0/GjsPrivate-1.0.typelib
+link path=usr/lib/$(MACH64)/libgjs.so target=libgjs.so.0
+link path=usr/lib/$(MACH64)/libgjs.so.0 target=libgjs.so.0.0.0
+file path=usr/lib/$(MACH64)/libgjs.so.0.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/gjs-1.0.pc
+file path=usr/libexec/installed-tests/gjs/GIMarshallingTests-1.0.typelib
+file path=usr/libexec/installed-tests/gjs/Regress-1.0.typelib
+file path=usr/libexec/installed-tests/gjs/RegressUnix-1.0.typelib
+file path=usr/libexec/installed-tests/gjs/Utility-1.0.typelib
+file path=usr/libexec/installed-tests/gjs/WarnLib-1.0.typelib
+file path=usr/libexec/installed-tests/gjs/libgimarshallingtests.so
+file path=usr/libexec/installed-tests/gjs/libregress.so
+file path=usr/libexec/installed-tests/gjs/libutility.so
+file path=usr/libexec/installed-tests/gjs/libwarnlib.so
+file path=usr/share/gjs-1.0/lsan/lsan.supp
+file path=usr/share/gjs-1.0/valgrind/gjs.supp

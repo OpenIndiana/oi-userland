@@ -1,0 +1,141 @@
+--- gjs-1.86.0/gi/object.cpp.~1~
++++ gjs-1.86.0/gi/object.cpp
+@@ -1375,9 +1375,9 @@
+         case G_TYPE_UINT:
+             return &ObjectBase::prop_getter<unsigned int>;
+         case G_TYPE_CHAR:
+-            return &ObjectBase::prop_getter<signed char>;
++            return &ObjectBase::prop_getter<int8_t>;
+         case G_TYPE_UCHAR:
+-            return &ObjectBase::prop_getter<unsigned char>;
++            return &ObjectBase::prop_getter<uint8_t>;
+         case G_TYPE_INT64:
+             return &ObjectBase::prop_getter<int64_t>;
+         case G_TYPE_UINT64:
+@@ -1483,9 +1483,9 @@
+         case G_TYPE_UINT:
+             return &ObjectBase::prop_setter<unsigned int>;
+         case G_TYPE_CHAR:
+-            return &ObjectBase::prop_setter<signed char>;
++            return &ObjectBase::prop_setter<int8_t>;
+         case G_TYPE_UCHAR:
+-            return &ObjectBase::prop_setter<unsigned char>;
++            return &ObjectBase::prop_setter<uint8_t>;
+         case G_TYPE_INT64:
+             return &ObjectBase::prop_setter<int64_t>;
+         case G_TYPE_UINT64:
+--- gjs-1.90.0/gi/js-value-inl.h.~1~
++++ gjs-1.90.0/gi/js-value-inl.h
+@@ -59,7 +59,7 @@
+ 
+ template <>
+ GJS_JSAPI_RETURN_CONVENTION
+-inline bool js_value_to_c<signed char>(JSContext* cx, JS::HandleValue value,
++inline bool js_value_to_c<int8_t>(JSContext* cx, JS::HandleValue value,
+                                        int32_t* out) {
+     return JS::ToInt32(cx, value, out);
+ }
+@@ -80,14 +80,14 @@
+ 
+ template <>
+ GJS_JSAPI_RETURN_CONVENTION
+-inline bool js_value_to_c<unsigned char>(JSContext* cx, JS::HandleValue value,
++inline bool js_value_to_c<uint8_t>(JSContext* cx, JS::HandleValue value,
+                                          int32_t* out) {
+     return JS::ToInt32(cx, value, out);
+ }
+ 
+ template <>
+ GJS_JSAPI_RETURN_CONVENTION
+-inline bool js_value_to_c<unsigned char>(JSContext* cx, JS::HandleValue value,
++inline bool js_value_to_c<uint8_t>(JSContext* cx, JS::HandleValue value,
+                                          uint32_t* out) {
+     return JS::ToUint32(cx, value, out);
+ }
+--- gjs-1.90.0/gi/value.cpp.~1~
++++ gjs-1.90.0/gi/value.cpp
+@@ -69,10 +69,10 @@
+                                     const GValue* value) {
+     switch (G_VALUE_TYPE(value)) {
+         case G_TYPE_CHAR:
+-            gjs_arg_set(arg, g_value_get_schar(value));
++            gjs_arg_set(arg, int8_t{g_value_get_char(value)});
+             return true;
+         case G_TYPE_UCHAR:
+-            gjs_arg_set(arg, g_value_get_uchar(value));
++            gjs_arg_set(arg, uint8_t{g_value_get_char(value)});
+             return true;
+         case G_TYPE_BOOLEAN:
+             gjs_arg_set(arg, g_value_get_boolean(value));
+@@ -598,10 +598,10 @@
+ 
+     if (gtype == G_TYPE_CHAR) {
+         int32_t i;
+-        if (Gjs::js_value_to_c_checked<signed char>(cx, value, &i,
++        if (Gjs::js_value_to_c_checked<int8_t>(cx, value, &i,
+                                                     &out_of_range) &&
+             !out_of_range) {
+-            Gjs::gvalue_set<signed char>(gvalue, i);
++            Gjs::gvalue_set<int8_t>(gvalue, i);
+             return true;
+         }
+         return throw_expect_type(cx, value, "char", 0, out_of_range);
+@@ -609,13 +609,13 @@
+ 
+     if (gtype == G_TYPE_UCHAR) {
+         uint32_t i;
+-        if (Gjs::js_value_to_c_checked<unsigned char>(cx, value, &i,
++        if (Gjs::js_value_to_c_checked<uint8_t>(cx, value, &i,
+                                                       &out_of_range) &&
+             !out_of_range) {
+-            Gjs::gvalue_set<unsigned char>(gvalue, i);
++            Gjs::gvalue_set<uint8_t>(gvalue, i);
+             return true;
+         }
+-        return throw_expect_type(cx, value, "unsigned char", 0, out_of_range);
++        return throw_expect_type(cx, value, "uint8_t", 0, out_of_range);
+     }
+ 
+     if (gtype == G_TYPE_INT) {
+@@ -1031,11 +1031,11 @@
+ 
+     switch (gtype) {
+         case G_TYPE_CHAR:
+-            return Gjs::c_value_to_js(cx, Gjs::gvalue_get<signed char>(gvalue),
++            return Gjs::c_value_to_js(cx, Gjs::gvalue_get<int8_t>(gvalue),
+                                       value_p);
+         case G_TYPE_UCHAR:
+             return Gjs::c_value_to_js(
+-                cx, Gjs::gvalue_get<unsigned char>(gvalue), value_p);
++                cx, Gjs::gvalue_get<uint8_t>(gvalue), value_p);
+         case G_TYPE_INT:
+             return Gjs::c_value_to_js(cx, Gjs::gvalue_get<int>(gvalue),
+                                       value_p);
+--- gjs-1.90.0/gi/value.h.~1~
++++ gjs-1.90.0/gi/value.h
+@@ -81,10 +81,10 @@
+                   std::is_same_v<TAG, bool>)
+         return gvalue->data[0].v_int != FALSE;
+     else if constexpr (std::is_same_v<TAG, char> ||
+-                       std::is_same_v<TAG, signed char> ||
++                       std::is_same_v<TAG, int8_t> ||
+                        std::is_same_v<TAG, int>)
+         return gvalue->data[0].v_int;
+-    else if constexpr (std::is_same_v<TAG, unsigned char> ||
++    else if constexpr (std::is_same_v<TAG, uint8_t> ||
+                        std::is_same_v<TAG, unsigned>)
+         return gvalue->data[0].v_uint;
+     else if constexpr (std::is_same_v<TAG, Tag::Long> ||
+@@ -117,10 +117,10 @@
+     else if constexpr (std::is_same_v<TAG, bool>)
+         gvalue->data[0].v_int = value != false;
+     else if constexpr (std::is_same_v<TAG, char> ||
+-                       std::is_same_v<TAG, signed char> ||
++                       std::is_same_v<TAG, int8_t> ||
+                        std::is_same_v<TAG, int>)
+         gvalue->data[0].v_int = value;
+-    else if constexpr (std::is_same_v<TAG, unsigned char> ||
++    else if constexpr (std::is_same_v<TAG, uint8_t> ||
+                        std::is_same_v<TAG, unsigned>)
+         gvalue->data[0].v_uint = value;
+     else if constexpr (std::is_same_v<TAG, Tag::Long> ||
