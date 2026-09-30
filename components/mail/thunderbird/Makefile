@@ -41,11 +41,11 @@ include ../../../make-rules/shared-macros.mk
 
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # Do not define for final release build.
-# CANDIDATE_BUILD= 1
-# CANDIDATE_BETA= 3
+# CANDIDATE_BUILD= 2
+# CANDIDATE_BETA= 4
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	156.0.1
+COMPONENT_VERSION =	157.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,7 +57,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC).source.tar.xz
 endif
 
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:4b12574dbf5106e0a764dd6a90b800ae332fa194a9b1d9f3fe7bd14fb0111c1d
+	 sha256:c276e8687b529fc7472df62c8fca11ea19f3bf06109217437210cfe48e5b01c9
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
@@ -73,7 +73,7 @@ COMPONENT_FMRI = mail/thunderbird
 COMPONENT_CLASSIFICATION = Applications/Internet
 
 # Use rust version specified at https://firefox-source-docs.mozilla.org/writing-rust-code/update-policy.html
-RUST_VERSION = 1.94.0
+RUST_VERSION = 1.98.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -330,9 +330,8 @@ COMPONENT_TEST_TRANSFORMS = \
 
 # Build dependencies
 ifdef MACH_BUILD
-REQUIRED_PACKAGES += runtime/python-313
+REQUIRED_PACKAGES += runtime/python-314
 else
-PYTHON_REQUIRED_PACKAGES += library/python/psutil
 REQUIRED_PACKAGES += runtime/python
 endif
 REQUIRED_PACKAGES += database/sqlite-3
