@@ -29,14 +29,37 @@
 -->
 <service_bundle type='manifest' name='export'>
   <service name='system/qemu-ga' type='service' version='0'>
-    <dependency name='fs-local' grouping='require_all' restart_on='none' type='service'>
-      <service_fmri value='svc:/system/filesystem/local'/>
+    <dependency
+        name='fs-local'
+        grouping='require_all'
+        restart_on='none'
+        type='service'>
+        <service_fmri value='svc:/system/filesystem/local'/>
     </dependency>
+
+    <dependency
+        name='filesystem-usr'
+        grouping='require_all'
+        restart_on='none'
+        type='service'>
+        <service_fmri value='svc:/system/filesystem/usr:default'/>
+    </dependency>
+
     <!-- NOTE: OmniOS has a built-in OOCE-based path to config, but can use
             exec='/usr/bin/qemu-ga -c /etc/qemu/qemu-ga.conf'
          while OpenIndiana has an older qemu-ga without "-c" option and the
          default built-in config location named above.
+         The package by default delivers several qemu-ga.conf.sample* files
+         one of which should be adapted to the particular virtual machine.
     -->
+    <dependency
+        name='config-files'
+        grouping='require_all'
+        restart_on='refresh'
+        type='path'>
+        <service_fmri value='file://localhost/etc/qemu/qemu-ga.conf'/>
+    </dependency>
+
     <exec_method
         type='method'
         name='start'
@@ -65,9 +88,13 @@
     <stability value='Evolving' />
 
     <template>
-            <common_name>
-                    <loctext xml:lang='C'>QEMU Guest Agent</loctext>
-            </common_name>
+        <common_name>
+            <loctext xml:lang='C'>QEMU Guest Agent</loctext>
+        </common_name>
+        <documentation>
+            <manpage title='qemu-ga' section='8'/>
+            <manpage title='qemu-ga-ref' section='7'/>
+        </documentation>
     </template>
   </service>
 
