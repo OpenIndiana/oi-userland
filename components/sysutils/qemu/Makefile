@@ -63,6 +63,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/sphinx-rtd-theme
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += image/library/libpng16
