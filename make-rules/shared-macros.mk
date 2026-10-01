@@ -98,6 +98,25 @@ test:		SHELLOPTS=
 install:	SHELLOPTS=
 publish:	SHELLOPTS=pipefail
 
+# Offer a small interactive cheat-sheet:
+help:
+	@echo "Please see $(WS_TOP)/docs/ directory for complete details,"
+	@echo "notably makefile-targets.txt. Also check $(WS_MAKE_RULES)/*.mk"
+	@echo "files about specific goal inter-dependency, with package creation workflow"
+	@echo "culminating in ips.mk. Roughly speaking, one-shot build in a component dir:"
+	@echo "  make publish"
+	@echo "...orchestrates multiple sub-goals useful for developer iteration, including:"
+	@echo "  make download"
+	@echo "  make unpack"
+	@echo "  make patch"
+	@echo "  make configure"
+	@echo "  make build"
+	@echo "  make test"
+	@echo "  make install"
+	@echo "  make pre-publish"
+	@echo "Specific details may depend on recipe ecosystem, check component Makefile."
+	@echo "To start over, 'make clean' or even 'make clobber'"
+
 # This can be overridden to avoid rebuilding when you touch a Makefile
 MAKEFILE_PREREQ =	Makefile
 
