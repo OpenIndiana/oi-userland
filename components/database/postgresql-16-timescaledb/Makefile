@@ -17,11 +17,11 @@ PG_VERSION= 16
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	timescaledb
-COMPONENT_VERSION=	2.30.0
+COMPONENT_VERSION=	2.30.2
 COMPONENT_SUMMARY=	Timescaledb extension for PostgreSQL
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:dac2fba0cd4eee9f4adcd04c91b7929850e24bc36f62eaee8bda4230a9fcee66
+COMPONENT_ARCHIVE_HASH= sha256:a7003a70836477dc8d575d95a4c515d8a22ed219d0cb03b3640bb813f04e1b42
 
 COMPONENT_ARCHIVE_URL=	https://github.com/timescale/timescaledb/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.timescale.com/
