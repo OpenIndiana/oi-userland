@@ -66,6 +66,7 @@ REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/accessibility/brltty
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
