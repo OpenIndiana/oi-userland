@@ -98,6 +98,26 @@ test:		SHELLOPTS=
 install:	SHELLOPTS=
 publish:	SHELLOPTS=pipefail
 
+# Offer a small interactive cheat-sheet:
+help:
+	@echo "Please see $(WS_TOP)/docs/ directory for complete details,"
+	@echo "notably makefile-targets.txt. Also check $(WS_MAKE_RULES)/*.mk"
+	@echo "files about specific goal inter-dependency, with package creation workflow"
+	@echo "culminating in ips.mk. Roughly speaking, one-shot build in a component dir:"
+	@echo "  gmake publish"
+	@echo "...orchestrates multiple sub-goals useful for developer iteration, including:"
+	@echo "  gmake download"
+	@echo "  gmake unpack"
+	@echo "  gmake patch"
+	@echo "  gmake configure"
+	@echo "  gmake build"
+	@echo "  gmake test"
+	@echo "  gmake install"
+	@echo "  gmake sample-manifest"
+	@echo "  gmake pre-publish"
+	@echo "Specific details may depend on recipe ecosystem, check component Makefile."
+	@echo "To start over, 'gmake clean' or even 'make clobber'"
+
 # This can be overridden to avoid rebuilding when you touch a Makefile
 MAKEFILE_PREREQ =	Makefile
 
