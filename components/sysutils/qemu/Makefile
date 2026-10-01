@@ -11,6 +11,7 @@
 
 #
 # Copyright 2023 OmniOS Community Edition (OmniOSce) Association.
+# Copyright 2024-2026 Jim Klimov.
 #
 
 BUILD_BITS=		64
@@ -22,6 +23,7 @@ PATH= $(PATH.gnu)
 
 COMPONENT_NAME=		qemu
 COMPONENT_VERSION=	11.1.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	\
 		A generic and open source machine emulator and virtualizer
 COMPONENT_PROJECT_URL=	https://www.qemu.org/
