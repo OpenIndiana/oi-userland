@@ -28,12 +28,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsync
-COMPONENT_VERSION=	3.5.0
+COMPONENT_VERSION=	3.5.1
 COMPONENT_SUMMARY=	Utility that provides fast incremental file transfer and copy
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://rsync.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c7ffd1ef653e99540f661e47cb00b7f9cad1ee6b972399b16f93d672656e0d33
+COMPONENT_ARCHIVE_HASH=	sha256:c55f9c9dc10fb8bec397b399a0fdded53cc9a2d8e30891bb0d63724d25c37bef
 COMPONENT_ARCHIVE_URL=	https://rsync.samba.org/ftp/rsync/src/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	network/rsync
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -44,6 +44,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Make gcc-14 happy (configure needs this!)
 CFLAGS += -Wno-error=implicit-function-declaration
+
+CFLAGS += -I$(USRINCDIR)/idn2
 
 CONFIGURE_OPTIONS += --with-included-popt
 CONFIGURE_OPTIONS += --enable-xattr-support
@@ -63,6 +65,7 @@ TEST_REQUIRED_PACKAGES += developer/fakeroot
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/zstd
+REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/libxxhash
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += system/library
