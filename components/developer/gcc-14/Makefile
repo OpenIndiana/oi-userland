@@ -17,7 +17,7 @@ BOOTSTRAP_COMPONENT= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 14.3.0
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
@@ -37,15 +37,14 @@ include $(WS_MAKE_RULES)/gcc-component.mk
 ifeq ($(COMPONENT_BOOTSTRAP),yes)
 CC=/usr/gcc/13/bin/gcc
 CXX=/usr/gcc/13/bin/g++
-else
-CC=/usr/gcc/$(GCC_MAJOR)/bin/gcc
-CXX=/usr/gcc/$(GCC_MAJOR)/bin/g++
-endif
-
 # Use gcc's default flags
 CFLAGS=
 CPPFLAGS=
 CXXFLAGS=
+else
+CC=/usr/gcc/$(GCC_MAJOR)/bin/gcc
+CXX=/usr/gcc/$(GCC_MAJOR)/bin/g++
+endif
 
 CPPFLAGS += " -D_TS_ERRNO"
 LDFLAGS= "-R$OPT/lib"
