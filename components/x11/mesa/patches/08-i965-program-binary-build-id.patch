@@ -1,0 +1,50 @@
+The i965 driver derives its GL_ARB_get_program_binary driver SHA-1 from the
+GNU build-id note of i965_dri.so and asserts that the note exists. The
+illumos link-editor does not emit that note, so context creation aborts (or
+dereferences NULL when assertions are disabled).
+
+Use disk_cache_get_function_identifier(), which uses the build id when it
+exists and otherwise the driver's modification time, as other Mesa drivers
+(for example llvmpipe and radeonsi) already do.
+
+Not needed upstream: the classic i965 driver was removed in Mesa 22.0.
+
+--- src/mesa/drivers/dri/i965/brw_program_binary.c
++++ src/mesa/drivers/dri/i965/brw_program_binary.c
+@@ -25,6 +25,7 @@
+ 
+ #include "compiler/nir/nir_serialize.h"
+ #include "util/build_id.h"
++#include "util/disk_cache.h"
+ #include "util/mesa-sha1.h"
+ 
+ #include "brw_context.h"
+@@ -36,14 +37,15 @@
+ void
+ brw_program_binary_init(unsigned device_id)
+ {
+-   const struct build_id_note *note =
+-      build_id_find_nhdr_for_addr(brw_program_binary_init);
+-   assert(note);
+-
+    /**
+     * With Mesa's megadrivers, taking the sha1 of i965_dri.so may not be
+     * unique. Therefore, we make a sha1 of the "i965" string and the sha1
+     * build id from i965_dri.so.
++    *
++    * The illumos link-editor does not emit a GNU build-id note, so
++    * build_id_find_nhdr_for_addr() returns NULL there. Use the shared
++    * helper, which prefers the build id and falls back to the driver's
++    * modification time.
+     */
+    struct mesa_sha1 ctx;
+    _mesa_sha1_init(&ctx);
+@@ -52,7 +54,7 @@
+    int len = snprintf(renderer, sizeof(renderer), "i965_%04x", device_id);
+    assert(len == sizeof(renderer) - 1);
+    _mesa_sha1_update(&ctx, renderer, len);
+-   _mesa_sha1_update(&ctx, build_id_data(note), build_id_length(note));
++   disk_cache_get_function_identifier(brw_program_binary_init, &ctx);
+    _mesa_sha1_final(&ctx, driver_sha1);
+ }
+ 
