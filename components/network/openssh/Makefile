@@ -30,6 +30,7 @@ COMPONENT_NAME=		openssh
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
 COMPONENT_VERSION=	10.5.0.1
+COMPONENT_REVISION=	2
 HUMAN_VERSION=		10.5p1
 COMPONENT_SUMMARY=	OpenSSH client and associated utilities
 # OpenSSH made a mistake when releasing openssh 10.0p1 which identifies itself as 10.0p2.
@@ -47,6 +48,10 @@ include $(WS_MAKE_RULES)/common.mk
 PATH = $(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) ; autoreconf -f -i )
+
+# In 2026 builds, apparently we get gnu23 by default, which causes errors
+# with tcp-wrappers headers the way they are worded for older standard.
+CFLAGS += -std=gnu17
 
 CFLAGS += -DSET_USE_PAM
 CFLAGS += -DPAM_ENHANCEMENT
