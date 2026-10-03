@@ -57,6 +57,8 @@ $(INSTALL_$(MK_BITS)):	$(BUILD_$(MK_BITS))
 	    $(CP) $(SOURCE_DIR)/NVDAgraphicsr/reloc/$$i $(PROTO_DIR)/$$i; done
 	$(RM) -r $(PROTO_DIR)/usr
 	$(CP) -a $(SOURCE_DIR)/NVDAgraphics/reloc $(PROTO_DIR)/usr
+	# Current GTK libraries are 64-bit only; retain the 64-bit settings UI.
+	$(RM) $(PROTO_DIR)/usr/bin/$(MACH32)/nvidia-settings
 	$(CHMOD) u+w $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1
 	$(CHMOD) u+w $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so.1
 	/usr/bin/elfedit -e "dyn:rpath $(GCC_ROOT)/lib:/lib:/usr/lib" $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1
@@ -75,7 +77,7 @@ GENERATE_EXTRA_CMD += | \
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
