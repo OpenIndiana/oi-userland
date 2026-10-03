@@ -1,0 +1,29 @@
+dril: also export __driDriverExtensions for loaders that only look that up.
+
+OpenIndiana's xorg-server 1.19.7 (patches/29-glx-mesa.patch) loads DRI
+drivers through __driDriverExtensions only; without it AIGLX finds no
+extensions in swrast_dri.so and the server offers no GLX visuals.  The
+symbol is listed in dri.sym, but dril is compiled with hidden visibility,
+so it needs PUBLIC.  Can be dropped once xorg-server looks up
+__driDriverGetExtensions_<driver>.
+
+--- src/gallium/targets/dril/dril_target.c.orig
++++ src/gallium/targets/dril/dril_target.c
+@@ -528,7 +528,7 @@
+    return malloc(sizeof(int));
+ }
+ 
+-const __DRIextension *__driDriverExtensions[];
++PUBLIC const __DRIextension *__driDriverExtensions[];
+ 
+ static __DRIscreen *
+ dril2CreateNewScreen(int scrn, int fd,
+@@ -591,7 +591,7 @@
+     .createContextAttribs       = drilCreateContextAttribs,
+ };
+ 
+-const __DRIextension *__driDriverExtensions[] = {
++PUBLIC const __DRIextension *__driDriverExtensions[] = {
+    &drilCoreExtension.base,
+    &drilSWRastExtension.base,
+    &drilDRI2Extension.base,

@@ -1,0 +1,57 @@
+Enable dma-buf (DRM PRIME) paths on illumos as on Linux and the BSDs.
+
+The illumos DRM core (virtio_gpu) reports DRM_CAP_PRIME; without the cap
+Mesa offers no EGL_EXT_image_dma_buf_import or GBM fd import (so Xorg glamor
+has no DRI3), and anv/venus need vk_image::drm_format_mod.  Upstreamable.
+
+--- src/gallium/auxiliary/util/u_screen.c.orig
++++ src/gallium/auxiliary/util/u_screen.c
+@@ -132,7 +132,7 @@
+ 
+    caps->throttle = true;
+ 
+-#if defined(HAVE_LIBDRM) && (DETECT_OS_LINUX || DETECT_OS_BSD || DETECT_OS_MANAGARM)
++#if defined(HAVE_LIBDRM) && (DETECT_OS_LINUX || DETECT_OS_BSD || DETECT_OS_MANAGARM || DETECT_OS_SOLARIS)
+    if (pscreen->get_screen_fd) {
+       uint64_t cap;
+       int fd = pscreen->get_screen_fd(pscreen);
+--- src/vulkan/runtime/vk_image.c.orig
++++ src/vulkan/runtime/vk_image.c
+@@ -23,7 +23,7 @@
+ 
+ #include "vk_image.h"
+ 
+-#if DETECT_OS_LINUX || DETECT_OS_BSD
++#if DETECT_OS_LINUX || DETECT_OS_BSD || DETECT_OS_SOLARIS
+ #include <drm-uapi/drm_fourcc.h>
+ #endif
+ 
+@@ -96,7 +96,7 @@
+       vk_find_struct_const(pCreateInfo->pNext, WSI_IMAGE_CREATE_INFO_MESA);
+    image->wsi_legacy_scanout = wsi_info && wsi_info->scanout;
+ 
+-#if DETECT_OS_LINUX || DETECT_OS_BSD
++#if DETECT_OS_LINUX || DETECT_OS_BSD || DETECT_OS_SOLARIS
+    image->drm_format_mod = ((1ULL << 56) - 1) /* DRM_FORMAT_MOD_INVALID */;
+ #endif
+ 
+@@ -168,7 +168,7 @@
+    vk_object_free(device, alloc, image);
+ }
+ 
+-#if DETECT_OS_LINUX || DETECT_OS_BSD
++#if DETECT_OS_LINUX || DETECT_OS_BSD || DETECT_OS_SOLARIS
+ VKAPI_ATTR VkResult VKAPI_CALL
+ vk_common_GetImageDrmFormatModifierPropertiesEXT(UNUSED VkDevice device,
+                                                  VkImage _image,
+--- src/vulkan/runtime/vk_image.h.orig
++++ src/vulkan/runtime/vk_image.h
+@@ -75,7 +75,7 @@
+    /* wsi_image_create_info::scanout */
+    bool wsi_legacy_scanout;
+ 
+-#if DETECT_OS_LINUX || DETECT_OS_BSD
++#if DETECT_OS_LINUX || DETECT_OS_BSD || DETECT_OS_SOLARIS
+    /* VK_EXT_drm_format_modifier
+     *
+     * Initialized by vk_image_create/init() to DRM_FORMAT_MOD_INVALID.  It's
