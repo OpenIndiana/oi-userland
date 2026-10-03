@@ -20,14 +20,14 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           wxmaxima
-COMPONENT_VERSION=        26.8.0
-HUMAN_VERSION=            26.08.0
+COMPONENT_VERSION=        26.9.0
+HUMAN_VERSION=            26.09.0
 COMPONENT_SUMMARY=        wxMaxima is a document based interface for the computer algebra system Maxima
 COMPONENT_PROJECT_URL=    https://github.com/wxMaxima-developers/wxmaxima
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=    https://github.com/wxMaxima-developers/wxmaxima/archive/refs/tags/Version-$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=   sha256:7524487ddf858eaba8d9e4d0fc2062bdb1d177b21183e5adfa78fc27929e57ce
+COMPONENT_ARCHIVE_HASH=   sha256:c490e30383e77e17de2005276429606ff4c5b43ae268aa889cfc3d4fb148a9e9
 COMPONENT_FMRI=           application/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/Office
 COMPONENT_LICENSE=        GPLv2

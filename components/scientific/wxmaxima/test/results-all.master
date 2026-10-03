@@ -21,10 +21,20 @@ Test multiple_batch_files2 ...................................***Exception: SegF
 Test multiple_batch_files_singlethread .......................***Exception: SegFault
 Test multiple_batch_files2_singlethread ......................***Exception: SegFault
 Test wxstatusbar .............................................   Passed
+Test wx_version_min ..........................................   Passed
+Test wx_version_min_outside_wxmaxima .........................   Passed
+Test with_slider_draw_bare ...................................   Passed
+Test with_slider_draw_file_name_kept .........................   Passed
+Test with_slider_draw_bare_file_name .........................   Passed
 Test wxbuildinfo .............................................   Passed
 Test check-xml-validity_matrix_default .......................   Passed
 Test check-xml-validity_matrix_lines .........................   Passed
 Test check-xml-validity_matrix_complex .......................   Passed
+Test check-xml-validity_matrix_oversized .....................   Passed
+Test check-wxMathML.lisp_matrix_oversized ....................   Passed
+Test check-wxMathML.lisp_matrix_shown_once ...................   Passed
+Test check-wxMathML.lisp_matrix_dollar_not_shown .............   Passed
+Test check-wxMathML.lisp_matrix_options_stay_with_value ......   Passed
 Test check-xml-validity_mfrac ................................   Passed
 Test check-wxmx-validity_all-celltypes .......................   Passed
 Test check-wxmx-validity_intervals ...........................   Passed
@@ -61,6 +71,8 @@ Test mfrac ...................................................   Passed
 Test load_symbol .............................................***Failed
 Test wxmaxima_batch_emptyFile ................................***Exception: SegFault
 Test wxmaxima_no_stray_children ..............................   Passed
+Test wxmaxima_one_maxima_per_file ............................***Failed
+Test wxmaxima_exit_code_file_not_found .......................***Failed
 Test wxmaxima_makelist .......................................***Exception: SegFault
 Test wxmaxima_performance ....................................***Exception: SegFault
 Test wxmaxima_performance2 ...................................***Exception: SegFault
@@ -184,11 +196,11 @@ Test testbench_simple.wxmx ...................................***Exception: SegF
 Test check_desktop_file ......................................   Passed
 Test check_appstream_file ....................................   Passed
 
-54% tests passed, 85 tests failed out of 184
+56% tests passed, 87 tests failed out of 196
 
 Label Time Summary:
-needs_posix    =  25.52 sec*proc (47 tests)
-unittest       =   0.70 sec*proc (1 test)
+needs_posix    =  40.22 sec*proc (57 tests)
+unittest       =   0.71 sec*proc (1 test)
 
 
 The following tests FAILED:
@@ -202,81 +214,83 @@ The following tests FAILED:
 	 19 - multiple_batch_files2 (SEGFAULT)
 	 20 - multiple_batch_files_singlethread (SEGFAULT)
 	 21 - multiple_batch_files2_singlethread (SEGFAULT)
-	 60 - load_symbol (Failed)                              needs_posix
-	 61 - wxmaxima_batch_emptyFile (SEGFAULT)
-	 63 - wxmaxima_makelist (SEGFAULT)
-	 64 - wxmaxima_performance (SEGFAULT)
-	 65 - wxmaxima_performance2 (SEGFAULT)
-	 66 - wxmaxima_performance3 (SEGFAULT)
-	 67 - wxmaxima_batch_textcell (SEGFAULT)
-	 68 - wxmaxima_batch_foreign_characters (SEGFAULT)
-	 69 - wxmaxima_load_symbol (SEGFAULT)
-	 70 - wxmaxima_version_string (SEGFAULT)
-	 71 - wxmaxima_version_returncode (SEGFAULT)
-	 72 - wxmaxima_help_returncode (SEGFAULT)
-	 73 - all_celltypes (SEGFAULT)
-	 74 - simpleInput (SEGFAULT)
-	 75 - rememberingAnswers (SEGFAULT)
-	 77 - absCells (SEGFAULT)
-	 79 - boxCells (SEGFAULT)
-	 81 - diffCells (SEGFAULT)
-	 84 - atCells (SEGFAULT)
-	 87 - conjugateCells (SEGFAULT)
-	 90 - exptCells (SEGFAULT)
-	 94 - fracCells (SEGFAULT)
-	 97 - intCells (SEGFAULT)
-	 98 - imageFormat (SEGFAULT)
-	101 - intervals (SEGFAULT)
-	104 - functionCells (SEGFAULT)
-	105 - slideshowCells (SEGFAULT)
-	106 - imageCells (SEGFAULT)
-	109 - limitCells (SEGFAULT)
-	112 - matrixCells (SEGFAULT)
-	115 - parenthesisCells (SEGFAULT)
-	118 - listCells (SEGFAULT)
-	121 - setCells (SEGFAULT)
-	124 - sqrtCells (SEGFAULT)
-	127 - subCells (SEGFAULT)
-	130 - subsupCells (SEGFAULT)
-	133 - presubsupcells (SEGFAULT)
-	136 - sumCells (SEGFAULT)
-	139 - productCells (SEGFAULT)
-	142 - printf_simple (SEGFAULT)
-	145 - printf_equations (SEGFAULT)
-	148 - printf_continuationLines (SEGFAULT)
-	149 - weirdLabels (SEGFAULT)
-	150 - xmlQuote (SEGFAULT)
-	151 - formerCrashes (SEGFAULT)
-	152 - multiplication (SEGFAULT)
-	153 - nonsenseConstructs (SEGFAULT)
-	154 - lisp (SEGFAULT)
-	155 - boxes (SEGFAULT)
-	156 - unicode (SEGFAULT)
-	157 - unicode_specialchars (SEGFAULT)
-	158 - openMacFiles (SEGFAULT)
-	159 - openMacFiles2 (SEGFAULT)
-	160 - tutorial_10Minutes (SEGFAULT)
-	161 - commandSequenceIntegrity (SEGFAULT)
-	162 - comment_begin (SEGFAULT)
-	163 - threadtest (SEGFAULT)
-	164 - autosave (SEGFAULT)
-	165 - noautosave (SEGFAULT)
-	166 - config_from_19.11 (SEGFAULT)
-	167 - longnum_ellipsis (SEGFAULT)
-	168 - longnum_allinone (SEGFAULT)
-	169 - longnum_broken (SEGFAULT)
-	170 - invalid_commandline_arg (SEGFAULT)
-	171 - multiwindow (SEGFAULT)
-	173 - config_dialogue_sample (SEGFAULT)
-	174 - tutorial_fastListAccess (SEGFAULT)
-	175 - tutorial_numberFormats (SEGFAULT)
-	176 - tutorial_toleranceCalculations (SEGFAULT)
-	177 - tutorial_fittingEquations (SEGFAULT)
-	178 - tutorial_variableNames (SEGFAULT)
-	179 - tutorial_displaying3DCurves (SEGFAULT)
-	180 - tutorial_memoizing (SEGFAULT)
-	181 - tutorial_solvingEquations (SEGFAULT)
-	182 - testbench_simple.wxmx (SEGFAULT)
+	 70 - load_symbol (Failed)                              needs_posix
+	 71 - wxmaxima_batch_emptyFile (SEGFAULT)
+	 73 - wxmaxima_one_maxima_per_file (Failed)
+	 74 - wxmaxima_exit_code_file_not_found (Failed)
+	 75 - wxmaxima_makelist (SEGFAULT)
+	 76 - wxmaxima_performance (SEGFAULT)
+	 77 - wxmaxima_performance2 (SEGFAULT)
+	 78 - wxmaxima_performance3 (SEGFAULT)
+	 79 - wxmaxima_batch_textcell (SEGFAULT)
+	 80 - wxmaxima_batch_foreign_characters (SEGFAULT)
+	 81 - wxmaxima_load_symbol (SEGFAULT)
+	 82 - wxmaxima_version_string (SEGFAULT)
+	 83 - wxmaxima_version_returncode (SEGFAULT)
+	 84 - wxmaxima_help_returncode (SEGFAULT)
+	 85 - all_celltypes (SEGFAULT)
+	 86 - simpleInput (SEGFAULT)
+	 87 - rememberingAnswers (SEGFAULT)
+	 89 - absCells (SEGFAULT)
+	 91 - boxCells (SEGFAULT)
+	 93 - diffCells (SEGFAULT)
+	 96 - atCells (SEGFAULT)
+	 99 - conjugateCells (SEGFAULT)
+	102 - exptCells (SEGFAULT)
+	106 - fracCells (SEGFAULT)
+	109 - intCells (SEGFAULT)
+	110 - imageFormat (SEGFAULT)
+	113 - intervals (SEGFAULT)
+	116 - functionCells (SEGFAULT)
+	117 - slideshowCells (SEGFAULT)
+	118 - imageCells (SEGFAULT)
+	121 - limitCells (SEGFAULT)
+	124 - matrixCells (SEGFAULT)
+	127 - parenthesisCells (SEGFAULT)
+	130 - listCells (SEGFAULT)
+	133 - setCells (SEGFAULT)
+	136 - sqrtCells (SEGFAULT)
+	139 - subCells (SEGFAULT)
+	142 - subsupCells (SEGFAULT)
+	145 - presubsupcells (SEGFAULT)
+	148 - sumCells (SEGFAULT)
+	151 - productCells (SEGFAULT)
+	154 - printf_simple (SEGFAULT)
+	157 - printf_equations (SEGFAULT)
+	160 - printf_continuationLines (SEGFAULT)
+	161 - weirdLabels (SEGFAULT)
+	162 - xmlQuote (SEGFAULT)
+	163 - formerCrashes (SEGFAULT)
+	164 - multiplication (SEGFAULT)
+	165 - nonsenseConstructs (SEGFAULT)
+	166 - lisp (SEGFAULT)
+	167 - boxes (SEGFAULT)
+	168 - unicode (SEGFAULT)
+	169 - unicode_specialchars (SEGFAULT)
+	170 - openMacFiles (SEGFAULT)
+	171 - openMacFiles2 (SEGFAULT)
+	172 - tutorial_10Minutes (SEGFAULT)
+	173 - commandSequenceIntegrity (SEGFAULT)
+	174 - comment_begin (SEGFAULT)
+	175 - threadtest (SEGFAULT)
+	176 - autosave (SEGFAULT)
+	177 - noautosave (SEGFAULT)
+	178 - config_from_19.11 (SEGFAULT)
+	179 - longnum_ellipsis (SEGFAULT)
+	180 - longnum_allinone (SEGFAULT)
+	181 - longnum_broken (SEGFAULT)
+	182 - invalid_commandline_arg (SEGFAULT)
+	183 - multiwindow (SEGFAULT)
+	185 - config_dialogue_sample (SEGFAULT)
+	186 - tutorial_fastListAccess (SEGFAULT)
+	187 - tutorial_numberFormats (SEGFAULT)
+	188 - tutorial_toleranceCalculations (SEGFAULT)
+	189 - tutorial_fittingEquations (SEGFAULT)
+	190 - tutorial_variableNames (SEGFAULT)
+	191 - tutorial_displaying3DCurves (SEGFAULT)
+	192 - tutorial_memoizing (SEGFAULT)
+	193 - tutorial_solvingEquations (SEGFAULT)
+	194 - testbench_simple.wxmx (SEGFAULT)
 Errors while running CTest
 Output from these tests are in: $(@D)/Testing/Temporary/LastTest.log
 Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.
