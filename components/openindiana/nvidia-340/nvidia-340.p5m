@@ -36,6 +36,9 @@ set name=variant.opensolaris.zone value=global value=nonglobal
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# 64-bit GLES public links are supplied by the vendor selector.
+depend fmri=pkg:/service/opengl/ogl-select@0.5.11-2026.0.0.8 type=require
+
 file path=kernel/drv/$(MACH64)/nvidia reboot-needed=true \
     variant.opensolaris.zone=global group=sys
 file path=kernel/drv/nvidia.conf reboot-needed=false \
@@ -69,7 +72,6 @@ file path=usr/X11/lib/modules/drivers/$(MACH64)/nvidia_drv.so
 file path=usr/X11/lib/modules/drivers/nvidia_drv.so
 file path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)/libglx.so.1
 file path=usr/X11/lib/modules/extensions/NVIDIA/libglx.so.1
-file path=usr/bin/$(MACH32)/nvidia-settings
 file path=usr/bin/$(MACH32)/nvidia-xconfig
 file path=usr/bin/$(MACH64)/nvidia-settings
 file path=usr/bin/$(MACH64)/nvidia-xconfig
@@ -181,10 +183,6 @@ link path=usr/lib/$(MACH64)/libvdpau_nvidia.so \
     target=../../X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
 link path=usr/lib/$(MACH64)/vdpau/libvdpau_nvidia.so.1 \
     target=../../../X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
-link path=usr/lib/$(MACH64)/libGLESv1_CM.so.1 target=../../X11/lib/NVIDIA/amd64/libGLESv1_CM.so.1
-link path=usr/lib/$(MACH64)/libGLESv1_CM.so target=libGLESv1_CM.so.1
-link path=usr/lib/$(MACH64)/libGLESv2.so.2 target=../../X11/lib/NVIDIA/amd64/libGLESv2.so.2
-link path=usr/lib/$(MACH64)/libGLESv2.so target=libGLESv2.so.2
 link path=usr/lib/$(MACH64)/libnvidia-eglcore.so.1 target=../../X11/lib/NVIDIA/amd64/libnvidia-eglcore.so.1
 link path=usr/lib/$(MACH64)/libnvidia-glsi.so.1 target=../../X11/lib/NVIDIA/amd64/libnvidia-glsi.so.1
 link path=usr/lib/libGLESv1_CM.so.1 target=../X11/lib/NVIDIA/libGLESv1_CM.so.1
