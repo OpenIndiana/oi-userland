@@ -1,5 +1,9 @@
+Solaris/OpenIndiana additions to Xserver(1): /usr/bin/X, the x11-server SMF
+service and its properties, transports, files and related pages.
+Rebased for 21.1.
+
 diff --git a/man/Xserver.man b/man/Xserver.man
-index ba65c9e..53c7912 100644
+index 2415c16..0f45c93 100644
 --- a/man/Xserver.man
 +++ b/man/Xserver.man
 @@ -1,4 +1,26 @@
@@ -54,7 +58,7 @@ index ba65c9e..53c7912 100644
  This utility is run from the system boot files and takes care of keeping
  the server running, prompting for usernames and passwords, and starting up
  the user sessions.
-@@ -205,13 +235,14 @@ with
+@@ -210,13 +240,14 @@ with
  .BR "\-nolisten tcp" .
  This option may be issued multiple times to disable listening to different
  transport types.
@@ -71,16 +75,16 @@ index ba65c9e..53c7912 100644
  local   Platform preferred local connection method
  .TE
  .TP 8
-@@ -417,7 +448,7 @@ located in the XKB base directory or a subdirectory, and specified as the
+@@ -416,7 +447,7 @@ located in the XKB base directory or a subdirectory, and specified as the
  relative path from the XKB base directory.  The default XKB base directory is
- .IR __projectroot__/lib/X11/xkb .
+ .IR @projectroot@/lib/X11/xkb .
  .TP 8
 -.BR [+-]accessx " [ \fItimeout\fP [ \fItimeout_mask\fP [ \fIfeedback\fP [ \fIoptions_mask\fP ] ] ] ]"
 +.BR [+-]accessx " [\fItimeout\fP[\fItimeout_mask\fP[\fIfeedback\fP[\fIoptions_mask\fP]]]]"
  enables(+) or disables(-) AccessX key sequences.
  .TP 8
  .B \-xkbdir \fIdirectory\fP
-@@ -572,6 +603,110 @@ the following font path:
+@@ -562,6 +593,110 @@ the following font path:
      /usr/share/fonts/default/Type1,
      /usr/share/fonts/default/ghostscript
  .fi
@@ -191,23 +195,23 @@ index ba65c9e..53c7912 100644
  
  .SH FILES
  .TP 30
-@@ -587,8 +722,12 @@ Outline font directories
+@@ -577,8 +712,12 @@ Outline font directories
  .I /tmp/.X11-unix/X\fBn\fP
  Unix domain socket for display number \fBn\fP
  .TP 30
 -.I /usr/adm/X\fBn\fPmsgs
--Error log file for display number \fBn\fP if run from \fIinit\fP(__adminmansuffix__)
+-Error log file for display number \fBn\fP if run from \fIinit\fP(@adminmansuffix@)
 +.I /tmp/.X11-pipe/X\fBn\fP
 +Named pipe (FIFO) for display number \fBn\fP
 +.TP 30
 +.I /var/log/gdm/:\fBn\fP.log
 +Default error log file for display number \fBn\fP if the server is run 
-+from \fIgdm\fP(__adminmansuffix__)
++from \fIgdm\fP(@adminmansuffix@)
  .TP 30
- .I __projectroot__/lib/X11/xdm/xdm-errors
+ .I @projectroot@/lib/X11/xdm/xdm-errors
  Default error log file if the server is run from \fIxdm\fP(1)
-@@ -610,14 +749,21 @@ Security: \fIXsecurity\fP(__miscmansuffix__), \fIxauth\fP(1), \fIXau\fP(1),
- \fIxdm\fP(1), \fIxhost\fP(1), \fIxfwp\fP(1),
+@@ -600,14 +739,21 @@ Security: \fIXsecurity\fP(@miscmansuffix@), \fIxauth\fP(1), \fIXau\fP(1),
+ \fIxdm\fP(1), \fIxhost\fP(1)
  .I "Security Extension Specification"
  .PP
 -Starting the server: \fIstartx\fP(1), \fIxdm\fP(1), \fIxinit\fP(1)
@@ -218,12 +222,12 @@ index ba65c9e..53c7912 100644
 +.\" Only list the servers shipped on Solaris
  .PP
  Server-specific man pages:
--\fIXorg\fP(1), \fIXdmx\fP(1), \fIXephyr\fP(1), \fIXnest\fP(1),
+-\fIXorg\fP(1), \fIXwayland\fP(1), \fIXephyr\fP(1), \fIXnest\fP(1),
 -\fIXvfb\fP(1), \fIXquartz\fP(1), \fIXWin\fP(1).
-+\fIXorg\fP(1), \fIXdmx\fP(1), \fIXephyr\fP(1), \fIXvfb\fP(1), \fIXvnc\fP(1).
++\fIXorg\fP(1), \fIXephyr\fP(1), \fIXvfb\fP(1), \fIXvnc\fP(1).
 +.PP
 +Service management framework:
-+\fIsmf\fP(__miscmansuffix__), \fIsvcadm\fP(__adminmansuffix__), \fIsvccfg\fP(__adminmansuffix__)
++\fIsmf\fP(@miscmansuffix@), \fIsvcadm\fP(@adminmansuffix@), \fIsvccfg\fP(@adminmansuffix@)
 +.PP
 +Dtrace probes:
 +\fI/usr/share/doc/Xserver/Xserver-DTrace.html\fP,

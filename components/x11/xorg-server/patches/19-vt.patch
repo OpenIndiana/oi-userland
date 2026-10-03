@@ -1,6 +1,8 @@
---- a/dix/main.c	2017-02-01 15:05:08.248943479 -0800
-+++ b/dix/main.c	2017-02-01 15:07:26.499207921 -0800
-@@ -78,6 +78,8 @@
+diff --git a/dix/main.c b/dix/main.c
+index 27592b2..66a9042 100644
+--- a/dix/main.c
++++ b/dix/main.c
+@@ -78,6 +78,8 @@ Equipment Corporation.
  #include <version-config.h>
  #endif
  
@@ -9,7 +11,7 @@
  #include <X11/X.h>
  #include <X11/Xos.h>            /* for unistd.h  */
  #include <X11/Xproto.h>
-@@ -125,6 +127,36 @@
+@@ -124,6 +126,36 @@ extern void DtloginCloseDown(void);
  
  extern void Dispatch(void);
  
@@ -46,7 +48,7 @@
  CallbackListPtr RootWindowFinalizeCallback = NULL;
  
  int
-@@ -132,6 +164,9 @@
+@@ -131,6 +163,9 @@ dix_main(int argc, char *argv[], char *envp[])
  {
      int i;
      HWEventQueueType alwaysCheckForInput[2];
@@ -56,7 +58,7 @@
  
      display = "0";
  
-@@ -145,6 +180,12 @@
+@@ -142,6 +177,12 @@ dix_main(int argc, char *argv[], char *envp[])
  
      ProcessCommandLine(argc, argv);
  
@@ -69,9 +71,11 @@
      alwaysCheckForInput[0] = 0;
      alwaysCheckForInput[1] = 1;
      while (1) {
---- a/hw/xfree86/os-support/solaris/sun_init.c	2017-02-01 15:07:50.575551326 -0800
-+++ b/hw/xfree86/os-support/solaris/sun_init.c	2017-02-01 15:08:25.999117101 -0800
-@@ -46,6 +46,9 @@
+diff --git a/hw/xfree86/os-support/solaris/sun_init.c b/hw/xfree86/os-support/solaris/sun_init.c
+index f6185b9..89d3610 100644
+--- a/hw/xfree86/os-support/solaris/sun_init.c
++++ b/hw/xfree86/os-support/solaris/sun_init.c
+@@ -50,6 +50,9 @@
  #define	CONSOLE_VTNO	1
  #define	SOL_CONSOLE_DEV	"/dev/console"
  
@@ -81,7 +85,7 @@
  static Bool KeepTty = FALSE;
  static Bool UseConsole = FALSE;
  
-@@ -232,6 +235,8 @@
+@@ -221,6 +224,8 @@ xf86OpenConsole(void)
  
              if (ioctl(xf86Info.consoleFd, VT_SETDISPINFO, atoi(display)) < 0)
                  xf86Msg(X_WARNING, "xf86OpenConsole: VT_SETDISPINFO failed\n");
@@ -90,10 +94,12 @@
          }
  #endif
  
---- a/os/log.c	2017-02-01 15:08:49.899272429 -0800
-+++ b/os/log.c	2017-02-01 15:09:43.768274981 -0800
-@@ -108,6 +108,10 @@
- void (*OsVendorVErrorFProc) (const char *, va_list args) = NULL;
+diff --git a/os/log.c b/os/log.c
+index 7364215..5ac1a69 100644
+--- a/os/log.c
++++ b/os/log.c
+@@ -115,6 +115,10 @@ void (*OsVendorVErrorFProc) (const char *, va_list args) = NULL;
+ #define DEFAULT_LOG_FILE_VERBOSITY	3
  #endif
  
 +#ifdef sun
@@ -103,7 +109,7 @@
  static FILE *logFile = NULL;
  static int logFileFd = -1;
  static Bool logFlush = FALSE;
-@@ -1007,6 +1011,9 @@
+@@ -1009,6 +1013,9 @@ FatalError(const char *f, ...)
      VErrorFSigSafe(f, args);
      va_end(args);
      ErrorFSigSafe("\n");

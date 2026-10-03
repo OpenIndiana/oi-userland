@@ -1,0 +1,72 @@
+glamor: enable DRI3 only when dma-bufs can be imported and exported.
+
+DRI3 passes buffers as dma-bufs. A PixmapFromBuffer request (and a PRIME
+import) reaches gbm_bo_import(GBM_BO_IMPORT_FD), which needs the DRI
+driver's dma-buf import; BufferFromPixmap needs gbm_bo_get_fd() and PRIME
+export. Mesa 21.3.9 on illumos builds its Gallium drivers without dma-buf
+import, and its GBM calls the missing function without checking: one DRI3
+PixmapFromBuffer request made Xorg with glamor crash (SIGSEGV at address 0).
+Kernel drivers without PRIME (the legacy gfx-drm i915) cannot pass dma-bufs
+at all.
+
+Turn DRI3 (and glamor's pixmap import/export) on only when the kernel
+reports PRIME import and export and EGL offers
+EGL_EXT_image_dma_buf_import, which Mesa sets exactly when the driver's
+import exists. Otherwise GLX clients use DRI2, as before.
+
+diff --git a/glamor/glamor_egl.c b/glamor/glamor_egl.c
+index 525b1f4..5cf7014 100644
+--- a/glamor/glamor_egl.c
++++ b/glamor/glamor_egl.c
+@@ -58,6 +58,7 @@ struct glamor_egl_screen_private {
+     int fd;
+     struct gbm_device *gbm;
+     int dmabuf_capable;
++    Bool dri3_capable;
+ 
+     CloseScreenProcPtr saved_close_screen;
+     DestroyPixmapProcPtr saved_destroy_pixmap;
+@@ -910,6 +911,9 @@ glamor_egl_screen_init(ScreenPtr screen, struct glamor_context *glamor_ctx)
+     glamor_ctx->make_current = glamor_egl_make_current;
+ 
+ #ifdef DRI3
++    if (!glamor_egl->dri3_capable)
++        return;
++
+     /* Tell the core that we have the interfaces for import/export
+      * of pixmaps.
+      */
+@@ -1172,6 +1176,33 @@ glamor_egl_init(ScrnInfoPtr scrn, int fd)
+     xf86DrvMsg(scrn->scrnIndex, X_INFO, "glamor X acceleration enabled on %s\n",
+                renderer);
+ 
++#ifdef DRI3
++    /*
++     * DRI3 passes buffers as dma-bufs: PixmapFromBuffer (and a PRIME
++     * import) goes through gbm_bo_import(GBM_BO_IMPORT_FD), BufferFromPixmap
++     * through gbm_bo_get_fd(). That needs PRIME import and export in the
++     * kernel and the DRI driver's dma-buf import, which Mesa advertises as
++     * EGL_EXT_image_dma_buf_import. Without the latter, GBM's fd import
++     * fails or (Mesa 21.3) calls a missing driver function.
++     */
++    {
++        uint64_t prime = 0;
++
++        if (drmGetCap(glamor_egl->fd, DRM_CAP_PRIME, &prime) != 0 ||
++            !(prime & DRM_PRIME_CAP_IMPORT) || !(prime & DRM_PRIME_CAP_EXPORT))
++            xf86DrvMsg(scrn->scrnIndex, X_INFO,
++                       "glamor: DRI3 disabled: the kernel driver lacks "
++                       "PRIME import or export\n");
++        else if (!epoxy_has_egl_extension(glamor_egl->display,
++                                          "EGL_EXT_image_dma_buf_import"))
++            xf86DrvMsg(scrn->scrnIndex, X_INFO,
++                       "glamor: DRI3 disabled: the EGL driver cannot "
++                       "import dma-bufs (no EGL_EXT_image_dma_buf_import)\n");
++        else
++            glamor_egl->dri3_capable = TRUE;
++    }
++#endif
++
+ #ifdef GBM_BO_WITH_MODIFIERS
+     if (epoxy_has_egl_extension(glamor_egl->display,
+                                 "EGL_EXT_image_dma_buf_import") &&

@@ -18,15 +18,13 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         xorg-server
-COMPONENT_VERSION=      1.19.7
-COMPONENT_REVISION=     16
+COMPONENT_VERSION=      21.1.24
 COMPONENT_SUMMARY=      Xorg - X11R7 X server
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:7112f7128a4f5b06ceb8bba1bdc5e5c9e0fae682a42d35218bc12ba693f4c80c
-COMPONENT_ARCHIVE_URL=  \
-	https://ftp.x.org/pub/individual/xserver/$(COMPONENT_ARCHIVE)
+	sha256:1a4eb36ca65cc3b1b936566d677a9786e13c11cd5806e951ac55f3f5ce3984af
+COMPONENT_ARCHIVE_URL=  $(XORG_XSERVER_BASE_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.x.org/
 COMPONENT_CLASSIFICATION=System/X11
 COMPONENT_LICENSE_FILE= COPYING
@@ -49,6 +47,10 @@ gcc_OPT =
 CFLAGS += -Wno-error=incompatible-pointer-types
 CFLAGS += -Wno-error=implicit-function-declaration
 
+# Do not force-include system headers such as sys/socket.h here. configure
+# (xtrans.m4) finds msghdr.msg_control, which xtrans' fd passing for DRI3
+# needs, only by defining _XOPEN_SOURCE=600 before sys/socket.h; dix-config.h
+# then carries that and __EXTENSIONS__ into os/xstrans.c.
 CPPFLAGS += -DSUNSOFT -DTSOL
 CPPFLAGS += -I$(USRINCDIR)/pixman-1
 CPPFLAGS += -I$(USRINCDIR)/X11/dri
@@ -86,11 +88,14 @@ CONFIGURE_OPTIONS += --disable-xwin
 CONFIGURE_OPTIONS += --disable-xnest
 CONFIGURE_OPTIONS += --disable-systemd-logind
 CONFIGURE_OPTIONS += --disable-input-thread
-CONFIGURE_OPTIONS += --enable-dmx
+CONFIGURE_OPTIONS += --disable-xf86-input-inputtest
 CONFIGURE_OPTIONS += --enable-dri
 CONFIGURE_OPTIONS += --enable-dri2
 CONFIGURE_OPTIONS += --enable-dri3
-CONFIGURE_OPTIONS += --disable-glamor
+# glamor: OpenGL 2D acceleration and DRI3 for the modesetting driver through
+# Mesa's EGL and GBM (patch 38 turns DRI3 on only with dma-buf support).
+# Xwayland is no longer part of this source.
+CONFIGURE_OPTIONS += --enable-glamor
 CONFIGURE_OPTIONS += --enable-glx
 CONFIGURE_OPTIONS += --enable-kdrive
 CONFIGURE_OPTIONS += --enable-shared
@@ -104,7 +109,6 @@ CONFIGURE_OPTIONS += --with-default-font-path='catalogue:/etc/X11/fontpath.d'
 CONFIGURE_OPTIONS += --with-default-xkb-model=pc105
 CONFIGURE_OPTIONS += --with-log-dir=/var/log
 CONFIGURE_OPTIONS += --with-module-dir=$(X11_SERVERMODS_DIR)
-CONFIGURE_OPTIONS += --with-os-name="`uname -srm`"
 CONFIGURE_OPTIONS += --with-vendor-name="Project OpenIndiana"
 CONFIGURE_OPTIONS += --with-vendor-web="http://openindiana.org"
 CONFIGURE_OPTIONS += --with-xkb-output=/var/run/xkb
@@ -150,23 +154,16 @@ REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += x11/library/libdmx
 REQUIRED_PACKAGES += x11/library/libdrm
+REQUIRED_PACKAGES += x11/library/libepoxy
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxau
 REQUIRED_PACKAGES += x11/library/libxcb
+REQUIRED_PACKAGES += x11/library/libxcvt
 REQUIRED_PACKAGES += x11/library/libxdmcp
-REQUIRED_PACKAGES += x11/library/libxext
-REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxfont2
-REQUIRED_PACKAGES += x11/library/libxi
-REQUIRED_PACKAGES += x11/library/libxmu
-REQUIRED_PACKAGES += x11/library/libxmuu
-REQUIRED_PACKAGES += x11/library/libxpm
-REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxshmfence
-REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
-REQUIRED_PACKAGES += x11/library/toolkit/libxt
+REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += x11/library/xcb-util
 REQUIRED_PACKAGES += x11/library/xcb-util-image
 REQUIRED_PACKAGES += x11/library/xcb-util-keysyms

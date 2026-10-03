@@ -24,10 +24,10 @@
 7010804 Xorg should audit connections and disconnections.
 
 diff --git a/configure.ac b/configure.ac
-index 67b1eb4..77ad53d 100644
+index e0a6839..a2a14f6 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -309,6 +309,12 @@ AC_CHECK_HEADER([execinfo.h],[
+@@ -252,6 +252,12 @@ AC_CHECK_HEADER([execinfo.h],[
      ])]
  )
  
@@ -41,24 +41,24 @@ index 67b1eb4..77ad53d 100644
  dnl Bus options and CPU capabilities.  Replaces logic in
  dnl hw/xfree86/os-support/bus/Makefile.am, among others.
 diff --git a/dix/main.c b/dix/main.c
-index fb935c9..e2ec177 100644
+index 38e29ce..29df4ef 100644
 --- a/dix/main.c
 +++ b/dix/main.c
-@@ -201,6 +201,7 @@ main(int argc, char *argv[], char *envp[])
+@@ -187,6 +187,7 @@ dix_main(int argc, char *argv[], char *envp[])
          dixResetRegistry();
-         ResetFontPrivateIndex();
+         InitFonts();
          InitCallbackManager();
 +        OSAuditInit(); /* Must be after InitCallbackManager() */
          InitOutput(&screenInfo, argc, argv);
  
          if (screenInfo.numScreens < 1)
 diff --git a/include/dix-config.h.in b/include/dix-config.h.in
-index 578f249..8acca13 100644
+index d8ba80c..3aedc27 100644
 --- a/include/dix-config.h.in
 +++ b/include/dix-config.h.in
-@@ -115,6 +115,9 @@
- /* Build a standalone xpbproxy */
- #undef STANDALONE_XPBPROXY
+@@ -113,6 +113,9 @@
+ /* Define to 1 if you have the `bsd' library (-lbsd). */
+ #undef HAVE_LIBBSD
  
 +/* Define to 1 if you have the Solaris BSM auditing library (-lbsm) */
 +#undef HAVE_LIBBSM
@@ -67,10 +67,10 @@ index 578f249..8acca13 100644
  #undef HAVE_LIBM
  
 diff --git a/include/os.h b/include/os.h
-index 9e323f3..01cea99 100644
+index 7db2408..08357e6 100644
 --- a/include/os.h
 +++ b/include/os.h
-@@ -680,4 +680,8 @@ LogPrintMarkers(void);
+@@ -713,6 +713,10 @@ LogPrintMarkers(void);
  extern _X_EXPORT void
  xorg_backtrace(void);
  
@@ -78,13 +78,15 @@ index 9e323f3..01cea99 100644
 +extern void
 +OSAuditInit (void);
 +
- #endif                          /* OS_H */
+ extern _X_EXPORT int
+ os_move_fd(int fd);
+ 
 diff --git a/os/Makefile.am b/os/Makefile.am
-index 8891485..c4825ad 100644
+index 30f516c..c2ee8b8 100644
 --- a/os/Makefile.am
 +++ b/os/Makefile.am
-@@ -15,6 +15,7 @@ libos_la_SOURCES = 	\
- 	connection.c	\
+@@ -19,6 +19,7 @@ libos_la_SOURCES = 	\
+ 	inputthread.c	\
  	io.c		\
  	mitauth.c	\
 +	osaudit.c	\

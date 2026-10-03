@@ -1,8 +1,10 @@
+Do not install the DRI1 SIGIO handler on illumos.
+
 diff --git a/hw/xfree86/dri/dri.c b/hw/xfree86/dri/dri.c
-index 398178e..929dc7c 100644
+index d1b092b..d4ed687 100644
 --- a/hw/xfree86/dri/dri.c
 +++ b/hw/xfree86/dri/dri.c
-@@ -2500,7 +2500,11 @@ drmInstallSIGIOHandler(int fd, void (*f) (int, void *, void *))
+@@ -339,7 +339,11 @@ drmInstallSIGIOHandler(int fd, void (*f) (int, void *, void *))
      entry = drmGetEntry(fd);
      entry->f = f;
  
@@ -13,8 +15,8 @@ index 398178e..929dc7c 100644
 +#endif
  }
  
- int
-@@ -2510,5 +2514,9 @@ drmRemoveSIGIOHandler(int fd)
+ static int
+@@ -349,7 +353,11 @@ drmRemoveSIGIOHandler(int fd)
  
      entry->f = NULL;
  
@@ -24,3 +26,5 @@ index 398178e..929dc7c 100644
      return xf86RemoveSIGIOHandler(fd);
 +#endif
  }
+ 
+ Bool
