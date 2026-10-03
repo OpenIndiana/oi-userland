@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =		nvidia-$(COMPONENT_MJR_VERSION)
 HUMAN_VERSION =			470.256.02
 COMPONENT_VERSION =		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.0*/./g')
+COMPONENT_REVISION =		1
 COMPONENT_MJR_VERSION =		$(firstword $(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_FMRI =		driver/graphics/nvidia-$(COMPONENT_MJR_VERSION)
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
@@ -74,7 +75,7 @@ GENERATE_EXTRA_CMD += | \
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
@@ -84,3 +85,4 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += service/opengl/ogl-select

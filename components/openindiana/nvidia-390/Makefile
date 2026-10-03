@@ -23,6 +23,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_MJR_VERSION =		390
 COMPONENT_NAME =		nvidia-$(COMPONENT_MJR_VERSION)
 COMPONENT_VERSION =		$(COMPONENT_MJR_VERSION).157
+COMPONENT_REVISION =		1
 COMPONENT_FMRI =		driver/graphics/nvidia-$(COMPONENT_MJR_VERSION)
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
 COMPONENT_CLASSIFICATION =	Drivers/Display
@@ -88,3 +89,4 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/compatibility/links-xorg
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += service/opengl/ogl-select
