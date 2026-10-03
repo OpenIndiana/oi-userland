@@ -1,0 +1,28 @@
+Adjust default location of ssh-askpass program (called by e.g. ssh-add during
+X11 Window manager session start-up) to match changes in oi-userland PR #22142
+moving the mediator link location.
+
+Signed-off-by: Jim Klimov <jim@jimklimov.com>
+
+diff -Naur openssh-10.5p1.orig/Makefile.in openssh-10.5p1/Makefile.in
+--- openssh-10.5p1.orig/Makefile.in	2026-08-11 04:22:17.000000000 +0200
++++ openssh-10.5p1/Makefile.in	2026-10-01 11:39:06.476607452 +0200
+@@ -20,7 +20,7 @@
+ 
+ VPATH=@srcdir@
+ SSH_PROGRAM=@bindir@/ssh
+-ASKPASS_PROGRAM=$(libexecdir)/ssh-askpass
++ASKPASS_PROGRAM=$(libexecdir)/ssh/ssh-askpass
+ SFTP_SERVER=$(libexecdir)/sftp-server
+ SSH_KEYSIGN=$(libexecdir)/ssh-keysign
+ SSHD_SESSION=$(libexecdir)/sshd-session
+diff -Naur openssh-10.5p1.orig/pathnames.h openssh-10.5p1/pathnames.h
+--- openssh-10.5p1.orig/pathnames.h	2026-08-11 04:22:17.000000000 +0200
++++ openssh-10.5p1/pathnames.h	2026-10-01 11:38:44.857290012 +0200
+@@ -187,5 +187,5 @@
+ 
+ /* Askpass program define */
+ #ifndef ASKPASS_PROGRAM
+-#define ASKPASS_PROGRAM         "/usr/lib/ssh/ssh-askpass"
++#define ASKPASS_PROGRAM         "/usr/libexec/ssh/ssh-askpass"
+ #endif /* ASKPASS_PROGRAM */
