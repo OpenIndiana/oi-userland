@@ -30,7 +30,7 @@ COMPONENT_NAME=		openssh
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
 COMPONENT_VERSION=	10.5.0.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 HUMAN_VERSION=		10.5p1
 COMPONENT_SUMMARY=	OpenSSH client and associated utilities
 # OpenSSH made a mistake when releasing openssh 10.0p1 which identifies itself as 10.0p2.
