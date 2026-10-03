@@ -17,7 +17,7 @@ BOOTSTRAP_COMPONENT= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 14.3.0
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)

@@ -1,0 +1,33 @@
+commit 635fbd48c830e0ee927247f0753f43b09bbf6d93
+Author: Bill Sommerfeld <sommerfeld@hamachi.org>
+Date:   Mon Apr 27 14:15:57 2026 -0700
+
+    fixup: whitespace, wrong use of wchar_t
+
+diff --git a/libstdc++-v3/config/locale/dragonfly/monetary_members.cc b/libstdc++-v3/config/locale/dragonfly/monetary_members.cc
+index 0aeb395c3a8..4bfadf8f9d7 100644
+--- a/libstdc++-v3/config/locale/dragonfly/monetary_members.cc
++++ b/libstdc++-v3/config/locale/dragonfly/monetary_members.cc
+@@ -52,18 +52,18 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
+       w = (wchar_t) conv[0];
+ 
+     int clen = mbtowc_l(&w, conv, tlen, __cloc);
+-    if (clen <= 0) 
++    if (clen <= 0)
+       return def;
+-    else 
++    else
+       return w;
+   }
+ 
+   char lconv2char(char *conv, char def)
+   {
+-    wchar_t w = def;
++    char w = def;
+     const size_t tlen = strlen(conv);
+     if (tlen == 1)
+-      w = (wchar_t) conv[0];
++      w = conv[0];
+     return w;
+   }
+ 
