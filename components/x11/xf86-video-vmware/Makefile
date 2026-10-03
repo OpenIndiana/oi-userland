@@ -19,6 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-vmware
 COMPONENT_VERSION= 13.4.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-video-vmware - VMWare driver for the Xorg X server
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:aed31ee5ed5ecc6e2226705383e7ad06f7602c1376a295305f376b17af3eb81a
@@ -28,7 +29,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 LD_OPTIONS= \
         -L$(X11_SERVERMODS_DIR) -R$(X11_SERVERMODS_DIR) \
-        -lfb -lpixman-1 -lshadowfb -lvgahw -lpciaccess
+        -lpixman-1 -lshadowfb -lvgahw -lpciaccess
 
 CONFIGURE_ENV += with_xorg_module_dir=/usr/lib/xorg/modules/drivers/$(MACH64)
 

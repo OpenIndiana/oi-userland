@@ -19,6 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-vesa
 COMPONENT_VERSION= 2.6.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-video-vesa - VESA driver for the Xorg X server
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:10082771b1a8f659c60b3d9b70456a4b59948a75b3cade2dfa33b8b05e549bb1
@@ -28,7 +29,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 LD_OPTIONS= \
         -L$(X11_SERVERMODS_DIR) -R$(X11_SERVERMODS_DIR) \
-        -lfb -lpciaccess -lshadow -lvbe
+        -lpciaccess -lshadow -lint10
 
 CONFIGURE_ENV += with_xorg_module_dir=/usr/lib/xorg/modules/drivers/$(MACH64)
 

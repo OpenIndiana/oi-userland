@@ -1,0 +1,16 @@
+shadowUpdatePackedWeak() was removed in xorg-server 1.20; pass
+shadowUpdatePacked, which it returned, directly.
+
+diff --git a/src/via_driver.c b/src/via_driver.c
+index 439313c..147eb6e 100644
+--- a/src/via_driver.c
++++ b/src/via_driver.c
+@@ -1675,7 +1675,7 @@ VIACreateScreenResources(ScreenPtr pScreen)
+         return FALSE;
+ 
+     if (pVia->shadowFB) {
+-        if (!shadowAdd(pScreen, rootPixmap, shadowUpdatePackedWeak(),
++        if (!shadowAdd(pScreen, rootPixmap, shadowUpdatePacked,
+                         viaShadowWindow, 0, NULL))
+             return FALSE;
+     }

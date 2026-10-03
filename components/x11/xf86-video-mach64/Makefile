@@ -19,6 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-mach64
 COMPONENT_VERSION= 6.9.7
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-video-mach64 - MACH64 driver for the Xorg X server
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-mach64
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
@@ -31,7 +32,7 @@ CFLAGS+= -D__EXTENSIONS__
 
 LD_OPTIONS+= \
         -L$(X11_SERVERMODS_DIR) -R$(X11_SERVERMODS_DIR) \
-        -lexa -lint10 -lpciaccess -lfb -lpixman-1 -lshadowfb -lvbe
+        -lexa -lint10 -lpciaccess -lpixman-1 -lshadowfb
 
 # - Disable DRI since the kernel module isn't ported
 CONFIGURE_OPTIONS += --disable-dri

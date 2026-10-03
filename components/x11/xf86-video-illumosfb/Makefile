@@ -4,7 +4,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=xf86-video-illumosfb
 COMPONENT_VERSION=0.5
-COMPONENT_REVISION=1
+COMPONENT_REVISION=2
 COMPONENT_SUMMARY=Xorg driver for illumos UEFI frame buffer
 COMPONENT_PROJECT_URL=  https://github.com/LuminousMonkey/xf86-video-illumosfb/
 COMPONENT_FMRI=         x11/server/xorg/driver/xorg-video-illumosfb
