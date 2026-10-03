@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= xf86-input-hotkey
 COMPONENT_SRC= src
 COMPONENT_VERSION= 0.5.11
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_SUMMARY= xf86-input-hotkey: ACPI hotkey input driver for the Xorg server
 COMPONENT_PROJECT_URL = https://hg.java.net/hg/solaris-x11~x-s12-clone
 COMPONENT_CLASSIFICATION= Drivers/Other Peripherals
@@ -27,6 +27,7 @@ COMPONENT_LICENSE_FILE = xf86-input-hotkey.license
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-input-hotkey
 
 include $(WS_TOP)/make-rules/justmake.mk
+include $(WS_TOP)/make-rules/common-rules.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 SERVERMOD_SUBDIR.64=/$(MACH64)
