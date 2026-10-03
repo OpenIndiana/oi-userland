@@ -49,10 +49,9 @@ update-license-file:
 
 CLEAN_PATHS += $(BUILD_DIR)
 
-# Hack to run proper unpack command
-UNPACK := $(SHELL) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE)
-UNPACK_ARGS = -x
-USERLAND_ARCHIVES = \#
+# The vendor self-extractor takes -x after the archive pathname.
+UNPACK = $(SHELL) -c 'exec $(SHELL) "$$1" -x' --
+UNPACK_ARGS =
 
 $(BUILD_$(MK_BITS)):	$(SOURCE_DIR)/.prep
 	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
