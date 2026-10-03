@@ -1,0 +1,62 @@
+diff --git a/hw/xfree86/common/xf86Events.c b/hw/xfree86/common/xf86Events.c
+index 6570f0b..85d698f 100644
+--- a/hw/xfree86/common/xf86Events.c
++++ b/hw/xfree86/common/xf86Events.c
+@@ -558,6 +558,16 @@ xf86VTEnter(void)
+     if (!xf86VTSwitchTo())
+         return;
+ 
++#ifdef __sun  /* restore root privs needed to restore device access */
++    uid_t user_id = geteuid();
++
++    if (user_id != 0) {
++        if (seteuid(0) < 0) {
++            xf86Msg(X_WARNING, "Error in resetting euid to root \n");
++        }
++    }
++#endif
++
+ #ifdef XF86PM
+     xf86OSPMClose = xf86OSPMOpen();
+ #endif
+@@ -600,6 +610,14 @@ xf86VTEnter(void)
+     xf86platformVTProbe();
+ #endif
+ 
++#ifdef __sun
++    if (user_id != 0) {               /* reset privs back to user */
++        if (seteuid(user_id) < 0) {
++            xf86Msg(X_WARNING, "Error in resetting euid to %d\n", user_id);
++        }
++    }
++#endif
++
+     xf86UpdateHasVTProperty(TRUE);
+ 
+     OsReleaseSIGIO();
+diff --git a/hw/xfree86/os-support/solaris/sun_vid.c b/hw/xfree86/os-support/solaris/sun_vid.c
+index 25f7618..7548f50 100644
+--- a/hw/xfree86/os-support/solaris/sun_vid.c
++++ b/hw/xfree86/os-support/solaris/sun_vid.c
+@@ -22,7 +22,7 @@
+  * OF THIS SOFTWARE.
+  *
+  */
+-/* Copyright (c) 2008, Oracle and/or its affiliates. All rights reserved.
++/* Copyright (c) 2008, 2017, Oracle and/or its affiliates. All rights reserved.
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a
+  * copy of this software and associated documentation files (the "Software"),
+@@ -100,8 +100,9 @@ xf86DisableIO(void)
+     if (!ExtendedEnabled)
+         return;
+ 
+-    sysi86(SI86V86, V86SC_IOPL, 0);
+-
+-    ExtendedEnabled = FALSE;
++    if (sysi86(SI86V86, V86SC_IOPL, 0) < 0)
++        xf86Msg(X_WARNING, "xf86DisableIOPorts: Failed to set IOPL for I/O\n");
++    else
++        ExtendedEnabled = FALSE;
+ #endif                          /* i386 */
+ }

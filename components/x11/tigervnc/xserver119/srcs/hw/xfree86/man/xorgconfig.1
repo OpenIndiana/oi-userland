@@ -1,0 +1,94 @@
+'\" t
+.\"
+.\" Copyright (c) 2009, 2014, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"),
+.\" to deal in the Software without restriction, including without limitation
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
+.\" and/or sell copies of the Software, and to permit persons to whom the
+.\" Software is furnished to do so, subject to the following conditions:
+.\"
+.\" The above copyright notice and this permission notice (including the next
+.\" paragraph) shall be included in all copies or substantial portions of the
+.\" Software.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+.\" DEALINGS IN THE SOFTWARE.
+.\"
+.\"
+.TH xorgconfig 1 "2 May 2014"
+.SH NAME
+.PP
+xorgconfig, xorgcfg \- generate an xorg.conf file
+.SH DESCRIPTION
+.PP
+The
+.BR xorgcfg (1)
+and
+.BR xorgconfig (1)
+utilities for generating
+.BR xorg.conf (4)
+files are no longer included in this release.
+.PP
+The
+.BR Xorg (1)
+server does not require a configuration file in many cases,
+and will autoconfigure itself if one is not present.  If the
+default configuration does not meet your needs, you may use one of
+these alternative methods to generate an xorg.conf file for
+customization:
+.IP " * "
+When Xorg is started without a configuration file, the xorg.conf
+data it generates automatically is logged in /var/log/Xorg.0.log
+and may be copied to an xorg.conf file for customization.
+.IP " * "
+/usr/bin/Xorg -configure, when the server is not already running,
+will provide a sample configuration file for the currently detected
+hardware in the system.
+.IP " * "
+Users of Nvidia graphics devices may use the provided
+.BR nvidia-settings (1)
+and
+.BR nvidia-xconfig (1)
+utilities to generate or update device-specific configurations.
+.IP " * "
+Users of Sun graphics devices for the SPARC platform may use the
+.BR fbconfig (1)
+utility to generate or update device-specific
+configurations.
+.PP
+Input device settings formerly found in xorg.conf have in most cases
+been replaced by settings made via the
+.BR hal (5)
+configuration framework in
+.BR fdi (4)
+configuration files.
+.SH FILES
+.IP /etc/hal/fdi/preprobe/10osvendor/10-x11-input.fdi
+Default system configuration for input devices
+.SH "ATTRIBUTES"
+See \fBattributes\fR(5) for descriptions of the following attributes:
+.sp
+.TS
+allbox;
+cw(2.750000i)| cw(2.750000i)
+lw(2.750000i)| lw(2.750000i).
+ATTRIBUTE TYPE	ATTRIBUTE VALUE
+Availability	None
+Interface Stability	Obsolete
+.TE
+.sp
+.SH "SEE ALSO"
+.IR Xorg (1),
+.IR xorg.conf (4),
+.IR hal (5),
+.IR fdi (4),
+.IR nvidia-settings (1),
+.IR nvidia-xconfig (1),
+.IR fbconfig (1).

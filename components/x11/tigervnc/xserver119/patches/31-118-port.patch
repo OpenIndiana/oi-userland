@@ -1,0 +1,96 @@
+--- a/hw/xfree86/sdksyms.sh	Fri Jan  8 15:20:10 2016
++++ b/hw/xfree86/sdksyms.sh	Fri Jan  8 15:20:28 2016
+@@ -302,7 +302,13 @@
+ LC_ALL=C
+ export LC_ALL
+ ${CPP:-cpp} "$@" sdksyms.c > /dev/null || exit $?
+-${CPP:-cpp} "$@" sdksyms.c | ${AWK:-awk} -v topdir=$topdir '
++# Some cpps add spaces in the middle of __attribute__((visibility(...)))
++# so we need to remove them for the following awk script to work.
++# Changes by alanc upstream
++${CPP:-cpp} "$@" sdksyms.c | \
++    ${SED:-sed} -e 's/( /(/g' -e 's/_ (/_(/g' -e 's/ )/)/g' \
++    -e 's/visibility (/visibility(/' | \
++    ${AWK:-awk} -v topdir=$topdir '
+ BEGIN {
+     sdk = 0;
+     print("/*");
+
+--- a/hw/xfree86/drivers/modesetting/Makefile.am	Thu Feb 26 13:47:39 2015
++++ b/hw/xfree86/drivers/modesetting/Makefile.am	Thu Feb 26 13:48:23 2015
+@@ -39,7 +39,9 @@
+ 
+ modesetting_drv_la_LTLIBRARIES = modesetting_drv.la
+ modesetting_drv_la_LDFLAGS = -module -avoid-version
+-modesetting_drv_la_LIBADD = $(UDEV_LIBS) $(DRM_LIBS)
++modesetting_drv_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
++modesetting_drv_la_LIBADD = $(UDEV_LIBS) $(DRM_LIBS) $(LIBDRM_LIBS) $(top_builddir)/fb/libfb.la $(top_builddir)/miext/shadow/libshadow.la
++
+ modesetting_drv_ladir = @moduledir@/drivers
+ 
+ modesetting_drv_la_SOURCES = \
+--- a/hw/xfree86/utils/cvt/cvt.c	Sun May  3 12:41:51 2015
++++ b/hw/xfree86/utils/cvt/cvt.c	Mon May  4 09:13:02 2015
+@@ -39,6 +39,13 @@
+ {
+     abort();
+ }
++
++/* added to quieten LogMessage undefined symbol error while compiling with Studio 12.4 */
++#include "os.h"
++_X_HIDDEN void
++LogMessage(MessageType type, const char *format, ...) {
++	abort();
++}
+ #endif
+ 
+ #include "xf86.h"
+--- a/hw/dmx/config/xdmxconfig.c	Mon May  4 10:01:10 2015
++++ b/hw/dmx/config/xdmxconfig.c	Mon May  4 10:01:43 2015
+@@ -63,6 +63,13 @@
+ {
+     abort();
+ }
++
++/* added to quieten LogMessage undefined symbol error while compiling with Studio 12.4 */
++#include "os.h"
++_X_HIDDEN void
++LogMessage(MessageType type, const char *format, ...) {
++       abort();
++}
+ #endif
+ 
+ #define DMX_INFO "xdmxconfig v0.9\nCopyright 2002 Red Hat Inc.\n"
+--- a/glx/glxdriswrast.c	Fri Jan  8 15:45:38 2016
++++ b/glx/glxdriswrast.c	Fri Jan  8 15:45:53 2016
+@@ -519,7 +519,7 @@
+     return NULL;
+ }
+ 
+-_X_EXPORT __GLXprovider __glXDRISWRastProvider = {
++__GLXprovider __glXDRISWRastProvider = {
+     __glXDRIscreenProbe,
+     "DRISWRAST",
+     NULL
+--- a/glx/glxscreens.c	Fri Jan  8 15:46:15 2016
++++ b/glx/glxscreens.c	Fri Jan  8 15:46:29 2016
+@@ -193,7 +193,7 @@
+     return dixLookupPrivate(&pScreen->devPrivates, glxScreenPrivateKey);
+ }
+ 
+-_X_EXPORT void
++void
+ GlxSetVisualConfigs(int nconfigs, void *configs, void **privates)
+ {
+     /* We keep this stub around for the DDX drivers that still
+--- a/include/input.h	Fri Jan  8 15:46:44 2016
++++ b/include/input.h	Fri Jan  8 15:47:06 2016
+@@ -604,7 +604,7 @@
+                           xEvent *xE,
+                           WindowPtr pWin, Window child, Bool calcChild);
+ extern Bool PointInBorderSize(WindowPtr pWin, int x, int y);
+-extern WindowPtr XYToWindow(SpritePtr pSprite, int x, int y);
++extern _X_EXPORT WindowPtr XYToWindow(SpritePtr pSprite, int x, int y);
+ extern int EventIsDeliverable(DeviceIntPtr dev, int evtype, WindowPtr win);
+ extern Bool ActivatePassiveGrab(DeviceIntPtr dev, GrabPtr grab,
+                                 InternalEvent *ev, InternalEvent *real_event);

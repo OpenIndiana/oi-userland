@@ -1,0 +1,148 @@
+diff --git a/Xi/exevents.c b/Xi/exevents.c
+index 106da3a..dd7e3a2 100644
+--- a/Xi/exevents.c
++++ b/Xi/exevents.c
+@@ -225,7 +225,16 @@ CopyKeyClass(DeviceIntPtr device, DeviceIntPtr master)
+ {
+     KeyClassPtr mk = master->key;
+ 
++#ifdef SUNSOFT
++    DeviceIntPtr mdev = dixLookupPrivate(&master->devPrivates,
++	HotkeyMapDevicePrivateKey);
++#endif
++
++#ifdef SUNSOFT
++    if ((device == master) || (device == mdev))
++#else
+     if (device == master)
++#endif
+         return;
+ 
+     mk->sourceid = device->id;
+diff --git a/config/hal.c b/config/hal.c
+index 2ead556..9de9dfc 100644
+--- a/config/hal.c
++++ b/config/hal.c
+@@ -123,6 +123,49 @@ get_prop_string_array(LibHalContext * hal_ctx, const char *udi,
+     return ret;
+ }
+ 
++#ifdef SUNSOFT
++static void
++add_extra_device(char *driver)
++{
++    DeviceIntPtr	dev;
++    char		*config_info = NULL;
++    InputOption 	*input_options = NULL;
++    InputAttributes	attrs = {0};
++
++    input_options = input_option_new(NULL, "_source", "server/hal");
++    if (!input_options){
++	LogMessage(X_ERROR, "config/hal: couldn't allocate first key/value pair\n");
++	goto unwind;
++    }
++
++    input_options = input_option_new(input_options, "driver", driver);
++    input_options = input_option_new(input_options, "name", driver);
++
++    if (!asprintf(&config_info, "hal:%s", driver) == -1) {
++	config_info = NULL;
++	LogMessage(X_ERROR, "config/hal: couldn't allocate name\n");
++	goto unwind;
++    }
++
++    /* Check for duplicate devices */
++    if (device_is_duplicate(config_info))
++	goto unwind;
++
++    LogMessage(X_INFO, "config/hal: Adding input device %s\n", driver);
++    if (NewInputDeviceRequest(input_options, &attrs, &dev) != Success) {
++	LogMessage(X_ERROR, "config/hal: NewInputDeviceRequest failed\n");
++	dev = NULL;
++	goto unwind;
++    }
++
++    dev->config_info = xstrdup(config_info);
++
++unwind:
++    free(config_info);
++    input_option_free_list(&input_options);
++}
++#endif
++
+ static void
+ device_added(LibHalContext * hal_ctx, const char *udi)
+ {
+@@ -382,6 +425,14 @@ device_added(LibHalContext * hal_ctx, const char *udi)
+             input_option_new(input_options, "xkb_options", xkb_opts.options);
+     input_options = input_option_new(input_options, "config_info", config_info);
+ 
++#ifdef SUNSOFT
++    InputOption *md = input_option_find(input_options, "mdriver");
++    if (md) {
++	char *mdriver = input_option_get_value(md);
++	add_extra_device (mdriver);
++    }
++#endif
++   
+     /* this isn't an error, but how else do you output something that the user can see? */
+     LogMessage(X_INFO, "config/hal: Adding input device %s\n", name);
+     if ((rc = NewInputDeviceRequest(input_options, &attrs, &dev)) != Success) {
+diff --git a/config/x11-input.fdi b/config/x11-input.fdi
+index b263f36..425aec2 100644
+--- a/config/x11-input.fdi
++++ b/config/x11-input.fdi
+@@ -71,6 +71,12 @@
+       <!-- If we're using Linux, we use evdev by default (falling back to
+            kbd otherwise). -->
+       <merge key="input.x11_driver" type="string">kbd</merge>
++        <match key="/org/freedesktop/Hal/devices/computer:system.formfactor" string="laptop">
++          <match key="/org/freedesktop/Hal/devices/computer:system.kernel.name"
++                string="SunOS">
++            <merge key="input.x11_options.mdriver" type="string">hotkey</merge>
++          </match>
++        </match>
+       <merge key="input.x11_options.XkbModel" type="string">pc105</merge>
+       <match key="/org/freedesktop/Hal/devices/computer:system.kernel.name"
+              string="Linux">
+diff --git a/include/inputstr.h b/include/inputstr.h
+index 5a38924..263b1b1 100644
+--- a/include/inputstr.h
++++ b/include/inputstr.h
+@@ -57,6 +57,11 @@ SOFTWARE.
+ #include "geext.h"
+ #include "privates.h"
+ 
++#ifdef SUNSOFT
++extern _X_EXPORT DevPrivateKeyRec HotkeyMapDevicePrivateKeyRec;
++#define HotkeyMapDevicePrivateKey (&HotkeyMapDevicePrivateKeyRec)
++#endif
++
+ #define BitIsOn(ptr, bit) (!!(((const BYTE *) (ptr))[(bit)>>3] & (1 << ((bit) & 7))))
+ #define SetBit(ptr, bit)  (((BYTE *) (ptr))[(bit)>>3] |= (1 << ((bit) & 7)))
+ #define ClearBit(ptr, bit) (((BYTE *)(ptr))[(bit)>>3] &= ~(1 << ((bit) & 7)))
+--- xorg-server-1.19.5/Xi/extinit.c.orig	Mon Oct 23 14:46:01 2017
++++ xorg-server-1.19.5/Xi/extinit.c	Mon Oct 23 14:46:10 2017
+@@ -371,6 +371,10 @@
+ 
+ DevPrivateKeyRec XIClientPrivateKeyRec;
+ 
++#ifdef SUNSOFT
++DevPrivateKeyRec HotkeyMapDevicePrivateKeyRec;
++#endif
++
+ /*****************************************************************
+  *
+  * Declarations of local routines.
+@@ -1290,6 +1290,11 @@
+         (&XIClientPrivateKeyRec, PRIVATE_CLIENT, sizeof(XIClientRec)))
+         FatalError("Cannot request private for XI.\n");
+ 
++#ifdef SUNSOFT   
++    if (!dixRegisterPrivateKey(&HotkeyMapDevicePrivateKeyRec, PRIVATE_DEVICE, 0))
++        FatalError("Cannot request private for hotkey.\n");
++#endif
++
+     if (!XIBarrierInit())
+         FatalError("Could not initialize barriers.\n");
+ 

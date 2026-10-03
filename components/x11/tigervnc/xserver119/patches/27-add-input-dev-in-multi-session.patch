@@ -1,0 +1,297 @@
+diff --git a/config/hal.c b/config/hal.c
+index ea574ca..e108f03 100644
+--- a/config/hal.c
++++ b/config/hal.c
+@@ -1,6 +1,7 @@
+ /*
+  * Copyright © 2007 Daniel Stone
+  * Copyright © 2007 Red Hat, Inc.
++ * Copyright (c) 2013 Oracle and/or its affiliates. All Rights Reserved.
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a
+  * copy of this software and associated documentation files (the "Software"),
+@@ -40,6 +41,23 @@
+ #include "config-backends.h"
+ #include "os.h"
+ 
++#if ((defined(__sparc__) || defined(__sparc)) && defined(SUNSOFT))
++#include <sys/stat.h>
++#include <unistd.h>
++
++#define MAX_DEVICES	4
++
++DeviceIntPtr added_devices[MAX_DEVICES];
++int num_added_devices = 0;
++Bool abort_on_fail_over = FALSE;
++static Bool do_abort = FALSE;
++
++extern int  num_total_disp_dev;
++extern int  num_session_disp_dev;
++extern char disp_dev_path[PATH_MAX];
++extern void GiveUp(int sig);
++#endif
++
+ #define LIBHAL_PROP_KEY "input.x11_options."
+ #define LIBHAL_XKB_PROP_KEY "input.xkb."
+ 
+@@ -124,6 +142,51 @@ get_prop_string_array(LibHalContext * hal_ctx, const char *udi,
+     return ret;
+ }
+ 
++#if defined(SUNSOFT) && (defined(__sparc__) || defined(__sparc))
++Bool check_inactive_session(char const *path) {
++    struct stat statbuf;
++    char linkpath[PATH_MAX];
++    ssize_t readstatus;
++    char *usbpath = NULL;
++    char *ptr;
++    char disppath[PATH_MAX];
++
++    if ((num_session_disp_dev == num_total_disp_dev) || !disp_dev_path[0])
++	return FALSE;
++
++    if (lstat(path, &statbuf) == 0 &&
++		(statbuf.st_mode & S_IFMT) == S_IFLNK) {
++	readstatus = readlink(path, linkpath, sizeof(linkpath));
++
++	if (readstatus > 0 && readstatus < sizeof(linkpath)) {
++	    linkpath[readstatus] = 0;
++	    usbpath = linkpath;
++	    if (strncmp(usbpath, "../..", sizeof("../..") - 1) == 0)
++		usbpath += sizeof("../..") - 1;
++	    if (strncmp(usbpath, "/devices", sizeof("/devices") - 1) == 0)
++		usbpath += sizeof("/devices") - 1;
++	}
++    }
++
++    if (!usbpath)
++	return FALSE;
++
++    if (ptr = strchr(usbpath + 1, '/'))
++	*ptr = 0;
++    else
++	return FALSE;
++    
++    strncpy(disppath, disp_dev_path, sizeof(disppath));
++
++    if (ptr = strchr(disppath + 1, '/'))
++	*ptr = 0;
++    else
++	return FALSE;
++
++    return (strcmp(usbpath, disppath));
++}
++#endif
++
+ static void
+ device_added(LibHalContext * hal_ctx, const char *udi)
+ {
+@@ -136,6 +199,11 @@ device_added(LibHalContext * hal_ctx, const char *udi)
+     struct xkb_options xkb_opts = { 0 };
+     int rc;
+ 
++#if ((defined(__sparc__) || defined(__sparc)) && defined(SUNSOFT))
++    if (do_abort)
++	return;
++#endif
++
+     LibHalPropertySet *set = NULL;
+     LibHalPropertySetIterator set_iter;
+     char *psi_key = NULL, *tmp_val;
+@@ -232,6 +300,28 @@ device_added(LibHalContext * hal_ctx, const char *udi)
+     input_options = input_option_new(input_options, "driver", driver);
+     input_options = input_option_new(input_options, "name", name);
+ 
++#if ((defined(__sparc__) || defined(__sparc)) && defined(SUNSOFT))
++    if (!strcmp(name, "keyboard") || !strcmp(name, "mouse")) {
++	if (check_inactive_session(path)) {
++	    if (abort_on_fail_over) {
++		/* M5: Input devices were removed, new input device added is to
++		   activate another session, reset it.
++		 */
++		do_abort = TRUE;
++		LogMessage(X_INFO, "config/hal: Server to abort\n");
++	    } else
++		/* M5: No removal of input devices happened, new input device 
++		   added is to activate another session, do nothing.
++		 */
++		LogMessage(X_INFO, "config/hal: Not adding input device %s\n", name);
++
++            goto unwind;
++	} else
++	    /* M5: new input device added is to activate current session. */
++	    abort_on_fail_over = FALSE;
++    }
++#endif
++
+     if (asprintf(&config_info, "hal:%s", udi) == -1) {
+         config_info = NULL;
+         LogMessage(X_ERROR, "config/hal: couldn't allocate name\n");
+@@ -402,6 +492,26 @@ device_added(LibHalContext * hal_ctx, const char *udi)
+         goto unwind;
+     }
+ 
++#if ((defined(__sparc__) || defined(__sparc)) && defined(SUNSOFT))
++    if ((num_session_disp_dev < num_total_disp_dev) &&
++		(!strcmp(name, "keyboard") || !strcmp(name, "mouse"))) {
++	int i;
++
++	if (num_added_devices == MAX_DEVICES) {
++	    LogMessage(X_ERROR, "config/hal: Too manay devices to add\n");
++	    goto unwind;
++	}
++
++	for (i = 0; i < MAX_DEVICES; i++) {
++	    if (added_devices[i] == 0) {
++		added_devices[i] = dev;
++		num_added_devices++;
++		break;
++	    }
++	}
++    }
++#endif
++	
+  unwind:
+     if (set)
+         libhal_free_property_set(set);
+@@ -434,6 +544,12 @@ device_added(LibHalContext * hal_ctx, const char *udi)
+ 
+     dbus_error_free(&error);
+ 
++#if ((defined(__sparc__) || defined(__sparc)) && defined(SUNSOFT))
++    if (do_abort) {
++	config_fini();
++	GiveUp(0);
++    }
++#endif
+     return;
+ }
+ 
+diff --git a/hw/xfree86/common/xf86Xinput.c b/hw/xfree86/common/xf86Xinput.c
+index c56a2b9..a3a7645 100644
+--- a/hw/xfree86/common/xf86Xinput.c
++++ b/hw/xfree86/common/xf86Xinput.c
+@@ -45,6 +45,9 @@
+  * the sale, use or other dealings in this Software without prior written
+  * authorization from the copyright holder(s) and author(s).
+  */
++/*
++ * Copyright (c) 2013 Oracle and/or its affiliates. All Rights Reserved.
++ */
+ 
+ #ifdef HAVE_XORG_CONFIG_H
+ #include <xorg-config.h>
+@@ -113,6 +116,15 @@ static int
+ static InputInfoPtr *new_input_devices;
+ static int new_input_devices_count;
+ 
++#if ((defined(__sparc__) || defined(__sparc)) && defined(sun))
++#define MAX_DEVICES       	4
++extern int  num_total_disp_dev;
++extern int  num_session_disp_dev;
++extern DeviceIntPtr added_devices[MAX_DEVICES];
++extern int num_added_devices;
++extern Bool abort_on_fail_over;
++#endif
++
+ /**
+  * Eval config and modify DeviceVelocityRec accordingly
+  */
+@@ -1469,6 +1481,25 @@ xf86DisableDevice(DeviceIntPtr dev, Bool panic)
+         SendDevicePresenceEvent(dev->id, DeviceUnrecoverable);
+         DeleteInputDeviceRequest(dev);
+     }
++
++#if ((defined(__sparc__) || defined(__sparc)) && defined(sun))
++    if (num_session_disp_dev < num_total_disp_dev) {
++	int i;
++
++	for (i = 0; i < MAX_DEVICES; i++) {
++	    if (added_devices[i] == dev) {
++		added_devices[i] = 0;
++		if (--num_added_devices == 0)
++		    /* M5: will abort server when another X session
++		       is activated.
++		     */
++		    abort_on_fail_over = TRUE;
++
++		break;
++	    }
++	}
++    }
++#endif
+ }
+ 
+ /**
+diff --git a/hw/xfree86/common/xf86pciBus.c b/hw/xfree86/common/xf86pciBus.c
+index 8158c2b..f812a3b 100644
+--- a/hw/xfree86/common/xf86pciBus.c
++++ b/hw/xfree86/common/xf86pciBus.c
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (c) 1997-2003 by The XFree86 Project, Inc.
++ * Copyright (c) 2013 Oracle and/or its affiliates. All Rights Reserved.
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a
+  * copy of this software and associated documentation files (the "Software"),
+@@ -54,6 +55,12 @@
+ /* Bus-specific globals */
+ int pciSlotClaimed = 0;
+ 
++#if ((defined(__sparc__) || defined(__sparc)) && defined (sun))
++int  num_total_disp_dev = 0;
++int  num_session_disp_dev = 0;
++char disp_dev_path[PATH_MAX];
++#endif
++
+ #define PCIINFOCLASSES(c) \
+     ( (((c) & 0x00ff0000) == (PCI_CLASS_PREHISTORIC << 16)) \
+       || (((c) & 0x00ff0000) == (PCI_CLASS_DISPLAY << 16)) \
+@@ -115,6 +122,11 @@ xf86PciProbe(void)
+                 primaryBus.id.pci = info;
+             }
+             info->user_data = 0;
++
++#if ((defined(__sparc__) || defined(__sparc)) && defined (sun))
++	    if (IS_VGA(info->device_class))
++		num_total_disp_dev++;
++#endif
+         }
+     }
+     free(iter);
+@@ -483,6 +495,15 @@ xf86PciProbeDev(DriverPtr drvp)
+     const struct pci_id_match *const devices = drvp->supported_devices;
+     GDevPtr *devList;
+     const unsigned numDevs = xf86MatchDevice(drvp->driverName, &devList);
++#if ((defined(__sparc__) || defined(__sparc)) && defined (sun))
++    struct sol_device_private {
++	struct pci_device  base;
++	const char * device_string;
++    };
++#define DEV_PATH(dev)    (((struct sol_device_private *) dev)->device_string)
++
++    num_session_disp_dev = numDevs;
++#endif
+ 
+     for (i = 0; i < numDevs; i++) {
+         struct pci_device_iterator *iter;
+@@ -560,6 +581,11 @@ xf86PciProbeDev(DriverPtr drvp)
+                     if ((*drvp->PciProbe) (drvp, entry, pPci,
+                                            devices[j].match_data)) {
+                         foundScreen = TRUE;
++
++#if ((defined(__sparc__) || defined(__sparc)) && defined (sun))
++			strncpy(disp_dev_path, DEV_PATH(pPci), sizeof(disp_dev_path));
++#endif
++
+                     }
+                     else
+                         xf86UnclaimPciSlot(pPci, devList[i]);
+@@ -568,6 +594,7 @@ xf86PciProbeDev(DriverPtr drvp)
+                 break;
+             }
+         }
++
+     }
+     free(devList);
+ 

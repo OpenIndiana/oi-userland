@@ -1,0 +1,233 @@
+diff --git a/man/Xserver.man b/man/Xserver.man
+index ba65c9e..53c7912 100644
+--- a/man/Xserver.man
++++ b/man/Xserver.man
+@@ -1,4 +1,26 @@
+ '\" t
++.\" 
++.\" Copyright (c) 2007, 2015, Oracle and/or its affiliates. All rights reserved.
++.\" 
++.\" Permission is hereby granted, free of charge, to any person obtaining a
++.\" copy of this software and associated documentation files (the "Software"),
++.\" to deal in the Software without restriction, including without limitation
++.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
++.\" and/or sell copies of the Software, and to permit persons to whom the
++.\" Software is furnished to do so, subject to the following conditions:
++.\"
++.\" The above copyright notice and this permission notice (including the next
++.\" paragraph) shall be included in all copies or substantial portions of the
++.\" Software.
++.\"
++.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++.\" DEALINGS IN THE SOFTWARE.
++.\"
+ .\"
+ .\" Copyright 1984 - 1991, 1993, 1994, 1998  The Open Group
+ .\"
+@@ -32,14 +54,22 @@ Xserver \- X Window System display server
+ .SH SYNOPSIS
+ .B X
+ [option ...]
++.PP
++\fB/usr/bin/Xserver\fP [\fB-c\fP \fIclass\fP] \fB:\fP\fIdisplaynumber\fP [\fIX server arguments\fP]
+ .SH DESCRIPTION
+ .I X
+ is the generic name for the X Window System display server.  It is
+ frequently a link or a copy of the appropriate server binary for
+ driving the most frequently used server on a given machine.
++In this release of __distroname__, /usr/bin/X is a link to the
++Xserver program which starts the appropriate X server based on properties
++set for the service management facility, under the service identifier
++\fIsvc:/application/x11/x11-server\fP.  The properties are described in the
++SMF PROPERTIES section below.
+ .SH "STARTING THE SERVER"
+-The X server is usually started from the X Display Manager program
+-\fIxdm\fP(1) or a similar display manager program.
++On __distroname__, the X server is usually started from the GNOME
++Display Manager program \fIgdm\fP(__adminmansuffix__).   This role may also be performed
++by the X Display Manager program \fIxdm\fP(1), or another display manager. 
+ This utility is run from the system boot files and takes care of keeping
+ the server running, prompting for usernames and passwords, and starting up
+ the user sessions.
+@@ -205,13 +235,14 @@ with
+ .BR "\-nolisten tcp" .
+ This option may be issued multiple times to disable listening to different
+ transport types.
+-Supported transport types are platform dependent, but commonly include:
++The current transport names supported on __distroname__ are as follows: 
+ .TS
+ l l.
+ tcp     TCP over IPv4 or IPv6
+ inet    TCP over IPv4 only
+ inet6   TCP over IPv6 only
+-unix    UNIX Domain Sockets
++unix    UNIX Domain Sockets (/tmp/.X11-unix/X\fIn\fP)
++pipe    Named pipes (/tmp/.X11-pipe/X\fIn\fP)
+ local   Platform preferred local connection method
+ .TE
+ .TP 8
+@@ -417,7 +448,7 @@ located in the XKB base directory or a subdirectory, and specified as the
+ relative path from the XKB base directory.  The default XKB base directory is
+ .IR __projectroot__/lib/X11/xkb .
+ .TP 8
+-.BR [+-]accessx " [ \fItimeout\fP [ \fItimeout_mask\fP [ \fIfeedback\fP [ \fIoptions_mask\fP ] ] ] ]"
++.BR [+-]accessx " [\fItimeout\fP[\fItimeout_mask\fP[\fIfeedback\fP[\fIoptions_mask\fP]]]]"
+ enables(+) or disables(-) AccessX key sequences.
+ .TP 8
+ .B \-xkbdir \fIdirectory\fP
+@@ -572,6 +603,110 @@ the following font path:
+     /usr/share/fonts/default/Type1,
+     /usr/share/fonts/default/ghostscript
+ .fi
++ 
++.SH SMF PROPERTIES
++.PP
++Configuration properties for the \fB/usr/bin/Xserver\fP program are
++managed by the service management facility, \fBsmf\fR(5), under the service 
++identifier:
++.PP
++.nf
++svc:/application/x11/x11-server
++.fi
++Use \fBsvccfg\fR(__adminmansuffix__) to make configuration changes and to view configuration
++information for this service\&. 
++.PP
++\fB/usr/bin/Xserver\fP will look for configuration options in the 
++instances in this order, stopping at the first match for the given
++property:
++.TP
++1.
++\fB:display\fP\fIN\fP (where \fIN\fP is the display number of the X server, 
++i.e. \fB:display0\fP for :0)
++.TP
++2.
++Any class names provided via the \fB-c\fP options to
++\fB/usr/bin/Xserver\fP.  Multiple \fB-c\fP options may be provided, if so,
++they are searched in the order found on the command line.
++.TP
++3.
++If any XDMCP options are provided to open a remote display connection,
++\fB:remote\fP, otherwise \fB:local\fP
++.TP
++4.
++The default properties for the service
++.PP
++Class names may be any valid FMRI instance name.   Sun reserves all class names
++beginning with lowercase letters for its own use - customers wishing to create
++their own class names may use names beginning with an uppercase letter.
++
++.PP
++These properties may be set in any instance of x11-server or for the service
++itself:
++.TP
++.B options/server 
++(Type astring) The absolute path to the X server binary to run, currently
++must be one of:
++.sp
++.nf
++\fB/usr/bin/Xorg\fP
++\fB/usr/bin/Xdmx\fP
++\fB/usr/bin/Xvfb\fP
++\fB/usr/bin/Xvnc\fP
++.fi
++.TP
++.B options/config_file
++(Type string) Setting this to a filename causes this file to be used as the
++configuration file for the X server.   Currently this property is only
++available when used with the Xorg server.  The value of this property must
++be a relative path from one of the directories in the Xorg config file
++search path, and not an absolute path.
++.TP
++.B options/tcp_listen
++(Type boolean) Setting this to false disables listening for incoming TCP/IP 
++connections (see \fB-nolisten tcp\fP option above).
++.TP
++.B options/default_depth
++(Type int) Sets the depth of the default visual of the X server started.
++.TP
++.B options/server_args
++(Type astring) Sets additional arguments to pass to the X server started.  Care
++must be used when using options specific to a particular X server as then it
++may cause failure to start the X server if the server to be started is later
++changed to one that does not support those options.
++.TP
++.B options/display_0_on_console
++(Type boolean) Setting this to true starts the X server with a DISPLAY ":0.0"
++on "/dev/console" rather than the first available "/dev/vt/#", see vt(4i),
++this preserves backward compatibility with programs such as "xterm -C"
++that expect have access to "/dev/console".  X servers with any other DISPLAY
++are not affected. The default is false.
++.SS "Example: Allow remote access"
++.PP
++The following command allows access from remote clients.
++.sp
++.nf
++svccfg -s svc:/application/x11/x11-server setprop options/tcp_listen = true
++.fi
++.sp
++Restart the Xserver by either logging out and logging back in, or manually 
++if the Xserver was started from the command line.
++.sp
++.SS "Example: Use of VESA driver"
++.PP
++The following command overrides the default Xorg driver selection to use the
++/usr/lib/X11/xorg.conf.vesa configuration file to select the "vesa" driver.
++.sp
++.nf
++svccfg -s svc:/application/x11/x11-server setprop options/config_file=xorg.conf.vesa
++.fi
++.SS "Example: Enabling the XINERAMA extension"
++.PP
++The following command enables the XINERAMA extension.
++.sp
++.nf
++svccfg -s svc:/application/x11/x11-server setprop options/server_args=+xinerama
++.fi
+ 
+ .SH FILES
+ .TP 30
+@@ -587,8 +722,12 @@ Outline font directories
+ .I /tmp/.X11-unix/X\fBn\fP
+ Unix domain socket for display number \fBn\fP
+ .TP 30
+-.I /usr/adm/X\fBn\fPmsgs
+-Error log file for display number \fBn\fP if run from \fIinit\fP(__adminmansuffix__)
++.I /tmp/.X11-pipe/X\fBn\fP
++Named pipe (FIFO) for display number \fBn\fP
++.TP 30
++.I /var/log/gdm/:\fBn\fP.log
++Default error log file for display number \fBn\fP if the server is run 
++from \fIgdm\fP(__adminmansuffix__)
+ .TP 30
+ .I __projectroot__/lib/X11/xdm/xdm-errors
+ Default error log file if the server is run from \fIxdm\fP(1)
+@@ -610,14 +749,21 @@ Security: \fIXsecurity\fP(__miscmansuffix__), \fIxauth\fP(1), \fIXau\fP(1),
+ \fIxdm\fP(1), \fIxhost\fP(1), \fIxfwp\fP(1),
+ .I "Security Extension Specification"
+ .PP
+-Starting the server: \fIstartx\fP(1), \fIxdm\fP(1), \fIxinit\fP(1)
++Starting the server: \fIgdm\fP(1m), \fIstartx\fP(1), \fIxdm\fP(1), \fIxinit\fP(1)
+ .PP
+ Controlling the server once started: \fIxset\fP(1), \fIxsetroot\fP(1),
+ \fIxhost\fP(1), \fIxinput\fP(1), \fIxrandr\fP(1)
++.\" Only list the servers shipped on Solaris
+ .PP
+ Server-specific man pages:
+-\fIXorg\fP(1), \fIXdmx\fP(1), \fIXephyr\fP(1), \fIXnest\fP(1),
+-\fIXvfb\fP(1), \fIXquartz\fP(1), \fIXWin\fP(1).
++\fIXorg\fP(1), \fIXdmx\fP(1), \fIXephyr\fP(1), \fIXvfb\fP(1), \fIXvnc\fP(1).
++.PP
++Service management framework:
++\fIsmf\fP(__miscmansuffix__), \fIsvcadm\fP(__adminmansuffix__), \fIsvccfg\fP(__adminmansuffix__)
++.PP
++Dtrace probes:
++\fI/usr/share/doc/Xserver/Xserver-DTrace.html\fP,
++\fI/usr/share/doc/Xserver/Xserver-DTrace.txt\fP
+ .PP
+ Server internal documentation:
+ .I "Definition of the Porting Layer for the X v11 Sample Server"

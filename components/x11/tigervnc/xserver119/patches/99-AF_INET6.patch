@@ -1,0 +1,12 @@
+We need to include <sys/socket.h> for AF_INET6 definition needed by xtrans-1.6.0
+
+--- xorg-server-1.19.7/xkb/ddxLoad.c.orig	2026-04-03 14:31:47.045889236 +0200
++++ xorg-server-1.19.7/xkb/ddxLoad.c	2026-04-03 14:32:42.050102259 +0200
+@@ -77,6 +77,7 @@
+ # define TRANS_SERVER
+ # define prmsg(lvl,...) \
+         if (lvl <= 1) { LogMessage(X_ERROR, __VA_ARGS__); } else ((void)0)
++# include <sys/socket.h>
+ # include <X11/Xtrans/Xtransutil.c>
+ # ifndef XKM_OUTPUT_DIR_MODE
+ #  define XKM_OUTPUT_DIR_MODE 0775
