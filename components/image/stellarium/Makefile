@@ -18,12 +18,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stellarium
-COMPONENT_VERSION=		26.2
+COMPONENT_VERSION=		26.3
 COMPONENT_SUMMARY=	Planetarium with realistic 3D sky just like seeing with naked eye, binoculars or telescope.
 COMPONENT_PROJECT_URL=	https://stellarium.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:43c3c124a44be60b70cd288d8f55fc32ce7f5a02f16f762bd4858da780a85882
+COMPONENT_ARCHIVE_HASH=	sha256:979716e89df588eb0a7df33c414c22c0d3c0ead0a455bdfe87ae827cafd8e254
 COMPONENT_ARCHIVE_URL=  https://github.com/Stellarium/stellarium/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		image/stellarium
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
@@ -37,7 +37,8 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_POST_UNPACK_ACTION += ( \
 	$(MV) $(SOURCE_DIR)/skycultures/norse_edda/illustrations/thiazi\'s_eyes.png $(SOURCE_DIR)/skycultures/norse_edda/illustrations/thiazis_eyes.png; \
 	$(MV) $(SOURCE_DIR)/skycultures/norse_edda/illustrations/freyr\'s_sickle.png $(SOURCE_DIR)/skycultures/norse_edda/illustrations/freyrs_sickle.png; \
-	$(GSED) -i -e "s/thiazi's_eyes.png/thiazis_eyes.png/" -e "s/freyr's_sickle.png/freyrs_pickle.png/" $(SOURCE_DIR)/skycultures/norse_edda/index.json );
+	$(MV) $(SOURCE_DIR)/skycultures/egyptian_dendera/illustrations/bull\'s_thigh.png $(SOURCE_DIR)/skycultures/egyptian_dendera/illustrations/bulls_thigh.png; \
+	$(GSED) -i -e "s/thiazi's_eyes.png/thiazis_eyes.png/" -e "s/freyr's_sickle.png/freyrs_pickle.png/" -e "s/bull's_thigh.png/bulls_thigh.png/" $(SOURCE_DIR)/skycultures/norse_edda/index.json );
 
 CFLAGS += $(XPG8MODE)
 
