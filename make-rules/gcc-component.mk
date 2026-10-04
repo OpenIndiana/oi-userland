@@ -193,8 +193,8 @@ COMPONENT_TEST_TARGETS = mail-report.log
 COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
-# Required by the test suite
-TEST_REQUIRED_PACKAGES += developer/test/dejagnu
-TEST_REQUIRED_PACKAGES += developer/build/autoconf-archive
-TEST_REQUIRED_PACKAGES += developer/build/autogen
-TEST_REQUIRED_PACKAGES += system/extended-system-utilities
+# Build and test dependencies
+USERLAND_REQUIRED_PACKAGES += developer/build/autoconf-archive
+USERLAND_REQUIRED_PACKAGES += developer/build/autogen
+USERLAND_REQUIRED_PACKAGES += system/extended-system-utilities
+USERLAND_TEST_REQUIRED_PACKAGES += developer/test/dejagnu
