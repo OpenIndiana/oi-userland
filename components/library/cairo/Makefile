@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cairo
 COMPONENT_VERSION=      1.18.6
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Vector graphics library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -38,7 +39,7 @@ PATH= $(PATH.gnu)
 # to avoid the following error
 # ld: fatal: recording name conflict: file 'src/libcairo.so.2.11800.0' and file '/usr/lib/amd64/libcairo.so' provide identical dependency names: libcairo.so.2
 # ld: fatal: file processing errors. No output written to test/any2ppm
-COMPONENT_POST_CONFIGURE_ACTION= $(GSED) -i -e '/^ LINK_ARGS/s:/usr/lib/amd64/libcairo.so :$(@D)/src/libcairo.so :' -e "s/\/usr\/lib\/amd64\/pkgconfig\/..\/..\/..\/lib\/amd64\/libcairo.so//g" $(@D)/build.ninja
+COMPONENT_POST_CONFIGURE_ACTION= $(GSED) -i -e '/^ LINK_ARGS/s:/usr/lib/$(MACH64)/libcairo.so :$(@D)/src/libcairo.so :' -e "s/\/usr\/lib\/$(MACH64)\/pkgconfig\/..\/..\/..\/lib\/$(MACH64)\/libcairo.so//g" $(@D)/build.ninja
 
 COMPONENT_BUILD_ARGS= -j1
 
