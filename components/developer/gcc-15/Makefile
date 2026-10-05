@@ -16,7 +16,7 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 15.3.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
@@ -38,14 +38,15 @@ GMP_ARCHIVE_HASH= sha256:ac28211a7cfb609bae2e2c8d6058d66c8fe96434f740cf6fe2e47b0
 # commented out.  Once this component is packaged, we can skip the bootstrap by
 # setting the GCC_VERSION to our major version (and so the GCC_VERSION setting
 # here should be uncommented).
-#GCC_VERSION = 15
+GCC_VERSION = 15
 
 include $(WS_MAKE_RULES)/gcc-component.mk
 
-# Use gcc's default flags
-CFLAGS=
-CPPFLAGS=
-CXXFLAGS=
+# Use gcc's default flags (only if we bootstrap). Once this component is packaged, we can use
+# the default settings from gcc-component.mk and thus comment out the next three lines:
+#CFLAGS=
+#CPPFLAGS=
+#CXXFLAGS=
 
 CPPFLAGS += " -D_TS_ERRNO"
 LDFLAGS= "-R$OPT/lib"
