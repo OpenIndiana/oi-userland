@@ -99,11 +99,11 @@ CXXFLAGS= -O2
 FCFLAGS= -O2
 
 COMMON_ENV=  LD_OPTIONS="-zignore -zcombreloc -i"
-COMMON_ENV+= LD_FOR_TARGET=/usr/bin/ld
-COMMON_ENV+= LD_FOR_HOST=/usr/bin/ld
+COMMON_ENV+= LD_FOR_TARGET=$(LD)
+COMMON_ENV+= LD_FOR_HOST=$(LD)
 COMMON_ENV+= STRIP="/usr/bin/strip -x"
 COMMON_ENV+= STRIP_FOR_TARGET="/usr/bin/strip -x"
-COMMON_ENV+= LD=/usr/bin/ld
+COMMON_ENV+= LD=$(LD)
 
 CONFIGURE_ENV+= $(COMMON_ENV)
 COMPONENT_BUILD_ENV+= $(COMMON_ENV)
@@ -126,7 +126,7 @@ CONFIGURE_OPTIONS+= --with-bugurl="https://bugs.openindiana.org"
 
 # Toolchain options
 CONFIGURE_OPTIONS+= --without-gnu-ld
-CONFIGURE_OPTIONS+= --with-ld=/usr/bin/ld
+CONFIGURE_OPTIONS+= --with-ld=$(LD)
 CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/$(GNU_TRIPLET)/bin
 
 # If the compiler used to build matches the compiler being built, there is no
