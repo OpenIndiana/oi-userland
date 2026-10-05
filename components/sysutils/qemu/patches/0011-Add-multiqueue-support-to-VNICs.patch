@@ -1,0 +1,458 @@
+From e470e93aaa86ec8a457ffde50e580e9e6b1e499a Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <illumos@fiddaman.net>
+Date: Wed, 19 Aug 2026 20:14:46 +0000
+Subject: Add multiqueue support to VNICs
+
+---
+ net/vnic.c    | 259 +++++++++++++++++++++++++++++++++++++++-----------
+ qapi/net.json |   6 +-
+ 2 files changed, 207 insertions(+), 58 deletions(-)
+
+diff --git a/net/vnic.c b/net/vnic.c
+index 481661b583..abcfc8af8b 100644
+--- a/net/vnic.c
++++ b/net/vnic.c
+@@ -2,6 +2,7 @@
+  * QEMU System Emulator Solaris VNIC support
+  *
+  * Copyright 2016 Joyent, Inc.
++ * Copyright 2026 OmniOS Community Edition (OmniOSce) Association.
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a
+  * copy of this software and associated documentation files (the
+@@ -30,6 +31,7 @@
+ 
+ #include <fcntl.h>
+ #include <libdlpi.h>
++#include <netinet/in.h>
+ #include <stdbool.h>
+ #include <sys/dlpi.h>
+ #include <sys/ethernet.h>
+@@ -44,43 +46,59 @@
+ #include "qemu/error-report.h"
+ 
+ #define	VNIC_BUFSIZE	65536
++#define	VNIC_MAX_QUEUES	16
+ 
+-typedef struct VNICState {
++typedef struct VNICState VNICState;
++
++/*
++ * State that is shared between all of the queues on a VNIC netdev. There is
++ * a single DLPI stream to the underlying VNIC; inbound packets are steered
++ * to a queue based on a hash of the flow, and every queue transmits through
++ * the same stream.
++ */
++typedef struct VNICShared {
++	dlpi_handle_t	vsh_hdl;
++	int		vsh_fd;
++	uint_t		vsh_sap;
++	int		vsh_nqueues;
++	int		vsh_refcnt;
++	bool		vsh_rpoll;
++	bool		vsh_wpoll;
++	uint8_t		vsh_buf[VNIC_BUFSIZE];
++	VNICState	*vsh_queues[VNIC_MAX_QUEUES];
++} VNICShared;
++
++struct VNICState {
+ 	NetClientState	vns_nc;
+-	int		vns_fd;
+-	bool		vns_rpoll;
+-	bool		vns_wpoll;
+-	uint8_t		vns_buf[VNIC_BUFSIZE];
+-	uint_t		vns_sap;
+-	dlpi_handle_t	vns_hdl;
+-} VNICState;
++	VNICShared	*vns_shared;
++};
+ 
+-static void vnic_update_fd_handler(VNICState *);
++static void vnic_update_fd_handler(VNICShared *);
+ 
+ static void
+-vnic_read_poll(VNICState *vsp, bool enable)
++vnic_read_poll(VNICShared *vsh, bool enable)
+ {
+-	vsp->vns_rpoll = enable;
+-	vnic_update_fd_handler(vsp);
++	vsh->vsh_rpoll = enable;
++	vnic_update_fd_handler(vsh);
+ }
+ 
+ static void
+-vnic_write_poll(VNICState *vsp, bool enable)
++vnic_write_poll(VNICShared *vsh, bool enable)
+ {
+-	vsp->vns_wpoll = enable;
+-	vnic_update_fd_handler(vsp);
++	vsh->vsh_wpoll = enable;
++	vnic_update_fd_handler(vsh);
+ }
+ 
+ static void
+ vnic_poll(NetClientState *ncp, bool enable)
+ {
+ 	VNICState *vsp = DO_UPCAST(VNICState, vns_nc, ncp);
+-	vnic_read_poll(vsp, true);
+-	vnic_write_poll(vsp, true);
++	vnic_read_poll(vsp->vns_shared, true);
++	vnic_write_poll(vsp->vns_shared, true);
+ }
+ 
+ static int
+-vnic_read_packet(VNICState *vsp, uint8_t *buf, int len)
++vnic_read_packet(VNICShared *vsh, uint8_t *buf, int len)
+ {
+ 	struct strbuf sbuf;
+ 	int flags, ret;
+@@ -90,11 +108,11 @@ vnic_read_packet(VNICState *vsp, uint8_t *buf, int len)
+ 	sbuf.buf = (char *)buf;
+ 
+ 	do {
+-		ret = getmsg(vsp->vns_fd, NULL, &sbuf, &flags);
++		ret = getmsg(vsh->vsh_fd, NULL, &sbuf, &flags);
+ 	} while (ret == -1 && errno == EINTR);
+ 
+ 	if (ret == -1 && errno == EAGAIN) {
+-		vnic_write_poll(vsp, true);
++		vnic_write_poll(vsh, true);
+ 		return (0);
+ 	}
+ 
+@@ -105,7 +123,7 @@ vnic_read_packet(VNICState *vsp, uint8_t *buf, int len)
+ }
+ 
+ static int
+-vnic_write_packet(VNICState *vsp, const uint8_t *buf, int len)
++vnic_write_packet(VNICShared *vsh, const uint8_t *buf, int len)
+ {
+ 	struct strbuf sbuf;
+ 	int flags, ret;
+@@ -115,11 +133,11 @@ vnic_write_packet(VNICState *vsp, const uint8_t *buf, int len)
+ 	sbuf.buf = (char *)buf;
+ 
+ 	do {
+-		ret = putmsg(vsp->vns_fd, NULL, &sbuf, flags);
++		ret = putmsg(vsh->vsh_fd, NULL, &sbuf, flags);
+ 	} while (ret == -1 && errno == EINTR);
+ 
+ 	if (ret == -1 && errno == EAGAIN) {
+-		vnic_write_poll(vsp, true);
++		vnic_write_poll(vsh, true);
+ 		return (0);
+ 	}
+ 
+@@ -134,37 +152,134 @@ vnic_send_completed(NetClientState *nc, ssize_t len)
+ {
+ 	VNICState *vsp = DO_UPCAST(VNICState, vns_nc, nc);
+ 
+-	vnic_read_poll(vsp, true);
++	vnic_read_poll(vsp->vns_shared, true);
++}
++
++static uint32_t
++vnic_hash(uint32_t hash, const uint8_t *buf, size_t len)
++{
++	while (len-- > 0) {
++		hash += *buf++;
++		hash += hash << 10;
++		hash ^= hash >> 6;
++	}
++
++	return (hash);
++}
++
++/*
++ * Select the queue that should receive an inbound packet. The packet is
++ * hashed on the IP flow (addresses and, for TCP and UDP, ports) so that a
++ * flow always maps to the same queue, in the same spirit as the steering
++ * done by a multi-queue-aware NIC. Non-IP traffic hashes on the MAC
++ * addresses. Only queues that the guest has started are candidates; if
++ * none have been started yet, queue 0 is used and the packet is left to
++ * QEMU's queuing machinery, matching the single-queue behaviour during
++ * boot.
++ */
++static VNICState *
++vnic_select_queue(VNICShared *vsh, const uint8_t *buf, size_t len)
++{
++	VNICState *cand[VNIC_MAX_QUEUES];
++	uint32_t hash = 0;
++	size_t l3 = 2 * ETHERADDRL + 2;
++	uint16_t etype;
++	int i, ncand;
++
++	if (vsh->vsh_nqueues == 1)
++		return (vsh->vsh_queues[0]);
++
++	ncand = 0;
++	for (i = 0; i < vsh->vsh_nqueues; i++) {
++		if (qemu_can_send_packet(&vsh->vsh_queues[i]->vns_nc))
++			cand[ncand++] = vsh->vsh_queues[i];
++	}
++	if (ncand == 0)
++		return (vsh->vsh_queues[0]);
++	if (ncand == 1)
++		return (cand[0]);
++
++	if (len < l3)
++		return (cand[0]);
++
++	etype = (buf[l3 - 2] << 8) | buf[l3 - 1];
++	if (etype == ETHERTYPE_VLAN && len >= l3 + 4) {
++		etype = (buf[l3 + 2] << 8) | buf[l3 + 3];
++		l3 += 4;
++	}
++
++	switch (etype) {
++	case ETHERTYPE_IP:
++		if (len < l3 + 20)
++			goto nonip;
++		/* Source and destination IPv4 addresses. */
++		hash = vnic_hash(hash, buf + l3 + 12, 8);
++		if (buf[l3 + 9] == IPPROTO_TCP ||
++		    buf[l3 + 9] == IPPROTO_UDP) {
++			size_t l4 = l3 + ((buf[l3] & 0xf) << 2);
++
++			if (len >= l4 + 4)
++				hash = vnic_hash(hash, buf + l4, 4);
++		}
++		break;
++	case ETHERTYPE_IPV6:
++		if (len < l3 + 40)
++			goto nonip;
++		/* Source and destination IPv6 addresses. */
++		hash = vnic_hash(hash, buf + l3 + 8, 32);
++		if (buf[l3 + 6] == IPPROTO_TCP ||
++		    buf[l3 + 6] == IPPROTO_UDP) {
++			if (len >= l3 + 44)
++				hash = vnic_hash(hash, buf + l3 + 40, 4);
++		}
++		break;
++	default:
++nonip:
++		hash = vnic_hash(hash, buf, 2 * ETHERADDRL);
++		break;
++	}
++
++	hash += hash << 3;
++	hash ^= hash >> 11;
++	hash += hash << 15;
++
++	return (cand[hash % ncand]);
+ }
+ 
+ /* outside world -> VM */
+ static void
+ vnic_send(void *opaque)
+ {
+-	VNICState *vsp = opaque;
++	VNICShared *vsh = opaque;
+ 	int ret;
+ 
+ 	do {
+-		ret = vnic_read_packet(vsp, vsp->vns_buf,
+-		    sizeof (vsp->vns_buf));
++		VNICState *vsp;
++
++		ret = vnic_read_packet(vsh, vsh->vsh_buf,
++		    sizeof (vsh->vsh_buf));
+ 		if (ret <= 0)
+ 			break;
+ 
+-		ret = qemu_send_packet_async(&vsp->vns_nc, vsp->vns_buf, ret,
++		vsp = vnic_select_queue(vsh, vsh->vsh_buf, ret);
++		ret = qemu_send_packet_async(&vsp->vns_nc, vsh->vsh_buf, ret,
+ 		    vnic_send_completed);
+ 
+ 		if (ret == 0)
+-			vnic_read_poll(vsp, false);
++			vnic_read_poll(vsh, false);
+ 
+-	} while (ret > 0 && qemu_can_send_packet(&vsp->vns_nc));
++	} while (ret > 0);
+ }
+ 
+ static void
+ vnic_writable(void *opaque)
+ {
+-	VNICState *vsp = opaque;
+-	vnic_write_poll(vsp, false);
+-	qemu_flush_queued_packets(&vsp->vns_nc);
++	VNICShared *vsh = opaque;
++	int i;
++
++	vnic_write_poll(vsh, false);
++	for (i = 0; i < vsh->vsh_nqueues; i++)
++		qemu_flush_queued_packets(&vsh->vsh_queues[i]->vns_nc);
+ }
+ 
+ /* VM -> outside world */
+@@ -173,7 +288,7 @@ vnic_receive(NetClientState *ncp, const uint8_t *buf, size_t size)
+ {
+ 	VNICState *vsp = DO_UPCAST(VNICState, vns_nc, ncp);
+ 
+-	return (vnic_write_packet(vsp, buf, size));
++	return (vnic_write_packet(vsp->vns_shared, buf, size));
+ }
+ 
+ 
+@@ -181,19 +296,25 @@ static void
+ vnic_cleanup(NetClientState *ncp)
+ {
+ 	VNICState *vsp = DO_UPCAST(VNICState, vns_nc, ncp);
++	VNICShared *vsh = vsp->vns_shared;
+ 
+ 	qemu_purge_queued_packets(ncp);
+ 
+-	dlpi_close(vsp->vns_hdl);
++	if (--vsh->vsh_refcnt > 0)
++		return;
++
++	qemu_set_fd_handler(vsh->vsh_fd, NULL, NULL, NULL);
++	dlpi_close(vsh->vsh_hdl);
++	g_free(vsh);
+ }
+ 
+ static void
+-vnic_update_fd_handler(VNICState *vsp)
++vnic_update_fd_handler(VNICShared *vsh)
+ {
+-	qemu_set_fd_handler(vsp->vns_fd,
+-	    vsp->vns_rpoll ? vnic_send : NULL,
+-	    vsp->vns_wpoll ? vnic_writable : NULL,
+-	    vsp);
++	qemu_set_fd_handler(vsh->vsh_fd,
++	    vsh->vsh_rpoll ? vnic_send : NULL,
++	    vsh->vsh_wpoll ? vnic_writable : NULL,
++	    vsh);
+ }
+ 
+ static NetClientInfo net_vnic_info = {
+@@ -209,27 +330,38 @@ int net_init_vnic(const Netdev *netdev, const char *name,
+ {
+ 	const NetdevVNICOptions *vnic;
+ 	NetClientState *ncp;
++	VNICShared *vsh;
+ 	VNICState *vsp;
+-	int fd, ret;
++	int64_t queues;
++	int i, fd, ret;
+ 
+ 	assert(netdev->type == NET_CLIENT_DRIVER_VNIC);
+ 	vnic = &netdev->u.vnic;
+ 
+-	ncp = qemu_new_net_client(&net_vnic_info, peer, "vnic", name);
+-	vsp = DO_UPCAST(VNICState, vns_nc, ncp);
++	queues = vnic->has_queues ? vnic->queues : 1;
++	if (queues < 1 || queues > VNIC_MAX_QUEUES) {
++		error_report("vnic: invalid number of queues %" PRId64
++		    " for interface %s (must be 1-%d)",
++		    queues, vnic->ifname, VNIC_MAX_QUEUES);
++		return (-1);
++	}
++
++	vsh = g_new0(VNICShared, 1);
++	vsh->vsh_nqueues = queues;
+ 
+-	ret = dlpi_open(vnic->ifname, &vsp->vns_hdl, DLPI_RAW);
++	ret = dlpi_open(vnic->ifname, &vsh->vsh_hdl, DLPI_RAW);
+ 	if (ret != DLPI_SUCCESS) {
+ 		error_report("vnic: failed to open interface %s, err %d",
+ 		    vnic->ifname, ret);
++		g_free(vsh);
+ 		return (-1);
+ 	}
+ 
+-	ret = dlpi_bind(vsp->vns_hdl, DLPI_ANY_SAP, &vsp->vns_sap);
++	ret = dlpi_bind(vsh->vsh_hdl, DLPI_ANY_SAP, &vsh->vsh_sap);
+ 	if (ret != DLPI_SUCCESS) {
+ 		error_report("vnic: failed to bind interface %s, err %d",
+ 		    vnic->ifname, ret);
+-		return (-1);
++		goto fail;
+ 	}
+ 
+ 	/*
+@@ -238,37 +370,50 @@ int net_init_vnic(const Netdev *netdev, const char *name,
+ 	 * care about. The latter is going to ensure that we also get other
+ 	 * types of physical traffic such as multicast and broadcast.
+ 	 */
+-	ret = dlpi_promiscon(vsp->vns_hdl, DL_PROMISC_SAP);
++	ret = dlpi_promiscon(vsh->vsh_hdl, DL_PROMISC_SAP);
+ 	if (ret != DLPI_SUCCESS) {
+ 		error_report(
+ 		    "vnic: failed to be promiscous with interface %s, err %d",
+ 		    vnic->ifname, ret);
+-		return (-1);
++		goto fail;
+ 	}
+ 
+-	ret = dlpi_promiscon(vsp->vns_hdl, DL_PROMISC_PHYS);
++	ret = dlpi_promiscon(vsh->vsh_hdl, DL_PROMISC_PHYS);
+ 	if (ret != DLPI_SUCCESS) {
+ 		error_report(
+ 		    "vnic: failed to be promiscous with interface %s, err %d",
+-		   vnic-> ifname, ret);
+-		return (-1);
++		    vnic->ifname, ret);
++		goto fail;
+ 	}
+ 
+-	fd = dlpi_fd(vsp->vns_hdl);
++	fd = dlpi_fd(vsh->vsh_hdl);
+ 
+ 	if (fcntl(fd, F_SETFL, O_NONBLOCK) < 0) {
+ 		error_report("vnic: failed to set fd on interface %s to "
+ 		    "non-blocking: %s", vnic->ifname, strerror(errno));
+-		return (-1);
++		goto fail;
+ 	}
+ 
+-	vsp->vns_fd = fd;
++	vsh->vsh_fd = fd;
++
++	for (i = 0; i < queues; i++) {
++		ncp = qemu_new_net_client(&net_vnic_info, peer, "vnic", name);
++		vsp = DO_UPCAST(VNICState, vns_nc, ncp);
++		vsp->vns_shared = vsh;
++		vsh->vsh_queues[i] = vsp;
++		vsh->vsh_refcnt++;
+ 
+-	snprintf(vsp->vns_nc.info_str, sizeof (vsp->vns_nc.info_str),
+-	    "ifname=%s", vnic->ifname);
++		snprintf(vsp->vns_nc.info_str, sizeof (vsp->vns_nc.info_str),
++		    "ifname=%s,queue=%d", vnic->ifname, i);
++	}
+ 
+ 	/* We have to manually intialize the polling for read */
+-	vnic_read_poll(vsp, true);
++	vnic_read_poll(vsh, true);
+ 
+ 	return (0);
++
++fail:
++	dlpi_close(vsh->vsh_hdl);
++	g_free(vsh);
++	return (-1);
+ }
+diff --git a/qapi/net.json b/qapi/net.json
+index 956ae5c2f6..c595db8511 100644
+--- a/qapi/net.json
++++ b/qapi/net.json
+@@ -557,10 +557,14 @@
+ # Connect to a VNIC on the host.
+ #
+ # @ifname: VNIC interface name
++#
++# @queues: number of queues to be created for multiqueue capable VNICs
++#     (default: 1)
+ ##
+ { 'struct': 'NetdevVNICOptions',
+   'data': {
+-    'ifname':	'str' } }
++    'ifname':	'str',
++    '*queues':	'int' } }
+ 
+ ##
+ # @NetdevBridgeOptions:
