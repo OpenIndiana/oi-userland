@@ -16,20 +16,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 15.3.0
-COMPONENT_REVISION= 1
-COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:f910401fce14ed9189e0f1efbbed06cb4032102c6b0c8d0b5d0a844c9c1c396f
+COMPONENT_REVISION= 2
+COMPONENT_ARCHIVE_HASH= sha256:fa59c1beef8995f27c4d71c1df227587189315d3e6faff1bb4306e61b0c530eb
 
-MPFR_VERSION= 4.2.1
-MPFR_ARCHIVE_HASH= sha256:b9df93635b20e4089c29623b19420c4ac848a1b29df1cfd59f26cab0d2666aa0
-
-MPC_VERSION= 1.3.1
-MPC_ARCHIVE_HASH= sha256:ab642492f5cf882b74aa0cb730cd410a81edcdbec895183ce930e706c1c759b8
-
+MPFR_VERSION= 4.2.2
+MPC_VERSION= 1.4.1
 GMP_VERSION= 6.3.0
-GMP_ARCHIVE_HASH= sha256:ac28211a7cfb609bae2e2c8d6058d66c8fe96434f740cf6fe2e47b000d1c20cb
 
 # This is the GCC version used to build this GCC.
 #
@@ -38,16 +30,10 @@ GMP_ARCHIVE_HASH= sha256:ac28211a7cfb609bae2e2c8d6058d66c8fe96434f740cf6fe2e47b0
 # commented out.  Once this component is packaged, we can skip the bootstrap by
 # setting the GCC_VERSION to our major version (and so the GCC_VERSION setting
 # here should be uncommented).
-#GCC_VERSION = 15
+GCC_VERSION = 15
 
 include $(WS_MAKE_RULES)/gcc-component.mk
 
-# Use gcc's default flags
-CFLAGS=
-CPPFLAGS=
-CXXFLAGS=
-
-CPPFLAGS += " -D_TS_ERRNO"
 LDFLAGS= "-R$OPT/lib"
 
 GCC_MAJOR= $(GCC_COMPONENT_VERSION_MAJOR)
@@ -71,11 +57,6 @@ CONFIGURE_OPTIONS += --with-diagnostics-urls=auto-if-env
 CONFIGURE_OPTIONS += enable_frame_pointer=yes
 
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
-
-COMPONENT_TEST_TRANSFORMS= -n \
-	"-e '/Running/p' " \
-	"-e '/Summary/p' " \
-	"-e '/\# of/p' "
 
 PKG_HARDLINKS += usr/gcc/$(GCC_MAJOR)/bin/g++
 PKG_HARDLINKS += usr/gcc/$(GCC_MAJOR)/bin/gcc
