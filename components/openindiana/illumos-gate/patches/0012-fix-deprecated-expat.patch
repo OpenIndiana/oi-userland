@@ -1,0 +1,125 @@
+diff --git a/usr/src/cmd/hal/hald/device_info.c b/usr/src/cmd/hal/hald/device_info.c
+index 36aa3b0eb4..a414672a87 100644
+--- a/usr/src/cmd/hal/hald/device_info.c
++++ b/usr/src/cmd/hal/hald/device_info.c
+@@ -917,8 +917,8 @@ start (ParsingContext * pc, const char *el, const char **attr)
+ 			HAL_ERROR (("%s:%d:%d: Element <match> can only be "
+ 				    "inside <device> and <match>",
+ 				    pc->file,
+-				    XML_GetCurrentLineNumber (pc->parser),
+-				    XML_GetCurrentColumnNumber (pc->parser)));
++				    XML_GetCurrentLineNumber64 (pc->parser),
++				    XML_GetCurrentColumnNumber64 (pc->parser)));
+ 			parsing_abort (pc);
+ 		}
+ 
+@@ -938,8 +938,8 @@ start (ParsingContext * pc, const char *el, const char **attr)
+ 			HAL_ERROR (("%s:%d:%d: Element <merge> can only be "
+ 				    "inside <device> and <match>",
+ 				    pc->file,
+-				    XML_GetCurrentLineNumber (pc->parser),
+-				    XML_GetCurrentColumnNumber (pc->parser)));
++				    XML_GetCurrentLineNumber64 (pc->parser),
++				    XML_GetCurrentColumnNumber64 (pc->parser)));
+ 			parsing_abort (pc);
+ 		}
+ 
+@@ -955,8 +955,8 @@ start (ParsingContext * pc, const char *el, const char **attr)
+ 			HAL_ERROR (("%s:%d:%d: Element <append> can only be "
+ 				    "inside <device> and <match>",
+ 				    pc->file,
+-				    XML_GetCurrentLineNumber (pc->parser),
+-				    XML_GetCurrentColumnNumber (pc->parser)));
++				    XML_GetCurrentLineNumber64 (pc->parser),
++				    XML_GetCurrentColumnNumber64 (pc->parser)));
+ 			parsing_abort (pc);
+ 		}
+ 
+@@ -972,8 +972,8 @@ start (ParsingContext * pc, const char *el, const char **attr)
+ 			HAL_ERROR (("%s:%d:%d: Element <prepend> can only be "
+ 				    "inside <device> and <match>",
+ 				    pc->file,
+-				    XML_GetCurrentLineNumber (pc->parser),
+-				    XML_GetCurrentColumnNumber (pc->parser)));
++				    XML_GetCurrentLineNumber64 (pc->parser),
++				    XML_GetCurrentColumnNumber64 (pc->parser)));
+ 			parsing_abort (pc);
+ 		}
+ 
+@@ -989,8 +989,8 @@ start (ParsingContext * pc, const char *el, const char **attr)
+ 			HAL_ERROR (("%s:%d:%d: Element <remove> can only be "
+ 				    "inside <device> and <match>",
+ 				    pc->file,
+-				    XML_GetCurrentLineNumber (pc->parser),
+-				    XML_GetCurrentColumnNumber (pc->parser)));
++				    XML_GetCurrentLineNumber64 (pc->parser),
++				    XML_GetCurrentColumnNumber64 (pc->parser)));
+ 			parsing_abort (pc);
+ 		}
+ 
+@@ -1006,8 +1006,8 @@ start (ParsingContext * pc, const char *el, const char **attr)
+ 			HAL_ERROR (("%s:%d:%d: Element <remove> can only be "
+ 				    "inside <device> and <match>",
+ 				    pc->file,
+-				    XML_GetCurrentLineNumber (pc->parser),
+-				    XML_GetCurrentColumnNumber (pc->parser)));
++				    XML_GetCurrentLineNumber64 (pc->parser),
++				    XML_GetCurrentColumnNumber64 (pc->parser)));
+ 			parsing_abort (pc);
+ 		}
+ 
+@@ -1022,8 +1022,8 @@ start (ParsingContext * pc, const char *el, const char **attr)
+ 			HAL_ERROR (("%s:%d:%d: Element <device> can only be "
+ 				    "inside <deviceinfo>",
+ 				    pc->file,
+-				    XML_GetCurrentLineNumber (pc->parser),
+-				    XML_GetCurrentColumnNumber (pc->parser)));
++				    XML_GetCurrentLineNumber64 (pc->parser),
++				    XML_GetCurrentColumnNumber64 (pc->parser)));
+ 			parsing_abort (pc);
+ 		}
+ 		pc->curelem = CURELEM_DEVICE;
+@@ -1032,8 +1032,8 @@ start (ParsingContext * pc, const char *el, const char **attr)
+ 			HAL_ERROR (("%s:%d:%d: Element <deviceinfo> must be "
+ 				    "a top-level element",
+ 				    pc->file,
+-				    XML_GetCurrentLineNumber (pc->parser),
+-				    XML_GetCurrentColumnNumber (pc->parser)));
++				    XML_GetCurrentLineNumber64 (pc->parser),
++				    XML_GetCurrentColumnNumber64 (pc->parser)));
+ 			parsing_abort (pc);
+ 		}
+ 		pc->curelem = CURELEM_DEVICE_INFO;
+@@ -1042,8 +1042,8 @@ start (ParsingContext * pc, const char *el, const char **attr)
+ 			HAL_ERROR (("%s:%d:%d: Element <spawn> can only be "
+ 				    "inside <match>",
+ 				    pc->file,
+-				    XML_GetCurrentLineNumber (pc->parser),
+-				    XML_GetCurrentColumnNumber (pc->parser)));
++				    XML_GetCurrentLineNumber64 (pc->parser),
++				    XML_GetCurrentColumnNumber64 (pc->parser)));
+ 			parsing_abort (pc);
+ 		}
+ 
+@@ -1055,8 +1055,8 @@ start (ParsingContext * pc, const char *el, const char **attr)
+ 	} else {
+ 		HAL_ERROR (("%s:%d:%d: Unknown element <%s>",
+ 			    pc->file,
+-			    XML_GetCurrentLineNumber (pc->parser),
+-			    XML_GetCurrentColumnNumber (pc->parser), el));
++			    XML_GetCurrentLineNumber64 (pc->parser),
++			    XML_GetCurrentColumnNumber64 (pc->parser), el));
+ 		parsing_abort (pc);
+ 	}
+ 
+@@ -1442,8 +1442,8 @@ process_fdi_file (const char *dir, const char *filename,
+ 		HAL_ERROR (("Error parsing XML document %s at line %d, "
+ 			    "column %d : %s",
+ 			    buf,
+-			    XML_GetCurrentLineNumber (parser),
+-			    XML_GetCurrentColumnNumber (parser),
++			    XML_GetCurrentLineNumber64 (parser),
++			    XML_GetCurrentColumnNumber64 (parser),
+ 			    XML_ErrorString (XML_GetErrorCode (parser))));
+ 		device_matched = FALSE;
+ 	} else {
