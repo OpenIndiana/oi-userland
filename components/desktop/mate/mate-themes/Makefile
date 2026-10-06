@@ -34,8 +34,8 @@ COMPONENT_CLASSIFICATION= System/Libraries
 include $(WS_MAKE_RULES)/common.mk
 
 # build dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
-PERL_REQUIRED_PACKAGES += library/perl-5/xml-parser
+REQUIRED_PACKAGES.perl += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/xml-parser
 REQUIRED_PACKAGES += library/desktop/xdg/icon-naming-utils
 REQUIRED_PACKAGES += text/intltool
 REQUIRED_PACKAGES += text/gnu-gettext
