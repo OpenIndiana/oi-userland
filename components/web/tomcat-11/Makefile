@@ -27,14 +27,14 @@ BUILD_STYLE=ant
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			apache-tomcat
-COMPONENT_VERSION=		11.0.26
+COMPONENT_VERSION=		11.0.27
 COMPONENT_SUMMARY=		Tomcat 11 Servlet/JSP Container
 COMPONENT_PROJECT_URL=	https://tomcat.apache.org/
-COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
+COMPONENT_SRC=			tomcat-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:9c9d7006faa69f3e7cf653ae6fc4e0e1d1fd52fe269df7eb38ac0a631236beb1
-COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/tomcat/tomcat-11/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
+	sha256:4f2d83c8dcc9c1924a64dbbfd06d9932dfe5b56806905e2c2dd1f30952cfe511
+COMPONENT_ARCHIVE_URL=	https://github.com/apache/tomcat/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=			web/java-servlet/tomcat-11
 COMPONENT_CLASSIFICATION=	Web Services/Application and Web Servers
 COMPONENT_LICENSE=		Apache-2.0 AND EPL-2.0 AND CDDL-1.0
