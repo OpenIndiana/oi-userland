@@ -29,22 +29,20 @@ ENV=/usr/bin/env
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         7zip
-COMPONENT_VERSION=	26.3
-HUMAN_VERSION=		26.03
+COMPONENT_VERSION=	26.4
+HUMAN_VERSION=		26.04
 COMPONENT_SUMMARY=      File archiver for extremely high compression
 COMPONENT_PROJECT_URL=  https://www.7-zip.org
-COMPONENT_SRC=          7z2602-src
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:cf967c98bca02a4b8b16375f441825a8e141362f14be1969bbec8e1ca0bff9dd
-COMPONENT_ARCHIVE_URL=	https://7-zip.org/a/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_ARCHIVE=      $(HUMAN_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:48fdc6dfe879ee2db867bb07f19c4a9406bfea01d51f48785b6c7a137881e25c
+COMPONENT_ARCHIVE_URL=	https://github.com/ip7z/7zip/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         compress/7zip
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=      LGPL-2.1-or-later, BSD-3-Clause, LicenseRef-UnRAR
 COMPONENT_LICENSE_FILE= 7zip.license
 
 include $(WS_MAKE_RULES)/common.mk
-
-UNPACK_ARGS += -r $(COMPONENT_SRC)
 
 COMPONENT_BUILD_ARGS += -f ../../cmpl_gcc.mak
 
