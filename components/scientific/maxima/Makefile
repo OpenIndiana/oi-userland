@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	maxima
 COMPONENT_VERSION= 	5.50.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY= 	Maxima is a descendant of Macsyma, the legendary computer algebra system
 COMPONENT_PROJECT_URL=	https://maxima.sourceforge.io
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
