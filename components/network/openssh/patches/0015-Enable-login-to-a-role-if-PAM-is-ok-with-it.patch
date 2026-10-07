@@ -38,7 +38,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth-pam.h a/auth-pam.h
 diff -wpruN --no-dereference '--exclude=*.orig' a~/auth.h a/auth.h
 --- a~/auth.h	1970-01-01 00:00:00
 +++ a/auth.h	1970-01-01 00:00:00
-@@ -98,6 +98,9 @@ struct Authctxt {
+@@ -100,6 +100,9 @@ struct Authctxt {
  #ifdef PAM_ENHANCEMENT
  	char		*authmethod_name;
  #endif
@@ -51,7 +51,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth.h a/auth.h
 diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-hostbased.c a/auth2-hostbased.c
 --- a~/auth2-hostbased.c	1970-01-01 00:00:00
 +++ a/auth2-hostbased.c	1970-01-01 00:00:00
-@@ -81,6 +81,9 @@ userauth_hostbased(struct ssh *ssh, cons
+@@ -80,6 +80,9 @@ userauth_hostbased(struct ssh *ssh, cons
  	debug("signature:");
  	sshbuf_dump_data(sig, slen, stderr);
  #endif
@@ -61,7 +61,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-hostbased.c a/auth2-hos
  	pktype = sshkey_type_from_name(pkalg);
  	if (pktype == KEY_UNSPEC) {
  		/* this is perfectly legal */
-@@ -154,6 +157,13 @@ userauth_hostbased(struct ssh *ssh, cons
+@@ -161,6 +164,13 @@ userauth_hostbased(struct ssh *ssh, cons
  	    sshbuf_ptr(b), sshbuf_len(b), pkalg, ssh->compat, NULL) == 0)
  		authenticated = 1;
  
@@ -73,8 +73,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-hostbased.c a/auth2-hos
 +#endif
 +
  	auth2_record_key(authctxt, authenticated, key);
- 	sshbuf_free(b);
  done:
+ 	debug2_f("authenticated %d", authenticated);
 diff -wpruN --no-dereference '--exclude=*.orig' a~/monitor.c a/monitor.c
 --- a~/monitor.c	1970-01-01 00:00:00
 +++ a/monitor.c	1970-01-01 00:00:00

@@ -36,8 +36,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
  #include "kex.h"
  #include "sshbuf.h"
  #include "log.h"
-@@ -84,6 +91,15 @@ format_key(const struct sshkey *key)
- 	return ret;
+@@ -108,6 +115,15 @@ check_hostbound_hostkey(struct ssh *ssh)
+ 	sshbuf_free(their_hostkey_blob);
  }
  
 +static const char *RSA_SYM_NAME = "sshd_user_rsa_key_allowed";
@@ -52,7 +52,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
  static int
  userauth_pubkey(struct ssh *ssh, const char *method)
  {
-@@ -783,6 +799,148 @@ user_key_command_allowed2(struct passwd
+@@ -820,6 +836,148 @@ user_key_command_allowed2(struct passwd
  	return found_key;
  }
  
@@ -201,7 +201,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -856,6 +1014,11 @@ user_key_allowed(struct ssh *ssh, struct
+@@ -893,6 +1051,11 @@ user_key_allowed(struct ssh *ssh, struct
  		goto out;
  	sshauthopt_free(opts);
  	opts = NULL;
@@ -216,8 +216,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
 diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
 --- a~/servconf.c	1970-01-01 00:00:00
 +++ a/servconf.c	1970-01-01 00:00:00
-@@ -2606,6 +2606,20 @@ process_server_config_line_depth(ServerO
- 		multistate_ptr = multistate_flag;
+@@ -2685,6 +2685,20 @@ process_server_config_line_depth(ServerO
+ 		multistate_ptr = multistate_warnweakcrypto;
  		goto parse_multistate;
  
 +	case sPubKeyPlugin:
@@ -237,7 +237,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  	case sDeprecated:
  	case sIgnore:
  	case sUnsupported:
-@@ -4363,6 +4377,7 @@ dump_config(ServerOptions *o)
+@@ -4494,6 +4508,7 @@ dump_config(ServerOptions *o)
  	dump_cfg_string(sHostKeyAgent, o->host_key_agent);
  	dump_cfg_string(sKexAlgorithms, o->kex_algorithms);
  	dump_cfg_string(sCASignatureAlgorithms, o->ca_sign_algorithms);
@@ -248,12 +248,12 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
 diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.h a/servconf.h
 --- a~/servconf.h	1970-01-01 00:00:00
 +++ a/servconf.h	1970-01-01 00:00:00
-@@ -235,7 +235,8 @@ SSHCONF_STRARRAY(channel_timeouts, num_c
- SSHCONF_INT(unused_connection_timeout, UnusedConnectionTimeout, SSHCFG_ALL, NULL, 0, SSHCFG_COPY_MATCH) \
- SSHCONF_STRING(sshd_session_path, SshdSessionPath, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
+@@ -242,7 +242,8 @@ SSHCONF_STRING(sshd_session_path, SshdSe
  SSHCONF_STRING(sshd_auth_path, SshdAuthPath, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
--SSHCONF_INTFLAG(refuse_connection, RefuseConnection, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH)
-+SSHCONF_INTFLAG(refuse_connection, RefuseConnection, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
+ SSHCONF_INTFLAG(refuse_connection, RefuseConnection, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
+ SSHCONF_STRING(agent_socket_path, AgentSocketPath, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+-SSHCONF_INT(warn_weak_crypto, WarnWeakCrypto, SSHCFG_GLOBAL, multistate_warnweakcrypto, 1, SSHCFG_COPY_NONE)
++SSHCONF_INT(warn_weak_crypto, WarnWeakCrypto, SSHCFG_GLOBAL, multistate_warnweakcrypto, 1, SSHCFG_COPY_NONE) \
 +SSHCONF_STRING(pubkey_plugin, PubKeyPlugin, SSHCFG_ALL, SSHCFG_COPY_MATCH)
  
  #define SSHD_CONFIG_ENTRIES_LEGACY \
