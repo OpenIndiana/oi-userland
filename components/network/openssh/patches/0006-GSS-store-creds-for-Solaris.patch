@@ -6,7 +6,7 @@ Subject: [PATCH 06/34] GSS store creds for illumos
 diff -wpruN --no-dereference '--exclude=*.orig' a~/configure.ac a/configure.ac
 --- a~/configure.ac	1970-01-01 00:00:00
 +++ a/configure.ac	1970-01-01 00:00:00
-@@ -1283,6 +1283,9 @@ if (setsockopt(s, IPPROTO_IP, IP_TOS, &o
+@@ -1272,6 +1272,9 @@ if (setsockopt(s, IPPROTO_IP, IP_TOS, &o
  		],
  	)
  	TEST_SHELL=$SHELL	# let configure find us a capable shell
@@ -59,7 +59,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/gss-serv.c a/gss-serv.c
  
  #include "ssh-gss.h"
  
-@@ -321,18 +322,61 @@ ssh_gssapi_getclient(Gssctxt *ctx, ssh_g
+@@ -322,18 +323,26 @@ ssh_gssapi_getclient(Gssctxt *ctx, ssh_g
  void
  ssh_gssapi_cleanup_creds(void)
  {
@@ -81,7 +81,16 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/gss-serv.c a/gss-serv.c
  {
 +#ifdef USE_GSS_STORE_CRED
 +	OM_uint32 maj_status, min_status;
++#endif
 +
+ 	if (!gssapi_client.userok) {
+ 		debug_f("GSSAPI client was not authorized, doing nothing");
+ 		return;
+@@ -344,10 +353,48 @@ ssh_gssapi_storecreds(void)
+ 		return;
+ 	}
+ 
++#ifdef USE_GSS_STORE_CRED
 +	if (gssapi_client.creds == NULL) {
 +		debug("No credentials stored");
 +		return;
@@ -118,10 +127,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/gss-serv.c a/gss-serv.c
 +		sshbuf_free(b);
 +	}
 +#else	/* #ifdef USE_GSS_STORE_CRED */
- 	if (options.gss_deleg_creds == 0) {
- 		debug_f("delegate credential is disabled, doing nothing");
- 		return;
-@@ -342,6 +386,7 @@ ssh_gssapi_storecreds(void)
+ 	if (gssapi_client.mech && gssapi_client.mech->storecreds) {
  		(*gssapi_client.mech->storecreds)(&gssapi_client);
  	} else
  		debug("ssh_gssapi_storecreds: Not a GSSAPI mechanism");
@@ -132,7 +138,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/gss-serv.c a/gss-serv.c
 diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
 --- a~/servconf.c	1970-01-01 00:00:00
 +++ a/servconf.c	1970-01-01 00:00:00
-@@ -1443,9 +1443,11 @@ process_server_config_line_depth(ServerO
+@@ -1492,9 +1492,11 @@ process_server_config_line_depth(ServerO
  		intptr = &options->gss_authentication;
  		goto parse_flag;
  
@@ -144,7 +150,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  
  	case sGSSAPIDelegateCredentials:
  		intptr = &options->gss_deleg_creds;
-@@ -4222,7 +4224,9 @@ dump_config(ServerOptions *o)
+@@ -4352,7 +4354,9 @@ dump_config(ServerOptions *o)
  #endif
  #ifdef GSSAPI
  	dump_cfg_fmtint(sGSSAPIAuthentication, o->gss_authentication);
@@ -157,7 +163,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
 diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.h a/servconf.h
 --- a~/servconf.h	1970-01-01 00:00:00
 +++ a/servconf.h	1970-01-01 00:00:00
-@@ -313,11 +313,19 @@ SSHCONF_UNSUPPORTED_INT(kerberos_get_afs
+@@ -320,11 +320,19 @@ SSHCONF_UNSUPPORTED_INT(kerberos_get_afs
  #endif /* KRB5 */
  
  #ifdef GSSAPI
@@ -180,7 +186,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.h a/servconf.h
 diff -wpruN --no-dereference '--exclude=*.orig' a~/sshd-session.c a/sshd-session.c
 --- a~/sshd-session.c	1970-01-01 00:00:00
 +++ a/sshd-session.c	1970-01-01 00:00:00
-@@ -1272,9 +1272,23 @@ main(int ac, char **av)
+@@ -1259,9 +1259,23 @@ main(int ac, char **av)
  
  #ifdef GSSAPI
  	if (options.gss_authentication) {

@@ -12,7 +12,7 @@ Subject: [PATCH 02/34] PAM Support
 diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
 --- a~/servconf.c	1970-01-01 00:00:00
 +++ a/servconf.c	1970-01-01 00:00:00
-@@ -1170,8 +1170,16 @@ process_server_config_line_depth(ServerO
+@@ -1208,8 +1208,16 @@ process_server_config_line_depth(ServerO
  	/* Portable-specific options */
  #ifdef USE_PAM
  	case sUsePAM:
@@ -32,12 +32,12 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
 diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.h a/servconf.h
 --- a~/servconf.h	1970-01-01 00:00:00
 +++ a/servconf.h	1970-01-01 00:00:00
-@@ -272,7 +272,7 @@ SSHCONF_ALIAS(KeepAlive, TCPKeepAlive, S
+@@ -279,7 +279,7 @@ SSHCONF_ALIAS(KeepAlive, TCPKeepAlive, S
  
  #ifdef USE_PAM
  #define SSHD_CONFIG_ENTRIES_PAM \
 -SSHCONF_INTFLAG(use_pam, UsePAM, SSHCFG_GLOBAL, 0, SSHCFG_COPY_NONE) \
 +SSHCONF_INTFLAG(use_pam, UsePAM, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
- SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL, SSHCFG_COPY_NONE)
+ SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL, SSHCFG_COPY_MATCH)
  #else
  #define SSHD_CONFIG_ENTRIES_PAM \
