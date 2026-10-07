@@ -10,8 +10,8 @@ behaviour (at least the parts that are most commonly used).
 diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
 --- a~/servconf.c	1970-01-01 00:00:00
 +++ a/servconf.c	1970-01-01 00:00:00
-@@ -162,6 +162,8 @@ initialize_server_options(ServerOptions
- 	options->subsystem_args = NULL;
+@@ -165,6 +165,8 @@ initialize_server_options(ServerOptions
+ 	options->max_pubkey_ok = -1;
  #define init_timingsecret(options) \
  	options->timing_secret = 0;
 +#define init_defaultacceptenv(options) \
@@ -19,7 +19,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  #ifdef PAM_ENHANCEMENT
  /*
   * Each userauth method will have its own PAM service by default. However,
-@@ -190,6 +192,7 @@ initialize_server_options(ServerOptions
+@@ -193,6 +195,7 @@ initialize_server_options(ServerOptions
  #undef init_rekeylimit
  #undef init_subsystem
  #undef init_timingsecret
@@ -27,7 +27,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  #ifdef PAM_ENHANCEMENT
  #undef init_pamserviceperauthmethod
  #endif
-@@ -467,6 +470,32 @@ fill_default_server_options(ServerOption
+@@ -482,6 +485,32 @@ fill_default_server_options(ServerOption
  		    &options->num_authkeys_files,
  		    _PATH_SSH_USER_PERMITTED_KEYS2);
  	}
@@ -60,7 +60,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  	if (options->ip_qos_interactive == -1)
  		options->ip_qos_interactive = IPTOS_DSCP_EF;
  	if (options->ip_qos_bulk == -1)
-@@ -2160,9 +2189,12 @@ process_server_config_line_depth(ServerO
+@@ -2233,9 +2262,12 @@ process_server_config_line_depth(ServerO
  			if (*arg == '\0' || strchr(arg, '=') != NULL)
  				fatal("%s line %d: Invalid environment name.",
  				    filename, linenum);
@@ -73,7 +73,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  			opt_array_append(filename, linenum, keyword,
  			    &options->accept_env, &options->num_accept_env,
  			    arg);
-@@ -3191,6 +3223,18 @@ serialise_timingsecret(const ServerOptio
+@@ -3283,6 +3315,18 @@ serialise_timingsecret(const ServerOptio
  	return 0;
  }
  
@@ -92,7 +92,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  #ifdef PAM_ENHANCEMENT
  static int
  serialise_pamserviceperauthmethod(const ServerOptions *options,
-@@ -3741,6 +3785,18 @@ deserialise_timingsecret(ServerOptions *
+@@ -3846,6 +3890,18 @@ deserialise_timingsecret(ServerOptions *
  	return 0;
  }
  
@@ -111,15 +111,15 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  #ifdef PAM_ENHANCEMENT
  static int
  deserialise_pamserviceperauthmethod(ServerOptions *options,
-@@ -3920,6 +3976,7 @@ free_server_options(ServerOptions *optio
- #define free_persourcepenalties(options)
+@@ -4026,6 +4082,7 @@ free_server_options(ServerOptions *optio
  #define free_rekeylimit(options)
+ #define free_pubkey_auth_options(options)
  #define free_timingsecret(options)
 +#define free_defaultacceptenv(options)
  #ifdef PAM_ENHANCEMENT
  #define free_pamserviceperauthmethod(options)
  #endif
-@@ -3938,6 +3995,7 @@ free_server_options(ServerOptions *optio
+@@ -4044,6 +4101,7 @@ free_server_options(ServerOptions *optio
  #undef free_persourcepenalties
  #undef free_rekeylimit
  #undef free_timingsecret
@@ -130,7 +130,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
 diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.h a/servconf.h
 --- a~/servconf.h	1970-01-01 00:00:00
 +++ a/servconf.h	1970-01-01 00:00:00
-@@ -203,6 +203,7 @@ SSHCONF_STRARRAY(deny_users, num_deny_us
+@@ -208,6 +208,7 @@ SSHCONF_STRARRAY(deny_users, num_deny_us
  SSHCONF_STRARRAY(allow_groups, num_allow_groups, AllowGroups, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
  SSHCONF_STRARRAY(deny_groups, num_deny_groups, DenyGroups, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
  SSHCONF_STRARRAY(accept_env, num_accept_env, AcceptEnv, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
@@ -138,8 +138,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.h a/servconf.h
  SSHCONF_STRARRAY(setenv, num_setenv, SetEnv, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
  SSHCONF_INT(per_source_max_startups, PerSourceMaxStartups, SSHCFG_GLOBAL, NULL, INT_MAX, SSHCFG_COPY_NONE) \
  SSHCONF_STRING(per_source_penalty_exempt, PerSourcePenaltyExemptList, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
-@@ -410,6 +411,8 @@ typedef struct ServerOptions {
- 	int	rekey_interval;
+@@ -420,6 +421,8 @@ typedef struct ServerOptions {
+ 	int	max_pubkey_ok;
  	/* Passed by config but not keyword for this */
  	uint64_t timing_secret;
 +	/* Cleared as a side-effect of AcceptEnv */
@@ -150,7 +150,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.h a/servconf.h
 diff -wpruN --no-dereference '--exclude=*.orig' a~/session.c a/session.c
 --- a~/session.c	1970-01-01 00:00:00
 +++ a/session.c	1970-01-01 00:00:00
-@@ -794,6 +794,18 @@ check_quietlogin(Session *s, const char
+@@ -799,6 +799,18 @@ check_quietlogin(Session *s, const char
  }
  
  /*
@@ -169,7 +169,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/session.c a/session.c
   * Reads environment variables from the given file and adds/overrides them
   * into the environment.  If the file does not exist, this does nothing.
   * Otherwise, it must consist of empty lines, comments (line starts with '#')
-@@ -977,6 +989,16 @@ do_setup_env(struct ssh *ssh, Session *s
+@@ -982,6 +994,16 @@ do_setup_env(struct ssh *ssh, Session *s
  	ssh_gssapi_do_child(&env, &envsize);
  #endif
  
@@ -186,7 +186,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/session.c a/session.c
  	/* Set basic environment. */
  	for (i = 0; i < s->num_env; i++)
  		child_set_env(&env, &envsize, s->env[i].name, s->env[i].val);
-@@ -1020,8 +1042,7 @@ do_setup_env(struct ssh *ssh, Session *s
+@@ -1025,8 +1047,7 @@ do_setup_env(struct ssh *ssh, Session *s
  	/* Normal systems set SHELL by default. */
  	child_set_env(&env, &envsize, "SHELL", shell);
  
