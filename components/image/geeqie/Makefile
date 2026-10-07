@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		geeqie
 COMPONENT_VERSION=	2.9
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Geeqie is a lightweight image viewer and organizer
 COMPONENT_PROJECT_URL=	https://www.geeqie.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
