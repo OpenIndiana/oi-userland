@@ -30,14 +30,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openexr
-COMPONENT_VERSION=      3.4.13
-COMPONENT_REVISION=		2
+COMPONENT_VERSION=      3.5.2
 COMPONENT_SUMMARY=      OpenEXR header files and libraries used to read and write OpenEXR images
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.openexr.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:1ed0cee48ac8c77da235c8ca8ab85d031d43cd790eda36af87fed4cf316cf2df
+COMPONENT_ARCHIVE_HASH= sha256:85a291b9b8563fabef1aa3f6e912d744ce1d4b9fd5a8f978eda194cd51b15ae9
 COMPONENT_FMRI=         library/openexr
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      BSD
@@ -55,6 +54,7 @@ CMAKE_OPTIONS += -DCMAKE_INSTALL_BINDIR=bin/$(MACH64)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/imath
 REQUIRED_PACKAGES += library/openjph
 REQUIRED_PACKAGES += system/library
