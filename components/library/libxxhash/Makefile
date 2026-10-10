@@ -17,13 +17,13 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libxxhash
-COMPONENT_VERSION= 0.8.3
+COMPONENT_VERSION= 0.8.4
 COMPONENT_SUMMARY= Extremely fast non-cryptographic hash algorithm
 COMPONENT_PROJECT_URL= http://www.xxhash.com/
 COMPONENT_SRC=		xxHash-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_URL= https://github.com/Cyan4973/xxHash/archive/refs/tags/v$(COMPONENT_VERSION).zip
-COMPONENT_ARCHIVE_HASH= sha256:db2c12e6f05d45546d3581b6881b25090fd65ab5194891da0b2a1a9c49beda66
+COMPONENT_ARCHIVE_HASH= sha256:c027c7aaa62ea2608ba233bce5beb3f73c96455a3be039dd0c485cba4e740d0c
 COMPONENT_FMRI= library/$(COMPONENT_NAME)
 COMPONENT_FMRI.xxhsum = sysutils/xxhsum
 COMPONENT_CLASSIFICATION= System/Libraries
