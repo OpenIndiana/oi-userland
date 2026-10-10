@@ -23,6 +23,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_MJR_VERSION =		390
 COMPONENT_NAME =		nvidia-$(COMPONENT_MJR_VERSION)
 COMPONENT_VERSION =		$(COMPONENT_MJR_VERSION).157
+COMPONENT_REVISION =		1
 COMPONENT_FMRI =		driver/graphics/nvidia-$(COMPONENT_MJR_VERSION)
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
 COMPONENT_CLASSIFICATION =	Drivers/Display
@@ -42,10 +43,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 CLEAN_PATHS += $(BUILD_DIR)
 
-# Hack to run proper unpack command
-UNPACK := $(SHELL) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE)
-UNPACK_ARGS = -x
-USERLAND_ARCHIVES = \#
+# The vendor self-extractor takes -x after the archive pathname.
+UNPACK = $(SHELL) -c 'exec $(SHELL) "$$1" -x' --
+UNPACK_ARGS =
 
 $(BUILD_$(MK_BITS)):	$(SOURCE_DIR)/.prep
 	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
@@ -57,6 +57,9 @@ $(INSTALL_$(MK_BITS)):	$(BUILD_$(MK_BITS))
 	    $(CP) $(SOURCE_DIR)/NVDAgraphicsr/reloc/$$i $(PROTO_DIR)/$$i; done
 	$(RM) -r $(PROTO_DIR)/usr
 	$(CP) -a $(SOURCE_DIR)/NVDAgraphics/reloc $(PROTO_DIR)/usr
+	# Current GTK libraries are 64-bit only; retain the 64-bit settings UI.
+	$(RM) $(PROTO_DIR)/usr/bin/$(MACH32)/nvidia-settings
+	$(RM) $(PROTO_DIR)/usr/lib/libnvidia-gtk2.so.$(COMPONENT_VERSION)
 	$(CHMOD) u+w $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1
 	$(CHMOD) u+w $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so.1
 	/usr/bin/elfedit -e "dyn:rpath $(GCC_ROOT)/lib:/lib:/usr/lib" $(PROTO_DIR)/usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1
@@ -76,7 +79,7 @@ GENERATE_EXTRA_CMD += | \
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
@@ -88,3 +91,4 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/compatibility/links-xorg
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += service/opengl/ogl-select
