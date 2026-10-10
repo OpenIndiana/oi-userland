@@ -20,8 +20,6 @@ else
 GCC_COMPONENT_STRING_VERSION = $(COMPONENT_VERSION)-il-$(ILLUMOS_GCC_REVISION)
 endif
 
-GCC_COMPONENT_PREFIX = /usr/gcc/$(GCC_COMPONENT_VERSION_MAJOR)
-
 #
 # Define default component variables for upstream GCC
 #
@@ -32,7 +30,7 @@ ifeq ($(strip $(COMPONENT_ARCHIVE_HASH)),)
 $(error Empty GCC archive hash)
 endif
 COMPONENT_NAME= gcc
-COMPONENT_FMRI= developer/gcc-$(GCC_COMPONENT_VERSION_MAJOR)
+COMPONENT_FMRI= developer/gcc-$(GCCVER)
 COMPONENT_SUMMARY= GNU Compiler Collection
 COMPONENT_CLASSIFICATION= Development/C
 COMPONENT_PROJECT_URL = https://gcc.gnu.org/
@@ -108,6 +106,32 @@ BUILD_STYLE=configure
 
 include $(WS_MAKE_RULES)/common.mk
 
+#
+# Warning!
+#
+# The order of the following three blocks (setting of CONFIGURE_PREFIX,
+# GCC_ROOT, and GCCVER) is important and should never be changed.
+#
+
+# The GCC_ROOT (set in shared-macros.mk) contains the path where we want to
+# install the currently built gcc component.  We need to set CONFIGURE_PREFIX
+# to the value of GCC_ROOT, but we do not want its full expansion because
+# GCCVER does not contain the correct value yet.  It will be set below.  We
+# must do this before we force the GCC_ROOT expansion below.
+$(eval CONFIGURE_PREFIX = $(value GCC_ROOT))
+
+# Make sure GCC_ROOT points to the GCC used to build the gcc component so we
+# are able to find GCC in a case we build new major GCC version.  We need this
+# because GCC_ROOT in shared-macros.mk is defined using the GCCVER and we need
+# to change GCCVER (see below) to version of the currently built gcc component.
+GCC_ROOT := $(GCC_ROOT)
+
+# Override GCCVER so it points to the currently built gcc component version.
+# This is needed to make sure all affected macros expand to the currently built
+# GCC version and not to the version used to build this component.  The only
+# exception to this rule is GCC_ROOT (see above).
+GCCVER = $(firstword $(subst ., ,$(HUMAN_VERSION)))
+
 PATH=$(PATH.gnu)
 
 CC_BITS=
@@ -125,8 +149,6 @@ COMMON_ENV+= LD=$(LD)
 CONFIGURE_ENV+= $(COMMON_ENV)
 COMPONENT_BUILD_ENV+= $(COMMON_ENV)
 COMPONENT_INSTALL_ENV+= $(COMMON_ENV)
-
-CONFIGURE_PREFIX=$(GCC_COMPONENT_PREFIX)
 
 # We need info files in versioned subdir
 CONFIGURE_INFODIR = $(CONFIGURE_PREFIX)/share/info
