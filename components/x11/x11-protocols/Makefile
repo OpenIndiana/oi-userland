@@ -17,14 +17,14 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xorgproto
-COMPONENT_VERSION= 2025.1
+COMPONENT_VERSION= 2026.1
 COMPONENT_FMRI= x11/header/x11-protocols
 COMPONENT_SUMMARY= X Window System protocol definitions
 COMPONENT_CLASSIFICATION= Development/X11
 OMPONENT_PROJECT_URL= $(XORG_PROJECT_URL)
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:56898c716c0578df8a2d828c9c3e5c528277705c0484381a81960fe1a67668e8
+COMPONENT_ARCHIVE_HASH= sha256:f9bfe4a9ed8c8ab9d2a3b0d49797f046052dadd06b7a8b45dbffaffb137e8290
 COMPONENT_ARCHIVE_URL= $(XORG_PROTO_BASE_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= MIT
 
@@ -34,13 +34,16 @@ PATH= $(PATH.gnu)
 
 COMPONENT_PREP_ACTION +=( cd $(@D); autoreconf -fiv );
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --without-xmlto
 CONFIGURE_OPTIONS+= --without-fop
-CONFIGURE_OPTIONS+= --localstatedir=/var
+#CONFIGURE_OPTIONS+= --localstatedir=/var
 CONFIGURE_OPTIONS+= --enable-legacy
 
 COMPONENT_INSTALL_ARGS += pkgconfigdir=/usr/share/pkgconfig
+
+# Dynamically create the license file from its sources:
+xorgproto.license: $(SOURCE_DIR)/COPYING-*
+	cat $? > $@
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
