@@ -19,7 +19,7 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			fast_float
-COMPONENT_VERSION=		8.3.0
+COMPONENT_VERSION=		8.3.2
 COMPONENT_SUMMARY=		Fast and exact implementation of the C++ from_chars functions for number types
 COMPONENT_PROJECT_URL=		https://github.com/fastfloat/fast_float
 COMPONENT_FMRI=			library/fast_float
@@ -27,7 +27,7 @@ COMPONENT_CLASSIFICATION=	Development/C++
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=		https://github.com/fastfloat/fast_float/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=		sha256:90485994d0fed61d0693e8dba32c464b0e8adf7f2e7c2efbf5bff0df5ef5b13f
+COMPONENT_ARCHIVE_HASH=		sha256:71bb9e865b888df01351558db5a39586d13ea97ada162156b3a07784d8c1b26b
 COMPONENT_LICENSE=		Apache-2.0 OR MIT OR BSL-1.0
 
 include $(WS_MAKE_RULES)/common.mk
