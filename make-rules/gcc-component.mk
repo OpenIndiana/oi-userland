@@ -102,7 +102,7 @@ COMPONENT_ARCHIVE_HASH_3= $(GMP_ARCHIVE_HASH)
 CLEAN_PATHS += $(COMPONENT_SRC_3)
 COMPONENT_POST_UNPACK_ACTION_3 += ( $(RM) -r $(COMPONENT_SRC)/$(GMP_NAME) && $(CP) -rpP $(COMPONENT_SRC_3) $(COMPONENT_SRC)/$(GMP_NAME) )
 
-BUILD_STYLE=configure
+USE_PARALLEL_BUILD ?= yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -231,6 +231,14 @@ COMPONENT_TEST_TARGETS = mail-report.log
 # Master test results are different between x86 and SPARC.
 COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
+
+PKG_HARDLINKS += usr/gcc/$(GCCVER)/bin/g++
+PKG_HARDLINKS += usr/gcc/$(GCCVER)/bin/gcc
+PKG_HARDLINKS += usr/gcc/$(GCCVER)/bin/gcc-ar
+PKG_HARDLINKS += usr/gcc/$(GCCVER)/bin/gcc-nm
+PKG_HARDLINKS += usr/gcc/$(GCCVER)/bin/gcc-ranlib
+PKG_HARDLINKS += usr/gcc/$(GCCVER)/bin/gccgo
+PKG_HARDLINKS += usr/gcc/$(GCCVER)/bin/gfortran
 
 # Build and test dependencies
 USERLAND_REQUIRED_PACKAGES += developer/build/autoconf-archive
