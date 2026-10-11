@@ -36,6 +36,9 @@ set name=variant.opensolaris.zone value=global value=nonglobal
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# 64-bit GLES public links are supplied by the vendor selector.
+depend fmri=pkg:/service/opengl/ogl-select@0.5.11-2026.0.0.8 type=require
+
 # Since version 390 the driver does not bundle libvdpau and requires
 # the library being present in the system.
 depend type=require fmri=library/graphics/libvdpau
@@ -76,7 +79,6 @@ file path=usr/X11/lib/modules/drivers/nvidia_drv.so
 file path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)/libglx.so.1
 file path=usr/X11/lib/modules/extensions/NVIDIA/libglx.so.1
 file path=usr/bin/$(MACH32)/nvidia-debugdump
-file path=usr/bin/$(MACH32)/nvidia-settings
 file path=usr/bin/$(MACH32)/nvidia-smi
 file path=usr/bin/$(MACH32)/nvidia-xconfig
 file path=usr/bin/$(MACH64)/nvidia-debugdump
@@ -99,7 +101,6 @@ file path=usr/lib/$(MACH64)/libnvidia-cfg.so.1
 file path=usr/lib/$(MACH64)/libnvidia-gtk2.so.$(COMPONENT_VERSION)
 file path=usr/lib/$(MACH64)/libnvidia-ml.so.1
 file path=usr/lib/libnvidia-cfg.so.1
-file path=usr/lib/libnvidia-gtk2.so.$(COMPONENT_VERSION)
 file path=usr/lib/libnvidia-ml.so.1
 file path=usr/share/applications/nvidia-settings.desktop \
     restart_fmri=svc:/application/desktop-cache/desktop-mime-cache:default
@@ -198,10 +199,6 @@ link path=usr/lib/$(MACH64)/libvdpau_nvidia.so \
     target=../../X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
 link path=usr/lib/$(MACH64)/vdpau/libvdpau_nvidia.so.1 \
     target=../../../X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
-link path=usr/lib/$(MACH64)/libGLESv1_CM.so.1 target=../../X11/lib/NVIDIA/amd64/libGLESv1_CM.so.1
-link path=usr/lib/$(MACH64)/libGLESv1_CM.so target=libGLESv1_CM.so.1
-link path=usr/lib/$(MACH64)/libGLESv2.so.2 target=../../X11/lib/NVIDIA/amd64/libGLESv2.so.2
-link path=usr/lib/$(MACH64)/libGLESv2.so target=libGLESv2.so.2
 link path=usr/lib/$(MACH64)/libnvidia-eglcore.so.1 target=../../X11/lib/NVIDIA/amd64/libnvidia-eglcore.so.1
 link path=usr/lib/$(MACH64)/libnvidia-glsi.so.1 target=../../X11/lib/NVIDIA/amd64/libnvidia-glsi.so.1
 link path=usr/lib/libGLESv1_CM.so.1 target=../X11/lib/NVIDIA/libGLESv1_CM.so.1

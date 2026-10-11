@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =		nvidia
 HUMAN_VERSION =			580.178.04
 COMPONENT_VERSION =		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.0*/./g')
+COMPONENT_REVISION =		1
 COMPONENT_FMRI =		driver/graphics/nvidia-$(firstword $(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
 COMPONENT_CLASSIFICATION =	Drivers/Display
@@ -48,10 +49,9 @@ update-license-file:
 
 CLEAN_PATHS += $(BUILD_DIR)
 
-# Hack to run proper unpack command
-UNPACK := $(SHELL) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE)
-UNPACK_ARGS = -x
-USERLAND_ARCHIVES = \#
+# The vendor self-extractor takes -x after the archive pathname.
+UNPACK = $(SHELL) -c 'exec $(SHELL) "$$1" -x' --
+UNPACK_ARGS =
 
 $(BUILD_$(MK_BITS)):	$(SOURCE_DIR)/.prep
 	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
@@ -86,3 +86,4 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += service/opengl/ogl-select

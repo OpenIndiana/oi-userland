@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =		nvidia-$(COMPONENT_MJR_VERSION)
 HUMAN_VERSION =			470.256.02
 COMPONENT_VERSION =		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.0*/./g')
+COMPONENT_REVISION =		1
 COMPONENT_MJR_VERSION =		$(firstword $(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_FMRI =		driver/graphics/nvidia-$(COMPONENT_MJR_VERSION)
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
@@ -44,10 +45,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 CLEAN_PATHS += $(BUILD_DIR)
 
-# Hack to run proper unpack command
-UNPACK := $(SHELL) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE)
-UNPACK_ARGS = -x
-USERLAND_ARCHIVES = \#
+# The vendor self-extractor takes -x after the archive pathname.
+UNPACK = $(SHELL) -c 'exec $(SHELL) "$$1" -x' --
+UNPACK_ARGS =
 
 $(BUILD_$(MK_BITS)):	$(SOURCE_DIR)/.prep
 	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
@@ -74,7 +74,7 @@ GENERATE_EXTRA_CMD += | \
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
@@ -84,3 +84,4 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += service/opengl/ogl-select
