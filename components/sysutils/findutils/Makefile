@@ -29,14 +29,14 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         findutils
-COMPONENT_VERSION=      4.10.0
+COMPONENT_VERSION=      4.11.0
 COMPONENT_SUMMARY=      GNU findutils
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/findutils/
 COMPONENT_FMRI=         file/gnu-findutils
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:1387e0b67ff247d2abde998f90dfbf70c1491391a59ddfecb8ae698789f0a4f5
+COMPONENT_ARCHIVE_HASH= sha256:bfd19cb06cc71f3352d567e90284d8cdac02ac89774bbeadf0b533b0c11432fd
 COMPONENT_ARCHIVE_URL= 	https://ftp.gnu.org/pub/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv3
 COMPONENT_LICENSE_FILE= COPYING
@@ -52,6 +52,8 @@ CONFIGURE_OPTIONS += --disable-leaf-optimisation
 # Run all the tests even if there is a failure
 COMPONENT_TEST_ARGS += -k
 COMPONENT_TEST_ENV += PATH="$(PATH.gnu)"
+
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
 
 # Test dependencies:
 TEST_REQUIRED_PACKAGES += developer/versioning/cvs
