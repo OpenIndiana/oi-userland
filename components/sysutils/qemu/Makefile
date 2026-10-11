@@ -11,6 +11,7 @@
 
 #
 # Copyright 2023 OmniOS Community Edition (OmniOSce) Association.
+# Copyright 2024-2026 Jim Klimov.
 #
 
 BUILD_BITS=		64
@@ -22,6 +23,7 @@ PATH= $(PATH.gnu)
 
 COMPONENT_NAME=		qemu
 COMPONENT_VERSION=	11.1.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	\
 		A generic and open source machine emulator and virtualizer
 COMPONENT_PROJECT_URL=	https://www.qemu.org/
@@ -61,9 +63,11 @@ PYTHON_REQUIRED_PACKAGES += library/python/sphinx-rtd-theme
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/accessibility/brltty
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

@@ -1,0 +1,47 @@
+Unlike some other OSes, OpenIndiana and OmniOS programs
+for poweroff/halt/reboot/shutdown are under /usr/sbin
+which is stand-alone, and are not visible under /sbin
+expected by qemu hard-coded paths across many versions.
+
+Also note that there is no `hwclock` here (to fix later).
+
+Signed-off-by: Jim Klimov <jim@jimklimov.com>
+
+diff -Naur qemu-11.1.1.orig/qga/commands-posix.c qemu-11.1.1/qga/commands-posix.c
+--- qemu-11.1.1.orig/qga/commands-posix.c	2026-10-01 17:15:50.925986296 +0200
++++ qemu-11.1.1/qga/commands-posix.c	2026-10-01 18:11:49.626078563 +0200
+@@ -220,9 +220,14 @@
+     return retcode;
+ }
+ 
+-#define POWEROFF_CMD_PATH "/sbin/poweroff"
+-#define HALT_CMD_PATH "/sbin/halt"
+-#define REBOOT_CMD_PATH "/sbin/reboot"
++/* NOTE: This build is configured for illumos distros where /usr/sbin and
++ *  /usr/bin are separate directories (possibly filesystems) from /sbin
++ *  and /bin, which are unified and mashed together in some other OSes.
++ */
++#define POWEROFF_CMD_PATH "/usr/sbin/poweroff"
++#define HALT_CMD_PATH "/usr/sbin/halt"
++#define REBOOT_CMD_PATH "/usr/sbin/reboot"
++#define SHUTDOWN_CMD_PATH "/usr/sbin/shutdown"
+ 
+ void qmp_guest_shutdown(const char *mode, Error **errp)
+ {
+@@ -266,7 +271,7 @@
+         return;
+     }
+ 
+-    const char *argv[] = {"/sbin/shutdown",
++    const char *argv[] = {SHUTDOWN_CMD_PATH,
+ #ifdef CONFIG_SOLARIS
+                           shutdown_flag, "-g0", "-y",
+ #elif defined(CONFIG_BSD)
+@@ -299,6 +304,7 @@
+     int ret;
+     Error *local_err = NULL;
+     struct timeval tv;
++    /* FIXME: On illumos, use `date` */
+     const char *argv[] = {"/sbin/hwclock", has_time ? "-w" : "-s", NULL};
+ 
+     /* If user has passed a time, validate and set it. */
