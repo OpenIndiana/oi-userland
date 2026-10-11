@@ -114,6 +114,7 @@ PKG_VARS += GIT_COMMIT_ID GIT_REPO GIT_TAG
 PKG_VARS += PUBLISHER PUBLISHER_LOCALIZABLE
 PKG_VARS += USERLAND_GIT_REMOTE USERLAND_GIT_BRANCH USERLAND_GIT_REV
 PKG_VARS += COMPONENT
+PKG_VARS += GCCVER
 
 # For items that need special definition, add them to PKG_MACROS.
 # IPS_COMPONENT_VERSION suitable for use in regular expressions.
@@ -137,7 +138,6 @@ endif
 endef
 $(foreach isa,$(MACH_LIST),$(eval $(call mach-list-generate-macros,$(isa))))
 
-PKG_MACROS +=		GCCVER=$(GCC_VERSION)
 PKG_MACROS +=		CLANGVER=$(CLANG_VERSION)
 PKG_MACROS +=		JAVAVER=$(JAVA_VERSION)
 

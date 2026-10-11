@@ -699,7 +699,8 @@ export CCACHE := $(shell \
 
 GCC_DEFAULT =	14
 GCC_VERSION ?=	$(GCC_DEFAULT)
-GCC_ROOT =	/usr/gcc/$(GCC_VERSION)
+GCCVER =	$(GCC_VERSION)
+GCC_ROOT =	/usr/gcc/$(GCCVER)
 
 # If a component asked for non-default gcc version we need to make sure it is
 # installed
