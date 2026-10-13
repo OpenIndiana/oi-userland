@@ -19,10 +19,10 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gjs
-HUMAN_VERSION =			1.90.0
+HUMAN_VERSION =			1.90.1
 COMPONENT_SUMMARY =		GNOME Javascript bindings
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:47e9f22b1d4aca841c6c492b449b6de32ff680972183e26fe7b98a45c5c3fee1
+	sha256:05ceaa80f48e3782e5c44938572fad863e02b8c4a6c55657a99aa81db8ce9efa
 COMPONENT_PROJECT_URL =		https://wiki.gnome.org/Projects/Gjs
 COMPONENT_FMRI =		library/desktop/gjs
 COMPONENT_CLASSIFICATION =	Desktop (GNOME)/Libraries
