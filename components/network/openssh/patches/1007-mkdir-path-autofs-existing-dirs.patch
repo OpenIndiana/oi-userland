@@ -1,0 +1,105 @@
+mkdir_path(): tolerate mkdir(2) failures on directories that already exist.
+
+OpenSSH 10.6 creates the agent socket directory (default user:.ssh/agent)
+with mkdir_path(), which calls mkdirat(2) for every path component including
+the home directory itself. On illumos, mkdir(2) of an entry in an autofs
+indirect map directory such as /home returns ENOSYS ("Operation not
+applicable") instead of EEXIST (auto_mkdir in uts/common/fs/autofs), so
+sshd agent forwarding and ssh-agent fail for every user with an automounted
+home directory:
+
+  sshd-session[954451]: error: mkdir_path: mkdir("/home/klausz"): Operation not applicable
+  sshd-session[954451]: error: agent_listener_user: failed to create agent socket parent directory
+
+Linux and FreeBSD return EEXIST for an already mounted autofs entry, which
+is why upstream did not notice. OpenSSH 10.5 only created ~/.ssh and
+~/.ssh/agent and was not affected.
+
+Remember the mkdir error, open the component as a directory anyway and only
+fail when that does not work either. Also fixes sftp "lmkdir -p" and
+ssh-agent's default socket directory on autofs homes.
+
+To be submitted upstream (bugzilla.mindrot.org).
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/misc.c a/misc.c
+--- a~/misc.c	1970-01-01 00:00:00
++++ a/misc.c	1970-01-01 00:00:00
+@@ -3270,7 +3270,7 @@ mkdir_path(const char *target, mode_t mode)
+ {
+ #if defined(HAVE_OPENAT) && defined(O_DIRECTORY)
+ 	char *dir, *odir = NULL, *next;
+-	int fd = AT_FDCWD, fd2, subpath_len, ret = -1;
++	int fd = AT_FDCWD, fd2, subpath_len, mkdir_errno, ret = -1;
+ 
+ 	dir = odir = xstrdup(target);
+ 
+@@ -3287,20 +3287,36 @@ mkdir_path(const char *target, mode_t mode)
+ 		if (*dir == '\0')
+ 			continue;
+ 		subpath_len = (next == NULL) ? INT_MAX : next - odir - 1;
++		mkdir_errno = 0;
+ 		if (mkdirat(fd, dir, mode) == 0)
+ 			debug_f("created directory %.*s", subpath_len, target);
+ 		else if (errno != EEXIST) {
+-			error_f("mkdir(\"%.*s\"): %s",
+-			    subpath_len, target, strerror(errno));
+-			goto out;
++			/*
++			 * Some filesystems refuse mkdir(2) for directories
++			 * that already exist without returning EEXIST, e.g.
++			 * automounter (autofs) directories yield ENOSYS on
++			 * illumos/Solaris, EPERM on FreeBSD and EACCES on
++			 * Linux. Remember the error and only fail if the
++			 * directory can't be opened below.
++			 */
++			mkdir_errno = errno;
+ 		}
+ 
+ 		/* descend */
+ 		if ((fd2 = openat(fd, dir, O_RDONLY|O_DIRECTORY)) == -1) {
+-			error_f("open(\"%.*s\"): %s",
+-			    subpath_len, target, strerror(errno));
++			if (mkdir_errno != 0) {
++				error_f("mkdir(\"%.*s\"): %s", subpath_len,
++				    target, strerror(mkdir_errno));
++			} else {
++				error_f("open(\"%.*s\"): %s",
++				    subpath_len, target, strerror(errno));
++			}
+ 			goto out;
+ 		}
++		if (mkdir_errno != 0) {
++			debug2_f("mkdir(\"%.*s\"): %s, but directory exists",
++			    subpath_len, target, strerror(mkdir_errno));
++		}
+ 		if (fd != AT_FDCWD)
+ 			close(fd);
+ 		fd = fd2;
+@@ -3318,7 +3334,8 @@ mkdir_path(const char *target, mode_t mode)
+ 	 * to the possibly racy way.
+ 	 */
+ 	char *dir, *odir, *p, path[PATH_MAX] = "";
+-	int ret = -1;
++	struct stat st;
++	int mkdir_errno, ret = -1;
+ 	size_t plen = sizeof(path);
+ 
+ 	dir = odir = xstrdup(target);
+@@ -3337,8 +3354,15 @@ mkdir_path(const char *target, mode_t mode)
+ 		if (mkdir(path, mode) == 0)
+ 			debug_f("created directory %s", path);
+ 		else if (errno != EEXIST && errno != EISDIR) {
+-			error_f("mkdir(\"%s\"): %s", path, strerror(errno));
+-			goto out;
++			/* See above: tolerate failures on existing dirs */
++			mkdir_errno = errno;
++			if (stat(path, &st) != 0 || !S_ISDIR(st.st_mode)) {
++				error_f("mkdir(\"%s\"): %s", path,
++				    strerror(mkdir_errno));
++				goto out;
++			}
++			debug2_f("mkdir(\"%s\"): %s, but directory exists",
++			    path, strerror(mkdir_errno));
+ 		}
+ 	}
+ 	/* success */
