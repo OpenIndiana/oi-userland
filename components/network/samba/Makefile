@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
 COMPONENT_VERSION =		4.25.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.samba.org/
@@ -74,6 +75,19 @@ LDFLAGS +=      -lldap-2.6 -lsendfile -lavahi-common -lavahi-core
 LDFLAGS +=     $(LD_SSP)
 
 LD_OPTIONS +=	-B direct
+
+# smbd reopens files via /proc/self/fd, which procfs denies (EACCES) once smbd
+# has changed its euid: Windows clients cannot save existing files
+CFLAGS +=	-DDISABLE_PROC_FDS=1
+
+# waf links -lldap, i.e. the system libldap.so.5, against the OpenLDAP headers
+# (crash in ldap_set_option()): make -lldap resolve to OpenLDAP
+LDAP_COMPAT_DIR =	$(BUILD_DIR)/ldap-compat
+LDFLAGS +=	-L$(LDAP_COMPAT_DIR)
+COMPONENT_PRE_CONFIGURE_ACTION += \
+	$(MKDIR) $(LDAP_COMPAT_DIR) ; \
+	$(RM) $(LDAP_COMPAT_DIR)/libldap.so ; \
+	$(SYMLINK) $(USRLIBDIR64)/libldap-2.6.so $(LDAP_COMPAT_DIR)/libldap.so ;
 
 # to avoid a clash with system gssapi.h (some declaration are not compatible)
 COMPONENT_POST_CONFIGURE_ACTION= ( \
@@ -132,6 +146,16 @@ CONFIGURE_OPTIONS +=	--disable-spotlight
 #
 # set everything for target build.
 #
+# nss_winbind is built 64-bit only since 4.19.3; nscd(8) and other 32-bit
+# consumers need a 32-bit module
+NSS32_DIR =	$(BUILD_DIR)/nss32
+COMPONENT_POST_BUILD_ACTION += \
+	$(COMPONENT_DIR)/Solaris/build-nss32.sh $(SOURCE_DIR) \
+	    $(BUILD_DIR_64)/bin/default $(NSS32_DIR) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(PROTO_DIR)$(USRLIBDIR)/samba/32 ; \
+	$(INSTALL) -m 0555 $(NSS32_DIR)/nss_winbind.so.1 \
+	    $(PROTO_DIR)$(USRLIBDIR)/samba/32/nss_winbind.so.1 ;
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PROTO_DIR)$(ETCDIR)/samba ; \
 	(sed -f $(COMPONENT_DIR)/Solaris/smbconf.sed \
