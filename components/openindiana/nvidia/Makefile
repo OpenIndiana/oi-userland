@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =		nvidia
 HUMAN_VERSION =			595.91.07
 COMPONENT_VERSION =		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.0*/./g')
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_FMRI =		driver/graphics/nvidia
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
 COMPONENT_CLASSIFICATION =	Drivers/Display
