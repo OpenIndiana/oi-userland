@@ -37,6 +37,7 @@ ESR =
 
 COMPONENT_NAME=         firefox
 COMPONENT_VERSION=      158.0
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -246,10 +247,14 @@ COMPONENT_POST_BUILD_ACTION = \
 	(cd $(@D)/browser/installer ; $(ENV) $(COMPONENT_BUILD_ENV) \
 		$(GMAKE) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))
 
+# gfxtest and libxul dlopen libdrm.so.2; OI installs it outside the default
+# library search path.  Keep the probe and the browser on the same path.
+FIREFOX_RUNPATH = $(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/xorg/$(MACH64)
+
 COMPONENT_POST_INSTALL_ACTION  = \
-    for file in `find $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/ -name "*.so"`; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox"' $$file ; \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox"' $$file ; \
+    for file in `find $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/ -name "*.so"` \
+        $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/gfxtest; do \
+        /usr/bin/elfedit -e 'dyn:runpath $(FIREFOX_RUNPATH)' $$file || exit 1 ; \
     done ; \
     mkdir $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/distribution ; \
     $(CP) $(COMPONENT_DIR)/files/distribution.ini $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/distribution/distribution.ini ; \
@@ -281,6 +286,9 @@ REQUIRED_PACKAGES += library/http-parser
 REQUIRED_PACKAGES += runtime/nodejs-24
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += web/browser/lynx
+
+# Loaded dynamically by gfxtest and the GTK dma-buf backend.
+REQUIRED_PACKAGES += x11/library/libdrm
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
