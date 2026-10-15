@@ -1,0 +1,42 @@
+# With -fvisibility=hidden the NSS backend constructors looked up by libc are
+# not exported; mark them _PUBLIC_ as the other platforms do.
+# Upstream: to be reported on bugzilla.samba.org.
+
+--- samba-4.25.0.orig/nsswitch/winbind_nss_solaris.c	2026-10-05 15:40:53.372105440 +0200
++++ samba-4.25.0/nsswitch/winbind_nss_solaris.c	2026-10-05 15:40:53.373838611 +0200
+@@ -171,7 +171,7 @@
+ 	_nss_winbind_getpwuid_solwrap		/* NSS_DBOP_PASSWD_BYUID */
+ };
+ 
+-nss_backend_t*
++_PUBLIC_ nss_backend_t*
+ _nss_winbind_passwd_constr (const char* db_name,
+ 			    const char* src_name,
+ 			    const char* cfg_args)
+@@ -326,7 +326,7 @@
+ 	_nss_winbind_getgroupsbymember_solwrap
+ };
+ 
+-nss_backend_t*
++_PUBLIC_ nss_backend_t*
+ _nss_winbind_group_constr (const char* db_name,
+ 			   const char* src_name,
+ 			   const char* cfg_args)
+@@ -636,7 +636,7 @@
+ 	_nss_winbind_hosts_getbyaddr,
+ };
+ 
+-nss_backend_t *
++_PUBLIC_ nss_backend_t *
+ _nss_winbind_ipnodes_constr(dummy1, dummy2, dummy3)
+         const char      *dummy1, *dummy2, *dummy3;
+ {
+@@ -653,7 +653,7 @@
+ 	_nss_winbind_hosts_getbyaddr,
+ };
+ 
+-nss_backend_t *
++_PUBLIC_ nss_backend_t *
+ _nss_winbind_hosts_constr(dummy1, dummy2, dummy3)
+         const char      *dummy1, *dummy2, *dummy3;
+ {

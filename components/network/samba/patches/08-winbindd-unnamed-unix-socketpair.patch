@@ -1,0 +1,68 @@
+# illumos returns a zero length address from getpeername()/getsockname() for
+# an unnamed AF_UNIX socket, so set_remote_addresses() fails every winbindd
+# child request. Also pass errno, not -1, to map_nt_error_from_unix().
+# Upstream: to be reported on bugzilla.samba.org.
+
+--- samba-4.25.0.orig/source3/winbindd/winbindd_dual_ndr.c
++++ samba-4.25.0/source3/winbindd/winbindd_dual_ndr.c
+@@ -466,6 +466,18 @@
+ 	return status;
+ }
+ 
++/*
++ * illumos returns a zero length address for an unnamed AF_UNIX socket
++ * (e.g. socketpair()); tsocket needs at least the address family.
++ */
++static void fixup_unnamed_unix_sockaddr(struct samba_sockaddr *ssa)
++{
++	if (ssa->sa_socklen < sizeof(ssa->u.sa.sa_family)) {
++		ssa->u.sa.sa_family = AF_UNIX;
++		ssa->sa_socklen = sizeof(ssa->u.sa.sa_family);
++	}
++}
++
+ static NTSTATUS set_remote_addresses(struct dcesrv_connection *conn,
+ 				     int sock)
+ {
+@@ -478,17 +490,18 @@
+ 	ssa = (struct samba_sockaddr) { .sa_socklen = sizeof(ssa.u.ss), };
+ 	ret = getpeername(sock, &ssa.u.sa, &ssa.sa_socklen);
+ 	if (ret != 0) {
+-		status = map_nt_error_from_unix(ret);
++		status = map_nt_error_from_unix(errno);
+ 		DBG_ERR("getpeername failed: %s\n", nt_errstr(status));
+ 		return status;
+ 	}
++	fixup_unnamed_unix_sockaddr(&ssa);
+ 
+ 	ret = tsocket_address_bsd_from_sockaddr(conn,
+ 						&ssa.u.sa,
+ 						ssa.sa_socklen,
+ 						&remote);
+ 	if (ret != 0) {
+-		status = map_nt_error_from_unix(ret);
++		status = map_nt_error_from_unix(errno);
+ 		DBG_ERR("tsocket_address_bsd_from_sockaddr failed: %s\n",
+ 			nt_errstr(status));
+ 		return status;
+@@ -497,17 +510,18 @@
+ 	ssa = (struct samba_sockaddr) { .sa_socklen = sizeof(ssa.u.ss), };
+ 	ret = getsockname(sock, &ssa.u.sa, &ssa.sa_socklen);
+ 	if (ret != 0) {
+-		status = map_nt_error_from_unix(ret);
++		status = map_nt_error_from_unix(errno);
+ 		DBG_ERR("getsockname failed: %s\n", nt_errstr(status));
+ 		return status;
+ 	}
++	fixup_unnamed_unix_sockaddr(&ssa);
+ 
+ 	ret = tsocket_address_bsd_from_sockaddr(conn,
+ 						&ssa.u.sa,
+ 						ssa.sa_socklen,
+ 						&local);
+ 	if (ret != 0) {
+-		status = map_nt_error_from_unix(ret);
++		status = map_nt_error_from_unix(errno);
+ 		DBG_ERR("tsocket_address_bsd_from_sockaddr failed: %s\n",
+ 			nt_errstr(status));
+ 		return status;
