@@ -110,6 +110,8 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched $(BUILD_DIR)/runtime-perl.p5
 	    echo export PYTHON3b_PKGVERS=-$(subst .,,$(lastword $(PYTHON_VERSIONS))) ; \
 	    echo export PYTHON3b_SUFFIX= ; \
 	  ) \
+	  echo export XML_MAJOR_VERSION=2; \
+	  echo export XML_MINOR_VERSION=9; \
 	  echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM); \
 	  echo export BOOTBANNER1=\"$(DISTRIBUTION_NAME) $(DISTRIBUTION_VERSION) Version ^v ^w-bit\") > \
 	  illumos.sh && \
