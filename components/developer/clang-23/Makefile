@@ -103,7 +103,6 @@ COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 COMPONENT_CONFIGURE_ACTION = \
         cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; $(ENV) $(CONFIGURE_ENV) \
                 $(CMAKE) $(CMAKE_OPTIONS) $(SOURCE_DIR)/llvm
-COMPONENT_BUILD_CMD = make 
 
 # Do not change the order of these regexp transforms.
 COMPONENT_TEST_TRANSFORMS += \
