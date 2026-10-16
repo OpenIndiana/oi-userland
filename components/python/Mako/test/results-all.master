@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 570 items
+collecting ... collected 615 items
 
 test/ext/test_babelplugin.py::PluginExtractTest::test_parse_python_expression PASSED
 test/ext/test_babelplugin.py::PluginExtractTest::test_python_gettext_call PASSED
@@ -383,8 +383,28 @@ test/test_lookup.py::LookupTest::test_uri_adjust PASSED
 test/test_lookup.py::LookupTest::test_uri_cache PASSED
 test/test_lookup.py::LookupTest::test_check_not_found PASSED
 test/test_lookup.py::LookupTest::test_dont_accept_relative_outside_of_root PASSED
-test/test_lookup.py::LookupTest::test_dont_accept_relative_outside_of_root_via_double_slash PASSED
-test/test_lookup.py::LookupTest::test_dont_accept_relative_outside_of_root_via_backslash PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[../../secrets/creds.txt-posix] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[../../secrets/creds.txt-windows] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[/../../secrets/creds.txt-posix] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[/../../secrets/creds.txt-windows] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[//../../secrets/creds.txt-posix] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[//../../secrets/creds.txt-windows] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[///../../secrets/creds.txt-posix] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[///../../secrets/creds.txt-windows] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[..\\..\\secrets\\creds.txt-posix] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[..\\..\\secrets\\creds.txt-windows] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[\\..\\..\\secrets\\creds.txt-posix] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[\\..\\..\\secrets\\creds.txt-windows] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[C:/../../../secrets/creds.txt-posix] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[C:/../../../secrets/creds.txt-windows] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[c:/../../../secrets/creds.txt-posix] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[c:/../../../secrets/creds.txt-windows] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[C:\\..\\..\\..\\secrets\\creds.txt-posix] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[C:\\..\\..\\..\\secrets\\creds.txt-windows] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[/C:/../../../secrets/creds.txt-posix] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[/C:/../../../secrets/creds.txt-windows] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[//C:/../../../secrets/creds.txt-posix] PASSED
+test/test_lookup.py::LookupTest::test_dont_accept_traversal_outside_of_root[//C:/../../../secrets/creds.txt-windows] PASSED
 test/test_lookup.py::LookupTest::test_checking_against_bad_filetype PASSED
 test/test_loop.py::TestLoop::test__FOR_LOOP PASSED
 test/test_loop.py::TestLoop::test_loop_demo PASSED
@@ -550,7 +570,32 @@ test/test_template.py::ModuleDirTest::test_callable PASSED
 test/test_template.py::ModuleDirTest::test_custom_writer PASSED
 test/test_template.py::FilenameToURITest::test_windows_paths PASSED
 test/test_template.py::FilenameToURITest::test_posix_paths PASSED
-test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[../../foo.html-posix] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[../../foo.html-windows] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[/../../foo.html-posix] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[/../../foo.html-windows] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[//../../foo.html-posix] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[//../../foo.html-windows] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[///../../foo.html-posix] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[///../../foo.html-windows] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[..\\..\\foo.html-posix] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[..\\..\\foo.html-windows] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[\\..\\..\\foo.html-posix] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[\\..\\..\\foo.html-windows] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[C:/../../foo.html-posix] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[C:/../../foo.html-windows] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[c:/../../foo.html-posix] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[c:/../../foo.html-windows] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[C:\\..\\..\\foo.html-posix] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[C:\\..\\..\\foo.html-windows] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[/C:/../../foo.html-posix] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[/C:/../../foo.html-windows] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[//C:/../../foo.html-posix] PASSED
+test/test_template.py::FilenameToURITest::test_dont_accept_relative_outside_of_root[//C:/../../foo.html-windows] PASSED
+test/test_template.py::FilenameToURITest::test_accept_relative_normalizing_inside_root[foo/bar/../../foo.html-posix] PASSED
+test/test_template.py::FilenameToURITest::test_accept_relative_normalizing_inside_root[foo/bar/../../foo.html-windows] PASSED
+test/test_template.py::FilenameToURITest::test_accept_relative_normalizing_inside_root[C:/foo/../foo.html-posix] PASSED
+test/test_template.py::FilenameToURITest::test_accept_relative_normalizing_inside_root[C:/foo/../foo.html-windows] PASSED
 test/test_template.py::ModuleTemplateTest::test_module_roundtrip PASSED
 test/test_template.py::TestTemplateAPI::test_metadata PASSED
 test/test_template.py::TestTemplateAPI::test_metadata_two PASSED
@@ -587,7 +632,7 @@ test/testing/test_config.py::SupportedTypesConfigTest::test_values PASSED
 test/testing/test_config.py::TypeMismatchConfigTest::test_error_on_load PASSED
 test/testing/test_config.py::MissingItemConfigTest::test_error_on_load PASSED
 
-======== 547 passed, 23 skipped ========
+======== 592 passed, 23 skipped ========
 py$(PYV): commands[1]> python tools/warn_tox.py
 
 ================================================================================
