@@ -19,32 +19,31 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Email-Sender
-HUMAN_VERSION =			2.601
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			2.603
 COMPONENT_SUMMARY =		a library for sending email
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dead783d62a968a5104c962e5562172d1e4dfebfa07a323ca62a4f9b455d000d
+	sha256:9d6f2a4a1b374c0285359996673f919f9aec9519d88c55100679f88b9ebe0075
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/email-abstract
-PERL_REQUIRED_PACKAGES += library/perl-5/email-address-xs
-PERL_REQUIRED_PACKAGES += library/perl-5/email-simple
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/file-path
-PERL_REQUIRED_PACKAGES += library/perl-5/libnet
-PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
-PERL_REQUIRED_PACKAGES += library/perl-5/moo
-PERL_REQUIRED_PACKAGES += library/perl-5/moox-types-mooselike
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/sub-exporter
-PERL_REQUIRED_PACKAGES += library/perl-5/throwable
-PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/email-abstract
+REQUIRED_PACKAGES.perl += library/perl-5/email-address-xs
+REQUIRED_PACKAGES.perl += library/perl-5/email-simple
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/file-path
+REQUIRED_PACKAGES.perl += library/perl-5/libnet
+REQUIRED_PACKAGES.perl += library/perl-5/module-runtime
+REQUIRED_PACKAGES.perl += library/perl-5/moo
+REQUIRED_PACKAGES.perl += library/perl-5/moox-types-mooselike
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/sub-exporter
+REQUIRED_PACKAGES.perl += library/perl-5/throwable
+REQUIRED_PACKAGES.perl += library/perl-5/try-tiny
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/capture-tiny
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
