@@ -19,20 +19,27 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bracex
-HUMAN_VERSION =			3.0.1
+HUMAN_VERSION =			3.1
 COMPONENT_SUMMARY =		Bash style brace expander.
 COMPONENT_PROJECT_URL =		https://github.com/facelessuser/bracex
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4e38e32392e4a4780fe15d644bfc7c8514057cfc3861e060b11814ce829c25e4
+	sha256:35c69fc105f08d77c02722e8ae707c656ff298dd4d26c89bcb3c98fca8bc3614
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.md
+
+TEST_STYLE = pytest
 
 # Python 3.9 is not supported by bracex >= 2.7
 PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_HATCH += dev
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/hatchling
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
