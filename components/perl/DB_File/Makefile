@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DB_File
-HUMAN_VERSION =			1.860
+HUMAN_VERSION =			1.861
 COMPONENT_SUMMARY =		Perl access to Berkeley DB 1.x
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cbe5e90b0e40e0d566f505789b73196e93c56709f660ca316af50662260749a0
+	sha256:608bc6ff234ae08ac5bf6b85887882965aaa89554cf09d09fb926fd4e389094f
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
