@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Compress-Raw-Bzip2
-HUMAN_VERSION =			2.224
+HUMAN_VERSION =			2.225
 COMPONENT_SUMMARY =		Low-Level Interface to bzip2 compression library
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cbf70590538b8e9d1e6e8356b50d0a4456cd9b32f9d58ee0a6e42e0ac2204944
+	sha256:5547dd4101411630e33fa04e9f43dfda06f55d6f3c3420d6207efaac7bc43633
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
