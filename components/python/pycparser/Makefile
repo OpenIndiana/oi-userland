@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycparser
-HUMAN_VERSION =			3.0
+HUMAN_VERSION =			3.11
 COMPONENT_SUMMARY =		C parser in Python
 COMPONENT_PROJECT_URL =		https://github.com/eliben/pycparser
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:600f49d217304a5902ac3c37e1281c9fe94e4d0489de643a9504c5cdfdfc6b29
+	sha256:d875f09c3507d00e1aba0eecc6dcadc1352f30fff09dc6bff2f1c2935e97c2bc
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -41,5 +41,4 @@ COMPONENT_POST_INSTALL_ACTION += \
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
-REQUIRED_PACKAGES.python += library/python/wheel
 REQUIRED_PACKAGES.python += runtime/python
