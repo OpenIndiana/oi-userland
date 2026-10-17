@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 138 items
+collecting ... collected 143 items
 
 test/test_buffer.py::test_unpack_buffer PASSED
 test/test_buffer.py::test_unpack_bytearray PASSED
@@ -50,6 +50,10 @@ test/test_limits.py::test_integer PASSED
 test/test_limits.py::test_single_float PASSED
 test/test_limits.py::test_array_header PASSED
 test/test_limits.py::test_map_header PASSED
+test/test_limits.py::test_negative_header_size[-1-pack_array_header] PASSED
+test/test_limits.py::test_negative_header_size[-1-pack_map_header] PASSED
+test/test_limits.py::test_negative_header_size[-4294967296-pack_array_header] PASSED
+test/test_limits.py::test_negative_header_size[-4294967296-pack_map_header] PASSED
 test/test_limits.py::test_max_str_len PASSED
 test/test_limits.py::test_max_bin_len PASSED
 test/test_limits.py::test_max_array_len PASSED
@@ -99,6 +103,7 @@ test/test_pack.py::testArraySize PASSED
 test/test_pack.py::test_manualreset PASSED
 test/test_pack.py::testMapSize PASSED
 test/test_pack.py::test_odict PASSED
+test/test_pack.py::test_frozendict SKIPPED (frozendict requires Pyth...)
 test/test_pack.py::test_pairlist PASSED
 test/test_pack.py::test_get_buffer PASSED
 test/test_pack.py::test_buf_size_is_converted_once PASSED
@@ -145,9 +150,9 @@ test/test_unpack.py::test_unpackb_raises_extra_data_with_trailing_bytes PASSED
 test/test_unpack.py::test_unpack_raises_extra_data_on_stream_with_trailing_bytes PASSED
 
 =============================== warnings summary ===============================
-test/test_limits.py:174
-  $(@D)/test/test_limits.py:174: PytestUnknownMarkWarning: Unknown pytest.mark.thread_unsafe - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+test/test_limits.py:184
+  $(@D)/test/test_limits.py:184: PytestUnknownMarkWarning: Unknown pytest.mark.thread_unsafe - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
     @pytest.mark.thread_unsafe
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 138 passed, 1 warning ========
+======== 142 passed, 1 skipped, 1 warning ========
