@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1196 items
+collecting ... collected 1369 items
 
 tests/core/test_adapter.py::TestAdapterAttributes::test_doc_string PASSED
 tests/core/test_adapter.py::TestAdapterAttributes::test_module_name PASSED
@@ -13,7 +13,13 @@ tests/core/test_adapter.py::TestAdapterAttributes::test_object_qualname PASSED
 tests/core/test_adapter.py::TestArgumentSpecification::test_argspec PASSED
 tests/core/test_adapter.py::TestArgumentSpecification::test_isinstance PASSED
 tests/core/test_adapter.py::TestArgumentSpecification::test_signature PASSED
+tests/core/test_adapter.py::TestDynamicAdapter::test_adapter_evaluates_false 
+tests/core/test_adapter.py::TestDynamicAdapter::test_adapter_evaluates_false PASSED
 tests/core/test_adapter.py::TestDynamicAdapter::test_adapter_factory PASSED
+tests/core/test_adapter.py::TestDynamicAdapter::test_adapter_factory_evaluates_false 
+tests/core/test_adapter.py::TestDynamicAdapter::test_adapter_factory_evaluates_false PASSED
+tests/core/test_adapter.py::TestDynamicAdapter::test_adapter_factory_returns_none 
+tests/core/test_adapter.py::TestDynamicAdapter::test_adapter_factory_returns_none PASSED
 tests/core/test_adapter.py::TestDynamicAdapter::test_dynamic_adapter_classmethod PASSED
 tests/core/test_adapter.py::TestDynamicAdapter::test_dynamic_adapter_function PASSED
 tests/core/test_adapter.py::TestDynamicAdapter::test_dynamic_adapter_instancemethod PASSED
@@ -75,6 +81,9 @@ tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_aiter PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_await PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_call PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_descriptor PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_descriptor_optional_owner 
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_descriptor_optional_owner PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_descriptor_optional_owner_required_by_wrapped PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_fspath PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_fspath_not_pathlike PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_fspath_pathlib PASSED
@@ -476,12 +485,17 @@ tests/core/test_instancemethod.py::TestCallingInstanceMethodNewStyle::test_class
 tests/core/test_instancemethod.py::TestCallingInstanceMethodNewStyle::test_class_call_function_nested PASSED
 tests/core/test_instancemethod.py::TestCallingInstanceMethodNewStyle::test_instance_call_function PASSED
 tests/core/test_instancemethod.py::TestCallingInstanceMethodNewStyle::test_instance_call_function_nested PASSED
+tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_descriptor_optional_owner 
+tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_descriptor_optional_owner PASSED
+tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_descriptor_optional_owner_required_by_wrapped PASSED
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_lazy_import PASSED
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_lazy_import_attribute PASSED
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_lazy_import_callable PASSED
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_lazy_import_dotted PASSED
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_lazy_import_iterable PASSED
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_lazy_object_proxy PASSED
+tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_pathlike_interface_is_lazy 
+tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_pathlike_interface_is_lazy PASSED
 tests/core/test_lru_cache.py::TestPlainFunction::test_cache_clear PASSED
 tests/core/test_lru_cache.py::TestPlainFunction::test_cache_info_before_call PASSED
 tests/core/test_lru_cache.py::TestPlainFunction::test_caching PASSED
@@ -869,6 +883,88 @@ tests/core/test_post_import_hooks.py::TestPostImportHooks::test_import_deadlock_
 tests/core/test_post_import_hooks.py::TestPostImportHooks::test_loader PASSED
 tests/core/test_post_import_hooks.py::TestPostImportHooks::test_remove_from_sys_modules PASSED
 tests/core/test_post_import_hooks.py::TestPostImportHooksStringForm::test_string_hook_callback_in_synthetic_module PASSED
+tests/core/test_proxy_doc_descriptor.py::TestDocDescriptor::test_class_docstring_not_replaced_by_descriptor PASSED
+tests/core/test_proxy_doc_descriptor.py::TestDocDescriptor::test_descriptor_found_by_generic_attribute_lookup PASSED
+tests/core/test_proxy_doc_descriptor.py::TestDocDescriptor::test_descriptor_setter_and_deleter_used PASSED
+tests/core/test_proxy_doc_descriptor.py::TestDocDescriptor::test_descriptor_used_for_instances PASSED
+tests/core/test_proxy_doc_descriptor.py::TestDocDescriptor::test_module_still_delegates PASSED
+tests/core/test_proxy_doc_descriptor.py::TestDocDescriptor::test_read_only_descriptor_rejects_assignment PASSED
+tests/core/test_proxy_doc_descriptor.py::TestInheritedDocDescriptor::test_inherited_by_class_with_docstring PASSED
+tests/core/test_proxy_doc_descriptor.py::TestInheritedDocDescriptor::test_inherited_by_class_without_docstring PASSED
+tests/core/test_proxy_doc_descriptor.py::TestInheritedDocDescriptor::test_inherited_descriptor_rejects_assignment PASSED
+tests/core/test_proxy_doc_descriptor.py::TestInheritedDocDescriptor::test_inherited_setter_used PASSED
+tests/core/test_proxy_doc_descriptor.py::TestDefaultDelegation::test_derived_class_of_delegating_class_delegates PASSED
+tests/core/test_proxy_doc_descriptor.py::TestDefaultDelegation::test_derived_class_with_docstring_delegates PASSED
+tests/core/test_proxy_doc_descriptor.py::TestDefaultDelegation::test_function_wrapper_subclass PASSED
+tests/core/test_proxy_doc_descriptor.py::TestDefaultDelegation::test_plain_proxy_delegates PASSED
+tests/core/test_proxy_new_arguments.py::TestBaseObjectProxyNewArguments::test_init_extra_keyword_argument PASSED
+tests/core/test_proxy_new_arguments.py::TestBaseObjectProxyNewArguments::test_init_extra_positional_argument PASSED
+tests/core/test_proxy_new_arguments.py::TestBaseObjectProxyNewArguments::test_new_passes_arguments_through PASSED
+tests/core/test_proxy_new_arguments.py::TestBaseObjectProxyNewArguments::test_new_passes_keyword_arguments_through PASSED
+tests/core/test_proxy_new_arguments.py::TestBaseObjectProxyNewArguments::test_new_without_arguments PASSED
+tests/core/test_proxy_new_arguments.py::TestObjectProxyNewArguments::test_init_extra_keyword_argument PASSED
+tests/core/test_proxy_new_arguments.py::TestObjectProxyNewArguments::test_init_extra_positional_argument PASSED
+tests/core/test_proxy_new_arguments.py::TestObjectProxyNewArguments::test_new_passes_arguments_through PASSED
+tests/core/test_proxy_new_arguments.py::TestObjectProxyNewArguments::test_new_passes_keyword_arguments_through PASSED
+tests/core/test_proxy_new_arguments.py::TestObjectProxyNewArguments::test_new_without_arguments PASSED
+tests/core/test_proxy_new_arguments.py::TestCallableObjectProxyNewArguments::test_init_extra_keyword_argument PASSED
+tests/core/test_proxy_new_arguments.py::TestCallableObjectProxyNewArguments::test_init_extra_positional_argument PASSED
+tests/core/test_proxy_new_arguments.py::TestCallableObjectProxyNewArguments::test_new_passes_arguments_through PASSED
+tests/core/test_proxy_new_arguments.py::TestCallableObjectProxyNewArguments::test_new_passes_keyword_arguments_through PASSED
+tests/core/test_proxy_new_arguments.py::TestCallableObjectProxyNewArguments::test_new_without_arguments PASSED
+tests/core/test_proxy_new_arguments.py::TestAutoObjectProxyNewArguments::test_dunder_methods_still_injected PASSED
+tests/core/test_proxy_new_arguments.py::TestAutoObjectProxyNewArguments::test_init_extra_keyword_argument PASSED
+tests/core/test_proxy_new_arguments.py::TestAutoObjectProxyNewArguments::test_init_extra_positional_argument PASSED
+tests/core/test_proxy_new_arguments.py::TestAutoObjectProxyNewArguments::test_new_passes_arguments_through PASSED
+tests/core/test_proxy_new_arguments.py::TestAutoObjectProxyNewArguments::test_new_passes_keyword_arguments_through PASSED
+tests/core/test_proxy_new_arguments.py::TestAutoObjectProxyNewArguments::test_new_without_arguments PASSED
+tests/core/test_proxy_new_arguments.py::TestLazyObjectProxyNewArguments::test_init_extra_keyword_argument PASSED
+tests/core/test_proxy_new_arguments.py::TestLazyObjectProxyNewArguments::test_init_extra_positional_argument PASSED
+tests/core/test_proxy_new_arguments.py::TestLazyObjectProxyNewArguments::test_interface_with_extra_arguments PASSED
+tests/core/test_proxy_new_arguments.py::TestLazyObjectProxyNewArguments::test_new_passes_arguments_through PASSED
+tests/core/test_proxy_new_arguments.py::TestLazyObjectProxyNewArguments::test_new_passes_keyword_arguments_through PASSED
+tests/core/test_proxy_new_arguments.py::TestLazyObjectProxyNewArguments::test_new_without_arguments PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandBinary::test_add PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandBinary::test_and PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandBinary::test_divmod PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandBinary::test_floordiv PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandBinary::test_lshift PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandBinary::test_matmul PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandBinary::test_mod PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandBinary::test_mul PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandBinary::test_or PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandBinary::test_pow PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandBinary::test_rshift PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandBinary::test_sub PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandBinary::test_truediv PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandBinary::test_xor PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandInplace::test_iadd PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandInplace::test_iand PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandInplace::test_ifloordiv PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandInplace::test_ilshift PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandInplace::test_imatmul PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandInplace::test_imod PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandInplace::test_imul PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandInplace::test_ior PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandInplace::test_ipow PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandInplace::test_irshift PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandInplace::test_isub PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandInplace::test_itruediv PASSED
+tests/core/test_proxy_operands.py::TestStrictOperandInplace::test_ixor PASSED
+tests/core/test_proxy_operands.py::TestSubclassReflectedPriority::test_add PASSED
+tests/core/test_proxy_operands.py::TestSubclassReflectedPriority::test_and PASSED
+tests/core/test_proxy_operands.py::TestSubclassReflectedPriority::test_divmod PASSED
+tests/core/test_proxy_operands.py::TestSubclassReflectedPriority::test_floordiv PASSED
+tests/core/test_proxy_operands.py::TestSubclassReflectedPriority::test_lshift PASSED
+tests/core/test_proxy_operands.py::TestSubclassReflectedPriority::test_matmul PASSED
+tests/core/test_proxy_operands.py::TestSubclassReflectedPriority::test_mod PASSED
+tests/core/test_proxy_operands.py::TestSubclassReflectedPriority::test_mul PASSED
+tests/core/test_proxy_operands.py::TestSubclassReflectedPriority::test_or PASSED
+tests/core/test_proxy_operands.py::TestSubclassReflectedPriority::test_pow PASSED
+tests/core/test_proxy_operands.py::TestSubclassReflectedPriority::test_rshift PASSED
+tests/core/test_proxy_operands.py::TestSubclassReflectedPriority::test_sub PASSED
+tests/core/test_proxy_operands.py::TestSubclassReflectedPriority::test_truediv PASSED
+tests/core/test_proxy_operands.py::TestSubclassReflectedPriority::test_xor PASSED
 tests/core/test_pyerr_clear_propagation.py::TestRawInitAttributeLookups::test_raw_init_doc_propagates PASSED
 tests/core/test_pyerr_clear_propagation.py::TestRawInitAttributeLookups::test_raw_init_module_propagates PASSED
 tests/core/test_pyerr_clear_propagation.py::TestRawInitAttributeLookups::test_raw_init_wrapped_factory_propagates PASSED
@@ -1084,11 +1180,52 @@ tests/core/test_type_module_attribute.py::TestSetModuleAndDoc::test_set_doc_on_o
 tests/core/test_type_module_attribute.py::TestSetModuleAndDoc::test_set_module_on_function_wrapper PASSED
 tests/core/test_type_module_attribute.py::TestSetModuleAndDoc::test_set_module_on_object_proxy PASSED
 tests/core/test_type_module_attribute.py::TestSetModuleAndDoc::test_set_module_on_user_subclass PASSED
+tests/core/test_type_module_attribute.py::TestDeleteModuleAndDoc::test_delete_doc_after_set PASSED
+tests/core/test_type_module_attribute.py::TestDeleteModuleAndDoc::test_delete_doc_on_class_target PASSED
+tests/core/test_type_module_attribute.py::TestDeleteModuleAndDoc::test_delete_doc_on_function_wrapper PASSED
+tests/core/test_type_module_attribute.py::TestDeleteModuleAndDoc::test_delete_doc_on_object_proxy PASSED
+tests/core/test_type_module_attribute.py::TestDeleteModuleAndDoc::test_delete_doc_on_user_subclass PASSED
+tests/core/test_type_module_attribute.py::TestDeleteModuleAndDoc::test_delete_module_after_set PASSED
+tests/core/test_type_module_attribute.py::TestDeleteModuleAndDoc::test_delete_module_on_class_target PASSED
+tests/core/test_type_module_attribute.py::TestDeleteModuleAndDoc::test_delete_module_on_function_wrapper PASSED
+tests/core/test_type_module_attribute.py::TestDeleteModuleAndDoc::test_delete_module_on_object_proxy PASSED
+tests/core/test_type_module_attribute.py::TestDeleteModuleAndDoc::test_delete_module_on_user_subclass PASSED
+tests/core/test_type_module_attribute.py::TestDeleteModuleAndDoc::test_proxy_state_matches_fresh_proxy_after_delete PASSED
 tests/core/test_type_module_attribute.py::TestWrappedReplacement::test_doc_after_wrapped_replacement PASSED
 tests/core/test_type_module_attribute.py::TestWrappedReplacement::test_module_after_wrapped_replacement PASSED
 tests/core/test_type_module_attribute.py::TestWrappedReplacement::test_module_after_wrapped_replacement_on_function_wrapper PASSED
+tests/core/test_type_module_attribute.py::TestNonInternedAttributeNames::test_delete_module_and_doc_via_non_interned_name PASSED
 tests/core/test_type_module_attribute.py::TestNonInternedAttributeNames::test_get_module_and_doc_via_non_interned_name PASSED
 tests/core/test_type_module_attribute.py::TestNonInternedAttributeNames::test_set_module_and_doc_via_non_interned_name PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedFunctionWrapper::test_call_created_by_new PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedFunctionWrapper::test_call_derived_class_not_calling_base_init PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedFunctionWrapper::test_call_with_arguments_created_by_new PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedFunctionWrapper::test_descriptor_access_derived_class_not_calling_base_init PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedFunctionWrapper::test_descriptor_access_via_class PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedFunctionWrapper::test_descriptor_access_via_instance PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedFunctionWrapper::test_initialized_wrapper_unaffected PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedBoundFunctionWrapper::test_assign_wrapped_created_by_new PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedBoundFunctionWrapper::test_call_created_by_new PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedBoundFunctionWrapper::test_call_with_arguments_created_by_new PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedPartialCallableObjectProxy::test_call_created_by_new PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedPartialCallableObjectProxy::test_call_derived_class_not_calling_base_init PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedPartialCallableObjectProxy::test_call_with_arguments_created_by_new PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedPartialCallableObjectProxy::test_initialized_partial_without_keywords_unaffected PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedWrapperAttributes::test_attributes_of_wrapped_wrapper_are_returned PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedWrapperAttributes::test_bound_function_wrapper_created_by_new 
+tests/core/test_uninitialized_wrapper.py::TestUninitializedWrapperAttributes::test_bound_function_wrapper_created_by_new PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedWrapperAttributes::test_error_is_that_of_the_wrapped_object PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedWrapperAttributes::test_function_wrapper_created_by_new 
+tests/core/test_uninitialized_wrapper.py::TestUninitializedWrapperAttributes::test_function_wrapper_created_by_new PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedWrapperAttributes::test_function_wrapper_derived_class_not_calling_base_init 
+tests/core/test_uninitialized_wrapper.py::TestUninitializedWrapperAttributes::test_function_wrapper_derived_class_not_calling_base_init PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedWrapperAttributes::test_initialized_function_wrapper_unaffected PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedWrapperAttributes::test_initialized_partial_with_keywords_unaffected PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedWrapperAttributes::test_initialized_partial_without_keywords_unaffected PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedWrapperAttributes::test_partial_created_by_new 
+tests/core/test_uninitialized_wrapper.py::TestUninitializedWrapperAttributes::test_partial_created_by_new PASSED
+tests/core/test_uninitialized_wrapper.py::TestUninitializedWrapperAttributes::test_partial_derived_class_not_calling_base_init 
+tests/core/test_uninitialized_wrapper.py::TestUninitializedWrapperAttributes::test_partial_derived_class_not_calling_base_init PASSED
 tests/core/test_unwrap_object.py::TestUnwrapObject::test_buried_under_closure_raises PASSED
 tests/core/test_unwrap_object.py::TestUnwrapObject::test_class_attribute PASSED
 tests/core/test_unwrap_object.py::TestUnwrapObject::test_deferred_wrap_and_handle_recovery PASSED
@@ -1131,7 +1268,13 @@ tests/core/test_update_attributes.py::TestUpdateAttributes::test_update_qualname
 tests/core/test_update_attributes.py::TestUpdateAttributes::test_update_qualname_modified_on_original PASSED
 tests/core/test_weak_function_proxy.py::TestWeakFunctionProxy::test_call_expired PASSED
 tests/core/test_weak_function_proxy.py::TestWeakFunctionProxy::test_classmethod PASSED
+tests/core/test_weak_function_proxy.py::TestWeakFunctionProxy::test_decorated_classmethod_does_not_retain_owner PASSED
+tests/core/test_weak_function_proxy.py::TestWeakFunctionProxy::test_decorated_descriptors 
+tests/core/test_weak_function_proxy.py::TestWeakFunctionProxy::test_decorated_descriptors PASSED
+tests/core/test_weak_function_proxy.py::TestWeakFunctionProxy::test_decorated_function PASSED
 tests/core/test_weak_function_proxy.py::TestWeakFunctionProxy::test_decorator_method PASSED
+tests/core/test_weak_function_proxy.py::TestWeakFunctionProxy::test_falsey_callback_receives_proxy PASSED
+tests/core/test_weak_function_proxy.py::TestWeakFunctionProxy::test_falsey_callback_runs_once_when_method_and_instance_expire PASSED
 tests/core/test_weak_function_proxy.py::TestWeakFunctionProxy::test_function PASSED
 tests/core/test_weak_function_proxy.py::TestWeakFunctionProxy::test_instancemethod_delete_function PASSED
 tests/core/test_weak_function_proxy.py::TestWeakFunctionProxy::test_instancemethod_delete_function_and_instance PASSED
@@ -1140,6 +1283,37 @@ tests/core/test_weak_function_proxy.py::TestWeakFunctionProxy::test_isinstance P
 tests/core/test_weak_function_proxy.py::TestWeakFunctionProxy::test_no_callback PASSED
 tests/core/test_weak_function_proxy.py::TestWeakFunctionProxy::test_staticmethod PASSED
 tests/core/test_weak_function_proxy.py::TestArgumentUnpackingWeakFunctionProxy::test_self_keyword_argument PASSED
+tests/core/test_with_doc.py::TestDoc::test_call_delegates_to_wrapped PASSED
+tests/core/test_with_doc.py::TestDoc::test_docstring_overridden PASSED
+tests/core/test_with_doc.py::TestDoc::test_none_docstring PASSED
+tests/core/test_with_doc.py::TestDoc::test_original_function_not_mutated PASSED
+tests/core/test_with_doc.py::TestDoc::test_pydoc_shows_override PASSED
+tests/core/test_with_doc.py::TestDoc::test_signature_of_wrapped_still_reported PASSED
+tests/core/test_with_doc.py::TestFactory::test_factory_called_once_at_decoration_time PASSED
+tests/core/test_with_doc.py::TestFactory::test_factory_receives_wrapped PASSED
+tests/core/test_with_doc.py::TestFactory::test_factory_sees_overridden_signature_when_stacked_above PASSED
+tests/core/test_with_doc.py::TestAssignment::test_assignment_after_deletion_writes_through PASSED
+tests/core/test_with_doc.py::TestAssignment::test_assignment_of_none PASSED
+tests/core/test_with_doc.py::TestAssignment::test_assignment_replaces_override PASSED
+tests/core/test_with_doc.py::TestAssignment::test_deletion_restores_delegation PASSED
+tests/core/test_with_doc.py::TestValidation::test_bare_decorator_raises PASSED
+tests/core/test_with_doc.py::TestValidation::test_multiple_specs_raises PASSED
+tests/core/test_with_doc.py::TestValidation::test_no_spec_raises PASSED
+tests/core/test_with_doc.py::TestInstanceMethod::test_bound_view PASSED
+tests/core/test_with_doc.py::TestInstanceMethod::test_bound_view_is_read_only PASSED
+tests/core/test_with_doc.py::TestInstanceMethod::test_call_through_binding PASSED
+tests/core/test_with_doc.py::TestInstanceMethod::test_class_view PASSED
+tests/core/test_with_doc.py::TestInstanceMethod::test_pydoc_on_bound_method PASSED
+tests/core/test_with_doc.py::TestInstanceMethod::test_pydoc_on_class PASSED
+tests/core/test_with_doc.py::TestClassmethod::test_above_classmethod PASSED
+tests/core/test_with_doc.py::TestClassmethod::test_below_classmethod PASSED
+tests/core/test_with_doc.py::TestStaticmethod::test_above_staticmethod PASSED
+tests/core/test_with_doc.py::TestStaticmethod::test_below_staticmethod PASSED
+tests/core/test_with_doc.py::TestStacking::test_docstring_propagates_through_outer_decorator PASSED
+tests/core/test_with_doc.py::TestStacking::test_docstring_propagates_through_outer_decorator_on_method PASSED
+tests/core/test_with_doc.py::TestStacking::test_with_doc_above_with_signature PASSED
+tests/core/test_with_doc.py::TestStacking::test_with_doc_below_with_signature PASSED
+tests/core/test_with_doc.py::TestStacking::test_with_doc_on_top_of_with_doc PASSED
 tests/core/test_with_signature.py::TestPrototype::test_call_delegates_to_wrapped PASSED
 tests/core/test_with_signature.py::TestPrototype::test_getfullargspec PASSED
 tests/core/test_with_signature.py::TestPrototype::test_original_function_not_mutated PASSED
@@ -1185,6 +1359,17 @@ tests/core/test_with_signature.py::TestMarkerStacking::test_mark_as_sync_over_wi
 tests/core/test_with_signature.py::TestMarkerStacking::test_stacking_on_instance_method PASSED
 tests/core/test_with_signature.py::TestMarkerStacking::test_varargs_flag_preserved_through_marker PASSED
 tests/core/test_with_signature.py::TestMarkerStacking::test_with_signature_over_mark_as_sync PASSED
+tests/core/test_with_signature.py::TestDocstring::test_bound_method_reports_doc PASSED
+tests/core/test_with_signature.py::TestDocstring::test_doc_argument PASSED
+tests/core/test_with_signature.py::TestDocstring::test_doc_argument_takes_precedence_over_tuple PASSED
+tests/core/test_with_signature.py::TestDocstring::test_doc_given_assignment_replaces_override PASSED
+tests/core/test_with_signature.py::TestDocstring::test_doc_not_given_delegates PASSED
+tests/core/test_with_signature.py::TestDocstring::test_doc_not_given_writes_through PASSED
+tests/core/test_with_signature.py::TestDocstring::test_docstring_propagates_through_outer_decorator PASSED
+tests/core/test_with_signature.py::TestDocstring::test_factory_returning_tuple_with_none_docstring PASSED
+tests/core/test_with_signature.py::TestDocstring::test_factory_returning_tuple_with_prototype PASSED
+tests/core/test_with_signature.py::TestDocstring::test_factory_returning_tuple_with_signature PASSED
+tests/core/test_with_signature.py::TestDocstring::test_pydoc_shows_doc_and_signature PASSED
 tests/core/test_wrapper_chain.py::TestWrapperChain::test_attribute_wrapper_missing_terminal PASSED
 tests/core/test_wrapper_chain.py::TestWrapperChain::test_broken_proxy_error_propagates PASSED
 tests/core/test_wrapper_chain.py::TestWrapperChain::test_chain_of_exactly_limit PASSED
@@ -1203,6 +1388,6 @@ tests/core/test_wrapper_chain.py::TestUnwrapped::test_lazy_proxy PASSED
 tests/core/test_wrapper_chain.py::TestUnwrapped::test_unwrapped_object PASSED
 tests/core/test_wrapper_chain.py::TestUnwrapped::test_wrapper_stack PASSED
 
-======== 1196 passed ========
+======== 1369 passed, 43 subtests passed ========
   py$(PYV): OK
   congratulations :)
