@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Alien-Build
-HUMAN_VERSION =			2.84
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			2.88
 COMPONENT_SUMMARY =		Build external dependencies for use in CPAN
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8e891fd3acbac39dd8fdc01376b9abff931e625be41e0910ca30ad59363b4477
+	sha256:c14346bace2b50cae62f1ee70a907f4c7383fabf90b034272ee52a5b1345fbba
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -46,20 +45,20 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/alien-cmake3
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/readonly
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/capture-tiny
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/ffi-checklib
-PERL_REQUIRED_PACKAGES += library/perl-5/file-chdir
-PERL_REQUIRED_PACKAGES += library/perl-5/file-which
-PERL_REQUIRED_PACKAGES += library/perl-5/json-pp
-PERL_REQUIRED_PACKAGES += library/perl-5/parent
-PERL_REQUIRED_PACKAGES += library/perl-5/path-tiny
-PERL_REQUIRED_PACKAGES += library/perl-5/pkgconfig
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += library/perl-5/text-parsewords
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/capture-tiny
+REQUIRED_PACKAGES.perl += library/perl-5/digest-sha
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/ffi-checklib
+REQUIRED_PACKAGES.perl += library/perl-5/file-chdir
+REQUIRED_PACKAGES.perl += library/perl-5/file-which
+REQUIRED_PACKAGES.perl += library/perl-5/json-pp
+REQUIRED_PACKAGES.perl += library/perl-5/parent
+REQUIRED_PACKAGES.perl += library/perl-5/path-tiny
+REQUIRED_PACKAGES.perl += library/perl-5/pkgconfig
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += library/perl-5/text-parsewords
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/archive-tar
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/devel-hide
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
