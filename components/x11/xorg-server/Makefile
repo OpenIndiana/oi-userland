@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         xorg-server
 COMPONENT_VERSION=      1.19.7
-COMPONENT_REVISION=     16
+COMPONENT_REVISION=     17
 COMPONENT_SUMMARY=      Xorg - X11R7 X server
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
@@ -49,6 +49,10 @@ gcc_OPT =
 CFLAGS += -Wno-error=incompatible-pointer-types
 CFLAGS += -Wno-error=implicit-function-declaration
 
+# Do not force-include system headers such as sys/socket.h here. configure
+# (xtrans.m4) finds msghdr.msg_control, which xtrans' fd passing for DRI3
+# needs, only by defining _XOPEN_SOURCE=600 before sys/socket.h; dix-config.h
+# then carries that and __EXTENSIONS__ into os/xstrans.c.
 CPPFLAGS += -DSUNSOFT -DTSOL
 CPPFLAGS += -I$(USRINCDIR)/pixman-1
 CPPFLAGS += -I$(USRINCDIR)/X11/dri
@@ -90,7 +94,9 @@ CONFIGURE_OPTIONS += --enable-dmx
 CONFIGURE_OPTIONS += --enable-dri
 CONFIGURE_OPTIONS += --enable-dri2
 CONFIGURE_OPTIONS += --enable-dri3
-CONFIGURE_OPTIONS += --disable-glamor
+# glamor: OpenGL 2D acceleration and DRI3 for the modesetting driver through
+# Mesa's EGL and GBM. Xwayland stays off (no Wayland libraries in the tree).
+CONFIGURE_OPTIONS += --enable-glamor
 CONFIGURE_OPTIONS += --enable-glx
 CONFIGURE_OPTIONS += --enable-kdrive
 CONFIGURE_OPTIONS += --enable-shared
@@ -152,6 +158,7 @@ REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libdmx
 REQUIRED_PACKAGES += x11/library/libdrm
+REQUIRED_PACKAGES += x11/library/libepoxy
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxau
 REQUIRED_PACKAGES += x11/library/libxcb
@@ -165,6 +172,7 @@ REQUIRED_PACKAGES += x11/library/libxmuu
 REQUIRED_PACKAGES += x11/library/libxpm
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxshmfence
+REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
 REQUIRED_PACKAGES += x11/library/xcb-util
