@@ -20,13 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tomli
-HUMAN_VERSION =			2.4.0
+HUMAN_VERSION =			2.5.0
 COMPONENT_SUMMARY =		A lil' TOML parser
 COMPONENT_PROJECT_URL =		https://github.com/hukkin/tomli
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/hukkin/tomli/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6d9e3a3f690db54a42eb9e98591ec5e9731779d3650c39668a220982f587a699
+	sha256:8d4b735554696bf2b7e3d4505e069f6750b80e4c035fe5f1566f2a241d34dcc3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
