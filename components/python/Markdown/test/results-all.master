@@ -50,7 +50,7 @@ testVerboseOption (test_apis.TestCliOptionParsing.testVerboseOption) ... ok
 testBooleansParsing (test_apis.TestConfigParsing.testBooleansParsing) ... ok
 testInvalidBooleansParsing (test_apis.TestConfigParsing.testInvalidBooleansParsing) ... ok
 testPreserveNone (test_apis.TestConfigParsing.testPreserveNone) ... ok
-testFileNames (test_apis.TestConvertFile.testFileNames) ... $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/markdown/core.py:450: DeprecationWarning: codecs.open() is deprecated. Use open() instead.
+testFileNames (test_apis.TestConvertFile.testFileNames) ... $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/markdown/core.py:457: DeprecationWarning: codecs.open() is deprecated. Use open() instead.
   output_file = codecs.open(output, "w",
 ok
 testFileObjects (test_apis.TestConvertFile.testFileObjects) ... ok
@@ -89,6 +89,8 @@ testSimpleInput (test_apis.TestMarkdownBasics.testSimpleInput)
 Test simple input. ... ok
 testWhitespaceOnly (test_apis.TestMarkdownBasics.testWhitespaceOnly)
 Test input of only whitespace. ... ok
+testInlineProcessorAdvancesSearchIndex (test_apis.testAtomicString.testInlineProcessorAdvancesSearchIndex)
+Test that repeated matches resume after the previous match. ... ok
 testInlineProcessorDoesntCrashWithWrongAtomicString (test_apis.testAtomicString.testInlineProcessorDoesntCrashWithWrongAtomicString)
 Test that an `AtomicString` returned from a Pattern doesn't cause a crash. ... ok
 testNestedAtomicString (test_apis.testAtomicString.testNestedAtomicString)
@@ -179,7 +181,6 @@ test_markdown_documentation_basics (test_legacy.TestBasic.test_markdown_document
 test_markdown_syntax (test_legacy.TestBasic.test_markdown_syntax) ... ok
 test_nested_blockquotes (test_legacy.TestBasic.test_nested_blockquotes) ... ok
 test_ordered_and_unordered_list (test_legacy.TestBasic.test_ordered_and_unordered_list) ... ok
-test_strong_and_em_together (test_legacy.TestBasic.test_strong_and_em_together) ... ok
 test_tabs (test_legacy.TestBasic.test_tabs) ... ok
 test_tidyness (test_legacy.TestBasic.test_tidyness) ... ok
 test_admonition (test_legacy.TestExtensions.test_admonition) ... ok
@@ -225,7 +226,6 @@ test_brackets_in_img_title (test_legacy.TestMisc.test_brackets_in_img_title) ...
 test_code_first_line (test_legacy.TestMisc.test_code_first_line) ... ok
 test_em_around_links (test_legacy.TestMisc.test_em_around_links) ... ok
 test_em_strong (test_legacy.TestMisc.test_em_strong) ... ok
-test_em_strong_complex (test_legacy.TestMisc.test_em_strong_complex) ... ok
 test_email (test_legacy.TestMisc.test_email) ... ok
 test_escaped_links (test_legacy.TestMisc.test_escaped_links) ... ok
 test_funky_list (test_legacy.TestMisc.test_funky_list) ... ok
@@ -253,7 +253,6 @@ test_missing_link_def (test_legacy.TestMisc.test_missing_link_def) ... ok
 test_multi_paragraph_block_quote (test_legacy.TestMisc.test_multi_paragraph_block_quote) ... ok
 test_multi_test (test_legacy.TestMisc.test_multi_test) ... ok
 test_nested_lists (test_legacy.TestMisc.test_nested_lists) ... ok
-test_nested_patterns (test_legacy.TestMisc.test_nested_patterns) ... ok
 test_normalize (test_legacy.TestMisc.test_normalize) ... ok
 test_numeric_entity (test_legacy.TestMisc.test_numeric_entity) ... ok
 test_para_with_hr (test_legacy.TestMisc.test_para_with_hr) ... ok
@@ -266,7 +265,6 @@ test_stronintags (test_legacy.TestMisc.test_stronintags) ... ok
 test_tabs_in_lists (test_legacy.TestMisc.test_tabs_in_lists) ... ok
 test_two_spaces (test_legacy.TestMisc.test_two_spaces) ... ok
 test_uche (test_legacy.TestMisc.test_uche) ... ok
-test_underscores (test_legacy.TestMisc.test_underscores) ... ok
 test_url_spaces (test_legacy.TestMisc.test_url_spaces) ... ok
 test__version__IsValid (test_meta.TestVersion.test__version__IsValid)
 Test that __version__ is valid and normalized. ... ok
@@ -407,6 +405,8 @@ test_not_hr_2_hyphens_spaces (test_syntax.blocks.test_hr.TestHorizontalRules.tes
 test_not_hr_2_underscores (test_syntax.blocks.test_hr.TestHorizontalRules.test_not_hr_2_underscores) ... ok
 test_not_hr_2_underscores_spaces (test_syntax.blocks.test_hr.TestHorizontalRules.test_not_hr_2_underscores_spaces) ... ok
 test_not_hr_end_in_char (test_syntax.blocks.test_hr.TestHorizontalRules.test_not_hr_end_in_char) ... ok
+test_additional_tail_cases (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_additional_tail_cases)
+Ensure various tail cases survive. ... ok
 test_adjacent_raw_blocks (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_adjacent_raw_blocks) ... ok
 test_adjacent_raw_blocks_with_blank_lines (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_adjacent_raw_blocks_with_blank_lines) ... ok
 test_amperstand (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_amperstand) ... ok
@@ -420,8 +420,17 @@ test_closed_startendtag_with_attrs (test_syntax.blocks.test_html_blocks.TestHTML
 test_closed_startendtag_without_space (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_closed_startendtag_without_space) ... ok
 test_code_span (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_code_span) ... ok
 test_code_span_open_gt (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_code_span_open_gt) ... ok
+test_comment_after_closed_inline_html (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_comment_after_closed_inline_html) ... ok
+test_comment_after_unclosed_inline_html (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_comment_after_unclosed_inline_html) ... ok
+test_comment_after_unclosed_inline_tag_in_code_span (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_comment_after_unclosed_inline_tag_in_code_span) ... ok
+test_comment_after_void_inline_html (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_comment_after_void_inline_html) ... ok
 test_comment_in_code_block (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_comment_in_code_block) ... ok
 test_comment_in_code_span (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_comment_in_code_span) ... ok
+test_comment_in_inline_html_after_blank_line (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_comment_in_inline_html_after_blank_line) ... ok
+test_comment_in_inline_html_own_line (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_comment_in_inline_html_own_line) ... ok
+test_comment_in_inline_html_own_line_before_endtag (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_comment_in_inline_html_own_line_before_endtag) ... ok
+test_comment_in_inline_html_same_line_as_start_tag (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_comment_in_inline_html_same_line_as_start_tag) ... ok
+test_comment_with_blank_line_in_inline_html (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_comment_with_blank_line_in_inline_html) ... ok
 test_entityref (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_entityref) ... ok
 test_hr_only_end (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_hr_only_end) ... ok
 test_hr_only_start (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_hr_only_start) ... ok
@@ -534,6 +543,10 @@ test_unclosed_comment (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_u
 test_unclosed_endtag (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_unclosed_endtag)
 Ensure unclosed end tag does not have side effects. ... ok
 test_unclosed_script_tag (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_unclosed_script_tag) ... ok
+test_unterminated_endtag (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_unterminated_endtag)
+Ensure an unterminated end tag is treated as text. ... ok
+test_unterminated_endtag_in_code_span (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_unterminated_endtag_in_code_span)
+Ensure an unterminated end tag does not swallow the remaining content. ... ok
 test_2_paragraphs_long_line (test_syntax.blocks.test_paragraphs.TestParagraphBlocks.test_2_paragraphs_long_line) ... ok
 test_blank_line_before_paragraph (test_syntax.blocks.test_paragraphs.TestParagraphBlocks.test_blank_line_before_paragraph) ... ok
 test_consecutive_multiline_paragraphs (test_syntax.blocks.test_paragraphs.TestParagraphBlocks.test_consecutive_multiline_paragraphs) ... ok
@@ -552,6 +565,12 @@ test_paragraphs_CR_LF (test_syntax.blocks.test_paragraphs.TestParagraphBlocks.te
 test_paragraphs_LF (test_syntax.blocks.test_paragraphs.TestParagraphBlocks.test_paragraphs_LF) ... ok
 test_paragraphs_no_list (test_syntax.blocks.test_paragraphs.TestParagraphBlocks.test_paragraphs_no_list) ... ok
 test_simple_paragraph (test_syntax.blocks.test_paragraphs.TestParagraphBlocks.test_simple_paragraph) ... ok
+test_malformed_reference_with_long_run_of_spaces (test_syntax.blocks.test_reference_links.TestReferenceLinks.test_malformed_reference_with_long_run_of_spaces)
+A reference definition whose URL is missing (only trailing spaces ... ok
+test_reference_link (test_syntax.blocks.test_reference_links.TestReferenceLinks.test_reference_link) ... ok
+test_reference_link_split_across_lines (test_syntax.blocks.test_reference_links.TestReferenceLinks.test_reference_link_split_across_lines) ... ok
+test_reference_link_title_on_own_line (test_syntax.blocks.test_reference_links.TestReferenceLinks.test_reference_link_title_on_own_line) ... ok
+test_reference_link_with_title (test_syntax.blocks.test_reference_links.TestReferenceLinks.test_reference_link_with_title) ... ok
 test_header_and_paragraph_no_blank_line_loose_list (test_syntax.blocks.test_ul.TestUnorderedLists.test_header_and_paragraph_no_blank_line_loose_list) ... ok
 test_header_and_paragraph_no_blank_line_loose_list_no_indent (test_syntax.blocks.test_ul.TestUnorderedLists.test_header_and_paragraph_no_blank_line_loose_list_no_indent) ... ok
 test_header_and_paragraph_no_blank_line_tight_list (test_syntax.blocks.test_ul.TestUnorderedLists.test_header_and_paragraph_no_blank_line_tight_list) ... skipped 'This behaves as a loose list in Python-Markdown'
@@ -564,6 +583,7 @@ test_abbr_empty (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_empty) ... 
 test_abbr_extra_space (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_extra_space) ... ok
 test_abbr_glossary (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_glossary) ... ok
 test_abbr_glossary_2 (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_glossary_2) ... ok
+test_abbr_glossary_override (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_glossary_override) ... ok
 test_abbr_hyphen (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_hyphen) ... ok
 test_abbr_ignore_backslash (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_ignore_backslash) ... ok
 test_abbr_ignore_unmatched_case (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_ignore_unmatched_case) ... ok
@@ -576,6 +596,7 @@ test_abbr_nested (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_nested) ..
 test_abbr_no_blank_Lines (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_no_blank_Lines) ... ok
 test_abbr_no_space (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_no_space) ... ok
 test_abbr_override (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_override) ... ok
+test_abbr_override_not_in_glossary (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_override_not_in_glossary) ... ok
 test_abbr_partial_word (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_partial_word) ... ok
 test_abbr_reset (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_reset) ... ok
 test_abbr_single_quoted (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_single_quoted) ... ok
@@ -737,6 +758,8 @@ test_complex_multple_underscore_type (test_syntax.extensions.test_legacy_em.Test
 test_complex_multple_underscore_type_variant2 (test_syntax.extensions.test_legacy_em.TestLegacyEm.test_complex_multple_underscore_type_variant2) ... ok
 test_legacy_emphasis (test_syntax.extensions.test_legacy_em.TestLegacyEm.test_legacy_emphasis) ... ok
 test_legacy_strong (test_syntax.extensions.test_legacy_em.TestLegacyEm.test_legacy_strong) ... ok
+test_additional_tail_cases (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_additional_tail_cases)
+Ensure various tail cases survive. ... ok
 test_adjacent_raw_blocks (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_adjacent_raw_blocks) ... ok
 test_adjacent_raw_blocks_with_blank_lines (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_adjacent_raw_blocks_with_blank_lines) ... ok
 test_amperstand (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_amperstand) ... ok
@@ -750,8 +773,17 @@ test_closed_startendtag_with_attrs (test_syntax.extensions.test_md_in_html.TestD
 test_closed_startendtag_without_space (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_closed_startendtag_without_space) ... ok
 test_code_span (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_code_span) ... ok
 test_code_span_open_gt (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_code_span_open_gt) ... ok
+test_comment_after_closed_inline_html (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_comment_after_closed_inline_html) ... ok
+test_comment_after_unclosed_inline_html (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_comment_after_unclosed_inline_html) ... ok
+test_comment_after_unclosed_inline_tag_in_code_span (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_comment_after_unclosed_inline_tag_in_code_span) ... ok
+test_comment_after_void_inline_html (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_comment_after_void_inline_html) ... ok
 test_comment_in_code_block (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_comment_in_code_block) ... ok
 test_comment_in_code_span (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_comment_in_code_span) ... ok
+test_comment_in_inline_html_after_blank_line (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_comment_in_inline_html_after_blank_line) ... ok
+test_comment_in_inline_html_own_line (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_comment_in_inline_html_own_line) ... ok
+test_comment_in_inline_html_own_line_before_endtag (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_comment_in_inline_html_own_line_before_endtag) ... ok
+test_comment_in_inline_html_same_line_as_start_tag (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_comment_in_inline_html_same_line_as_start_tag) ... ok
+test_comment_with_blank_line_in_inline_html (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_comment_with_blank_line_in_inline_html) ... ok
 test_entityref (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_entityref) ... ok
 test_hr_only_end (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_hr_only_end) ... ok
 test_hr_only_start (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_hr_only_start) ... ok
@@ -864,6 +896,10 @@ test_unclosed_comment (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHT
 test_unclosed_endtag (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_unclosed_endtag)
 Ensure unclosed end tag does not have side effects. ... ok
 test_unclosed_script_tag (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_unclosed_script_tag) ... ok
+test_unterminated_endtag (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_unterminated_endtag)
+Ensure an unterminated end tag is treated as text. ... ok
+test_unterminated_endtag_in_code_span (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_unterminated_endtag_in_code_span)
+Ensure an unterminated end tag does not swallow the remaining content. ... ok
 test_complex_nested_case (test_syntax.extensions.test_md_in_html.TestMdInHTML.test_complex_nested_case) ... ok
 test_complex_nested_case_whitespace (test_syntax.extensions.test_md_in_html.TestMdInHTML.test_complex_nested_case_whitespace) ... ok
 test_empty_tags (test_syntax.extensions.test_md_in_html.TestMdInHTML.test_empty_tags) ... ok
@@ -937,6 +973,8 @@ test_no_md1_paragraph (test_syntax.extensions.test_md_in_html.TestMdInHTML.test_
 test_nomd_nested_in_md1 (test_syntax.extensions.test_md_in_html.TestMdInHTML.test_nomd_nested_in_md1) ... ok
 test_noname_tag (test_syntax.extensions.test_md_in_html.TestMdInHTML.test_noname_tag) ... ok
 test_orphan_end_tag_in_raw_html (test_syntax.extensions.test_md_in_html.TestMdInHTML.test_orphan_end_tag_in_raw_html) ... ok
+test_registered_custom_element_is_block_level (test_syntax.extensions.test_md_in_html.TestMdInHTML.test_registered_custom_element_is_block_level) ... ok
+test_registered_custom_element_markdown_attr (test_syntax.extensions.test_md_in_html.TestMdInHTML.test_registered_custom_element_markdown_attr) ... ok
 test_trailing_content_after_tag_in_md_block (test_syntax.extensions.test_md_in_html.TestMdInHTML.test_trailing_content_after_tag_in_md_block) ... ok
 test_stash_to_string (test_syntax.extensions.test_md_in_html.TestMarkdownInHTMLPostProcessor.test_stash_to_string) ... ok
 test_basic (test_syntax.extensions.test_smarty.TestSmarty.test_basic) ... ok
@@ -1037,16 +1075,21 @@ test_mailto_email_address (test_syntax.inline.test_autolinks.TestAutomaticLinks.
 test_code_comments (test_syntax.inline.test_code.TestCode.test_code_comments) ... ok
 test_code_html (test_syntax.inline.test_code.TestCode.test_code_html) ... ok
 test_noname_tag (test_syntax.inline.test_code.TestCode.test_noname_tag) ... ok
+test_commonmark (test_syntax.inline.test_emphasis.TestCommonMark.test_commonmark)
+Test CommonMark. ... ok
+test_advanced_nesting (test_syntax.inline.test_emphasis.TestNotEmphasis.test_advanced_nesting) ... ok
 test_complex_emphasis_asterisk (test_syntax.inline.test_emphasis.TestNotEmphasis.test_complex_emphasis_asterisk) ... ok
 test_complex_emphasis_asterisk_mid_word (test_syntax.inline.test_emphasis.TestNotEmphasis.test_complex_emphasis_asterisk_mid_word) ... ok
 test_complex_emphasis_smart_underscore (test_syntax.inline.test_emphasis.TestNotEmphasis.test_complex_emphasis_smart_underscore) ... ok
 test_complex_emphasis_smart_underscore_mid_word (test_syntax.inline.test_emphasis.TestNotEmphasis.test_complex_emphasis_smart_underscore_mid_word) ... ok
 test_complex_multple_emphasis_type (test_syntax.inline.test_emphasis.TestNotEmphasis.test_complex_multple_emphasis_type) ... ok
 test_complex_multple_emphasis_type_variant2 (test_syntax.inline.test_emphasis.TestNotEmphasis.test_complex_multple_emphasis_type_variant2) ... ok
+test_em_strong_complex (test_syntax.inline.test_emphasis.TestNotEmphasis.test_em_strong_complex) ... ok
 test_link_emphasis_inner (test_syntax.inline.test_emphasis.TestNotEmphasis.test_link_emphasis_inner) ... ok
 test_link_emphasis_inner_outer (test_syntax.inline.test_emphasis.TestNotEmphasis.test_link_emphasis_inner_outer) ... ok
 test_link_emphasis_outer (test_syntax.inline.test_emphasis.TestNotEmphasis.test_link_emphasis_outer) ... ok
 test_nested_emphasis (test_syntax.inline.test_emphasis.TestNotEmphasis.test_nested_emphasis) ... ok
+test_nested_patterns (test_syntax.inline.test_emphasis.TestNotEmphasis.test_nested_patterns) ... ok
 test_standalone_asterisk (test_syntax.inline.test_emphasis.TestNotEmphasis.test_standalone_asterisk) ... ok
 test_standalone_asterisk_at_end (test_syntax.inline.test_emphasis.TestNotEmphasis.test_standalone_asterisk_at_end) ... ok
 test_standalone_asterisk_in_text (test_syntax.inline.test_emphasis.TestNotEmphasis.test_standalone_asterisk_in_text) ... ok
@@ -1064,6 +1107,9 @@ test_standalone_understore_triples (test_syntax.inline.test_emphasis.TestNotEmph
 test_standalone_understores_at_begin_end (test_syntax.inline.test_emphasis.TestNotEmphasis.test_standalone_understores_at_begin_end) ... ok
 test_standalone_understores_in_text (test_syntax.inline.test_emphasis.TestNotEmphasis.test_standalone_understores_in_text) ... ok
 test_standalone_understores_with_newlines (test_syntax.inline.test_emphasis.TestNotEmphasis.test_standalone_understores_with_newlines) ... ok
+test_strong_and_em_together (test_syntax.inline.test_emphasis.TestNotEmphasis.test_strong_and_em_together) ... ok
+test_underscore_legacy (test_syntax.inline.test_emphasis.TestNotEmphasis.test_underscore_legacy) ... ok
+test_remove_processor (test_syntax.inline.test_emphasis.TestProcessorRemoval.test_remove_processor) ... ok
 test_decimal_entities (test_syntax.inline.test_entities.TestEntities.test_decimal_entities) ... ok
 test_false_entities (test_syntax.inline.test_entities.TestEntities.test_false_entities) ... ok
 test_hexadecimal_entities (test_syntax.inline.test_entities.TestEntities.test_hexadecimal_entities) ... ok
@@ -1133,13 +1179,14 @@ test_reference_across_blocks (test_syntax.inline.test_links.TestReferenceLinks.t
 Test references across blocks. ... ok
 test_reference_newlines (test_syntax.inline.test_links.TestReferenceLinks.test_reference_newlines)
 Test reference id whitespace cleanup. ... ok
+test_angle_brackets_in_attributes (test_syntax.inline.test_raw_html.TestRawHtml.test_angle_brackets_in_attributes) ... ok
 test_inline_html_angle_brackets (test_syntax.inline.test_raw_html.TestRawHtml.test_inline_html_angle_brackets) ... ok
 test_inline_html_backslashes (test_syntax.inline.test_raw_html.TestRawHtml.test_inline_html_backslashes) ... ok
 test_markdown_nested_in_inline_comment (test_syntax.inline.test_raw_html.TestRawHtml.test_markdown_nested_in_inline_comment) ... ok
 test_noname_tag (test_syntax.inline.test_raw_html.TestRawHtml.test_noname_tag) ... ok
 
 ----------------------------------------------------------------------
-Ran 1042 tests
+Ran 1080 tests
 
 OK (skipped=64)
   py$(PYV): OK
