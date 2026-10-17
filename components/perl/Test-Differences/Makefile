@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Differences
-HUMAN_VERSION =			0.72
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.73
 COMPONENT_SUMMARY =		Test strings and data structures and show differences if not ok
 COMPONENT_CPAN_AUTHOR =		DCANTRELL
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:648844b9dcb7dae6f9b5a15c9359d0f09de247a624b65c4620ebff249558f913
+	sha256:3c113f4e25c38323a3fe5992d30c337264d00ef872aecfd2d9431ca8ea0083e2
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
@@ -33,8 +32,8 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/capture-tiny
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += library/perl-5/text-diff
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/capture-tiny
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += library/perl-5/text-diff
+REQUIRED_PACKAGES.perl += runtime/perl
