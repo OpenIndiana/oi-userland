@@ -39,10 +39,6 @@ COMPONENT_ARCHIVE ?= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL ?= \
   https://ftp.gnu.org/gnu/gcc/gcc-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-PATCH_EACH_ARCHIVE=1
-PATCHDIR_PATCHES = $(shell $(FIND) $(PATCH_DIR) -type f -name '$(PATCH_PATTERN)' \
-                                2>/dev/null | $(SORT))
-
 MPFR_NAME= mpfr
 ifeq ($(strip $(MPFR_VERSION)),)
 $(error Empty MPFR version)
