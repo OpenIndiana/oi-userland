@@ -19,23 +19,28 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wcwidth
-HUMAN_VERSION =			0.8.3
+HUMAN_VERSION =			0.9.2
 COMPONENT_SUMMARY =		Measures the displayed width of unicode strings in a terminal
 COMPONENT_PROJECT_URL =		https://github.com/jquast/wcwidth
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d128512515fbf4612e0ff21fd6380399210318b7b54a9af59dff8454cf9730eb
+	sha256:ae0ef90b90f6af38b54f1fe6d58662ec33b3cb4b8391958a62416d654231727b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# deliverables differs for Python < 3.10
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/cffi
 TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pygments
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/tomli
 TEST_REQUIRED_PACKAGES.python += library/python/zipp
