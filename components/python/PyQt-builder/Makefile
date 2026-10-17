@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyqt_builder
-HUMAN_VERSION =			1.19.1
+HUMAN_VERSION =			1.20.1
 COMPONENT_SUMMARY =		The PyQt build system
 COMPONENT_PROJECT_URL =		https://github.com/Python-PyQt/PyQt-builder
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6af6646ba29668751b039bfdced51642cb510e300796b58a4d68b7f956a024d8
+	sha256:b303cd9ec7a04100ecb66fcbcae432c409e22a98153249bf504db5900a361de3
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -31,6 +31,9 @@ TEST_STYLE = none
 
 # This project is missing tests
 # https://github.com/Python-PyQt/PyQt-builder/issues/35
+
+# Python 3.9 is not supported by PyQt-builder >= 1.20.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
