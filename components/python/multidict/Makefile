@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		multidict
-HUMAN_VERSION =			6.9.1
+HUMAN_VERSION =			7.1.0
 COMPONENT_SUMMARY =		multidict implementation
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/multidict
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0f06e60fa190aa7abd0914c2a766736fdc8e9f34878c4346338534b73d1b20e2
+	sha256:61a4e5d81b8d4e4ad61964b230129e7a2b914793d96289029078fc9009f074ec
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -41,6 +41,7 @@ TEST_REQUIREMENTS += requirements/pytest.txt
 # We have no pytest-codspeed packaged yet
 PYTEST_ADDOPTS += --ignore tests/test_multidict_benchmarks.py
 PYTEST_ADDOPTS += --ignore tests/test_views_benchmarks.py
+PYTEST_ADDOPTS += --ignore tests/test_watched_benchmarks.py
 
 # This test needs coverage
 PYTEST_ADDOPTS += --deselect tests/test_leaks.py::test_leak
