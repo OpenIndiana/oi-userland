@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		installer
-HUMAN_VERSION =			1.0.1
+HUMAN_VERSION =			1.1.0
 COMPONENT_SUMMARY =		A library for installing Python wheels.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:052c7fc3721d54c696e2dea019be67539d7b144e924f559f54beb3121831c364
+	sha256:5adc0c01ce62d809989e246987cd68944fe5df8af562d0358f65b2ab15cb5de7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,9 +37,6 @@ PYTHON_BOOTSTRAP = yes
 PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Random directory name
-COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/flit-core
