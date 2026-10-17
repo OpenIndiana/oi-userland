@@ -15,21 +15,22 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyflakes
-HUMAN_VERSION =			3.4.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			4.0.3
 COMPONENT_SUMMARY =		passive checker of Python programs
 COMPONENT_PROJECT_URL =		https://github.com/PyCQA/pyflakes
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b24f96fafb7d2ab0ec5075b7350b3d2d2218eab42003821c06344973d3ea2f58
+	sha256:94762a3a5a343a79b28754f96c554bce057a592a4896907d73f0369fe824e053
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
+
+# Python 3.9 is not supported by pyflakes >= 4.0.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
