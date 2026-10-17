@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Params-SomeUtil
-HUMAN_VERSION =			1.11
+HUMAN_VERSION =			1.12
 COMPONENT_SUMMARY =		Simple, compact and correct param-checking functions
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ad171c7c579e332d067089fa5cb11e3b2c9a6bddf41050d57274577e7bcc976a
+	sha256:ca61027a5c7f9ce2e31285c67a0bdc4f052c62051adfb7406d79ea0f23e5c1f0
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
