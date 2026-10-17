@@ -1,7 +1,7 @@
 We do not have devpi_process available (yet)
 
---- tox-4.60.0/pyproject.toml.orig
-+++ tox-4.60.0/pyproject.toml
+--- tox-4.64.7/pyproject.toml.orig
++++ tox-4.64.7/pyproject.toml
 @@ -89,7 +89,6 @@
    "covdefaults>=2.3",
    "coverage>=7.13.4",
@@ -10,8 +10,8 @@ We do not have devpi_process available (yet)
    "diff-cover>=10.2",
    "distlib>=0.4",
    "docutils>=0.21",
---- tox-4.60.0/src/tox/pytest.py.orig
-+++ tox-4.60.0/src/tox/pytest.py
+--- tox-4.64.7/src/tox/pytest.py.orig
++++ tox-4.64.7/src/tox/pytest.py
 @@ -17,7 +17,6 @@
  
  import pytest
@@ -20,7 +20,7 @@ We do not have devpi_process available (yet)
  from virtualenv.info import fs_supports_symlink
  
  import tox.run
-@@ -484,15 +483,6 @@
+@@ -473,15 +472,6 @@
  
  
  @pytest.fixture(scope="session")
@@ -36,9 +36,9 @@ We do not have devpi_process available (yet)
  def _invalid_index_fake_port() -> int:
      with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as socket_handler:
          socket_handler.bind(("", 0))
---- tox-4.60.0/tests/test_provision.py.orig
-+++ tox-4.60.0/tests/test_provision.py
-@@ -19,7 +19,6 @@
+--- tox-4.64.7/tests/test_provision.py.orig
++++ tox-4.64.7/tests/test_provision.py
+@@ -20,7 +20,6 @@
      from collections.abc import Callable, Iterator, Sequence
  
      from build import DistributionType
@@ -46,7 +46,7 @@ We do not have devpi_process available (yet)
  
      from tox.execute.request import ExecuteRequest
      from tox.pytest import MonkeyPatch, TempPathFactory, ToxProjectCreator
-@@ -105,39 +104,6 @@
+@@ -106,39 +105,6 @@
          return result
  
  
@@ -86,10 +86,11 @@ We do not have devpi_process available (yet)
  def test_provision_requires_nok(tox_project: ToxProjectCreator) -> None:
      ini = "[tox]\nrequires = pkg-does-not-exist\n setuptools==1\nskipsdist=true\n"
      outcome = tox_project({"tox.ini": ini}).run("c", "-e", "py")
-@@ -228,97 +194,6 @@
+@@ -228,52 +194,6 @@
+     assert f"future tox ran {subcommand}" in outcome.out
  
  
- @pytest.mark.integration
+-@pytest.mark.integration
 -@pytest.mark.usefixtures("_pypi_index_self")
 -@pytest.mark.timeout(120)
 -def test_provision_requires_ok(tox_project: ToxProjectCreator, tmp_path: Path) -> None:
@@ -135,29 +136,13 @@ We do not have devpi_process available (yet)
 -    assert msg in result.out
 -
 -
--def test_provision_no_recreate(tox_project: ToxProjectCreator) -> None:
--    ini = "[tox]\nrequires = p\nskipsdist=true\n"
--    result = tox_project({"tox.ini": ini}).run("c", "-e", "py", "--no-provision")
--    result.assert_failed()
--    assert f"provisioning explicitly disabled within {sys.executable}, but is missing [requires (has)]: p" in result.out
--
--
--def test_provision_no_recreate_json(tox_project: ToxProjectCreator) -> None:
--    ini = "[tox]\nrequires = p\nskipsdist=true\n"
--    project = tox_project({"tox.ini": ini})
--    result = project.run("c", "-e", "py", "--no-provision", "out.json")
--    result.assert_failed()
--    msg = (
--        f"provisioning explicitly disabled within {sys.executable}, "
--        f"but is missing [requires (has)]: p and wrote to out.json"
--    )
--    assert msg in result.out
--    with (project.path / "out.json").open() as file_handler:
--        requires = json.load(file_handler)
--    assert requires == {"minversion": None, "requires": ["p", "tox"]}
--
--
--@pytest.mark.integration
+ def test_provision_invalid_platform_regex(tox_project: ToxProjectCreator) -> None:
+     toml = """
+     requires = ["p"]
+@@ -310,29 +230,6 @@
+ 
+ 
+ @pytest.mark.integration
 -@pytest.mark.usefixtures("_pypi_index_self")
 -@pytest.mark.parametrize("plugin_testenv", ["testenv", "testenv:a"])
 -def test_provision_plugin_runner(tox_project: ToxProjectCreator, tmp_path: Path, plugin_testenv: str) -> None:
@@ -184,7 +169,7 @@ We do not have devpi_process available (yet)
  def test_provision_plugin_runner_in_provision(tox_project: ToxProjectCreator, tmp_path: Path) -> None:
      """Ensure that provision environment can be explicitly configured."""
      log = tmp_path / "out.log"
-@@ -327,17 +202,6 @@
+@@ -341,17 +238,6 @@
          proj.run("r", "-e", "py", "--result-json", str(log))
  
  
@@ -202,7 +187,36 @@ We do not have devpi_process available (yet)
  def test_provision_acquires_file_lock(tox_project: ToxProjectCreator) -> None:
      lock_held_during_provision: dict[str, bool] = {}
  
-@@ -406,37 +270,6 @@
+@@ -382,28 +268,6 @@
+     assert "unrecognized arguments: --some-unknown-flag" in result.out
+ 
+ 
+-@pytest.mark.integration
+-@pytest.mark.usefixtures("_pypi_index_self")
+-def test_provision_plugin_cli_options(tox_project: ToxProjectCreator, tmp_path: Path) -> None:
+-    """Tox should provision before rejecting CLI options from not-yet-installed plugins."""
+-    log = tmp_path / "out.log"
+-    proj = tox_project({
+-        "tox.toml": """
+-            requires = ["demo-pkg-inline"]
+-            [env_run_base]
+-            package = "skip"
+-        """,
+-    })
+-    prov_msg = (
+-        f"ROOT: will run in automatically provisioned tox, host {sys.executable} is missing"
+-        f" [requires (has)]: demo-pkg-inline"
+-    )
+-
+-    result = proj.run("r", "-e", "py", "--demo-plugin", "--result-json", str(log))
+-    result.assert_success()
+-    assert prov_msg in result.out
+-
+-
+ @pytest.mark.parametrize("subcommand", ["r", "p", "de", "l", "d", "c", "q", "e", "le"])
+ def test_provision_default_arguments_exists(tox_project: ToxProjectCreator, subcommand: str) -> None:
+     ini = r"""
+@@ -420,37 +284,6 @@
          assert hasattr(outcome.state.conf.options, argument)
  
  
