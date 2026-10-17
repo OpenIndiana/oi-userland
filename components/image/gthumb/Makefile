@@ -19,13 +19,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gthumb
-COMPONENT_VERSION=      3.12.7
-COMPONENT_REVISION=		2
+COMPONENT_VERSION=      3.12.12
 COMPONENT_SUMMARY=      GNOME image organizer (gthumb)
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/gthumb
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:ee12d24cf231010241f758d6c95b9d53a7381278fa76b6a518b3d09b371efaec
+COMPONENT_ARCHIVE_HASH= sha256:16fb2276e7f63dae533abe5c7163c5b0e4c3c787c3b1f26517fca69e543512a4
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/3.12/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         image/viewer/gthumb
 COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
@@ -71,11 +70,8 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libchamplain
 REQUIRED_PACKAGES += library/desktop/pango
-REQUIRED_PACKAGES += library/desktop/webkitgtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lcms2
-REQUIRED_PACKAGES += library/libsecret
-REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
