@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_hookable
-HUMAN_VERSION =			8.3
+HUMAN_VERSION =			8.4
 COMPONENT_SUMMARY =		Zope hookable
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a05c9f8a4b3f21184cc423dad6116342c1c59818eeb1e4cbdf841f4243952d4f
+	sha256:ca0ffaf3d3bbca83e90378395ab31bdf7c66bdf3ded4d788cc1c6451146a69ec
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
