@@ -1,0 +1,21 @@
+Do not build the vmwgfx (KMS and 3D) path on illumos.
+
+It needs the vmwgfx kernel DRM driver, which illumos does not have, and
+configure enables it whenever Mesa's xatracker is installed, which then
+also requires libudev. Build the legacy driver only, as before.
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -89,6 +89,12 @@
+                  [Has version 1.7.0 or greater of the Xserver])
+ 		 BUILD_VMWGFX=yes],[BUILD_VMWGFX=no])
+ 
++case $host_os in
++    solaris*)
++	BUILD_VMWGFX=no
++	;;
++esac
++
+ PKG_CHECK_EXISTS([xorg-server >= 1.12.0],
+                  [AC_DEFINE([HAVE_XORG_SERVER_1_12_0], 1,
+                  [Has version 1.12.0 or greater of the Xserver])])

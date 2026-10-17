@@ -23,10 +23,10 @@ Integration of Display Manager (gdm/xdm/etc.) to X server communication pipe
 with core server code - see sun-src/os/dtlogin.c for the main implementation.
 
 diff --git a/configure.ac b/configure.ac
-index 77ad53d..28eb2f1 100644
+index a2a14f6..d7b878e 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1492,6 +1492,7 @@ PKG_CHECK_MODULES([XSERVERLIBS], [$REQUIRED_LIBS])
+@@ -1658,6 +1658,7 @@ AM_CONDITIONAL(HAVE_LIBUNWIND, [test "x$LIBUNWIND" = xyes])
  XSERVER_CFLAGS="${XSERVER_CFLAGS} ${XSERVERCFLAGS_CFLAGS}"
  XSERVER_LIBS="$DIX_LIB $MI_LIB $OS_LIB"
  XSERVER_SYS_LIBS="${XSERVERLIBS_LIBS} ${SYS_LIBS} ${LIBS}"
@@ -35,10 +35,10 @@ index 77ad53d..28eb2f1 100644
  AC_SUBST([XSERVER_SYS_LIBS])
  
 diff --git a/dix/main.c b/dix/main.c
-index e2ec177..0eaa6aa 100644
+index 29df4ef..27592b2 100644
 --- a/dix/main.c
 +++ b/dix/main.c
-@@ -116,6 +116,11 @@ Equipment Corporation.
+@@ -117,6 +117,11 @@ Equipment Corporation.
  #include "dpmsproc.h"
  #endif
  
@@ -49,8 +49,8 @@ index e2ec177..0eaa6aa 100644
 +
  extern void Dispatch(void);
  
- #ifdef XQUARTZ
-@@ -165,6 +170,13 @@ main(int argc, char *argv[], char *envp[])
+ CallbackListPtr RootWindowFinalizeCallback = NULL;
+@@ -149,6 +154,13 @@ dix_main(int argc, char *argv[], char *envp[])
          InitBlockAndWakeupHandlers();
          /* Perform any operating system dependent initializations you'd like */
          OsInit();
@@ -63,10 +63,10 @@ index e2ec177..0eaa6aa 100644
 +
          if (serverGeneration == 1) {
              CreateWellKnownSockets();
-             for (i = 1; i < MAXCLIENTS; i++)
-@@ -302,6 +314,11 @@ main(int argc, char *argv[], char *envp[])
-         pthread_mutex_unlock(&serverRunningMutex);
- #endif
+             for (i = 1; i < LimitClients; i++)
+@@ -276,6 +288,11 @@ dix_main(int argc, char *argv[], char *envp[])
+ 
+         UnrefCursor(rootCursor);
  
 +#ifdef SUNSOFT
 +        /* Return to root privs before calling the rest of close down */
@@ -77,11 +77,11 @@ index e2ec177..0eaa6aa 100644
          DisableAllDevices();
  
 diff --git a/os/Makefile.am b/os/Makefile.am
-index c4825ad..27d70ca 100644
+index c2ee8b8..3ee6ff9 100644
 --- a/os/Makefile.am
 +++ b/os/Makefile.am
-@@ -35,6 +35,9 @@ if XDMCP
- libos_la_SOURCES += $(XDMCP_SRCS)
+@@ -55,6 +55,9 @@ if BUSFAULT
+ libos_la_SOURCES += $(BUSFAULT_SRCS)
  endif
  
 +libos_la_SOURCES += dtlogin.c
@@ -91,10 +91,10 @@ index c4825ad..27d70ca 100644
  
  if SPECIAL_DTRACE_OBJECTS
 diff --git a/os/auth.c b/os/auth.c
-index ac20de4..d43795b 100644
+index 243d3c5..5cdc14b 100644
 --- a/os/auth.c
 +++ b/os/auth.c
-@@ -277,6 +277,19 @@ AddAuthorization(unsigned name_length, const char *name,
+@@ -283,6 +283,19 @@ AddAuthorization(unsigned name_length, const char *name,
      return 0;
  }
  

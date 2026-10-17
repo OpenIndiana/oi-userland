@@ -1,43 +1,50 @@
---- a/config/hal.c	Fri Feb 20 12:38:27 2015
-+++ b/config/hal.c	Fri Feb 20 12:39:43 2015
+Taken from Oracle solaris-userland b83a793,
+components/x11/xserver/xorg/patches/27-sparc-multisession.patch (xorg-server 21.1.24).
+
+Solaris sparc specific patch for multi session setup
+
+Not suitable for upstream
+
+--- a/config/hal.c	2019-02-12 12:37:35.112189147 -0800
++++ b/config/hal.c	2019-02-12 12:40:26.404813665 -0800
 @@ -1,7 +1,7 @@
  /*
   * Copyright © 2007 Daniel Stone
   * Copyright © 2007 Red Hat, Inc.
-- * Copyright (c) 2013 Oracle and/or its affiliates. All Rights Reserved.
-+ * Copyright (c) 2013, 2014 Oracle and/or its affiliates. All Rights Reserved.
+- * Copyright (c) 2013, 2025, Oracle and/or its affiliates.
++ * Copyright (c) 2013, 2025, Oracle and/or its affiliates.
   *
   * Permission is hereby granted, free of charge, to any person obtaining a
   * copy of this software and associated documentation files (the "Software"),
-@@ -152,7 +152,7 @@
+@@ -150,7 +150,7 @@
      char *ptr;
      char disppath[PATH_MAX];
  
 -    if ((num_session_disp_dev == num_total_disp_dev) || !disp_dev_path[0])
 +    if (((num_session_disp_dev & 0xFF) == num_total_disp_dev) || !disp_dev_path[0])
- 	return FALSE;
+        return FALSE;
  
      if (lstat(path, &statbuf) == 0 &&
-@@ -544,7 +544,7 @@
+@@ -494,7 +494,7 @@
      }
  
  #if ((defined(__sparc__) || defined(__sparc)) && defined(SUNSOFT))
 -    if ((num_session_disp_dev < num_total_disp_dev) &&
 +    if ((num_session_disp_dev < (num_total_disp_dev & 0x0FF)) &&
- 		(!strcmp(name, "keyboard") || !strcmp(name, "mouse"))) {
- 	int i;
+                (!strcmp(name, "keyboard") || !strcmp(name, "mouse"))) {
+        int i;
  
---- a/hw/xfree86/common/xf86AutoConfig.c	Fri Feb 20 12:24:38 2015
-+++ b/hw/xfree86/common/xf86AutoConfig.c	Fri Feb 20 12:36:48 2015
-@@ -1,6 +1,7 @@
- /*
+--- a/hw/xfree86/common/xf86AutoConfig.c	2019-02-12 12:40:47.029843557 -0800
++++ b/hw/xfree86/common/xf86AutoConfig.c	2019-02-12 12:43:58.523857933 -0800
+@@ -2,6 +2,7 @@
   * Copyright 2003 by David H. Dawes.
   * Copyright 2003 by X-Oz Technologies.
-+ * Copyright (c) 2013, 2014 Oracle and/or its affiliates. All Rights Reserved.
   * All rights reserved.
++ * Copyright (c) 2013, 2025, Oracle and/or its affiliates.
   *
   * Permission is hereby granted, free of charge, to any person obtaining a
-@@ -50,6 +51,11 @@
+  * copy of this software and associated documentation files (the "Software"),
+@@ -51,6 +52,11 @@
  #include <ctype.h>
  #endif
  
@@ -49,20 +56,20 @@
  /* Sections for the default built-in configuration. */
  
  #define BUILTIN_DEVICE_NAME \
-@@ -168,6 +174,11 @@
-     char buf[1024];
-     ConfigStatus ret;
+@@ -200,6 +206,11 @@
+         return FALSE;
+     }
  
 +#if ((defined(__sparc__) || defined(__sparc)) && defined (sun))
 +    /* Do not do MultiSessionConfig() when invoked with -isolateDevice option */
 +    if ((num_total_disp_dev & 0x1000)|| !MultiSessionConfig()) {
 +#endif
 +
-     listPossibleVideoDrivers(deviceList, 20);
+     listPossibleVideoDrivers(&md);
  
-     for (p = deviceList; *p; p++) {
-@@ -196,6 +207,10 @@
-         free(*p);
+     for (i = 0; i < md.nmatches; i++) {
+@@ -231,6 +242,10 @@
+         free(md.matches[i]);
      }
  
 +#if ((defined(__sparc__) || defined(__sparc)) && defined (sun))
@@ -72,7 +79,7 @@
      xf86MsgVerb(X_DEFAULT, 0,
                  "Using default built-in configuration (%d lines)\n",
                  builtinLines);
-@@ -448,3 +403,176 @@
+@@ -468,3 +483,174 @@
  
      return ptr;
  }
@@ -107,7 +114,7 @@
 +
 +#define BUILTIN_MULTI_LAYOUT_SECTION_PRE \
 +       "Section \"ServerLayout\"\n" \
-+       "\tIdentifier\t\"Xsession%d\"\n"
++      "\tIdentifier\t\"Xsession%d\"\n"
 +
 +#define BUILTIN_MULTI_LAYOUT_SECTION_LINE \
 +       "\tScreen\t\t\"Screen%d\"\n"
@@ -129,7 +136,6 @@
 +static Bool
 +MultiSessionConfig (void)
 +{
-+    di_node_t node;
 +    struct pci_device_iterator * iter;
 +    struct pci_device * dev;
 +    typedef struct {
@@ -170,9 +176,8 @@
 +               "PCI:%d@%d:%d:%d", dev->bus, dev->domain,
 +               dev->dev, dev->func);
 +
-+           strcpy(disp_dev[num].dev_path, "/devices");
-+           strncat(disp_dev[num].dev_path, DEV_PATH(dev),
-+               sizeof(disp_dev_type) - strlen("/devices"));
++           snprintf(disp_dev[num].dev_path, sizeof(disp_dev[num].dev_path),
++               "/devices%s", DEV_PATH(dev));
 +
 +           num++;
 +       }
@@ -208,7 +213,7 @@
 +       AppendToConfig(buf);
 +
 +       drv[0] = 0;
-+       if (disp_dev[i].dev_path) {
++       if (disp_dev[i].dev_path[0] != '\0') {
 +           int iret;
 +           int fd;
 +
@@ -226,7 +231,7 @@
 +                       for (cp = visid.name; (*cp != '\0') && isupper((uchar_t)*cp); cp++);
 +                       /* find end of all uppercase vendor section */
 +                       if ((cp != visid.name) && (*cp != '\0'))
-+                           strncpy (drv, cp, sizeof(drv));
++                           strlcpy (drv, cp, sizeof(drv));
 +                   }
 +               }
 +           }
@@ -249,17 +254,9 @@
 +}
 +#endif
 +
---- a/hw/xfree86/common/xf86pciBus.c	Wed May 20 08:27:14 2015
-+++ b/hw/xfree86/common/xf86pciBus.c	Wed May 20 08:28:57 2015
-@@ -1,6 +1,6 @@
- /*
-  * Copyright (c) 1997-2003 by The XFree86 Project, Inc.
-- * Copyright (c) 2013 Oracle and/or its affiliates. All Rights Reserved.
-+ * Copyright (c) 2013, 2015 Oracle and/or its affiliates. All Rights Reserved.
-  *
-  * Permission is hereby granted, free of charge, to any person obtaining a
-  * copy of this software and associated documentation files (the "Software"),
-@@ -131,6 +131,27 @@
+--- a/hw/xfree86/common/xf86pciBus.c	2019-02-12 12:44:13.372840348 -0800
++++ b/hw/xfree86/common/xf86pciBus.c	2019-02-12 12:45:25.611287613 -0800
+@@ -130,6 +130,27 @@
      }
      free(iter);
  
@@ -287,8 +284,8 @@
      /* If we haven't found a primary device try a different heuristic */
      if (primaryBus.type == BUS_NONE && num) {
          for (i = 0; i < num; i++) {
-@@ -1219,7 +1240,11 @@
- #ifdef __linux__
+@@ -1221,7 +1242,11 @@
+ #if defined(__linux__) || defined(__NetBSD__)
          driverList[idx++] = "nouveau";
  #endif
 +#ifdef sun
@@ -299,59 +296,44 @@
          break;
      }
      case 0x1106:
---- a/hw/xfree86/common/xf86Xinput.c	Fri Feb 20 12:34:32 2015
-+++ b/hw/xfree86/common/xf86Xinput.c	Fri Feb 20 12:37:40 2015
-@@ -46,7 +46,7 @@
+--- a/hw/xfree86/common/xf86Xinput.c	2019-02-12 12:45:50.385519021 -0800
++++ b/hw/xfree86/common/xf86Xinput.c	2019-02-12 12:46:53.201042630 -0800
+@@ -45,9 +45,9 @@
+  * the sale, use or other dealings in this Software without prior written
   * authorization from the copyright holder(s) and author(s).
   */
- /*
-- * Copyright (c) 2013 Oracle and/or its affiliates. All Rights Reserved.
-+ * Copyright (c) 2013, 2014 Oracle and/or its affiliates. All Rights Reserved.
-  */
+-+/*
+-+ * Copyright (c) 2013, Oracle and/or its affiliates. All Rights Reserved.
+-+ */
++/*
++ * Copyright (c) 2013, 2014, Oracle and/or its affiliates.
++ */
  
  #ifdef HAVE_XORG_CONFIG_H
-@@ -1502,7 +1502,7 @@
+ #include <xorg-config.h>
+@@ -1567,7 +1567,7 @@
      }
  
  #if ((defined(__sparc__) || defined(__sparc)) && defined(sun))
 -    if (num_session_disp_dev < num_total_disp_dev) {
 +    if (num_session_disp_dev < (num_total_disp_dev & 0x0FFF)) {
- 	int i;
+        int i;
  
- 	for (i = 0; i < MAX_DEVICES; i++) {
---- a/hw/xfree86/common/xf86Bus.c	Fri Feb 20 12:25:35 2015
-+++ b/hw/xfree86/common/xf86Bus.c	Fri Feb 20 12:26:02 2015
-@@ -1,5 +1,6 @@
- /*
-  * Copyright (c) 1997-2003 by The XFree86 Project, Inc.
-+ * Copyright (c) 2013 Oracle and/or its affiliates. All Rights Reserved.
-  *
-  * Permission is hereby granted, free of charge, to any person obtaining a
-  * copy of this software and associated documentation files (the "Software"),
-@@ -207,9 +208,6 @@
- #ifdef XSERVER_LIBPCIACCESS
-     xf86PciProbe();
- #endif
--#if (defined(__sparc__) || defined(__sparc)) && !defined(__OpenBSD__)
--    xf86SbusProbe();
--#endif
+        for (i = 0; i < MAX_DEVICES; i++) {
+--- a/hw/xfree86/common/xf86AutoConfig.c	2025-10-28 07:23:12.831417367 -0700
++++ b/hw/xfree86/common/xf86AutoConfig.c	2025-10-28 07:22:52.671402314 -0700
+@@ -274,64 +274,6 @@
  #ifdef XSERVER_PLATFORM_BUS
-     xf86platformPrimary();
- #endif
---- a/hw/xfree86/common/xf86AutoConfig.c	2017-02-01 15:25:17.530888588 -0800
-+++ b/hw/xfree86/common/xf86AutoConfig.c	2017-02-01 15:26:39.121379814 -0800
-@@ -253,66 +253,7 @@
- #ifdef XSERVER_PLATFORM_BUS
-     i = xf86PlatformMatchDriver(matches, nmatches);
+     xf86PlatformMatchDriver(md);
  #endif
 -#ifdef __sun
 -    /* Check for driver type based on /dev/fb type and if valid, use
 -       it instead of PCI bus probe results */
--    if (xf86Info.consoleFd >= 0 && (i < (nmatches - 1))) {
+-    if (xf86Info.consoleFd >= 0) {
 -        struct vis_identifier visid;
 -        const char *cp;
 -        int iret;
- 
+-
 -        SYSCALL(iret = ioctl(xf86Info.consoleFd, VIS_GETIDENTIFIER, &visid));
 -        if (iret < 0) {
 -            int fbfd;
@@ -373,7 +355,7 @@
 -
 -            /* Special case from before the general case was set */
 -            if (strcmp(visid.name, "NVDAnvda") == 0) {
--                matches[i++] = xnfstrdup("nvidia");
+-                xf86AddMatchedDriver(md, "nvidia");
 -            }
 -
 -            /* General case - split into vendor name (initial all-caps
@@ -383,27 +365,37 @@
 -                    /* find end of all uppercase vendor section */
 -                }
 -                if ((cp != visid.name) && (*cp != '\0')) {
--                    char *driverName = xnfstrdup(cp);
 -                    char *vendorName = xnfstrdup(visid.name);
 -
 -                    vendorName[cp - visid.name] = '\0';
 -
--                    matches[i++] = vendorName;
--                    matches[i++] = driverName;
+-                    xf86AddMatchedDriver(md, vendorName);
+-                    xf86AddMatchedDriver(md, cp);
+-
+-                    free(vendorName);
 -                }
 -            }
 -        }
 -    }
 -#endif
 -#ifdef __sparc__
--    if (i < (nmatches - 1))
--    {
--        char *sbusDriver = sparcDriverName();
+-    const char *sbusDriver = sparcDriverName();
 -
--        if (sbusDriver)
--            matches[i++] = xnfstrdup(sbusDriver);
--    }
+-    if (sbusDriver)
+-        xf86AddMatchedDriver(md, sbusDriver);
 -#endif
  #ifdef XSERVER_LIBPCIACCESS
-     if (i < (nmatches - 1))
-         i += xf86PciMatchDriver(&matches[i], nmatches - i);
+     xf86PciMatchDriver(md);
+ #endif
+--- a/hw/xfree86/common/xf86Bus.c	2019-03-13 13:18:04.774729935 -0700
++++ b/hw/xfree86/common/xf86Bus.c	2019-03-13 13:18:16.025013289 -0700
+@@ -247,9 +247,6 @@
+ #ifdef XSERVER_LIBPCIACCESS
+     xf86PciProbe();
+ #endif
+-#if (defined(__sparc__) || defined(__sparc)) && !defined(__OpenBSD__)
+-    xf86SbusProbe();
+-#endif
+ #ifdef XSERVER_PLATFORM_BUS
+     xf86platformPrimary();
+ #endif

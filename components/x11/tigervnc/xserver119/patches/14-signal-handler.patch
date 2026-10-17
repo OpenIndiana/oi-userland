@@ -1,0 +1,26 @@
+diff --git a/hw/xfree86/dri/dri.c b/hw/xfree86/dri/dri.c
+index 398178e..929dc7c 100644
+--- a/hw/xfree86/dri/dri.c
++++ b/hw/xfree86/dri/dri.c
+@@ -2500,7 +2500,11 @@ drmInstallSIGIOHandler(int fd, void (*f) (int, void *, void *))
+     entry = drmGetEntry(fd);
+     entry->f = f;
+ 
++#if defined(__sun) && defined(__SVR4)
++    return 1;
++#else
+     return xf86InstallSIGIOHandler(fd, drmSIGIOHandler, 0);
++#endif
+ }
+ 
+ int
+@@ -2510,5 +2514,9 @@ drmRemoveSIGIOHandler(int fd)
+ 
+     entry->f = NULL;
+ 
++#if defined(__sun) && defined(__SVR4)
++    return 1;
++#else
+     return xf86RemoveSIGIOHandler(fd);
++#endif
+ }

@@ -1,0 +1,31 @@
+glamor: refuse softpipe as well as llvmpipe.
+
+Without a hardware Mesa driver for the device (for example Mesa 21.3 on
+virtio-gpu without virgl, or a GPU whose DRI driver is not installed), GBM
+falls back to kms_swrast, which on a Mesa built without LLVM is softpipe.
+glamor then renders on a software rasterizer that is slower than llvmpipe,
+which glamor already refuses; the modesetting driver's shadow framebuffer
+is faster. Treat softpipe like llvmpipe.
+
+diff --git a/glamor/glamor_egl.c b/glamor/glamor_egl.c
+index 5cf7014..30c5038 100644
+--- a/glamor/glamor_egl.c
++++ b/glamor/glamor_egl.c
+@@ -1150,13 +1150,14 @@ glamor_egl_init(ScrnInfoPtr scrn, int fd)
+                    "glGetString() returned NULL, your GL is broken\n");
+         goto error;
+     }
+-    if (strstr((const char *)renderer, "llvmpipe")) {
++    if (strstr((const char *)renderer, "llvmpipe") ||
++        strstr((const char *)renderer, "softpipe")) {
+         if (scrn->confScreen->num_gpu_devices)
+             xf86DrvMsg(scrn->scrnIndex, X_INFO,
+-                       "Allowing glamor on llvmpipe for PRIME\n");
++                       "Allowing glamor on %s for PRIME\n", (const char *) renderer);
+         else {
+             xf86DrvMsg(scrn->scrnIndex, X_INFO,
+-                       "Refusing to try glamor on llvmpipe\n");
++                       "Refusing to try glamor on %s\n", (const char *) renderer);
+             goto error;
+         }
+     }

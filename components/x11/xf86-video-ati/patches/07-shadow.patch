@@ -1,0 +1,29 @@
+shadowUpdatePackedWeak() was removed in xorg-server 1.20; pass
+shadowUpdatePacked, which it returned, directly.
+
+diff --git a/src/radeon_driver.c b/src/radeon_driver.c
+index 8b2deff..6b8deb7 100644
+--- a/src/radeon_driver.c
++++ b/src/radeon_driver.c
+@@ -255,7 +255,7 @@ RADEONCreateScreenResources (ScreenPtr pScreen)
+    if (info->r600_shadow_fb) {
+        pixmap = pScreen->GetScreenPixmap(pScreen);
+ 
+-       if (!shadowAdd(pScreen, pixmap, shadowUpdatePackedWeak(),
++       if (!shadowAdd(pScreen, pixmap, shadowUpdatePacked,
+ 		      radeonShadowWindow, 0, NULL))
+ 	   return FALSE;
+    }
+diff --git a/src/radeon_kms.c b/src/radeon_kms.c
+index 9d7fa77..eec929b 100644
+--- a/src/radeon_kms.c
++++ b/src/radeon_kms.c
+@@ -174,7 +174,7 @@ static Bool RADEONCreateScreenResources_KMS(ScreenPtr pScreen)
+     if (info->r600_shadow_fb) {
+ 	pixmap = pScreen->GetScreenPixmap(pScreen);
+ 
+-	if (!shadowAdd(pScreen, pixmap, shadowUpdatePackedWeak(),
++	if (!shadowAdd(pScreen, pixmap, shadowUpdatePacked,
+ 		       radeonShadowWindow, 0, NULL))
+ 	    return FALSE;
+     }

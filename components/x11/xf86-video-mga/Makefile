@@ -19,13 +19,17 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-mga
 COMPONENT_VERSION= 1.6.5
-COMPONENT_REVISION= 5
+COMPONENT_REVISION= 6
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-mga
 COMPONENT_SUMMARY= xf86-video-mga - Matrox MGA driver for the Xorg X server
 COMPONENT_ARCHIVE_HASH= \
   sha256:b663cd8e6364f7c4e2637b9fcab9861d0e3971518c73b00d213f6545a1289422
 
 include $(WS_MAKE_RULES)/common.mk
+
+# GCC 14 makes these errors; the driver passes e.g. unsigned char ** for
+# void ** to pci_device_map_range().
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 # Extra flags to link mga_drv.so, but not util/stormdwg binary with
 DRIVER_LD_FLAGS = -L$(X11_SERVERMODS_DIR) -R$(X11_SERVERMODS_DIR)

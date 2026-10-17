@@ -19,6 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-input-synaptics
 COMPONENT_VERSION= 1.9.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-input-synaptics - Synaptics touchpad driver for X.Org
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-input-synaptics
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz

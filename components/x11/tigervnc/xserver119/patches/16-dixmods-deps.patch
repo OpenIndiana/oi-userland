@@ -1,0 +1,38 @@
+--- a/hw/xfree86/Makefile.am	2017-02-02 07:34:36.117204752 -0800
++++ b/hw/xfree86/Makefile.am	2017-02-02 07:35:26.842036982 -0800
+@@ -137,7 +137,7 @@
+ EXTRA_DIST += sdksyms.sh
+ 
+ sdksyms.dep sdksyms.c: sdksyms.sh
+-	$(AM_V_GEN)CPP='$(CPP)' AWK='$(AWK)' $(SHELL) $(srcdir)/sdksyms.sh $(top_srcdir) $(CFLAGS) $(AM_CFLAGS) $(AM_CPPFLAGS)
++	$(AM_V_GEN)CPP='$(CPP)' AWK='$(AWK)' SED='$(SED)' $(SHELL) $(srcdir)/sdksyms.sh $(top_srcdir) $(CFLAGS) $(AM_CFLAGS) $(AM_CPPFLAGS) -I/usr/include -I/usr/include/xorg -I/usr/include/pixman-1 -I/usr/include/X11/dri
+ 
+ SDKSYMS_DEP = sdksyms.dep
+ -include $(SDKSYMS_DEP)
+--- a/configure.ac	2017-02-02 07:40:40.357395126 -0800
++++ b/configure.ac	2017-02-02 07:42:15.312782485 -0800
+@@ -247,6 +247,8 @@
+ dnl Find the math libary, then check for cbrt function in it.
+ AC_CHECK_LIB(m, sqrt)
+ AC_CHECK_FUNCS([cbrt])
++# But we don't want to link everything with libm
++LIBS="${LIBS//-lm}"
+ 
+ AC_CHECK_HEADERS([ndbm.h dbm.h rpcsvc/dbm.h])
+ 
+@@ -1764,6 +1766,7 @@
+ XSERVER_LIBS="$DIX_LIB $MI_LIB $OS_LIB"
+ XSERVER_SYS_LIBS="${XSERVERLIBS_LIBS} ${SYS_LIBS} ${LIBS}"
+ XSERVER_SYS_LIBS="${XSERVER_SYS_LIBS} -lproject"
++XSERVER_SYS_LIBS="${XSERVER_SYS_LIBS} -lm"
+ AC_SUBST([XSERVER_LIBS])
+ AC_SUBST([XSERVER_SYS_LIBS])
+ 
+--- xorg-server-1.19.5/hw/xfree86/utils/cvt/Makefile.am.orig	2017-10-23 16:34:25.592472787 +0000
++++ xorg-server-1.19.5/hw/xfree86/utils/cvt/Makefile.am	2017-10-23 16:34:42.983047274 +0000
+@@ -33,3 +33,5 @@
+ 	$(top_srcdir)/os/xprintf.c
+ 
+ cvt_CFLAGS = $(DIX_CFLAGS) $(XORG_CFLAGS)
++
++cvt_LDADD = -lm

@@ -19,6 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-input-mouse
 COMPONENT_VERSION= 1.9.5
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-input-mouse - Mouse input driver for the Xorg X server
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-input-mouse
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
