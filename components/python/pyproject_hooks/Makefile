@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_hooks
-HUMAN_VERSION =			1.2.0
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			1.3.3
 COMPONENT_SUMMARY =		Wrappers to call pyproject.toml-based build backend hooks.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1e859bd5c40fae9448642dd871adf459e5e2084186e8d2c2a79a824c970da1f8
+	sha256:defda19b854fa0d3bd4f76ea4ddcba8abd7dcfcdd585a6690ade050744fc5f43
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -39,9 +38,6 @@ include $(WS_MAKE_RULES)/common.mk
 # This project does not support tox so we need to provide test requirements
 # manually.
 TEST_REQUIREMENTS += dev-requirements.txt
-
-# Random directory name
-COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/flit-core
