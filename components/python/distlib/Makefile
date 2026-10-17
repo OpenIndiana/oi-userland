@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		distlib
-HUMAN_VERSION =			0.4.3
+HUMAN_VERSION =			0.4.4
 COMPONENT_SUMMARY =		Distribution utilities
 COMPONENT_PROJECT_URL =		https://github.com/pypa/distlib
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f152097224a0ae24be5a0f6bae1b9359af82133bce63f98a95f86cae1aede9ed
+	sha256:ca4175b4ac7f71223cc30ed7248c45d2b38c2439d8ee6e498ab67ed63cf3508d
 COMPONENT_LICENSE =		PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
