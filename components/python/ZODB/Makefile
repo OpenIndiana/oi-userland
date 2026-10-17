@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zodb
-HUMAN_VERSION =			6.3
+HUMAN_VERSION =			6.4
 COMPONENT_SUMMARY =		ZODB, a Python object-oriented database
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2da749cf21c709058b2957bb1bc3d3a5d6e86b456246cb48acb5197173367c9f
+	sha256:bdc5de730bdc624d1eee0d53d66ad80d58f393080cab5c96e5d7ffeee5dba341
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
