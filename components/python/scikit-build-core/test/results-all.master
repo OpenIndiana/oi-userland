@@ -1,12 +1,12 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-installed packages of interest: exceptiongroup==1.3.1 hatch-fancy-pypi-readme==25.1.0 hatchling==1.27.0 importlib-resources==6.5.2 packaging==26.2 pathspec==1.1.1 pip==25.2 scikit_build_core==1.0.3 setuptools==80.10.2 setuptools-scm==9.2.2 tomli==2.4.0 typing-extensions==4.16.0
+installed packages of interest: exceptiongroup==1.3.1 hatch-fancy-pypi-readme==25.1.0 hatchling==1.27.0 packaging==26.3 pathspec==1.1.1 pip==25.2 scikit_build_core==1.1.1 setuptools==80.10.2 setuptools-scm==9.2.2 tomli==2.5.0 typing-extensions==4.16.0
 sysconfig platform: solaris-2.11-i86pc.64bit
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 1035 items / 1 skipped
+collecting ... collected 1248 items / 1 skipped
 
 tests/test_auto.py::test_auto_cmake_version[3.15-3.15] PASSED
 tests/test_auto.py::test_auto_cmake_version[3.16-3.16] PASSED
@@ -43,16 +43,35 @@ tests/test_build_cli.py::test_requires_command[False-wheel] PASSED
 tests/test_build_cli.py::test_requires_command[True-editable] PASSED
 tests/test_build_cli.py::test_requires_command[True-sdist] PASSED
 tests/test_build_cli.py::test_requires_command[True-wheel] PASSED
+tests/test_build_cli.py::test_requires_command_type_and_config[args0-expected0] PASSED
+tests/test_build_cli.py::test_requires_command_type_and_config[args1-expected1] PASSED
+tests/test_build_cli.py::test_requires_command_type_and_config[args2-expected2] PASSED
+tests/test_build_cli.py::test_requires_command_type_and_config[args3-expected3] PASSED
+tests/test_build_cli.py::test_requires_command_type_and_config[args4-expected4] PASSED
+tests/test_build_cli.py::test_requires_command_type_and_config[args5-expected5] PASSED
+tests/test_build_cli.py::test_requires_command_type_and_config[args6-expected6] PASSED
 tests/test_builder.py::test_build_tool_args PASSED
 tests/test_builder.py::test_builder_applies_env_table PASSED
 tests/test_builder.py::test_builder_combined_abi3_abi3t[free_threaded] PASSED
 tests/test_builder.py::test_builder_combined_abi3_abi3t[gil] PASSED
 tests/test_builder.py::test_builder_env_table_wins_over_source_date_epoch PASSED
 tests/test_builder.py::test_builder_exports_source_date_epoch PASSED
+tests/test_builder.py::test_builder_free_threaded_find_abi[ft_cmake330] PASSED
+tests/test_builder.py::test_builder_free_threaded_find_abi[ft_cmake4.1.1] PASSED
+tests/test_builder.py::test_builder_free_threaded_find_abi[ft_cmake4.1.2] PASSED
+tests/test_builder.py::test_builder_free_threaded_find_abi[gil_cmake4.1.2] PASSED
 tests/test_builder.py::test_builder_get_cmake_args["-DA=1 1" -DB=2-answer3] PASSED
+tests/test_builder.py::test_builder_get_cmake_args[-D A=1 -DB=2-answer4] PASSED
+tests/test_builder.py::test_builder_get_cmake_args[-D CMAKE_BUILD_TYPE=Release -DA=1-answer6] PASSED
+tests/test_builder.py::test_builder_get_cmake_args[-D CMAKE_INSTALL_PREFIX=/usr -DA=1-answer8] PASSED
 tests/test_builder.py::test_builder_get_cmake_args[-DA="1 1" -DB=\\"2\\"-answer2] PASSED
 tests/test_builder.py::test_builder_get_cmake_args[-DA='1 1' -DB=\\'2\\'-answer1] PASSED
 tests/test_builder.py::test_builder_get_cmake_args[-DA=1 -DB=2-answer0] PASSED
+tests/test_builder.py::test_builder_get_cmake_args[-DCMAKE_BUILD_TYPE:STRING=Debug -DA=1-answer7] PASSED
+tests/test_builder.py::test_builder_get_cmake_args[-DCMAKE_BUILD_TYPE=Release -DA=1-answer5] PASSED
+tests/test_builder.py::test_builder_get_cmake_args[-DCMAKE_BUILD_TYPE_FOO=1 -DA=1-answer11] PASSED
+tests/test_builder.py::test_builder_get_cmake_args[-DCMAKE_INSTALL_PREFIX:PATH=/opt -DA=1-answer9] PASSED
+tests/test_builder.py::test_builder_get_cmake_args[-DFOO=CMAKE_BUILD_TYPE -DA=1-answer10] PASSED
 tests/test_builder.py::test_builder_keeps_existing_source_date_epoch PASSED
 tests/test_builder.py::test_builder_limited_api_auto_free_threaded PASSED
 tests/test_builder.py::test_builder_limited_api_override_classic PASSED
@@ -64,6 +83,7 @@ tests/test_builder.py::test_builder_macos_arch_cmake_system_processor PASSED
 tests/test_builder.py::test_builder_macos_arch_cmake_system_processor_false_positive PASSED
 tests/test_builder.py::test_builder_macos_arch_cmake_system_processor_two_token PASSED
 tests/test_builder.py::test_builder_macos_arch_extra PASSED
+tests/test_builder.py::test_builder_no_python_hints_skips_lookups PASSED
 tests/test_builder.py::test_builder_no_source_date_epoch_when_not_reproducible PASSED
 tests/test_builder.py::test_builder_project_version_cmake[1!2.3.4-1!2.3.4-2.3.4] PASSED
 tests/test_builder.py::test_builder_project_version_cmake[1.0.0a1-1.0.0a1-1.0.0] PASSED
@@ -73,6 +93,11 @@ tests/test_builder.py::test_builder_project_version_cmake[1.2.3.4-1.2.3.4-1.2.3.
 tests/test_builder.py::test_builder_project_version_cmake[1.2.3.4.5-1.2.3.4.5-1.2.3.4] PASSED
 tests/test_builder.py::test_builder_project_version_cmake[1.2.3.dev4+local-1.2.3.dev4+local-1.2.3] PASSED
 tests/test_builder.py::test_builder_project_version_cmake[2-2-2] PASSED
+tests/test_builder.py::test_builder_project_version_cmake_raw PASSED
+tests/test_builder.py::test_builder_py_api_gil_disabled_zero PASSED
+tests/test_builder.py::test_builder_unsupported_cmake_args_warns_once PASSED
+tests/test_builder.py::test_builder_windows_library_hint_sabi[abi3] PASSED
+tests/test_builder.py::test_builder_windows_library_hint_sabi[classic] PASSED
 tests/test_builder.py::test_generator_args[joined] PASSED
 tests/test_builder.py::test_generator_args[two-token] PASSED
 tests/test_builder.py::test_generator_define PASSED
@@ -124,8 +149,10 @@ tests/test_builder.py::test_wheel_tag[10.12_arm64] PASSED
 tests/test_builder.py::test_wheel_tag[10.12_universal2] PASSED
 tests/test_builder.py::test_wheel_tag[10.12_x86_64] PASSED
 tests/test_builder.py::test_wheel_tag_combined_rejects_higher_classic_minor PASSED
+tests/test_builder.py::test_wheel_tag_env_argument PASSED
 tests/test_builder.py::test_wheel_tag_expand PASSED
 tests/test_builder.py::test_wheel_tag_expand_11 PASSED
+tests/test_builder.py::test_wheel_tag_gil_disabled_zero PASSED
 tests/test_builder.py::test_wheel_tag_host_platform_override PASSED
 tests/test_builder.py::test_wheel_tag_with_abi3t_darwin PASSED
 tests/test_builder.py::test_wheel_tag_with_abi3t_ignored_on_classic PASSED
@@ -166,6 +193,8 @@ tests/test_cli.py::test_cli_builder_sysconfig PASSED
 tests/test_cli.py::test_cli_builder_wheel_tag PASSED
 tests/test_cli.py::test_cli_file_api_query PASSED
 tests/test_cli.py::test_cli_no_args PASSED
+tests/test_cli.py::test_cli_settings_config_settings PASSED
+tests/test_cli.py::test_cli_settings_config_settings_no_declarations PASSED
 tests/test_cmake_ast.py::test_cmake_ast_parse PASSED
 tests/test_cmake_ast.py::test_cmake_ast_parse_long PASSED
 tests/test_cmake_ast.py::test_cmake_file_parse[docs/examples/downstream/nanobind_example] PASSED
@@ -175,6 +204,7 @@ tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/abi3_setuptools_ex
 tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/broken_fallback] PASSED
 tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/cmake_defines] PASSED
 tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/cmake_generated] PASSED
+tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/config_settings] PASSED
 tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/custom_cmake] PASSED
 tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/cython_pxd_editable/pkg1] PASSED
 tests/test_cmake_ast.py::test_cmake_file_parse[tests/packages/cython_pxd_editable/pkg2] PASSED
@@ -209,17 +239,24 @@ tests/test_cmake_ast.py::test_find_min_cmake_version_with_inner_comment[#[[ brac
 tests/test_cmake_ast.py::test_find_min_cmake_version_with_leading_inner_comment PASSED
 tests/test_cmake_ast.py::test_missing_open_paren_raises_parse_error PASSED
 tests/test_cmake_ast.py::test_unterminated_block_raises_parse_error PASSED
+tests/test_cmake_config.py::test_build_multiple_targets_one_call PASSED
 tests/test_cmake_config.py::test_cmake_args[default] PASSED
 tests/test_cmake_config.py::test_cmake_args[makefiles] PASSED
 tests/test_cmake_config.py::test_cmake_args[ninja] PASSED
 tests/test_cmake_config.py::test_cmake_args[others] PASSED
+tests/test_cmake_config.py::test_cmake_corrupt_info_file[[]] PASSED
+tests/test_cmake_config.py::test_cmake_corrupt_info_file[] PASSED
+tests/test_cmake_config.py::test_cmake_corrupt_info_file[{"source_dir": "/nope"}] PASSED
+tests/test_cmake_config.py::test_cmake_corrupt_info_file[{] PASSED
 tests/test_cmake_config.py::test_cmake_defines PASSED
+tests/test_cmake_config.py::test_cmake_fresh_clears_cache PASSED
 tests/test_cmake_config.py::test_cmake_multi_config_generator_via_define PASSED
 tests/test_cmake_config.py::test_cmake_paths[default] PASSED
 tests/test_cmake_config.py::test_cmake_paths[makefiles] PASSED
 tests/test_cmake_config.py::test_cmake_paths[ninja] PASSED
 tests/test_cmake_config.py::test_cmake_paths[others] PASSED
 tests/test_cmake_config.py::test_get_cmake_via_envvar PASSED
+tests/test_cmake_config.py::test_get_cmake_via_envvar_missing PASSED
 tests/test_cmake_config.py::test_init_cache[default] PASSED
 tests/test_cmake_config.py::test_init_cache[makefiles] PASSED
 tests/test_cmake_config.py::test_init_cache[ninja] PASSED
@@ -241,6 +278,47 @@ tests/test_common_wheel_helpers.py::test_purelib_tag_is_any PASSED
 tests/test_common_wheel_helpers.py::test_targetlib_honors_explicit_platlib PASSED
 tests/test_common_wheel_helpers.py::test_targetlib_platlib_by_default PASSED
 tests/test_common_wheel_helpers.py::test_targetlib_purelib_when_cmake_disabled PASSED
+tests/test_common_wheel_helpers.py::test_wheel_tag_uses_settings_env PASSED
+tests/test_config_settings.py::test_bool_type[1-True] PASSED
+tests/test_config_settings.py::test_bool_type[ON-True] PASSED
+tests/test_config_settings.py::test_bool_type[false-False] PASSED
+tests/test_config_settings.py::test_bool_type[off-False] PASSED
+tests/test_config_settings.py::test_bool_type_gpep517_bool PASSED
+tests/test_config_settings.py::test_config_settings_reach_cmake[conf] PASSED
+tests/test_config_settings.py::test_config_settings_reach_cmake[env] PASSED
+tests/test_config_settings.py::test_declaration_invalid[bad-charset] PASSED
+tests/test_config_settings.py::test_declaration_invalid[bad-default-bool] PASSED
+tests/test_config_settings.py::test_declaration_invalid[bad-default-str] PASSED
+tests/test_config_settings.py::test_declaration_invalid[bad-type] PASSED
+tests/test_config_settings.py::test_declaration_invalid[dotless-name] PASSED
+tests/test_config_settings.py::test_declaration_invalid[no-cmake-alias] PASSED
+tests/test_config_settings.py::test_declaration_invalid[not-a-table] PASSED
+tests/test_config_settings.py::test_declaration_invalid[removed-choices-key] PASSED
+tests/test_config_settings.py::test_declaration_invalid[reserved-segment] PASSED
+tests/test_config_settings.py::test_declaration_invalid[skbuild-segment] PASSED
+tests/test_config_settings.py::test_declaration_invalid[unknown-key] PASSED
+tests/test_config_settings.py::test_declaration_minimal PASSED
+tests/test_config_settings.py::test_declared_key_accepted PASSED
+tests/test_config_settings.py::test_default_and_unset PASSED
+tests/test_config_settings.py::test_define_conf_beats_toml_reference PASSED
+tests/test_config_settings.py::test_define_reference PASSED
+tests/test_config_settings.py::test_define_reference_bool PASSED
+tests/test_config_settings.py::test_define_reference_extra_keys PASSED
+tests/test_config_settings.py::test_define_reference_undeclared PASSED
+tests/test_config_settings.py::test_define_reference_unset_dropped PASSED
+tests/test_config_settings.py::test_env_beats_config_settings PASSED
+tests/test_config_settings.py::test_malformed_cmake_table[cmake-False] PASSED
+tests/test_config_settings.py::test_malformed_cmake_table[cmake-True] PASSED
+tests/test_config_settings.py::test_malformed_cmake_table[define-False] PASSED
+tests/test_config_settings.py::test_malformed_cmake_table[define-True] PASSED
+tests/test_config_settings.py::test_minimum_version_gate_ok PASSED
+tests/test_config_settings.py::test_minimum_version_gate_too_old PASSED
+tests/test_config_settings.py::test_resolve_from_config_settings PASSED
+tests/test_config_settings.py::test_resolve_from_env PASSED
+tests/test_config_settings.py::test_resolve_repeated_config_setting_errors PASSED
+tests/test_config_settings.py::test_skbuild_prefixed_custom_key_rejected PASSED
+tests/test_config_settings.py::test_typo_gets_suggestion PASSED
+tests/test_config_settings.py::test_undeclared_key_rejected PASSED
 tests/test_custom_modules.py::test_ep PASSED
 tests/test_dynamic_metadata.py::test_array_dynamic_metadata PASSED
 tests/test_dynamic_metadata.py::test_array_plugin_requires_field PASSED
@@ -301,6 +379,7 @@ tests/test_dynamic_metadata_unit.py::test_list_dict_field_rejects_non_dict PASSE
 tests/test_dynamic_metadata_unit.py::test_load_provider_path_loads_local PASSED
 tests/test_dynamic_metadata_unit.py::test_load_provider_path_missing_dir_raises PASSED
 tests/test_dynamic_metadata_unit.py::test_load_provider_path_not_shadowed PASSED
+tests/test_dynamic_metadata_unit.py::test_load_provider_relative_path_after_chdir PASSED
 tests/test_dynamic_metadata_unit.py::test_optional_dependencies_rejects_non_str_elements PASSED
 tests/test_dynamic_metadata_unit.py::test_provider_requires_field PASSED
 tests/test_dynamic_metadata_unit.py::test_regex PASSED
@@ -316,7 +395,8 @@ tests/test_editable.py::test_cython_pxd[multiple_packages0-redirect-False] PASSE
 tests/test_editable.py::test_direct_import[inplace-importlib_editable] PASSED
 tests/test_editable.py::test_direct_import[not_editable-importlib_editable] PASSED
 tests/test_editable.py::test_direct_import[redirect-importlib_editable] PASSED
-tests/test_editable.py::test_editable_rebuild_dir[False-simplest_c] PASSED
+tests/test_editable.py::test_editable_rebuild_dir[None-False-simplest_c] PASSED
+tests/test_editable.py::test_editable_rebuild_dir[false-False-simplest_c] PASSED
 tests/test_editable.py::test_editable_with_beartype_claw[inplace-False-simplest_c] PASSED
 tests/test_editable.py::test_editable_with_beartype_claw[redirect-False-simplest_c] PASSED
 tests/test_editable.py::test_importlib_resources[inplace-importlib_editable] PASSED
@@ -342,21 +422,26 @@ tests/test_editable_redirect.py::test_editable_redirect_external_install_tree PA
 tests/test_editable_redirect.py::test_inplace_finder_ignores_unknown PASSED
 tests/test_editable_redirect.py::test_inplace_finder_rebuild_runs_build_only PASSED
 tests/test_editable_redirect.py::test_inplace_import_time_rebuild_debounced PASSED
+tests/test_editable_redirect.py::test_inplace_loader_exposes_paths PASSED
 tests/test_editable_redirect.py::test_inplace_loader_exposes_rebuild PASSED
 tests/test_editable_redirect.py::test_inplace_rebuild_without_path_errors PASSED
 tests/test_editable_redirect.py::test_install_inplace_is_idempotent PASSED
 tests/test_editable_redirect.py::test_install_is_idempotent PASSED
 tests/test_editable_redirect.py::test_install_multiple_packages PASSED
 tests/test_editable_redirect.py::test_libdir_to_installed_absolute PASSED
+tests/test_editable_redirect.py::test_loader_exposes_paths PASSED
 tests/test_editable_redirect.py::test_loader_exposes_rebuild PASSED
 tests/test_editable_redirect.py::test_loader_rebuild_without_build_dir_errors PASSED
 tests/test_editable_redirect.py::test_mapping_to_modules_keeps_symlink_in_package_dir PASSED
 tests/test_editable_redirect.py::test_mapping_to_modules_prefers_py PASSED
+tests/test_editable_redirect.py::test_multiplexed_path_paths PASSED
+tests/test_editable_redirect.py::test_no_expensive_module_level_imports PASSED
 tests/test_editable_redirect.py::test_rebuild_failure_surfaces_stdout_when_not_verbose PASSED
 tests/test_editable_redirect.py::test_rebuild_refuses_nonrebuildable_install_dir PASSED
 tests/test_editable_redirect.py::test_rebuild_runs_once_per_process PASSED
 tests/test_editable_redirect.py::test_rebuild_success_runs_build_and_install PASSED
 tests/test_editable_redirect.py::test_redirect_falls_back_when_path_hooks_miss PASSED
+tests/test_editable_redirect.py::test_redirect_path_order_install_first PASSED
 tests/test_editable_redirect.py::test_redirect_resolves_through_path_hooks PASSED
 tests/test_editable_redirect.py::test_synthesized_namespace_merges_native_portions PASSED
 tests/test_editable_unit.py::test_collect_search_locations_data_only_install_dir PASSED
@@ -380,7 +465,9 @@ tests/test_editable_unit.py::test_editable_redirect_files_pep829_start PASSED
 tests/test_editable_unit.py::test_editable_redirect_files_platlib_install_dir_no_rebuild_reduced PASSED
 tests/test_editable_unit.py::test_editable_redirect_files_platlib_var_install_dir_with_rebuild[${SKBUILD_PLATLIB_DIR}/pkg] PASSED
 tests/test_editable_unit.py::test_editable_redirect_files_platlib_var_install_dir_with_rebuild[${SKBUILD_PURELIB_DIR}/pkg] PASSED
-tests/test_editable_unit.py::test_editable_redirect_files_rebuild_dir_implies_rebuild PASSED
+tests/test_editable_unit.py::test_editable_redirect_files_rebuild_dir_rebuild[False-False] PASSED
+tests/test_editable_unit.py::test_editable_redirect_files_rebuild_dir_rebuild[None-True] PASSED
+tests/test_editable_unit.py::test_editable_redirect_files_rebuild_dir_rebuild[True-True] PASSED
 tests/test_editable_unit.py::test_editable_redirect_files_var_install_dir_with_rebuild PASSED
 tests/test_editable_unit.py::test_get_packages_explicit_passthrough PASSED
 tests/test_editable_unit.py::test_get_packages_flat_discovery PASSED
@@ -450,10 +537,31 @@ tests/test_file_processor.py::test_exclude_patterns[manual] PASSED
 tests/test_file_processor.py::test_explicit_exclude_wins_over_include PASSED
 tests/test_file_processor.py::test_explicit_ignores_gitignore PASSED
 tests/test_file_processor.py::test_explicit_is_opt_in PASSED
+tests/test_file_processor.py::test_git_config_value[ "vendor/dep" # dependency-vendor/dep] PASSED
+tests/test_file_processor.py::test_git_config_value[" a # b "- a # b ] PASSED
+tests/test_file_processor.py::test_git_config_value["a\\"b" ; c-a"b] PASSED
+tests/test_file_processor.py::test_git_config_value[a  b  # c-a  b] PASSED
+tests/test_file_processor.py::test_git_config_value[a\\\\b-a\\b] PASSED
+tests/test_file_processor.py::test_git_config_value[a\\tb-a\tb] PASSED
+tests/test_file_processor.py::test_git_config_value[vendor/"a b"  -vendor/a b] PASSED
 tests/test_file_processor.py::test_gitignore_interaction[classic] PASSED
 tests/test_file_processor.py::test_gitignore_interaction[default] PASSED
 tests/test_file_processor.py::test_gitignore_interaction[manual] PASSED
+tests/test_file_processor.py::test_gitignore_stops_at_repository_boundary[classic-git-dir] PASSED
+tests/test_file_processor.py::test_gitignore_stops_at_repository_boundary[classic-git-file] PASSED
+tests/test_file_processor.py::test_gitignore_stops_at_repository_boundary[classic-gitmodules] PASSED
+tests/test_file_processor.py::test_gitignore_stops_at_repository_boundary[default-git-dir] PASSED
+tests/test_file_processor.py::test_gitignore_stops_at_repository_boundary[default-git-file] PASSED
+tests/test_file_processor.py::test_gitignore_stops_at_repository_boundary[default-gitmodules] PASSED
+tests/test_file_processor.py::test_gitignore_stops_at_repository_boundary[manual-git-dir] PASSED
+tests/test_file_processor.py::test_gitignore_stops_at_repository_boundary[manual-git-file] PASSED
+tests/test_file_processor.py::test_gitignore_stops_at_repository_boundary[manual-gitmodules] PASSED
+tests/test_file_processor.py::test_gitmodules_value_syntax PASSED
 tests/test_file_processor.py::test_glob_include_with_broad_exclude_keeps_subpackages PASSED
+tests/test_file_processor.py::test_ignored_repository_boundary_excludes_subtree[root-git-dir] PASSED
+tests/test_file_processor.py::test_ignored_repository_boundary_excludes_subtree[root-gitmodules] PASSED
+tests/test_file_processor.py::test_ignored_repository_boundary_excludes_subtree[vendor-git-dir] PASSED
+tests/test_file_processor.py::test_ignored_repository_boundary_excludes_subtree[vendor-gitmodules] PASSED
 tests/test_file_processor.py::test_include_overrides_exclude[classic] PASSED
 tests/test_file_processor.py::test_include_overrides_exclude[default] PASSED
 tests/test_file_processor.py::test_include_overrides_exclude[manual] PASSED
@@ -464,6 +572,7 @@ tests/test_file_processor.py::test_include_patterns[manual] PASSED
 tests/test_file_processor.py::test_nested_gitignore[classic] PASSED
 tests/test_file_processor.py::test_nested_gitignore[default] PASSED
 tests/test_file_processor.py::test_nested_gitignore[manual] PASSED
+tests/test_file_processor.py::test_nested_gitignore_scan_scoped_to_starting_path PASSED
 tests/test_file_processor.py::test_nonexistent_patterns[classic] PASSED
 tests/test_file_processor.py::test_nonexistent_patterns[default] PASSED
 tests/test_file_processor.py::test_nonexistent_patterns[manual] PASSED
@@ -471,9 +580,31 @@ tests/test_file_processor.py::test_on_each_with_symlink[classic] PASSED
 tests/test_file_processor.py::test_on_each_with_symlink[default] PASSED
 tests/test_file_processor.py::test_on_each_with_symlink[manual] PASSED
 tests/test_fileapi.py::test_cattrs_comparison PASSED
-tests/test_fileapi.py::test_convert_union_matches_shape PASSED
+tests/test_fileapi.py::test_convert_compile_group PASSED
+tests/test_fileapi.py::test_convert_install_rule PASSED
+tests/test_fileapi.py::test_convert_target_relationships PASSED
 tests/test_fileapi.py::test_included_dir PASSED
 tests/test_fileapi.py::test_link_without_command_fragments PASSED
+tests/test_fileapi.py::test_load_file_api_degrades_on_broken_reply[bad-int] PASSED
+tests/test_fileapi.py::test_load_file_api_degrades_on_broken_reply[bad-json] PASSED
+tests/test_fileapi.py::test_load_file_api_degrades_on_broken_reply[bad-types] PASSED
+tests/test_fileapi.py::test_load_file_api_degrades_on_broken_reply[empty] PASSED
+tests/test_fileapi.py::test_load_file_api_degrades_on_broken_reply[missing-fields] PASSED
+tests/test_fileapi.py::test_load_file_api_degrades_on_broken_reply[missing-json-file] PASSED
+tests/test_fileapi.py::test_load_file_api_degrades_on_broken_reply[nested-not-dict] PASSED
+tests/test_fileapi.py::test_load_file_api_degrades_on_broken_reply[non-utf8] PASSED
+tests/test_fileapi.py::test_load_file_api_degrades_on_broken_reply[root-not-dict] PASSED
+tests/test_fileapi.py::test_load_file_api_degrades_on_broken_reply[unreadable] PASSED
+tests/test_fileapi.py::test_load_reply_dir_raises_group_or_oserror[bad-int] PASSED
+tests/test_fileapi.py::test_load_reply_dir_raises_group_or_oserror[bad-json] PASSED
+tests/test_fileapi.py::test_load_reply_dir_raises_group_or_oserror[bad-types] PASSED
+tests/test_fileapi.py::test_load_reply_dir_raises_group_or_oserror[empty] PASSED
+tests/test_fileapi.py::test_load_reply_dir_raises_group_or_oserror[missing-fields] PASSED
+tests/test_fileapi.py::test_load_reply_dir_raises_group_or_oserror[missing-json-file] PASSED
+tests/test_fileapi.py::test_load_reply_dir_raises_group_or_oserror[nested-not-dict] PASSED
+tests/test_fileapi.py::test_load_reply_dir_raises_group_or_oserror[non-utf8] PASSED
+tests/test_fileapi.py::test_load_reply_dir_raises_group_or_oserror[root-not-dict] PASSED
+tests/test_fileapi.py::test_load_reply_dir_raises_group_or_oserror[unreadable] PASSED
 tests/test_fileapi.py::test_no_index PASSED
 tests/test_fileapi.py::test_simple_pure PASSED
 tests/test_force_include.py::test_force_include_directory_recurses_and_skips_junk PASSED
@@ -520,6 +651,7 @@ tests/test_force_include.py::test_force_include_unresolvable_through_sdist_error
 tests/test_force_include.py::test_force_include_var_no_experimental PASSED
 tests/test_force_include.py::test_force_include_var_pure_wheel_platlib_tree PASSED
 tests/test_force_include.py::test_force_include_var_targets_scripts PASSED
+tests/test_force_include.py::test_package_sources_are_not_copied PASSED
 tests/test_force_include.py::test_resolve_wheel_tree_bad_leading_var_rejected[${HOME}/x] PASSED
 tests/test_force_include.py::test_resolve_wheel_tree_bad_leading_var_rejected[${SKBUILD_DATA_DIR] PASSED
 tests/test_force_include.py::test_resolve_wheel_tree_bad_leading_var_rejected[${SKBUILD_DATA}/x] PASSED
@@ -560,6 +692,7 @@ tests/test_generate_include.py::test_generate_include_wheel[generate_include] PA
 tests/test_generator_default.py::test_best_gen_older_windows PASSED
 tests/test_generator_default.py::test_best_gen_unix PASSED
 tests/test_generator_default.py::test_best_gen_windows PASSED
+tests/test_get_requires.py::test_cmake_namespace_dir_is_not_a_module PASSED
 tests/test_get_requires.py::test_get_requires_for_build_editable PASSED
 tests/test_get_requires.py::test_get_requires_for_build_editable_pure PASSED
 tests/test_get_requires.py::test_get_requires_for_build_sdist PASSED
@@ -569,6 +702,9 @@ tests/test_get_requires.py::test_get_requires_for_build_wheel_pure PASSED
 tests/test_get_requires.py::test_get_requires_for_build_with_variant[get_requires_for_build_editable-config2] PASSED
 tests/test_get_requires.py::test_get_requires_for_build_with_variant[get_requires_for_build_sdist-config0] PASSED
 tests/test_get_requires.py::test_get_requires_for_build_with_variant[get_requires_for_build_wheel-config1] PASSED
+tests/test_get_requires.py::test_get_requires_ninja_define_generator[define-ninja] PASSED
+tests/test_get_requires.py::test_get_requires_ninja_define_generator[define-non-ninja] PASSED
+tests/test_get_requires.py::test_get_requires_ninja_define_generator[define-vs] PASSED
 tests/test_get_requires.py::test_get_requires_parts PASSED
 tests/test_get_requires.py::test_get_requires_parts_pyproject PASSED
 tests/test_get_requires.py::test_get_requires_parts_pyproject_old PASSED
@@ -584,6 +720,10 @@ tests/test_get_requires.py::test_uses_ninja_generator[settings-joined] PASSED
 tests/test_get_requires.py::test_uses_ninja_generator[settings-non-ninja] PASSED
 tests/test_get_requires.py::test_uses_ninja_generator[settings-two-token] PASSED
 tests/test_get_requires.py::test_uses_ninja_generator[unset] PASSED
+tests/test_get_requires.py::test_uses_ninja_generator_define[define-ninja] PASSED
+tests/test_get_requires.py::test_uses_ninja_generator_define[define-non-ninja] PASSED
+tests/test_get_requires.py::test_uses_ninja_generator_define[define-vs] PASSED
+tests/test_get_requires.py::test_uses_ninja_generator_define_precedence PASSED
 tests/test_hatchling.py::test_hatchling_editable_install[inplace-hatchling] PASSED
 tests/test_hatchling.py::test_hatchling_editable_install[redirect-hatchling] PASSED
 tests/test_hatchling.py::test_hatchling_editable_wheel[inplace-hatchling] PASSED
@@ -595,9 +735,22 @@ tests/test_hatchling.py::test_hatchling_sdist_cmake_error_message PASSED
 tests/test_hatchling.py::test_hatchling_wheel[sdist_to_wheel-hatchling] PASSED
 tests/test_hatchling.py::test_hatchling_wheel[wheel_directly-hatchling] PASSED
 tests/test_hatchling.py::test_hatchling_wheel_exclude_rejected PASSED
+tests/test_import_names.py::test_dynamic_import_names[editable] PASSED
+tests/test_import_names.py::test_dynamic_import_names[wheel] PASSED
+tests/test_import_names.py::test_dynamic_import_names_default_package PASSED
+tests/test_import_names.py::test_dynamic_import_names_extends_static PASSED
+tests/test_import_names.py::test_dynamic_import_names_needs_namespaces PASSED
+tests/test_import_names.py::test_dynamic_import_names_plugin PASSED
+tests/test_import_names.py::test_dynamic_import_names_prepare_metadata PASSED
+tests/test_import_names.py::test_dynamic_import_names_sdist PASSED
+tests/test_import_names.py::test_dynamic_import_names_wheel_exclude_single_file PASSED
+tests/test_import_names.py::test_find_import_names_modules PASSED
+tests/test_import_names.py::test_find_import_names_namespaces PASSED
+tests/test_import_names.py::test_find_import_names_packages PASSED
 tests/test_init.py::test_generate_project_rejects_unsafe_name[../evil] PASSED
 tests/test_init.py::test_generate_project_rejects_unsafe_name[/abs/foo] PASSED
 tests/test_init.py::test_generate_project_rejects_unsafe_name[foo bar] PASSED
+tests/test_init.py::test_init_abi3t_wheel_suffix SKIPPED (The abi3t ...)
 tests/test_init.py::test_init_default_name_from_directory PASSED
 tests/test_init.py::test_init_force_into_nonempty_directory PASSED
 tests/test_init.py::test_init_generates_files[abi3] PASSED
@@ -653,22 +806,33 @@ tests/test_pep517_sdist_symlink.py::test_pep517_sdist_symlink[all] PASSED
 tests/test_pep517_sdist_symlink.py::test_pep517_sdist_symlink[classic] PASSED
 tests/test_pep517_sdist_symlink.py::test_pep517_sdist_symlink[external] PASSED
 tests/test_pep517_sdist_symlink.py::test_pep517_sdist_symlink[none] PASSED
+tests/test_pep517_sdist_symlink.py::test_pep517_sdist_symlink_error PASSED
+tests/test_pep517_sdist_symlink.py::test_pep517_sdist_symlink_error_excluded PASSED
+tests/test_pep517_sdist_symlink.py::test_pep517_sdist_symlink_error_force_include PASSED
 tests/test_prepare_metadata.py::test_license_normalization PASSED
 tests/test_prepare_metadata.py::test_multiline_description PASSED
 tests/test_prepare_metadata.py::test_prepare_metadata_for_build[editable-simplest_c] PASSED
 tests/test_prepare_metadata.py::test_prepare_metadata_for_build[wheel-simplest_c] PASSED
 tests/test_prepare_metadata.py::test_prepare_metadata_for_build_wheel_variant PASSED
+tests/test_prepare_metadata.py::test_raw_version_keeps_leading_zeros PASSED
+tests/test_prepare_metadata.py::test_raw_version_strips_whitespace PASSED
 tests/test_printouts.py::test_builder_module_wheel_tag PASSED
 tests/test_printouts.py::test_builder_printout PASSED
 tests/test_process_scripts.py::test_script_dir PASSED
 tests/test_process_scripts.py::test_script_dir_with_subdirectory PASSED
+tests/test_program_search.py::test_compute_timeout_base_unchanged_on_linux PASSED
+tests/test_program_search.py::test_compute_timeout_ci_quadruples_base PASSED
+tests/test_program_search.py::test_compute_timeout_native_apple_silicon_doubles PASSED
 tests/test_program_search.py::test_get_cmake_program_fallback_exception[exc0] PASSED
 tests/test_program_search.py::test_get_cmake_program_fallback_exception[exc1] PASSED
+tests/test_program_search.py::test_get_cmake_program_missing_binary PASSED
 tests/test_program_search.py::test_get_cmake_programs_all PASSED
-tests/test_program_search.py::test_get_cmake_programs_cmake_module SKIPPED
+tests/test_program_search.py::test_get_cmake_programs_cmake_module PASSED
 tests/test_program_search.py::test_get_cmake_programs_malformed PASSED
 tests/test_program_search.py::test_get_ninja_programs_all PASSED
 tests/test_program_search.py::test_get_ninja_programs_cmake_module SKIPPED
+tests/test_program_search.py::test_get_ninja_programs_missing_binary PASSED
+tests/test_program_search.py::test_macos_binary_is_x86_hides_stderr PASSED
 tests/test_pyproject_abi3.py::test_abi3_wheel PASSED
 tests/test_pyproject_extra_dirs.py::test_pep517_wheel_extra_dirs[filepath_pure] PASSED
 tests/test_pyproject_extra_dirs.py::test_pep517_wheel_too_old_core[filepath_pure] PASSED
@@ -715,7 +879,16 @@ tests/test_schema.py::test_invalid_schemas[addition12] SKIPPED (coul...)
 tests/test_schema.py::test_invalid_schemas[addition13] SKIPPED (coul...)
 tests/test_schema.py::test_invalid_schemas[addition14] SKIPPED (coul...)
 tests/test_schema.py::test_invalid_schemas[addition15] SKIPPED (coul...)
+tests/test_schema.py::test_invalid_schemas[addition16] SKIPPED (coul...)
+tests/test_schema.py::test_invalid_schemas[addition17] SKIPPED (coul...)
+tests/test_schema.py::test_invalid_schemas[addition18] SKIPPED (coul...)
+tests/test_schema.py::test_invalid_schemas[addition19] SKIPPED (coul...)
 tests/test_schema.py::test_invalid_schemas[addition1] SKIPPED (could...)
+tests/test_schema.py::test_invalid_schemas[addition20] SKIPPED (coul...)
+tests/test_schema.py::test_invalid_schemas[addition21] SKIPPED (coul...)
+tests/test_schema.py::test_invalid_schemas[addition22] SKIPPED (coul...)
+tests/test_schema.py::test_invalid_schemas[addition23] SKIPPED (coul...)
+tests/test_schema.py::test_invalid_schemas[addition24] SKIPPED (coul...)
 tests/test_schema.py::test_invalid_schemas[addition2] SKIPPED (could...)
 tests/test_schema.py::test_invalid_schemas[addition3] SKIPPED (could...)
 tests/test_schema.py::test_invalid_schemas[addition4] SKIPPED (could...)
@@ -728,6 +901,9 @@ tests/test_schema.py::test_required_names_normalized PASSED
 tests/test_schema.py::test_valid_schemas[addition0] SKIPPED (could n...)
 tests/test_schema.py::test_valid_schemas[addition10] SKIPPED (could ...)
 tests/test_schema.py::test_valid_schemas[addition11] SKIPPED (could ...)
+tests/test_schema.py::test_valid_schemas[addition12] SKIPPED (could ...)
+tests/test_schema.py::test_valid_schemas[addition13] SKIPPED (could ...)
+tests/test_schema.py::test_valid_schemas[addition14] SKIPPED (could ...)
 tests/test_schema.py::test_valid_schemas[addition1] SKIPPED (could n...)
 tests/test_schema.py::test_valid_schemas[addition2] SKIPPED (could n...)
 tests/test_schema.py::test_valid_schemas[addition3] SKIPPED (could n...)
@@ -744,6 +920,7 @@ tests/test_schema.py::test_valid_schemas_files[tests/packages/abi3_setuptools_ex
 tests/test_schema.py::test_valid_schemas_files[tests/packages/broken_fallback] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[tests/packages/cmake_defines] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[tests/packages/cmake_generated] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[tests/packages/config_settings] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[tests/packages/custom_cmake/extern] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[tests/packages/custom_cmake] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[tests/packages/cython_pxd_editable/pkg1] SKIPPED
@@ -823,6 +1000,20 @@ tests/test_settings_overrides.py::test_free_threaded_override PASSED
 tests/test_settings_overrides.py::test_not_regex_match[^string] PASSED
 tests/test_settings_overrides.py::test_not_regex_match[other] PASSED
 tests/test_settings_overrides.py::test_not_regex_match[this$] PASSED
+tests/test_settings_overrides.py::test_override_config_setting[conf] PASSED
+tests/test_settings_overrides.py::test_override_config_setting[env] PASSED
+tests/test_settings_overrides.py::test_override_config_setting_any PASSED
+tests/test_settings_overrides.py::test_override_config_setting_bool[None-false-True] PASSED
+tests/test_settings_overrides.py::test_override_config_setting_bool[None-true-False] PASSED
+tests/test_settings_overrides.py::test_override_config_setting_bool[off-false-True] PASSED
+tests/test_settings_overrides.py::test_override_config_setting_bool[off-true-False] PASSED
+tests/test_settings_overrides.py::test_override_config_setting_bool[on-false-False] PASSED
+tests/test_settings_overrides.py::test_override_config_setting_bool[on-true-True] PASSED
+tests/test_settings_overrides.py::test_override_config_setting_default_no_match PASSED
+tests/test_settings_overrides.py::test_override_config_setting_regex PASSED
+tests/test_settings_overrides.py::test_override_config_setting_undeclared PASSED
+tests/test_settings_overrides.py::test_override_contributed_define_reference PASSED
+tests/test_settings_overrides.py::test_override_may_not_set_config_setting PASSED
 tests/test_settings_overrides.py::test_override_only_allowed_dynamically PASSED
 tests/test_settings_overrides.py::test_regex_match[^this] PASSED
 tests/test_settings_overrides.py::test_regex_match[is] PASSED
@@ -888,6 +1079,15 @@ tests/test_settings_overrides.py::test_skbuild_overrides_matched_version_if_any 
 tests/test_settings_overrides.py::test_skbuild_overrides_matched_version_if_any_dual PASSED
 tests/test_settings_overrides.py::test_skbuild_overrides_matched_version_if_any_match PASSED
 tests/test_settings_overrides.py::test_skbuild_overrides_no_if PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_not[darwin-cpython] PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_not[darwin-pypy] PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_not[linux-cpython] PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_not[linux-pypy] PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_not_mixed[darwin-3.10] PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_not_mixed[darwin-3.9] PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_not_mixed[linux-3.10] PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_not_mixed[linux-3.9] PASSED
+tests/test_settings_overrides.py::test_skbuild_overrides_not_unknown PASSED
 tests/test_settings_overrides.py::test_skbuild_overrides_platnode[matchthat] PASSED
 tests/test_settings_overrides.py::test_skbuild_overrides_platnode[thismatch] PASSED
 tests/test_settings_overrides.py::test_skbuild_overrides_pyver[3.10] PASSED
@@ -919,6 +1119,8 @@ tests/test_setuptools_pep517.py::test_cmake_install_target_keyword_validates_typ
 tests/test_setuptools_pep517.py::test_cmake_install_target_maps_to_install_targets PASSED
 tests/test_setuptools_pep517.py::test_editable_install_dir_honors_per_package_dir PASSED
 tests/test_setuptools_pep517.py::test_finalize_options_honors_directly_set_editable_mode PASSED
+tests/test_setuptools_pep517.py::test_finalize_options_parses_cmake_args PASSED
+tests/test_setuptools_pep517.py::test_get_requires_uses_hook_state PASSED
 tests/test_setuptools_pep517.py::test_get_source_files_empty_when_missing PASSED
 tests/test_setuptools_pep517.py::test_get_source_files_finds_configured_cmakelists PASSED
 tests/test_setuptools_pep517.py::test_get_source_files_honors_sdist_include_exclude PASSED
@@ -943,6 +1145,7 @@ tests/test_setuptools_pep517.py::test_validate_settings_rejects_build_type_list 
 tests/test_setuptools_pep517.py::test_wrapper_classic_layout_wheel[wrapper_setuptools_classic_layout] PASSED
 tests/test_setuptools_pep517.py::test_wrapper_forwards_manifest_hook PASSED
 tests/test_setuptools_pep517.py::test_wrapper_setup_raises_setup_error PASSED
+tests/test_setuptools_pep517.py::test_wrapper_staged_install_layout PASSED
 tests/test_setuptools_pep518.py::test_pep518_pip[simple_setuptools_ext] PASSED
 tests/test_setuptools_pep518.py::test_pep518_pip_editable[simple_setuptools_ext] PASSED
 tests/test_setuptools_pep518.py::test_pep518_wheel[simple_setuptools_ext] PASSED
@@ -954,6 +1157,7 @@ tests/test_simplest_c.py::test_pep517_sdist PASSED
 tests/test_simplest_c.py::test_pep517_wheel[all] PASSED
 tests/test_simplest_c.py::test_pep517_wheel[one] PASSED
 tests/test_simplest_c.py::test_pep517_wheel[two] PASSED
+tests/test_simplest_c.py::test_pep517_wheel_fresh PASSED
 tests/test_simplest_c.py::test_pep517_wheel_incexl PASSED
 tests/test_simplest_c.py::test_pep517_wheel_reproducible PASSED
 tests/test_skbuild_settings.py::test_auto_cmake_version PASSED
@@ -981,6 +1185,9 @@ tests/test_skbuild_settings.py::test_deprecated_field_old_pin_allowed[cmake.verb
 tests/test_skbuild_settings.py::test_deprecated_field_old_pin_allowed[ninja.minimum-version = '1.11'-0.7] PASSED
 tests/test_skbuild_settings.py::test_editable_inplace_rebuild_allowed PASSED
 tests/test_skbuild_settings.py::test_editable_inplace_rebuild_dir_rejected PASSED
+tests/test_skbuild_settings.py::test_editable_rebuild_dir_rebuild[-True] PASSED
+tests/test_skbuild_settings.py::test_editable_rebuild_dir_rebuild[editable.rebuild = false-False] PASSED
+tests/test_skbuild_settings.py::test_editable_rebuild_dir_rebuild[editable.rebuild = true-True] PASSED
 tests/test_skbuild_settings.py::test_editable_rebuild_requires_build_dir[editable.rebuild = true] PASSED
 tests/test_skbuild_settings.py::test_editable_rebuild_requires_build_dir[editable.rebuild-dir = "tree"] PASSED
 tests/test_skbuild_settings.py::test_env_value_rejects_bad_types[raw0] PASSED
@@ -990,6 +1197,7 @@ tests/test_skbuild_settings.py::test_env_value_rejects_bad_types[raw3] PASSED
 tests/test_skbuild_settings.py::test_env_value_rejects_bad_types[raw4] PASSED
 tests/test_skbuild_settings.py::test_sdist_inclusion_mode_explicit PASSED
 tests/test_skbuild_settings.py::test_sdist_inclusion_mode_explicit_requires_minimum_version PASSED
+tests/test_skbuild_settings.py::test_sdist_resolve_symlinks_error_requires_minimum_version PASSED
 tests/test_skbuild_settings.py::test_skbuild_override_renamed PASSED
 tests/test_skbuild_settings.py::test_skbuild_override_renamed_fail PASSED
 tests/test_skbuild_settings.py::test_skbuild_override_static PASSED
@@ -1030,7 +1238,12 @@ tests/test_sources_pep604_union.py::TestUnionTypeDetection::test_none_not_recogn
 tests/test_sources_pep604_union.py::TestUnionTypeDetection::test_pep604_union_type_recognized SKIPPED
 tests/test_sources_pep604_union.py::TestUnionTypeDetection::test_typing_union_recognized PASSED
 tests/test_uv_workspace.py::test_uv_workspace_editable_member SKIPPED
+tests/test_wheelfile_utils.py::test_direct_sources_match_staged_wheel[platlib-False] PASSED
+tests/test_wheelfile_utils.py::test_direct_sources_match_staged_wheel[platlib-True] PASSED
+tests/test_wheelfile_utils.py::test_direct_sources_match_staged_wheel[purelib-False] PASSED
+tests/test_wheelfile_utils.py::test_direct_sources_match_staged_wheel[purelib-True] PASSED
 tests/test_wheelfile_utils.py::test_reproducible_epoch_non_integer_errors PASSED
+tests/test_wheelfile_utils.py::test_staged_symlink_to_package_source PASSED
 tests/test_wheelfile_utils.py::test_wheel_metadata PASSED
 tests/test_wheelfile_utils.py::test_wheel_reproducible_normalizes_generated_metadata PASSED
 tests/test_wheelfile_utils.py::test_wheel_timestamp_clamps_epoch_beyond_zip_range[False] PASSED
@@ -1045,4 +1258,4 @@ tests/test_wheelfile_utils.py::test_wheel_writer_variant PASSED
 tests/test_wheelfile_utils.py::test_wheel_writer_variant_metadata_dir_conflict PASSED
 
 =========================== short test summary info ============================
-======== 962 passed, 74 skipped ========
+======== 1162 passed, 87 skipped ========
