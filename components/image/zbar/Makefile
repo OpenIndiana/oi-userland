@@ -23,38 +23,41 @@
 # Copyright 2024 Friedrich Kink
 #
 
+BUILD_STYLE= meson
 USE_PARALLEL_BUILD= yes
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zbar
-COMPONENT_VERSION=	0.23.93
+COMPONENT_VERSION=	0.23.95
 COMPONENT_DESCRIPTION=	ZBar is an open source software suite for reading bar codes from \
 			various sources, including webcams.
 COMPONENT_SUMMARY=	ZBAR  bar code reader
 COMPONENT_PROJECT_URL=	https://github.com/mchehab/zbar
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:212dfab527894b8bcbcc7cd1d43d63f5604a07473d31a5f02889e372614ebe28
+COMPONENT_ARCHIVE_HASH=	sha256:3bad3fe7b8764c6e2131cba91d40e22567a1365352914b62b55247b49124ed33
 COMPONENT_ARCHIVE_URL=	https://github.com/mchehab/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		image/zbar
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_LICENSE=	LGPL2.1
 COMPONENT_LICENSE_FILE=	COPYING
 
-# no usable tests available
-TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -vfi )
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 # configure
-CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --disable-video
-CONFIGURE_OPTIONS += --disable-dependency-tracking
-CONFIGURE_OPTIONS += --enable-introspection=yes
-CONFIGURE_OPTIONS += --with-gir
-CONFIGURE_OPTIONS += --with-java=no
-CONFIGURE_OPTIONS += --with-qt=no
+CONFIGURE_OPTIONS += -Dlibrary_type=shared
+CONFIGURE_OPTIONS += -Dvideo=false
+CONFIGURE_OPTIONS += -Dqt=false
+CONFIGURE_OPTIONS += -Djava=disabled
+
+# We use python vendor-packages instead of site-packages
+COMPONENT_POST_INSTALL_ACTION += ( \
+    cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) ; \
+    $(RM) -r vendor-packages ; \
+    $(MV) site-packages vendor-packages ) ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
