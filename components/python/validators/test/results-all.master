@@ -1,11 +1,10 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest .
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 934 items
+collecting ... collected 1108 items
 
 src/validators/_extremes.py::validators._extremes.AbsMax PASSED
 src/validators/_extremes.py::validators._extremes.AbsMin PASSED
@@ -59,6 +58,7 @@ src/validators/ip_address.py::validators.ip_address.ipv6 PASSED
 src/validators/length.py::validators.length.length PASSED
 src/validators/mac_address.py::validators.mac_address.mac_address PASSED
 src/validators/slug.py::validators.slug.slug PASSED
+src/validators/uri.py::validators.uri._telnet_url PASSED
 src/validators/uri.py::validators.uri.uri PASSED
 src/validators/url.py::validators.url.url PASSED
 src/validators/utils.py::validators.utils.validator PASSED
@@ -92,6 +92,8 @@ tests/crypto_addresses/test_btc_address.py::test_returns_true_on_valid_btc_addre
 tests/crypto_addresses/test_btc_address.py::test_returns_true_on_valid_btc_address[3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy] PASSED
 tests/crypto_addresses/test_btc_address.py::test_returns_true_on_valid_btc_address[bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq] PASSED
 tests/crypto_addresses/test_btc_address.py::test_returns_true_on_valid_btc_address[bc1qc7slrfxkknqcq2jevvvkdgvrt8080852dfjewde450xdlk4ugp7szw5tk9] PASSED
+tests/crypto_addresses/test_btc_address.py::test_returns_true_on_valid_btc_address[tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx] PASSED
+tests/crypto_addresses/test_btc_address.py::test_returns_true_on_valid_btc_address[tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3qccfmv3] PASSED
 tests/crypto_addresses/test_btc_address.py::test_returns_failed_validation_on_invalid_btc_address[ff3Cwgr2g7vsi1bXDUkpEnVoRLA9w4FZfC69] PASSED
 tests/crypto_addresses/test_btc_address.py::test_returns_failed_validation_on_invalid_btc_address[b3Cgwgr2g7vsi1bXyjyDUkphEnVoRLA9w4FZfC69] PASSED
 tests/crypto_addresses/test_btc_address.py::test_returns_failed_validation_on_invalid_btc_address[1BvBMsEYstWetqTFn5Au4m4GFg7xJaNVN2] PASSED
@@ -221,6 +223,7 @@ tests/i18n/test_fr.py::test_returns_true_on_valid_ssn[2 99 05 971 12 817 70] PAS
 tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[None] PASSED
 tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[] PASSED
 tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[3 84 12 76 451 089 46] PASSED
+tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[, 84 12 76 451 089] PASSED
 tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[1 84 12 76 451 089 47] PASSED
 tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[1 84 00 76 451 089] PASSED
 tests/i18n/test_fr.py::test_returns_failed_validation_on_invalid_ssn[1 84 13 76 451 089] PASSED
@@ -255,6 +258,8 @@ tests/i18n/test_ind.py::test_returns_true_on_valid_ind_pan[AAAPL1234C] PASSED
 tests/i18n/test_ind.py::test_returns_failed_validation_on_invalid_ind_pan[ABC5d7896B] PASSED
 tests/i18n/test_ind.py::test_returns_failed_validation_on_invalid_ind_pan[417598346012] PASSED
 tests/i18n/test_ind.py::test_returns_failed_validation_on_invalid_ind_pan[AaaPL1234C] PASSED
+tests/i18n/test_ind.py::test_returns_failed_validation_on_invalid_ind_pan[ABCDE9999Kextra] PASSED
+tests/i18n/test_ind.py::test_returns_failed_validation_on_invalid_ind_pan[ABCDE9999K ] PASSED
 tests/i18n/test_ru.py::test_returns_true_on_valid_ru_inn[2222058686] PASSED
 tests/i18n/test_ru.py::test_returns_true_on_valid_ru_inn[7709439560] PASSED
 tests/i18n/test_ru.py::test_returns_true_on_valid_ru_inn[5003052454] PASSED
@@ -343,6 +348,8 @@ tests/test_card.py::test_returns_failed_on_valid_mastercard[36227206271667] PASS
 tests/test_card.py::test_returns_failed_on_valid_mastercard[3566002020360505] PASSED
 tests/test_card.py::test_returns_failed_on_valid_mastercard[6011111111111117] PASSED
 tests/test_card.py::test_returns_failed_on_valid_mastercard[6011000990139424] PASSED
+tests/test_card.py::test_returns_failed_on_valid_mastercard[2200123456789019] PASSED
+tests/test_card.py::test_returns_failed_on_valid_mastercard[2204987654321098] PASSED
 tests/test_card.py::test_returns_true_on_valid_amex[378282246310005] PASSED
 tests/test_card.py::test_returns_true_on_valid_amex[371449635398431] PASSED
 tests/test_card.py::test_returns_failed_on_valid_amex[4242424242424242] PASSED
@@ -465,7 +472,13 @@ tests/test_cron.py::test_returns_true_on_valid_cron[0 12 * 1-6 1-5] PASSED
 tests/test_cron.py::test_returns_true_on_valid_cron[0 3-6 * * *] PASSED
 tests/test_cron.py::test_returns_true_on_valid_cron[*/15 0,6,12,18 * * *] PASSED
 tests/test_cron.py::test_returns_true_on_valid_cron[0 12 * * 0] PASSED
+tests/test_cron.py::test_returns_true_on_valid_cron[0 12 * * 7] PASSED
+tests/test_cron.py::test_returns_true_on_valid_cron[0 0 * * 0-7] PASSED
+tests/test_cron.py::test_returns_true_on_valid_cron[0 0 * * 0,7] PASSED
 tests/test_cron.py::test_returns_true_on_valid_cron[*/61 * * * *] PASSED
+tests/test_cron.py::test_returns_true_on_valid_cron[5-10/2 * * * *] PASSED
+tests/test_cron.py::test_returns_true_on_valid_cron[1-30/2 * * * *] PASSED
+tests/test_cron.py::test_returns_true_on_valid_cron[15,45 6-18/3 * * *] PASSED
 tests/test_cron.py::test_returns_failed_validation_on_invalid_cron[* * * * * *] PASSED
 tests/test_cron.py::test_returns_failed_validation_on_invalid_cron[* * * *] PASSED
 tests/test_cron.py::test_returns_failed_validation_on_invalid_cron[*/5 25 * * *] PASSED
@@ -521,6 +534,9 @@ tests/test_domain.py::test_returns_failed_validation_on_invalid_domain[example?.
 tests/test_domain.py::test_returns_failed_validation_on_invalid_domain[__exa__mple__.com-False-True] PASSED
 tests/test_domain.py::test_returns_failed_validation_on_invalid_domain[a......b.com-False-False] PASSED
 tests/test_domain.py::test_returns_failed_validation_on_invalid_domain[a.123-False-False] PASSED
+tests/test_domain.py::test_returns_failed_validation_on_invalid_domain[foo.ba_r-False-False] PASSED
+tests/test_domain.py::test_returns_failed_validation_on_invalid_domain[foo.ba_r-False-True] PASSED
+tests/test_domain.py::test_returns_failed_validation_on_invalid_domain[example.co_uk-False-False] PASSED
 tests/test_domain.py::test_returns_failed_validation_on_invalid_domain[123.123-False-False] PASSED
 tests/test_domain.py::test_returns_failed_validation_on_invalid_domain[123.123.123.-True-False] PASSED
 tests/test_domain.py::test_returns_failed_validation_on_invalid_domain[123.123.123.123-False-False] PASSED
@@ -534,6 +550,18 @@ tests/test_domain.py::test_returns_failed_validation_invalid_top_level_domain[3.
 tests/test_domain.py::test_returns_failed_validation_invalid_top_level_domain[_example.#13-True-False-True] PASSED
 tests/test_domain.py::test_returns_failed_validation_invalid_top_level_domain[example_.fo-ul-True-False-True] PASSED
 tests/test_domain.py::test_returns_failed_validation_invalid_top_level_domain[somerandomexample.xn-n-fiqs8s-True-False-False] PASSED
+tests/test_domain.py::test_returns_true_on_domain_within_rfc_length_limits[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.a.com] PASSED
+tests/test_domain.py::test_returns_true_on_domain_within_rfc_length_limits[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com] PASSED
+tests/test_domain.py::test_returns_true_on_domain_within_rfc_length_limits[1host.example.com] PASSED
+tests/test_domain.py::test_returns_true_on_domain_within_rfc_length_limits[\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.com] PASSED
+tests/test_domain.py::test_returns_failed_validation_on_domain_beyond_rfc_limits[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aa.com] PASSED
+tests/test_domain.py::test_returns_failed_validation_on_domain_beyond_rfc_limits[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaa.com] PASSED
+tests/test_domain.py::test_returns_failed_validation_on_domain_beyond_rfc_limits[kld8MXQh6YalMqKRbfs895gMjW5T4p2EwToPoCSThPHHbXgmXc.kld8MXQh6YalMqKRbfs895gMjW5T4p2EwToPoCSThPHHbXgmXc.kld8MXQh6YalMqKRbfs895gMjW5T4p2EwToPoCSThPHHbXgmXc.kld8MXQh6YalMqKRbfs895gMjW5T4p2EwToPoCSThPHHbXgmXc.kld8MXQh6YalMqKRbfs895gMjW5T4p2EwToPoCSThPHHbXgmXcab] PASSED
+tests/test_domain.py::test_returns_failed_validation_on_domain_beyond_rfc_limits[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com] PASSED
+tests/test_domain.py::test_returns_failed_validation_on_domain_beyond_rfc_limits[\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.com] PASSED
+tests/test_domain.py::test_returns_failed_validation_on_domain_beyond_rfc_limits[www.abcdefghijklmnop.abcdefghijklmnop.abcdefghijklmnop.abcdefghijklmnop.abcdefghijklmnop.abcdefghijklmnop.abcdefghijklmnop.abcdefghijklmnop.abcdefghijklmnop.abcdefghijklmnop.abcdefghijklmnop.abcdefghijklmnop.abcdefghijklmnop.abcdefghijklmnop.abcdefghijklmnop.fr] PASSED
+tests/test_domain.py::test_returns_failed_validation_on_domain_beyond_rfc_limits[-host.example.com] PASSED
+tests/test_domain.py::test_returns_failed_validation_on_domain_beyond_rfc_limits[host-.example.com] PASSED
 tests/test_email.py::test_returns_true_on_valid_email[email@here.com] PASSED
 tests/test_email.py::test_returns_true_on_valid_email[weirder-email@here.and.there.com] PASSED
 tests/test_email.py::test_returns_true_on_valid_email[email@127.local.home.arpa] PASSED
@@ -603,6 +631,22 @@ tests/test_encoding.py::test_returns_true_on_valid_base64[YW55IGNhcm5hbCBwbGVhcw
 tests/test_encoding.py::test_returns_failed_validation_on_invalid_base64[SGVsbG8gV29ybGQ] PASSED
 tests/test_encoding.py::test_returns_failed_validation_on_invalid_base64[U29tZSBkYXRhIHN0cmluZw] PASSED
 tests/test_encoding.py::test_returns_failed_validation_on_invalid_base64[YW55IGNhcm5hbCBwbGVhc] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[\n-base16-a3f4b2] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[\n-base32-MFZWIZLTOQ======] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[\n-base58-18KToMF5] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[\n-base64-SGVsbG8=] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[\r\n-base16-a3f4b2] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[\r\n-base32-MFZWIZLTOQ======] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[\r\n-base58-18KToMF5] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[\r\n-base64-SGVsbG8=] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[ -base16-a3f4b2] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[ -base32-MFZWIZLTOQ======] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[ -base58-18KToMF5] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[ -base64-SGVsbG8=] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[\nextra-base16-a3f4b2] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[\nextra-base32-MFZWIZLTOQ======] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[\nextra-base58-18KToMF5] PASSED
+tests/test_encoding.py::test_encoding_rejects_trailing_characters[\nextra-base64-SGVsbG8=] PASSED
 tests/test_finance.py::test_returns_true_on_valid_cusip[912796X38] PASSED
 tests/test_finance.py::test_returns_true_on_valid_cusip[912796X20] PASSED
 tests/test_finance.py::test_returns_true_on_valid_cusip[912796x20] PASSED
@@ -611,12 +655,16 @@ tests/test_finance.py::test_returns_failed_validation_on_invalid_cusip[912796T68
 tests/test_finance.py::test_returns_failed_validation_on_invalid_cusip[XCVF] PASSED
 tests/test_finance.py::test_returns_failed_validation_on_invalid_cusip[00^^^1234] PASSED
 tests/test_finance.py::test_returns_true_on_valid_isin[US0004026250] PASSED
-tests/test_finance.py::test_returns_true_on_valid_isin[JP000K0VF054] PASSED
 tests/test_finance.py::test_returns_true_on_valid_isin[US0378331005] PASSED
+tests/test_finance.py::test_returns_true_on_valid_isin[GB0002634946] PASSED
+tests/test_finance.py::test_returns_true_on_valid_isin[DE000BAY0017] PASSED
 tests/test_finance.py::test_returns_failed_validation_on_invalid_isin[010378331005] PASSED
 tests/test_finance.py::test_returns_failed_validation_on_invalid_isin[XCVF] PASSED
 tests/test_finance.py::test_returns_failed_validation_on_invalid_isin[00^^^1234] PASSED
 tests/test_finance.py::test_returns_failed_validation_on_invalid_isin[A000009] PASSED
+tests/test_finance.py::test_returns_failed_validation_on_invalid_isin[US0378331006] PASSED
+tests/test_finance.py::test_returns_failed_validation_on_invalid_isin[US0004026251] PASSED
+tests/test_finance.py::test_returns_failed_validation_on_invalid_isin[GB0002634947] PASSED
 tests/test_finance.py::test_returns_true_on_valid_sedol[0263494] PASSED
 tests/test_finance.py::test_returns_true_on_valid_sedol[0540528] PASSED
 tests/test_finance.py::test_returns_true_on_valid_sedol[B000009] PASSED
@@ -624,6 +672,15 @@ tests/test_finance.py::test_returns_failed_validation_on_invalid_sedol[0540526] 
 tests/test_finance.py::test_returns_failed_validation_on_invalid_sedol[XCVF] PASSED
 tests/test_finance.py::test_returns_failed_validation_on_invalid_sedol[00^^^1234] PASSED
 tests/test_finance.py::test_returns_failed_validation_on_invalid_sedol[A000009] PASSED
+tests/test_finance.py::test_rejects_non_numeric_check_digit[cusip-03783310J] PASSED
+tests/test_finance.py::test_rejects_non_numeric_check_digit[cusip-03783310j] PASSED
+tests/test_finance.py::test_rejects_non_numeric_check_digit[cusip-03783310@] PASSED
+tests/test_finance.py::test_rejects_non_numeric_check_digit[sedol-293692L] PASSED
+tests/test_finance.py::test_rejects_non_numeric_check_digit[sedol-B12345G] PASSED
+tests/test_finance.py::test_rejects_non_numeric_check_digit[sedol-B12345Q] PASSED
+tests/test_finance.py::test_accepts_numeric_check_digit[cusip-037833100] PASSED
+tests/test_finance.py::test_accepts_numeric_check_digit[sedol-2936921] PASSED
+tests/test_finance.py::test_accepts_numeric_check_digit[sedol-B123456] PASSED
 tests/test_hashes.py::test_returns_true_on_valid_base58[cUSECaVvAiV3srWbFRvVPzm5YzcXJwPSwZfE7veYPHoXmR9h6YMQ] PASSED
 tests/test_hashes.py::test_returns_true_on_valid_base58[18KToMF5ckjXBYt2HAj77qsG3GPeej3PZn] PASSED
 tests/test_hashes.py::test_returns_true_on_valid_base58[n4FFXRNNEW1aA2WPscSuzHTCjzjs4TVE2Z] PASSED
@@ -669,10 +726,36 @@ tests/test_hashes.py::test_returns_true_on_valid_sha512[CF83E1357EEFB8BDF1542850
 tests/test_hashes.py::test_returns_failed_validation_on_invalid_sha512[zf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e] PASSED
 tests/test_hashes.py::test_returns_failed_validation_on_invalid_sha512[cf8357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e] PASSED
 tests/test_hashes.py::test_returns_failed_validation_on_invalid_sha512[cf8aaaa3e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\n-md5-32] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\n-sha1-40] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\n-sha224-56] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\n-sha256-64] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\n-sha384-96] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\n-sha512-128] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\r\n-md5-32] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\r\n-sha1-40] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\r\n-sha224-56] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\r\n-sha256-64] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\r\n-sha384-96] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\r\n-sha512-128] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[ -md5-32] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[ -sha1-40] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[ -sha224-56] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[ -sha256-64] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[ -sha384-96] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[ -sha512-128] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\nextra-md5-32] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\nextra-sha1-40] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\nextra-sha224-56] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\nextra-sha256-64] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\nextra-sha384-96] PASSED
+tests/test_hashes.py::test_hash_rejects_trailing_characters[\nextra-sha512-128] PASSED
 tests/test_hostname.py::test_returns_true_on_valid_hostname[ubuntu-pc:443-False-False] PASSED
 tests/test_hostname.py::test_returns_true_on_valid_hostname[this-pc-False-False] PASSED
 tests/test_hostname.py::test_returns_true_on_valid_hostname[lab-01a-notebook:404-False-False] PASSED
 tests/test_hostname.py::test_returns_true_on_valid_hostname[4-oh-4-False-False] PASSED
+tests/test_hostname.py::test_returns_true_on_valid_hostname[this-pc.-True-False] PASSED
+tests/test_hostname.py::test_returns_true_on_valid_hostname[ie.-True-False] PASSED
 tests/test_hostname.py::test_returns_true_on_valid_hostname[example.com:4444-False-False] PASSED
 tests/test_hostname.py::test_returns_true_on_valid_hostname[kr\xe4uter.com.-True-False] PASSED
 tests/test_hostname.py::test_returns_true_on_valid_hostname[xn----gtbspbbmkef.xn--p1ai:65535-False-False] PASSED
@@ -689,6 +772,7 @@ tests/test_hostname.py::test_returns_failed_validation_on_invalid_hostname[ubunt
 tests/test_hostname.py::test_returns_failed_validation_on_invalid_hostname[this-pc-is-sh*t-False-False] PASSED
 tests/test_hostname.py::test_returns_failed_validation_on_invalid_hostname[lab-01a-note._com_.com:404-False-False] PASSED
 tests/test_hostname.py::test_returns_failed_validation_on_invalid_hostname[4-oh-4:@.com-False-False] PASSED
+tests/test_hostname.py::test_returns_failed_validation_on_invalid_hostname[this-pc.-False-False] PASSED
 tests/test_hostname.py::test_returns_failed_validation_on_invalid_hostname[example.com:-4444-False-False] PASSED
 tests/test_hostname.py::test_returns_failed_validation_on_invalid_hostname[xn----gtbspbbmkef.xn--p1ai:65538-False-False] PASSED
 tests/test_hostname.py::test_returns_failed_validation_on_invalid_hostname[_example.com:0-False-True] PASSED
@@ -701,8 +785,21 @@ tests/test_hostname.py::test_returns_failed_validation_on_invalid_hostname[[::1]
 tests/test_hostname.py::test_returns_failed_validation_on_invalid_hostname[[dead:beef:0:-:0:-:42:1]:5731-False-False] PASSED
 tests/test_hostname.py::test_returns_failed_validation_on_invalid_hostname[[0:0:0:0:0:ffff:1.2.3.4]:-65538-False-False] PASSED
 tests/test_hostname.py::test_returns_failed_validation_on_invalid_hostname[[0:&:b:c:@:e:f:::9999-False-False] PASSED
+tests/test_hostname.py::test_returns_true_on_hostname_within_rfc_length_limits[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa] PASSED
+tests/test_hostname.py::test_returns_true_on_hostname_within_rfc_length_limits[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com] PASSED
+tests/test_hostname.py::test_returns_true_on_hostname_within_rfc_length_limits[1host.example.com] PASSED
+tests/test_hostname.py::test_returns_true_on_hostname_within_rfc_length_limits[\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.com] PASSED
+tests/test_hostname.py::test_returns_failed_validation_on_hostname_beyond_rfc_limits[kld8MXQh6YalMqKRbfs895gMjW5T4p2EwToPoCSThPHHbXgmXc.kld8MXQh6YalMqKRbfs895gMjW5T4p2EwToPoCSThPHHbXgmXc.kld8MXQh6YalMqKRbfs895gMjW5T4p2EwToPoCSThPHHbXgmXc.kld8MXQh6YalMqKRbfs895gMjW5T4p2EwToPoCSThPHHbXgmXc.kld8MXQh6YalMqKRbfs895gMjW5T4p2EwToPoCSThPHHbXgmXcab] PASSED
+tests/test_hostname.py::test_returns_failed_validation_on_hostname_beyond_rfc_limits[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa] PASSED
+tests/test_hostname.py::test_returns_failed_validation_on_hostname_beyond_rfc_limits[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com] PASSED
+tests/test_hostname.py::test_returns_failed_validation_on_hostname_beyond_rfc_limits[\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc.com] PASSED
+tests/test_hostname.py::test_returns_failed_validation_on_hostname_beyond_rfc_limits[-host.example.com] PASSED
+tests/test_hostname.py::test_returns_failed_validation_on_hostname_beyond_rfc_limits[host-.example.com] PASSED
+tests/test_hostname.py::test_returns_failed_validation_on_hostname_beyond_rfc_limits[ho_st.example.com] PASSED
 tests/test_iban.py::test_returns_true_on_valid_iban[GB82WEST12345698765432] PASSED
 tests/test_iban.py::test_returns_true_on_valid_iban[NO9386011117947] PASSED
+tests/test_iban.py::test_returns_true_on_valid_lowercase_iban[gb82west12345698765432] PASSED
+tests/test_iban.py::test_returns_true_on_valid_lowercase_iban[No9386011117947] PASSED
 tests/test_iban.py::test_returns_failed_validation_on_invalid_iban[GB81WEST12345698765432] PASSED
 tests/test_iban.py::test_returns_failed_validation_on_invalid_iban[NO9186011117947] PASSED
 tests/test_ip_address.py::test_returns_true_on_valid_ipv4_address[127.0.0.1] PASSED
@@ -786,14 +883,87 @@ tests/test_mac_address.py::test_returns_failed_validation_on_invalid_mac_address
 tests/test_mac_address.py::test_returns_failed_validation_on_invalid_mac_address[01:23:45:67:89:] PASSED
 tests/test_mac_address.py::test_returns_failed_validation_on_invalid_mac_address[01:23-45:67-89:gh] PASSED
 tests/test_mac_address.py::test_returns_failed_validation_on_invalid_mac_address[123:23:45:67:89:00] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[hello123] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[123hello] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[123] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[hello-world] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[hello-world-test] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[test-123-abc] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[hello123-world456] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[123-456-789] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[a1-b2-c3] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[a] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[1] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[z] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[test-123-abc-456-def] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[this-is-a-very-long-slug-with-many-words] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[a-b-c] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[1-2-3] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-a-end] PASSED
+tests/test_slug.py::test_returns_true_on_valid_slug[a1-b2-c3-d4-e5-f6-g7-h8-i9-j0] PASSED
 tests/test_slug.py::test_returns_true_on_valid_slug[123-asd-7sda] PASSED
 tests/test_slug.py::test_returns_true_on_valid_slug[123-k-123] PASSED
 tests/test_slug.py::test_returns_true_on_valid_slug[dac-12sa-459] PASSED
 tests/test_slug.py::test_returns_true_on_valid_slug[dac-12sa7-ad31as] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[hello-world\n] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[\n] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[Hello] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[HELLO] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[hello-World] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[Test-Slug] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[hello world0] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[hello_world] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[hello.world] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[hello@world] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[hello#world] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[hello$world] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[-hello] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[-123] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[-hello-world] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[hello--world] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[test---slug] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[a--b] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[caf\xe9] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[\u043f\u0440\u0438\u0432\u0435\u0442] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[\u6771\u4eac] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[hello-\u043c\u0438\u0440] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[hello world1] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[ hello ] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[hello  world] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[-] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[--] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[---] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[HelloWorld] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[helloWorld] PASSED
+tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[HELLOworld] PASSED
 tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[some.slug&] PASSED
 tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[1231321%] PASSED
 tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[   21312] PASSED
 tests/test_slug.py::test_returns_failed_validation_on_invalid_slug[-47q-p--123] PASSED
+tests/test_slug.py::test_non_string_input[1-int] PASSED
+tests/test_slug.py::test_non_string_input[1.0-float] PASSED
+tests/test_slug.py::test_non_string_input[None-NoneType] PASSED
+tests/test_slug.py::test_non_string_input[val3-list] PASSED
+tests/test_slug.py::test_non_string_input[val4-tuple] PASSED
+tests/test_slug.py::test_non_string_input[val5-dict] PASSED
+tests/test_slug.py::test_slug_function_signature PASSED
+tests/test_uri.py::test_valid_telnet_uri[telnet://example.com] PASSED
+tests/test_uri.py::test_valid_telnet_uri[telnet://example.com/] PASSED
+tests/test_uri.py::test_valid_telnet_uri[telnet://example.com:23] PASSED
+tests/test_uri.py::test_valid_telnet_uri[telnet://example.com:23/] PASSED
+tests/test_uri.py::test_valid_telnet_uri[telnet://192.168.1.1] PASSED
+tests/test_uri.py::test_valid_telnet_uri[telnet://192.168.1.1:23] PASSED
+tests/test_uri.py::test_valid_telnet_uri[telnet://user:password@example.com] PASSED
+tests/test_uri.py::test_valid_telnet_uri[telnet://user:password@example.com:23/] PASSED
+tests/test_uri.py::test_invalid_telnet_uri[telnet://] PASSED
+tests/test_uri.py::test_invalid_telnet_uri[telnet://example.com/path] PASSED
+tests/test_uri.py::test_invalid_telnet_uri[telnet://example.com?query=1] PASSED
+tests/test_uri.py::test_invalid_telnet_uri[telnet://example.com#frag] PASSED
+tests/test_uri.py::test_invalid_telnet_uri[telnet://example.com\n] PASSED
+tests/test_uri.py::test_invalid_telnet_uri[telnet://exa\nmple.com] PASSED
+tests/test_uri.py::test_invalid_telnet_uri[telnet://example.com\t] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[http://foobar.dk] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[http://foobar.museum/foobar] PASSED
 tests/test_url.py::test_returns_true_on_valid_url[http://fo.com] PASSED
@@ -929,6 +1099,9 @@ tests/test_url.py::test_returns_failed_validation_on_invalid_private_url[http://
 tests/test_url.py::test_returns_failed_validation_on_invalid_private_url[http://username:password@127.0.0.1:8080-False] PASSED
 tests/test_url.py::test_returns_failed_validation_on_invalid_private_url[http://10.0.10.1-False] PASSED
 tests/test_url.py::test_returns_failed_validation_on_invalid_private_url[http://255.255.255.255-False] PASSED
+tests/test_url.py::test_returns_string_for_valid_file_url[file:///var/www] PASSED
+tests/test_url.py::test_returns_string_for_valid_file_url[file:///C:/Windows] PASSED
+tests/test_url.py::test_returns_string_for_valid_file_url[file://localhost/var/www] PASSED
 tests/test_uuid.py::test_returns_true_on_valid_uuid[value0] PASSED
 tests/test_uuid.py::test_returns_true_on_valid_uuid[2bc1c94f-0deb-43e9-92a1-4775189ec9f8] PASSED
 tests/test_uuid.py::test_returns_true_on_valid_uuid[value2] PASSED
@@ -942,6 +1115,6 @@ tests/test_validation_failure.py::TestValidationError::test_repr PASSED
 tests/test_validation_failure.py::TestValidationError::test_string PASSED
 tests/test_validation_failure.py::TestValidationError::test_arguments_as_properties PASSED
 
-======== 934 passed ========
+======== 1108 passed ========
   py$(PYV): OK
   congratulations :)
