@@ -5,7 +5,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 424 items
+collecting ... collected 475 items
 
 tests/test_advisory.py::TestAdvisory::test_ghsa_ffqj_6fqr_9h24 PASSED
 tests/test_algorithms.py::TestAlgorithms::test_check_crypto_key_type_should_fail_when_not_using_crypto PASSED
@@ -111,6 +111,18 @@ tests/test_algorithms.py::TestAlgorithmsRFC7520::test_hmac_verify_should_return_
 tests/test_algorithms.py::TestAlgorithmsRFC7520::test_rsa_verify_should_return_true_for_test_vector PASSED
 tests/test_algorithms.py::TestAlgorithmsRFC7520::test_rsapss_verify_should_return_true_for_test_vector PASSED
 tests/test_algorithms.py::TestAlgorithmsRFC7520::test_ec_verify_should_return_true_for_test_vector PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_jwk_should_reject_inconsistent_private_key[False-Ed25519] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_jwk_should_reject_inconsistent_private_key[False-Ed448] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_jwk_should_reject_inconsistent_private_key[True-Ed25519] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_jwk_should_reject_inconsistent_private_key[True-Ed448] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_jwk_should_reject_private_key_with_invalid_public_length[0-Ed25519] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_jwk_should_reject_private_key_with_invalid_public_length[0-Ed448] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_jwk_should_reject_private_key_with_invalid_public_length[1-Ed25519] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_jwk_should_reject_private_key_with_invalid_public_length[1-Ed448] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_jwk_should_reject_private_key_with_invalid_public_length[56-Ed25519] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_jwk_should_reject_private_key_with_invalid_public_length[56-Ed448] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_jwk_should_reject_private_key_with_invalid_public_length[58-Ed25519] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_jwk_should_reject_private_key_with_invalid_public_length[58-Ed448] PASSED
 tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_should_reject_non_string_key PASSED
 tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_sign_should_generate_correct_signature_value[testkey_ed25519-testkey_ed25519.pub-hello_world_sig] PASSED
 tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_sign_should_generate_correct_signature_value[testkey_ed25519.pem-testkey_ed25519.pub.pem-hello_world_sig_pem] PASSED
@@ -191,6 +203,10 @@ tests/test_api_jwk.py::TestPyJWKSet::test_should_load_keys_from_jwk_data_dict PA
 tests/test_api_jwk.py::TestPyJWKSet::test_should_load_keys_from_jwk_data_json_string PASSED
 tests/test_api_jwk.py::TestPyJWKSet::test_keyset_should_index_by_kid PASSED
 tests/test_api_jwk.py::TestPyJWKSet::test_keyset_iterator PASSED
+tests/test_api_jwk.py::TestPyJWKSet::test_keyset_skips_members_that_are_not_objects PASSED
+tests/test_api_jwk.py::TestPyJWKSet::test_keyset_of_only_non_object_members_raises_set_error PASSED
+tests/test_api_jwk.py::TestPyJWKSet::test_keyset_skips_members_with_invalid_component_types PASSED
+tests/test_api_jwk.py::TestPyJWKSet::test_jwk_with_invalid_component_type_raises_invalid_key_error PASSED
 tests/test_api_jwk.py::TestPyJWKSet::test_keyset_with_unknown_alg PASSED
 tests/test_api_jwk.py::TestPyJWKSet::test_invalid_keys_list PASSED
 tests/test_api_jwk.py::TestPyJWKSet::test_empty_keys_list PASSED
@@ -248,6 +264,17 @@ tests/test_api_jws.py::TestJWS::test_decode_deeply_nested_header_throws_decode_e
 tests/test_api_jws.py::TestJWS::test_decode_invalid_payload_padding PASSED
 tests/test_api_jws.py::TestJWS::test_decode_invalid_crypto_padding PASSED
 tests/test_api_jws.py::TestJWS::test_decode_rejects_non_canonical_crypto_segment PASSED
+tests/test_api_jws.py::TestJWS::test_decode_accepts_padded_crypto_segment PASSED
+tests/test_api_jws.py::TestJWS::test_decode_rejects_embedded_padding_in_crypto_segment PASSED
+tests/test_api_jws.py::TestJWS::test_decode_accepts_canonical_base64url_padding[Zg-f] PASSED
+tests/test_api_jws.py::TestJWS::test_decode_accepts_canonical_base64url_padding[Zg==-f] PASSED
+tests/test_api_jws.py::TestJWS::test_decode_accepts_canonical_base64url_padding[Zm8=-fo] PASSED
+tests/test_api_jws.py::TestJWS::test_decode_rejects_invalid_base64url_padding[Zg===] PASSED
+tests/test_api_jws.py::TestJWS::test_decode_rejects_invalid_base64url_padding[Zg=] PASSED
+tests/test_api_jws.py::TestJWS::test_decode_rejects_invalid_base64url_padding[a] PASSED
+tests/test_api_jws.py::TestJWS::test_decode_rejects_invalid_base64url_padding[Z?==] PASSED
+tests/test_api_jws.py::TestJWS::test_decode_rejects_invalid_base64url_padding[Zh] PASSED
+tests/test_api_jws.py::TestJWS::test_decode_rejects_invalid_base64url_padding[Zh==] PASSED
 tests/test_api_jws.py::TestJWS::test_decode_with_algo_none_should_fail PASSED
 tests/test_api_jws.py::TestJWS::test_decode_with_algo_none_and_verify_false_should_pass PASSED
 tests/test_api_jws.py::TestJWS::test_get_unverified_header_returns_header_values PASSED
@@ -298,6 +325,7 @@ tests/test_api_jwt.py::TestJWT::test_decodes_valid_jwt PASSED
 tests/test_api_jwt.py::TestJWT::test_decodes_complete_valid_jwt PASSED
 tests/test_api_jwt.py::TestJWT::test_load_verify_valid_jwt PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_invalid_payload_string PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_payload_recursion_error_throws_decode_error PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_with_non_mapping_payload_throws_exception PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_with_invalid_audience_param_throws_exception PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_with_nonlist_aud_claim_throws_exception PASSED
@@ -310,9 +338,22 @@ tests/test_api_jwt.py::TestJWT::test_decode_raises_exception_if_iat_is_not_int P
 tests/test_api_jwt.py::TestJWT::test_decode_raises_exception_if_iat_is_greater_than_now PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_works_if_iat_is_str_of_a_number PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_raises_exception_if_nbf_is_not_int PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_raises_clean_error_if_claim_is_non_numeric_type[value0-exp] PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_raises_clean_error_if_claim_is_non_numeric_type[value0-nbf] PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_raises_clean_error_if_claim_is_non_numeric_type[value0-iat] PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_raises_clean_error_if_claim_is_non_numeric_type[value1-exp] PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_raises_clean_error_if_claim_is_non_numeric_type[value1-nbf] PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_raises_clean_error_if_claim_is_non_numeric_type[value1-iat] PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_raises_clean_error_if_claim_is_non_numeric_type[None-exp] PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_raises_clean_error_if_claim_is_non_numeric_type[None-nbf] PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_raises_clean_error_if_claim_is_non_numeric_type[None-iat] PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_raises_clean_error_if_claim_is_non_numeric_type[inf-exp] PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_raises_clean_error_if_claim_is_non_numeric_type[inf-nbf] PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_raises_clean_error_if_claim_is_non_numeric_type[inf-iat] PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_allows_aud_to_be_none PASSED
 tests/test_api_jwt.py::TestJWT::test_encode_datetime PASSED
-tests/test_api_jwt.py::TestJWT::test_decodes_valid_es256_jwt PASSED
+tests/test_api_jwt.py::TestJWT::test_decodes_valid_es256_jwt[compact] PASSED
+tests/test_api_jwt.py::TestJWT::test_decodes_valid_es256_jwt[alb-padded] PASSED
 tests/test_api_jwt.py::TestJWT::test_decodes_valid_rs384_jwt PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_with_expiration PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_with_notbefore PASSED
@@ -385,11 +426,21 @@ tests/test_jwks_client.py::TestPyJWKClient::test_get_signing_key PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_signing_key_caches_result PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_signing_key_does_not_cache_opt_out PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_signing_key_from_jwt PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_get_signing_key_from_jwt_rejects_payload_recursion_error PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwk_set_caches_result PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_get_jwk_set_returns_pyjwkset_cached_by_the_client PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_get_jwk_set_accepts_externally_cached_pyjwkset PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_client_caches_the_parsed_jwk_set PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_get_jwk_set_reuses_the_cached_instance PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_fetch_data_override_result_is_cached PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_cache_put_rejects_a_value_that_is_not_a_jwk_set PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_cache_put_none_clears_the_cache PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_get_jwk_set_raises_when_endpoint_does_not_return_an_object PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_cache_expired_result PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_cache_disabled PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_failed_refresh_preserves_cached_jwks PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_failed_request_should_raise_connection_error PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_incomplete_read_should_raise_connection_error PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_refresh_cache PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_no_matching_kid_after_second_attempt PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_unknown_kid_refresh_is_cooled_down PASSED
@@ -433,6 +484,6 @@ tests/test_utils.py::test_is_ssh_key[ecdsa-sha2-nistp384] PASSED
 tests/test_utils.py::test_is_ssh_key[ecdsa-sha2-nistp521] PASSED
 
 =========================== short test summary info ============================
-======== 420 passed, 4 skipped ========
+======== 471 passed, 4 skipped ========
   py$(PYV): OK
   congratulations :)
