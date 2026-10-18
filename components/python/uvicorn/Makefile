@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		uvicorn
-HUMAN_VERSION =			0.53.0
+HUMAN_VERSION =			0.54.0
 COMPONENT_SUMMARY =		The lightning-fast ASGI server.
 COMPONENT_PROJECT_URL =		https://uvicorn.dev/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a9356f0cb89b3b8621529c5d5eebd69bfe154f4c3f68b4cf2de47e45fa855c2e
+	sha256:a2e33cbfaa0306f8e6b0c13e0cb89d7d7a2da3e62b90c66e18c33d9807b28620
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
