@@ -15,27 +15,25 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_mock
-HUMAN_VERSION =			3.15.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			3.17.0
 COMPONENT_SUMMARY =		Thin-wrapper around the mock package for easier use with pytest
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-mock/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1849a238f6f396da19762269de72cb1814ab44416fa73a8686deac10b0d87a0f
+	sha256:e36576e0985e01027e999891e7a966c67822d40c89ef1b4c8b6e22737e3590b4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# Python 3.9 is not supported by pytest-mock >= 3.16.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
 # https://github.com/pytest-dev/pytest-mock/issues/240
 PYTEST_ADDOPTS += --assert=plain
-
-# Random directory name
-COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/pytest
