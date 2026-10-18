@@ -19,9 +19,9 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libnotify
-COMPONENT_VERSION=	0.8.8
+COMPONENT_VERSION=	0.8.9
 COMPONENT_SUMMARY=      Library for desktop notifications
-COMPONENT_ARCHIVE_HASH=	sha256:23420ef619dc2cb5aebad613f4823a2fa41c07e5a1d05628d40f6ec4b35bfddd
+COMPONENT_ARCHIVE_HASH=	sha256:c906bb084027ea512f94a60fbfc0cc8d4f17e4b4d525bed370d07a6d8714c923
 COMPONENT_FMRI=         library/libnotify
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	LGPL-2.1-only
