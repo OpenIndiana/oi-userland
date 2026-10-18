@@ -19,14 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		validators
-HUMAN_VERSION =			0.35.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.36.0
 COMPONENT_SUMMARY =		Python Data Validation for Humans™
 COMPONENT_PROJECT_URL =		https://python-validators.github.io/validators
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:992d6c48a4e77c81f1b4daba10d16c3a9bb0dbb79b3a19ea847ff0928e70497a
+	sha256:92ad9ed00bbed320b784cec0ea90b213cf08904cf605b3d0852cfa4108e32a2c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
+
+# Python 3.9 is not supported by validators >= 0.36.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
