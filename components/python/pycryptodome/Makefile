@@ -15,27 +15,21 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycryptodome
-HUMAN_VERSION =			3.23.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			4.0.1
 COMPONENT_SUMMARY =		Cryptographic library for Python
 COMPONENT_PROJECT_URL =		https://www.pycryptodome.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:447700a657182d60338bab09fdb27518f8856aecd80ae4c6bdddb67ff5da44ef
+	sha256:9981c68e717db5e841a74c4b33016d25f7d9beb8f7dd55c4dc844b9b42c08150
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
-# https://github.com/Legrandin/pycryptodome/issues/731
-TEST_STYLE = setup.py
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-
-# get verbose test output
-COMPONENT_TEST_TARGETS += -vv
 
 # This project does not support tox so we need to provide test requirements
 # manually.
@@ -46,3 +40,4 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pycryptodome-test-vectors
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
