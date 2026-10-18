@@ -15,21 +15,22 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytimeparse
-HUMAN_VERSION =			1.1.8
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.1.10
 COMPONENT_SUMMARY =		Time expression parser
 COMPONENT_PROJECT_URL =		https://github.com/wroberts/pytimeparse
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e86136477be924d7e670646a98561957e8ca7308d44841e21f5ddea757556a0a
+	sha256:ecf0ee613a72cb0b1d3d5404bd398a64266576fc36ccf3149178af6f2ec6f736
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
 TEST_STYLE = unittest
+
+# Python 3.9 is not supported by pytimeparse >= 1.1.9
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
