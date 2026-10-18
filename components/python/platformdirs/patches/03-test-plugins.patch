@@ -1,0 +1,12 @@
+We need PYTEST_DISABLE_PLUGIN_AUTOLOAD so we do not load all installed pytest plugins.
+
+--- platformdirs-4.13.4/tests/test_pytest_plugin.py.orig
++++ platformdirs-4.13.4/tests/test_pytest_plugin.py
+@@ -37,7 +37,6 @@
+     ],
+ )
+ def test_import_before_pytest_main(tmp_path: Path, invocation: str, monkeypatch: pytest.MonkeyPatch) -> None:
+-    monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
+     monkeypatch.delenv("PYTEST_ADDOPTS", raising=False)
+     (tmp_path / "test_example.py").write_text(
+         "from pathlib import Path\n"
