@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests, scripts/tests
-collecting ... collected 11272 items / 6 deselected / 11266 selected
+collecting ... collected 12156 items / 6 deselected / 12150 selected
 
 scripts/tests/test_cache_invalidation.py::test_empty_exclusion_set PASSED
 scripts/tests/test_cache_invalidation.py::test_missing_sentinel PASSED
@@ -23,6 +23,12 @@ scripts/tests/test_data_sources.py::test_load_cached_articles_respects_limit PAS
 scripts/tests/test_data_sources.py::test_madlad_lang_map_covers_priority_languages PASSED
 scripts/tests/test_data_sources.py::test_save_and_load_articles PASSED
 scripts/tests/test_data_sources.py::test_wikipedia_lang_map_covers_priority_languages PASSED
+scripts/tests/test_detector_env.py::test_build_enables_both_hooks_and_returns_wheel PASSED
+scripts/tests/test_detector_env.py::test_build_raises_when_no_wheel PASSED
+scripts/tests/test_detector_env.py::test_build_sweeps_even_when_build_fails PASSED
+scripts/tests/test_detector_env.py::test_clean_missing_src_returns_empty PASSED
+scripts/tests/test_detector_env.py::test_clean_removes_planted_artifacts PASSED
+scripts/tests/test_exclusions.py::test_bidi_frozensets_members_are_canonical PASSED
 scripts/tests/test_exclusions.py::test_build_exclusion_set_decodes_and_fingerprints PASSED
 scripts/tests/test_exclusions.py::test_build_exclusion_set_deduplicates_across_encodings PASSED
 scripts/tests/test_exclusions.py::test_build_exclusion_set_empty_dir PASSED
@@ -32,6 +38,7 @@ scripts/tests/test_exclusions.py::test_build_exclusion_set_skips_none_dir PASSED
 scripts/tests/test_exclusions.py::test_content_hash_ignores_formatting_only_differences PASSED
 scripts/tests/test_exclusions.py::test_coverage_is_tracked_per_test_file PASSED
 scripts/tests/test_exclusions.py::test_digest_is_stable_and_content_dependent PASSED
+scripts/tests/test_exclusions.py::test_dual_order_degrades_without_icu PASSED
 scripts/tests/test_exclusions.py::test_empty_and_blank_text_never_overlap PASSED
 scripts/tests/test_exclusions.py::test_empty_index_matches_nothing PASSED
 scripts/tests/test_exclusions.py::test_fingerprint_text_basic PASSED
@@ -50,6 +57,8 @@ scripts/tests/test_exclusions.py::test_overlap_detects_a_test_file_inside_a_long
 scripts/tests/test_exclusions.py::test_overlap_survives_a_different_opening PASSED
 scripts/tests/test_exclusions.py::test_overlap_works_without_ascii_sentence_punctuation PASSED
 scripts/tests/test_exclusions.py::test_repeated_boilerplate_earns_credit_only_once PASSED
+scripts/tests/test_exclusions.py::test_shaped_visual_dir_without_sidecar_raises PASSED
+scripts/tests/test_exclusions.py::test_shaped_visual_sidecar_is_indexed PASSED
 scripts/tests/test_exclusions.py::test_shared_boilerplate_is_not_overlap PASSED
 scripts/tests/test_exclusions.py::test_short_boilerplate_test_file_does_not_swallow_the_corpus PASSED
 scripts/tests/test_exclusions.py::test_text_without_sentence_structure_matches_as_a_whole PASSED
@@ -69,6 +78,8 @@ scripts/tests/test_utils.py::test_normalize_language_none PASSED
 scripts/tests/test_utils.py::test_normalize_language_unknown_code PASSED
 scripts/tests/test_verify_no_overlap.py::test_no_overlap PASSED
 scripts/tests/test_verify_no_overlap.py::test_overlap_detected PASSED
+scripts/tests/test_verify_no_overlap.py::test_require_provenance_fails_on_unverified_metadata PASSED
+scripts/tests/test_verify_no_overlap.py::test_unverified_provenance_is_advisory_by_default PASSED
 tests/test_accuracy.py::test_detect[None-None/sample-1.gif] PASSED
 tests/test_accuracy.py::test_detect[None-None/sample-1.jpg] PASSED
 tests/test_accuracy.py::test_detect[None-None/sample-1.mp4] PASSED
@@ -266,6 +277,8 @@ tests/test_accuracy.py::test_detect[cp500-no/culturax_mC4_66764.txt] PASSED
 tests/test_accuracy.py::test_detect[cp500-pt/culturax_mC4_101817.txt] PASSED
 tests/test_accuracy.py::test_detect[cp500-sv/culturax_mC4_96485.txt] PASSED
 tests/test_accuracy.py::test_detect[cp500-sv/culturax_mC4_96486.txt] PASSED
+tests/test_accuracy.py::test_detect[cp720-ar/carved_manager_exe.txt] PASSED
+tests/test_accuracy.py::test_detect[cp720-ar/carved_manager_hlp.txt] PASSED
 tests/test_accuracy.py::test_detect[cp720-ar/culturax_OSCAR-2109_98639.txt] PASSED
 tests/test_accuracy.py::test_detect[cp720-ar/culturax_mC4_98635.txt] PASSED
 tests/test_accuracy.py::test_detect[cp720-ar/culturax_mC4_98641.txt] PASSED
@@ -459,6 +472,8 @@ tests/test_accuracy.py::test_detect[cp861-is/culturax_mC4_77488.txt] PASSED
 tests/test_accuracy.py::test_detect[cp861-is/culturax_mC4_77489.txt] PASSED
 tests/test_accuracy.py::test_detect[cp861-is/historic_9569ee1ce042.txt] PASSED
 tests/test_accuracy.py::test_detect[cp861-is/historic_ad320626cff5.txt] PASSED
+tests/test_accuracy.py::test_detect[cp862-he/carved_manager_exe.txt] PASSED
+tests/test_accuracy.py::test_detect[cp862-he/carved_manager_hlp.txt] PASSED
 tests/test_accuracy.py::test_detect[cp862-he/culturax_00000.txt] PASSED
 tests/test_accuracy.py::test_detect[cp862-he/culturax_00001.txt] PASSED
 tests/test_accuracy.py::test_detect[cp862-he/culturax_00002.txt] PASSED
@@ -470,6 +485,7 @@ tests/test_accuracy.py::test_detect[cp863-fr/culturax_00002.txt] PASSED
 tests/test_accuracy.py::test_detect[cp863-fr/historic_2f37e62a1d77.txt] PASSED
 tests/test_accuracy.py::test_detect[cp863-fr/historic_a0db4dbba260.txt] PASSED
 tests/test_accuracy.py::test_detect[cp864-ar/culturax_00000.txt] PASSED
+tests/test_accuracy.py::test_detect[cp864-ar/historic_189b43d0b58d.txt] PASSED
 tests/test_accuracy.py::test_detect[cp865-da/culturax_00000.txt] PASSED
 tests/test_accuracy.py::test_detect[cp865-da/culturax_00001.txt] PASSED
 tests/test_accuracy.py::test_detect[cp865-da/culturax_00002.txt] PASSED
@@ -607,6 +623,10 @@ tests/test_accuracy.py::test_detect[euc-kr-ko/jely.pe.kr.xml] PASSED
 tests/test_accuracy.py::test_detect[euc-kr-ko/jowchung.oolim.net.xml] PASSED
 tests/test_accuracy.py::test_detect[euc-kr-ko/kina.egloos.com.xml] PASSED
 tests/test_accuracy.py::test_detect[euc-kr-ko/lennon81.egloos.com.xml] PASSED
+tests/test_accuracy.py::test_detect[euc-kr-ko/msdn_networks.txt] PASSED
+tests/test_accuracy.py::test_detect[euc-kr-ko/msdn_os2.txt] PASSED
+tests/test_accuracy.py::test_detect[euc-kr-ko/msdn_readme.txt] PASSED
+tests/test_accuracy.py::test_detect[euc-kr-ko/msdn_setup.msg] PASSED
 tests/test_accuracy.py::test_detect[euc-kr-ko/oroll.egloos.com.xml] PASSED
 tests/test_accuracy.py::test_detect[euc-kr-ko/poliplus.egloos.com.xml] PASSED
 tests/test_accuracy.py::test_detect[euc-kr-ko/scarletkh2.egloos.com.xml] PASSED
@@ -646,6 +666,7 @@ tests/test_accuracy.py::test_detect[gb2312-zh/godthink.blogsome.com.xml] PASSED
 tests/test_accuracy.py::test_detect[gb2312-zh/jjgod.3322.org.xml] PASSED
 tests/test_accuracy.py::test_detect[gb2312-zh/lily.blogsome.com.xml] PASSED
 tests/test_accuracy.py::test_detect[gb2312-zh/luciferwang.blogcn.com.xml] PASSED
+tests/test_accuracy.py::test_detect[gb2312-zh/msdn_sample.txt] PASSED
 tests/test_accuracy.py::test_detect[gb2312-zh/pda.blogsome.com.xml] PASSED
 tests/test_accuracy.py::test_detect[gb2312-zh/softsea.net.xml] PASSED
 tests/test_accuracy.py::test_detect[gb2312-zh/w3cn.org.xml] PASSED
@@ -1371,6 +1392,9 @@ tests/test_accuracy.py::test_detect[shift_jis-ja/dogsinn.jp.xml] PASSED
 tests/test_accuracy.py::test_detect[shift_jis-ja/grebeweb.net.xml] PASSED
 tests/test_accuracy.py::test_detect[shift_jis-ja/milliontimes.jp.xml] PASSED
 tests/test_accuracy.py::test_detect[shift_jis-ja/moon-light.ne.jp.xml] PASSED
+tests/test_accuracy.py::test_detect[shift_jis-ja/msdn_networkj.txt] PASSED
+tests/test_accuracy.py::test_detect[shift_jis-ja/msdn_os2j.txt] PASSED
+tests/test_accuracy.py::test_detect[shift_jis-ja/msdn_readmej.txt] PASSED
 tests/test_accuracy.py::test_detect[shift_jis-ja/nextbeaut.com.xml] PASSED
 tests/test_accuracy.py::test_detect[shift_jis-ja/ooganemochi.com.xml] PASSED
 tests/test_accuracy.py::test_detect[shift_jis-ja/perth-on.net.xml] PASSED
@@ -3391,6 +3415,8 @@ tests/test_accuracy.py::test_detect_era_filtered[cp500-no/culturax_mC4_66764.txt
 tests/test_accuracy.py::test_detect_era_filtered[cp500-pt/culturax_mC4_101817.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[cp500-sv/culturax_mC4_96485.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[cp500-sv/culturax_mC4_96486.txt] PASSED
+tests/test_accuracy.py::test_detect_era_filtered[cp720-ar/carved_manager_exe.txt] PASSED
+tests/test_accuracy.py::test_detect_era_filtered[cp720-ar/carved_manager_hlp.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[cp720-ar/culturax_OSCAR-2109_98639.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[cp720-ar/culturax_mC4_98635.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[cp720-ar/culturax_mC4_98641.txt] PASSED
@@ -3584,6 +3610,8 @@ tests/test_accuracy.py::test_detect_era_filtered[cp861-is/culturax_mC4_77488.txt
 tests/test_accuracy.py::test_detect_era_filtered[cp861-is/culturax_mC4_77489.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[cp861-is/historic_9569ee1ce042.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[cp861-is/historic_ad320626cff5.txt] PASSED
+tests/test_accuracy.py::test_detect_era_filtered[cp862-he/carved_manager_exe.txt] PASSED
+tests/test_accuracy.py::test_detect_era_filtered[cp862-he/carved_manager_hlp.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[cp862-he/culturax_00000.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[cp862-he/culturax_00001.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[cp862-he/culturax_00002.txt] PASSED
@@ -3595,6 +3623,7 @@ tests/test_accuracy.py::test_detect_era_filtered[cp863-fr/culturax_00002.txt] PA
 tests/test_accuracy.py::test_detect_era_filtered[cp863-fr/historic_2f37e62a1d77.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[cp863-fr/historic_a0db4dbba260.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[cp864-ar/culturax_00000.txt] PASSED
+tests/test_accuracy.py::test_detect_era_filtered[cp864-ar/historic_189b43d0b58d.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[cp865-da/culturax_00000.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[cp865-da/culturax_00001.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[cp865-da/culturax_00002.txt] PASSED
@@ -3732,6 +3761,10 @@ tests/test_accuracy.py::test_detect_era_filtered[euc-kr-ko/jely.pe.kr.xml] PASSE
 tests/test_accuracy.py::test_detect_era_filtered[euc-kr-ko/jowchung.oolim.net.xml] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[euc-kr-ko/kina.egloos.com.xml] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[euc-kr-ko/lennon81.egloos.com.xml] PASSED
+tests/test_accuracy.py::test_detect_era_filtered[euc-kr-ko/msdn_networks.txt] PASSED
+tests/test_accuracy.py::test_detect_era_filtered[euc-kr-ko/msdn_os2.txt] PASSED
+tests/test_accuracy.py::test_detect_era_filtered[euc-kr-ko/msdn_readme.txt] PASSED
+tests/test_accuracy.py::test_detect_era_filtered[euc-kr-ko/msdn_setup.msg] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[euc-kr-ko/oroll.egloos.com.xml] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[euc-kr-ko/poliplus.egloos.com.xml] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[euc-kr-ko/scarletkh2.egloos.com.xml] PASSED
@@ -3771,6 +3804,7 @@ tests/test_accuracy.py::test_detect_era_filtered[gb2312-zh/godthink.blogsome.com
 tests/test_accuracy.py::test_detect_era_filtered[gb2312-zh/jjgod.3322.org.xml] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[gb2312-zh/lily.blogsome.com.xml] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[gb2312-zh/luciferwang.blogcn.com.xml] PASSED
+tests/test_accuracy.py::test_detect_era_filtered[gb2312-zh/msdn_sample.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[gb2312-zh/pda.blogsome.com.xml] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[gb2312-zh/softsea.net.xml] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[gb2312-zh/w3cn.org.xml] PASSED
@@ -4496,6 +4530,9 @@ tests/test_accuracy.py::test_detect_era_filtered[shift_jis-ja/dogsinn.jp.xml] PA
 tests/test_accuracy.py::test_detect_era_filtered[shift_jis-ja/grebeweb.net.xml] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[shift_jis-ja/milliontimes.jp.xml] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[shift_jis-ja/moon-light.ne.jp.xml] PASSED
+tests/test_accuracy.py::test_detect_era_filtered[shift_jis-ja/msdn_networkj.txt] PASSED
+tests/test_accuracy.py::test_detect_era_filtered[shift_jis-ja/msdn_os2j.txt] PASSED
+tests/test_accuracy.py::test_detect_era_filtered[shift_jis-ja/msdn_readmej.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[shift_jis-ja/nextbeaut.com.xml] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[shift_jis-ja/ooganemochi.com.xml] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[shift_jis-ja/perth-on.net.xml] PASSED
@@ -6516,6 +6553,8 @@ tests/test_accuracy.py::test_detect_streaming_parity[cp500-no/culturax_mC4_66764
 tests/test_accuracy.py::test_detect_streaming_parity[cp500-pt/culturax_mC4_101817.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[cp500-sv/culturax_mC4_96485.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[cp500-sv/culturax_mC4_96486.txt] PASSED
+tests/test_accuracy.py::test_detect_streaming_parity[cp720-ar/carved_manager_exe.txt] PASSED
+tests/test_accuracy.py::test_detect_streaming_parity[cp720-ar/carved_manager_hlp.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[cp720-ar/culturax_OSCAR-2109_98639.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[cp720-ar/culturax_mC4_98635.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[cp720-ar/culturax_mC4_98641.txt] PASSED
@@ -6709,6 +6748,8 @@ tests/test_accuracy.py::test_detect_streaming_parity[cp861-is/culturax_mC4_77488
 tests/test_accuracy.py::test_detect_streaming_parity[cp861-is/culturax_mC4_77489.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[cp861-is/historic_9569ee1ce042.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[cp861-is/historic_ad320626cff5.txt] PASSED
+tests/test_accuracy.py::test_detect_streaming_parity[cp862-he/carved_manager_exe.txt] PASSED
+tests/test_accuracy.py::test_detect_streaming_parity[cp862-he/carved_manager_hlp.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[cp862-he/culturax_00000.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[cp862-he/culturax_00001.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[cp862-he/culturax_00002.txt] PASSED
@@ -6720,6 +6761,7 @@ tests/test_accuracy.py::test_detect_streaming_parity[cp863-fr/culturax_00002.txt
 tests/test_accuracy.py::test_detect_streaming_parity[cp863-fr/historic_2f37e62a1d77.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[cp863-fr/historic_a0db4dbba260.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[cp864-ar/culturax_00000.txt] PASSED
+tests/test_accuracy.py::test_detect_streaming_parity[cp864-ar/historic_189b43d0b58d.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[cp865-da/culturax_00000.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[cp865-da/culturax_00001.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[cp865-da/culturax_00002.txt] PASSED
@@ -6857,6 +6899,10 @@ tests/test_accuracy.py::test_detect_streaming_parity[euc-kr-ko/jely.pe.kr.xml] P
 tests/test_accuracy.py::test_detect_streaming_parity[euc-kr-ko/jowchung.oolim.net.xml] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[euc-kr-ko/kina.egloos.com.xml] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[euc-kr-ko/lennon81.egloos.com.xml] PASSED
+tests/test_accuracy.py::test_detect_streaming_parity[euc-kr-ko/msdn_networks.txt] PASSED
+tests/test_accuracy.py::test_detect_streaming_parity[euc-kr-ko/msdn_os2.txt] PASSED
+tests/test_accuracy.py::test_detect_streaming_parity[euc-kr-ko/msdn_readme.txt] PASSED
+tests/test_accuracy.py::test_detect_streaming_parity[euc-kr-ko/msdn_setup.msg] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[euc-kr-ko/oroll.egloos.com.xml] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[euc-kr-ko/poliplus.egloos.com.xml] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[euc-kr-ko/scarletkh2.egloos.com.xml] PASSED
@@ -6896,6 +6942,7 @@ tests/test_accuracy.py::test_detect_streaming_parity[gb2312-zh/godthink.blogsome
 tests/test_accuracy.py::test_detect_streaming_parity[gb2312-zh/jjgod.3322.org.xml] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[gb2312-zh/lily.blogsome.com.xml] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[gb2312-zh/luciferwang.blogcn.com.xml] PASSED
+tests/test_accuracy.py::test_detect_streaming_parity[gb2312-zh/msdn_sample.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[gb2312-zh/pda.blogsome.com.xml] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[gb2312-zh/softsea.net.xml] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[gb2312-zh/w3cn.org.xml] PASSED
@@ -7621,6 +7668,9 @@ tests/test_accuracy.py::test_detect_streaming_parity[shift_jis-ja/dogsinn.jp.xml
 tests/test_accuracy.py::test_detect_streaming_parity[shift_jis-ja/grebeweb.net.xml] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[shift_jis-ja/milliontimes.jp.xml] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[shift_jis-ja/moon-light.ne.jp.xml] PASSED
+tests/test_accuracy.py::test_detect_streaming_parity[shift_jis-ja/msdn_networkj.txt] PASSED
+tests/test_accuracy.py::test_detect_streaming_parity[shift_jis-ja/msdn_os2j.txt] PASSED
+tests/test_accuracy.py::test_detect_streaming_parity[shift_jis-ja/msdn_readmej.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[shift_jis-ja/nextbeaut.com.xml] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[shift_jis-ja/ooganemochi.com.xml] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[shift_jis-ja/perth-on.net.xml] PASSED
@@ -9455,6 +9505,7 @@ tests/test_api.py::test_detect_all_each_is_dict PASSED
 tests/test_api.py::test_detect_all_max_bytes_negative_raises PASSED
 tests/test_api.py::test_detect_all_max_bytes_zero_raises PASSED
 tests/test_api.py::test_detect_all_prefer_superset PASSED
+tests/test_api.py::test_detect_all_prefer_superset_lists_each_name_once PASSED
 tests/test_api.py::test_detect_all_returns_list PASSED
 tests/test_api.py::test_detect_all_sorted_by_confidence PASSED
 tests/test_api.py::test_detect_all_top_result_matches_detect[ascii] PASSED
@@ -9522,6 +9573,10 @@ tests/test_api.py::test_detector_unknown_empty_input_raises PASSED
 tests/test_api.py::test_detector_unknown_exclude_raises PASSED
 tests/test_api.py::test_detector_unknown_include_raises PASSED
 tests/test_api.py::test_detector_unknown_no_match_raises PASSED
+tests/test_api.py::test_display_name_kept_when_it_decodes PASSED
+tests/test_api.py::test_display_name_never_narrower_than_the_data[big5-statistical] PASSED
+tests/test_api.py::test_display_name_never_narrower_than_the_data[euc-jp-declared] PASSED
+tests/test_api.py::test_display_name_never_narrower_than_the_data[euc-jp-statistical] PASSED
 tests/test_api.py::test_encoding_era_excludes_legacy PASSED
 tests/test_api.py::test_get_candidates_all_filtered_returns_empty PASSED
 tests/test_api.py::test_get_candidates_exclude_only PASSED
@@ -9547,6 +9602,37 @@ tests/test_api.py::test_normalize_encodings_empty_iterable PASSED
 tests/test_api.py::test_normalize_encodings_none_returns_none PASSED
 tests/test_api.py::test_normalize_encodings_unknown_raises PASSED
 tests/test_api.py::test_normalize_encodings_valid_names PASSED
+tests/test_api.py::test_prefer_superset_never_hands_back_an_undecodable_name PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[allowed-False-detect] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[allowed-False-detect_all] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[allowed-False-stream] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[allowed-True-detect] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[allowed-True-detect_all] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[allowed-True-stream] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[both-False-detect] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[both-False-detect_all] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[both-False-stream] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[both-True-detect] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[both-True-detect_all] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[both-True-stream] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[exclude-False-detect] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[exclude-False-detect_all] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[exclude-False-stream] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[exclude-True-detect] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[exclude-True-detect_all] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[exclude-True-stream] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[include-False-detect] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[include-False-detect_all] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[include-False-stream] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[include-True-detect] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[include-True-detect_all] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[include-True-stream] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[unfiltered-False-detect] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[unfiltered-False-detect_all] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[unfiltered-False-stream] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[unfiltered-True-detect] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[unfiltered-True-detect_all] PASSED
+tests/test_api.py::test_prefer_superset_respects_encoding_filters[unfiltered-True-stream] PASSED
 tests/test_api.py::test_rename_legacy_default PASSED
 tests/test_api.py::test_rename_legacy_default_with_all_era PASSED
 tests/test_api.py::test_rename_legacy_detect_all PASSED
@@ -9587,6 +9673,10 @@ tests/test_benchmark.py::test_scaling_statistical PASSED
 tests/test_benchmark.py::test_scaling_utf8 PASSED
 tests/test_binary.py::test_all_null_bytes_is_binary PASSED
 tests/test_binary.py::test_control_characters_indicate_binary PASSED
+tests/test_binary.py::test_ebcdic_all_padding_is_not_binary PASSED
+tests/test_binary.py::test_ebcdic_high_bytes_without_word_separators_is_binary PASSED
+tests/test_binary.py::test_ebcdic_text_shape_is_not_binary PASSED
+tests/test_binary.py::test_ebcdic_whitespace_without_high_bytes_is_binary PASSED
 tests/test_binary.py::test_empty_input_is_not_binary PASSED
 tests/test_binary.py::test_exactly_at_threshold_is_not_binary PASSED
 tests/test_binary.py::test_few_control_chars_in_large_text_is_not_binary PASSED
@@ -9598,18 +9688,82 @@ tests/test_binary.py::test_plain_ascii_is_not_binary PASSED
 tests/test_binary.py::test_single_null_in_large_text_is_not_binary PASSED
 tests/test_binary.py::test_text_with_newlines_tabs_is_not_binary PASSED
 tests/test_binary.py::test_utf8_text_is_not_binary PASSED
+tests/test_bom.py::test_bom_with_decodable_body_still_certain PASSED
+tests/test_bom.py::test_cut_utf32_bom_rejects_corruption_before_tail[utf-32-be] PASSED
+tests/test_bom.py::test_cut_utf32_bom_rejects_corruption_before_tail[utf-32-le] PASSED
 tests/test_bom.py::test_empty_input PASSED
 tests/test_bom.py::test_no_bom PASSED
 tests/test_bom.py::test_too_short_for_bom PASSED
 tests/test_bom.py::test_utf16_be_bom PASSED
+tests/test_bom.py::test_utf16_be_bom_with_lone_surrogate_is_no_answer PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[detect-101-ascii] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[detect-101-cjk] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[detect-102-ascii] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[detect-102-cjk] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[detect-103-ascii] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[detect-103-cjk] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[detect_all-101-ascii] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[detect_all-101-cjk] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[detect_all-102-ascii] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[detect_all-102-cjk] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[detect_all-103-ascii] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[detect_all-103-cjk] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[split-stream-101-ascii] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[split-stream-101-cjk] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[split-stream-102-ascii] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[split-stream-102-cjk] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[split-stream-103-ascii] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[split-stream-103-cjk] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[stream-101-ascii] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[stream-101-cjk] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[stream-102-ascii] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[stream-102-cjk] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[stream-103-ascii] PASSED
+tests/test_bom.py::test_utf16_bom_fallback_survives_max_bytes_cut[stream-103-cjk] PASSED
+tests/test_bom.py::test_utf16_bom_with_lone_surrogate_is_no_answer PASSED
 tests/test_bom.py::test_utf16_le_bom PASSED
 tests/test_bom.py::test_utf32_be_bom PASSED
 tests/test_bom.py::test_utf32_be_bom_falls_through_when_payload_not_aligned PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect-1020-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect-1020-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect-1021-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect-1021-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect-1022-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect-1022-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect-1023-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect-1023-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect_all-1020-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect_all-1020-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect_all-1021-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect_all-1021-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect_all-1022-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect_all-1022-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect_all-1023-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[detect_all-1023-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[split-stream-1020-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[split-stream-1020-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[split-stream-1021-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[split-stream-1021-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[split-stream-1022-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[split-stream-1022-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[split-stream-1023-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[split-stream-1023-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[stream-1020-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[stream-1020-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[stream-1021-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[stream-1021-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[stream-1022-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[stream-1022-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[stream-1023-utf-32-be] PASSED
+tests/test_bom.py::test_utf32_bom_survives_max_bytes_cut[stream-1023-utf-32-le] PASSED
+tests/test_bom.py::test_utf32_bom_with_out_of_range_unit_is_no_answer[False] PASSED
+tests/test_bom.py::test_utf32_bom_with_out_of_range_unit_is_no_answer[True] PASSED
 tests/test_bom.py::test_utf32_le_bom PASSED
 tests/test_bom.py::test_utf32_le_bom_falls_through_to_utf16_when_payload_not_aligned PASSED
 tests/test_bom.py::test_utf32_le_bom_only PASSED
 tests/test_bom.py::test_utf32_le_checked_before_utf16_le PASSED
 tests/test_bom.py::test_utf8_bom PASSED
+tests/test_bom.py::test_utf8_bom_over_cp1252_bytes_is_no_answer PASSED
 tests/test_cjk_gating.py::test_ebcdic_not_detected_as_gb18030 PASSED
 tests/test_cjk_gating.py::test_german_macroman_not_detected_as_cjk PASSED
 tests/test_cjk_gating.py::test_latin_text_not_detected_as_cp932 PASSED
@@ -9633,24 +9787,45 @@ tests/test_cli.py::test_cli_language_none_minimal_shows_und PASSED
 tests/test_cli.py::test_cli_language_none_shows_und PASSED
 tests/test_cli.py::test_cli_language_short_flag PASSED
 tests/test_cli.py::test_cli_language_stdin PASSED
+tests/test_cli.py::test_cli_mime_type_binary_file PASSED
+tests/test_cli.py::test_cli_mime_type_flag PASSED
+tests/test_cli.py::test_cli_mime_type_minimal PASSED
+tests/test_cli.py::test_cli_mime_type_minimal_language PASSED
+tests/test_cli.py::test_cli_mime_type_none_shows_octet_stream PASSED
+tests/test_cli.py::test_cli_mime_type_short_flag PASSED
+tests/test_cli.py::test_cli_mime_type_stdin PASSED
+tests/test_cli.py::test_cli_mime_type_with_language PASSED
 tests/test_cli.py::test_cli_minimal_flag PASSED
 tests/test_cli.py::test_cli_minimal_flag_in_process PASSED
 tests/test_cli.py::test_cli_multiple_files PASSED
 tests/test_cli.py::test_cli_no_match_encoding PASSED
 tests/test_cli.py::test_cli_nonexistent_file PASSED
 tests/test_cli.py::test_cli_partial_failure PASSED
+tests/test_cli.py::test_cli_preserves_input_truncation[clipped-utf8-file] PASSED
+tests/test_cli.py::test_cli_preserves_input_truncation[clipped-utf8-stdin] PASSED
+tests/test_cli.py::test_cli_preserves_input_truncation[exact-cap-file] PASSED
+tests/test_cli.py::test_cli_preserves_input_truncation[exact-cap-stdin] PASSED
+tests/test_cli.py::test_cli_preserves_input_truncation[incomplete-input-file] PASSED
+tests/test_cli.py::test_cli_preserves_input_truncation[incomplete-input-stdin] PASSED
+tests/test_cli.py::test_cli_preserves_input_truncation[past-cap-file] PASSED
+tests/test_cli.py::test_cli_preserves_input_truncation[past-cap-stdin] PASSED
 tests/test_cli.py::test_cli_python_m_chardet PASSED
 tests/test_cli.py::test_cli_stdin PASSED
 tests/test_cli.py::test_cli_stdin_success_in_process PASSED
 tests/test_cli.py::test_cli_version PASSED
 tests/test_cli.py::test_cli_without_language_flag_unchanged PASSED
+tests/test_cli.py::test_cli_without_mime_type_flag_unchanged PASSED
 tests/test_cli.py::test_main_module_importable PASSED
+tests/test_confusion.py::test_arbitrate_distinguishing_bytes_declines_without_evidence PASSED
+tests/test_confusion.py::test_arbitrate_distinguishing_bytes_falls_back_to_word_shape PASSED
+tests/test_confusion.py::test_arbitrate_distinguishing_bytes_lets_the_models_decide PASSED
 tests/test_confusion.py::test_best_variant_score_none_means_every_variant PASSED
 tests/test_confusion.py::test_bigram_rescore_judges_hungarian_under_hungarian PASSED
 tests/test_confusion.py::test_bigram_rescore_no_variants_for_one_encoding PASSED
 tests/test_confusion.py::test_bigram_rescore_returns_enc_a PASSED
 tests/test_confusion.py::test_bigram_rescore_returns_enc_b PASSED
 tests/test_confusion.py::test_bigram_rescore_returns_valid_result PASSED
+tests/test_confusion.py::test_bigram_rescore_without_distinguishing_bigrams_declines PASSED
 tests/test_confusion.py::test_category_voting_letter_over_punctuation_is_not_evidence PASSED
 tests/test_confusion.py::test_category_voting_prefers_letter_over_symbol PASSED
 tests/test_confusion.py::test_category_voting_returns_enc_b PASSED
@@ -9660,17 +9835,28 @@ tests/test_confusion.py::test_comparable_languages_falls_back_when_a_language_is
 tests/test_confusion.py::test_comparable_languages_keeps_the_art_model PASSED
 tests/test_confusion.py::test_comparable_languages_restricts_when_every_language_is_shared PASSED
 tests/test_confusion.py::test_comparable_languages_unrestricted_without_languages PASSED
+tests/test_confusion.py::test_confusion_pair_winner_cross_family_requires_corroboration PASSED
+tests/test_confusion.py::test_confusion_pair_winner_decisive_vote_short_circuits PASSED
 tests/test_confusion.py::test_confusion_pair_winner_reads_distinguishing_bytes PASSED
 tests/test_confusion.py::test_confusion_pair_winner_without_a_map_declines PASSED
+tests/test_confusion.py::test_context_preference_isolated_letter_is_implausible PASSED
+tests/test_confusion.py::test_context_preference_lowercase_before_uppercase_is_implausible PASSED
+tests/test_confusion.py::test_differing_high_bytes_counts_undecodable_bytes_as_differing PASSED
+tests/test_confusion.py::test_differing_high_bytes_is_the_c1_range_for_latin1_and_cp1252 PASSED
+tests/test_confusion.py::test_letter_case_table_skips_zero_char_decodes PASSED
 tests/test_confusion.py::test_load_confusion_data PASSED
 tests/test_confusion.py::test_load_confusion_data_corrupt_file PASSED
 tests/test_confusion.py::test_load_confusion_data_empty_file PASSED
+tests/test_confusion.py::test_pair_categories_marks_undecodable_bytes_unassigned PASSED
+tests/test_confusion.py::test_pair_categories_marks_zero_char_decodes_unassigned PASSED
 tests/test_confusion.py::test_rescore_dense_and_sparse_paths_agree PASSED
 tests/test_confusion.py::test_rescore_dense_path_skips_non_distinguishing_bigrams PASSED
 tests/test_confusion.py::test_resolve_by_bigram_rescore_empty_freq PASSED
 tests/test_confusion.py::test_resolve_by_bigram_rescore_short_data PASSED
+tests/test_confusion.py::test_resolve_confusion_groups_art_top_is_not_reviewed PASSED
 tests/test_confusion.py::test_resolve_confusion_groups_band_limit PASSED
 tests/test_confusion.py::test_resolve_confusion_groups_bigram_wins_over_category PASSED
+tests/test_confusion.py::test_resolve_confusion_groups_in_band_decisive_vote PASSED
 tests/test_confusion.py::test_resolve_confusion_groups_no_change_when_unrelated PASSED
 tests/test_confusion.py::test_resolve_confusion_groups_no_swap_when_winner_is_top PASSED
 tests/test_confusion.py::test_resolve_confusion_groups_none_encoding PASSED
@@ -9679,12 +9865,18 @@ tests/test_confusion.py::test_resolve_confusion_groups_preserves_all_results PAS
 tests/test_confusion.py::test_resolve_confusion_groups_promotes_on_the_restricted_rescore PASSED
 tests/test_confusion.py::test_resolve_confusion_groups_single_result PASSED
 tests/test_confusion.py::test_resolve_confusion_groups_skips_none_encoding_candidate PASSED
+tests/test_confusion.py::test_resolve_confusion_groups_strict_tier_corroborated PASSED
+tests/test_confusion.py::test_resolve_confusion_groups_strict_tier_decisive_vote PASSED
 tests/test_confusion.py::test_resolve_confusion_groups_swaps_top_and_second PASSED
+tests/test_confusion.py::test_vote_demotion_counted_for_first_encoding PASSED
+tests/test_confusion.py::test_vote_demotion_counted_for_second_encoding PASSED
+tests/test_confusion.py::test_vote_letter_beating_punctuation_is_not_evidence PASSED
 tests/test_detector.py::test_basic_lifecycle PASSED
 tests/test_detector.py::test_close_idempotent PASSED
 tests/test_detector.py::test_done_not_set_before_max_bytes PASSED
 tests/test_detector.py::test_done_property PASSED
 tests/test_detector.py::test_done_when_max_bytes_reached PASSED
+tests/test_detector.py::test_empty_feed_after_done_is_not_a_truncation PASSED
 tests/test_detector.py::test_encoding_era_parameter PASSED
 tests/test_detector.py::test_equivalence_with_detect[1-ascii-Hello world, this is plain ASCII text. Hello world, this is plain ASCII text. Hello world, this is plain ASCII text. Hello world, this is plain ASCII text. Hello world, this is plain ASCII text. ] PASSED
 tests/test_detector.py::test_equivalence_with_detect[1-bom_utf16be-\xfe\xff\x00H\x00e\x00l\x00l\x00o] PASSED
@@ -9716,6 +9908,7 @@ tests/test_detector.py::test_equivalence_with_detect[None-markup_charset-<html><
 tests/test_detector.py::test_equivalence_with_detect[None-markup_xml-<?xml version="1.0" encoding="iso-8859-1"?><root>text</root>] PASSED
 tests/test_detector.py::test_equivalence_with_detect[None-utf8-H\xc3\xa9llo w\xc3\xb6rld caf\xc3\xa9 r\xc3\xa9sum\xc3\xa9 na\xc3\xafve \xc3\xbcber \xce\x95\xce\xbb\xce\xbb\xce\xb7\xce\xbd\xce\xb9\xce\xba\xce\xac] PASSED
 tests/test_detector.py::test_equivalence_with_detect[None-windows1252- !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4\xe9\xe8\xea\xeb\xf6\xfc\xe4] PASSED
+tests/test_detector.py::test_feed_after_an_exact_fill_marks_the_buffer_truncated PASSED
 tests/test_detector.py::test_feed_after_close_raises PASSED
 tests/test_detector.py::test_feed_after_done_is_ignored PASSED
 tests/test_detector.py::test_max_bytes_negative_raises PASSED
@@ -9730,8 +9923,33 @@ tests/test_enums.py::test_encoding_era_bitwise_or PASSED
 tests/test_enums.py::test_encoding_era_is_int_flag PASSED
 tests/test_enums.py::test_encoding_era_members_exist PASSED
 tests/test_enums.py::test_encoding_era_values_are_powers_of_two PASSED
-tests/test_equivalences.py::test_import_emits_deprecation_warning PASSED
+tests/test_equivalences.py::test_attribute_access_emits_deprecation_warning PASSED
+tests/test_equivalences.py::test_attribute_access_warns_every_time PASSED
+tests/test_equivalences.py::test_deleting_an_owned_name_deletes_it_from_the_owner PASSED
+tests/test_equivalences.py::test_deleting_an_unowned_name_stays_local PASSED
+tests/test_equivalences.py::test_dir_lists_the_proxied_names PASSED
+tests/test_equivalences.py::test_import_itself_does_not_warn PASSED
+tests/test_equivalences.py::test_package_exposes_the_submodule_without_an_explicit_import PASSED
+tests/test_equivalences.py::test_patch_object_round_trips_through_the_owner PASSED
+tests/test_equivalences.py::test_rebinding_a_table_reaches_the_transforms PASSED
+tests/test_equivalences.py::test_rebinding_an_unowned_name_stays_local PASSED
 tests/test_equivalences.py::test_reexports_resolve_to_new_modules PASSED
+tests/test_equivalences.py::test_undocumented_names_still_resolve[Callable-chardet.evaluation] PASSED
+tests/test_equivalences.py::test_undocumented_names_still_resolve[DetectionDict-chardet.output_names] PASSED
+tests/test_equivalences.py::test_undocumented_names_still_resolve[_COMPAT_NAMES-chardet.output_names] PASSED
+tests/test_equivalences.py::test_undocumented_names_still_resolve[_EQUIVALENT_SYMBOL_PAIRS-chardet.evaluation] PASSED
+tests/test_equivalences.py::test_undocumented_names_still_resolve[_LANGUAGE_EQUIV-chardet.evaluation] PASSED
+tests/test_equivalences.py::test_undocumented_names_still_resolve[_NORMALIZED_BIDIR-chardet.evaluation] PASSED
+tests/test_equivalences.py::test_undocumented_names_still_resolve[_NORMALIZED_SUPERSETS-chardet.evaluation] PASSED
+tests/test_equivalences.py::test_undocumented_names_still_resolve[_build_group_index-chardet.evaluation] PASSED
+tests/test_equivalences.py::test_undocumented_names_still_resolve[_chars_equivalent-chardet.evaluation] PASSED
+tests/test_equivalences.py::test_undocumented_names_still_resolve[_remap_encoding-chardet.output_names] PASSED
+tests/test_equivalences.py::test_undocumented_names_still_resolve[_strip_combining-chardet.evaluation] PASSED
+tests/test_equivalences.py::test_undocumented_names_still_resolve[lookup_encoding-chardet.evaluation] PASSED
+tests/test_equivalences.py::test_undocumented_names_still_resolve[unicodedata-chardet.evaluation] PASSED
+tests/test_equivalences.py::test_unknown_attribute_raises_attribute_error PASSED
+tests/test_escape.py::test_designation_inside_plain_text_is_not_iso2022 PASSED
+tests/test_escape.py::test_embedded_base64_guard_boundary PASSED
 tests/test_escape.py::test_hz_close_marker_before_open_marker PASSED
 tests/test_escape.py::test_hz_gb_2312 PASSED
 tests/test_escape.py::test_hz_gb_2312_needs_both_markers PASSED
@@ -9740,6 +9958,7 @@ tests/test_escape.py::test_hz_gb_2312_rejects_empty_region PASSED
 tests/test_escape.py::test_hz_gb_2312_rejects_english_with_tildes PASSED
 tests/test_escape.py::test_hz_gb_2312_rejects_odd_length_region PASSED
 tests/test_escape.py::test_hz_only_close_before_open PASSED
+tests/test_escape.py::test_hz_with_stray_tilde_falls_through PASSED
 tests/test_escape.py::test_iso2022_jp_2004_codes PASSED
 tests/test_escape.py::test_iso2022_jp_2004_esc_dollar_paren_q PASSED
 tests/test_escape.py::test_iso2022_jp_2004_without_base PASSED
@@ -9748,9 +9967,12 @@ tests/test_escape.py::test_iso2022_jp_ext_codes PASSED
 tests/test_escape.py::test_iso2022_jp_ext_esc_kana PASSED
 tests/test_escape.py::test_iso2022_jp_ext_esc_kana_only PASSED
 tests/test_escape.py::test_iso2022_jp_jis_x_0212_entry PASSED
+tests/test_escape.py::test_iso2022_jp_with_bad_byte_past_header_falls_through PASSED
+tests/test_escape.py::test_iso2022_kr_with_bad_byte_falls_through PASSED
 tests/test_escape.py::test_iso_2022_jp_esc_dollar_at PASSED
 tests/test_escape.py::test_iso_2022_jp_esc_dollar_b PASSED
 tests/test_escape.py::test_iso_2022_kr PASSED
+tests/test_escape.py::test_jis_x0213_2000_designation_falls_through PASSED
 tests/test_escape.py::test_plain_ascii_returns_none PASSED
 tests/test_escape.py::test_random_bytes_returns_none PASSED
 tests/test_escape.py::test_utf7_b64_accepts_valid_surrogate_pair PASSED
@@ -9758,6 +9980,7 @@ tests/test_escape.py::test_utf7_b64_rejects_consecutive_high_surrogates PASSED
 tests/test_escape.py::test_utf7_b64_rejects_high_surrogate_without_low PASSED
 tests/test_escape.py::test_utf7_b64_rejects_lone_low_surrogate PASSED
 tests/test_escape.py::test_utf7_b64_rejects_trailing_high_surrogate PASSED
+tests/test_escape.py::test_utf7_base64_run_outrunning_the_bound_is_skipped PASSED
 tests/test_escape.py::test_utf7_basic PASSED
 tests/test_escape.py::test_utf7_consecutive_shifted_sequences PASSED
 tests/test_escape.py::test_utf7_empty_shift PASSED
@@ -9778,13 +10001,20 @@ tests/test_escape.py::test_utf7_rejects_triple_plus_variable PASSED
 tests/test_escape.py::test_utf7_rejects_url_with_plus PASSED
 tests/test_escape.py::test_utf7_shifted_sequence PASSED
 tests/test_escape.py::test_utf7_short_base64_rejected PASSED
+tests/test_escape.py::test_utf7_validator_is_linear_in_base64_blobs PASSED
 tests/test_evaluation.py::test_base_letter_match_returns_true PASSED
 tests/test_evaluation.py::test_completely_different_decode_returns_false PASSED
 tests/test_evaluation.py::test_currency_vs_euro_sign_accepted PASSED
 tests/test_evaluation.py::test_decode_error_returns_false PASSED
 tests/test_evaluation.py::test_ebcdic_pair_decodes_identically PASSED
 tests/test_evaluation.py::test_empty_data_returns_true PASSED
+tests/test_evaluation.py::test_equivalent_detection_length_mismatch_is_not_equivalent PASSED
+tests/test_evaluation.py::test_equivalent_detection_mixed_identical_and_equivalent_chars PASSED
 tests/test_evaluation.py::test_identical_decode_returns_true PASSED
+tests/test_evaluation.py::test_is_acceptable_binary_expectation PASSED
+tests/test_evaluation.py::test_is_acceptable_rejects_differing_decodes PASSED
+tests/test_evaluation.py::test_is_acceptable_via_byte_level_equivalence PASSED
+tests/test_evaluation.py::test_is_acceptable_via_name_level_acceptance PASSED
 tests/test_evaluation.py::test_is_correct_exact_match PASSED
 tests/test_evaluation.py::test_is_correct_expected_none_detected_encoding PASSED
 tests/test_evaluation.py::test_is_correct_expected_none_detected_none PASSED
@@ -9793,6 +10023,8 @@ tests/test_evaluation.py::test_is_correct_superset PASSED
 tests/test_evaluation.py::test_is_correct_superset_reversed PASSED
 tests/test_evaluation.py::test_is_equivalent_expected_none_detected_encoding PASSED
 tests/test_evaluation.py::test_is_equivalent_expected_none_detected_none PASSED
+tests/test_evaluation.py::test_is_exact_match_none_detected PASSED
+tests/test_evaluation.py::test_is_exact_match_none_expected PASSED
 tests/test_evaluation.py::test_iso2022_jp_branches_bidirectional PASSED
 tests/test_evaluation.py::test_language_equivalent_czech_slovak PASSED
 tests/test_evaluation.py::test_language_equivalent_east_slavic_group PASSED
@@ -9806,6 +10038,17 @@ tests/test_evaluation.py::test_normalized_name_match_returns_true PASSED
 tests/test_evaluation.py::test_superset_equivalences_for_renamed_encodings PASSED
 tests/test_evaluation.py::test_symbol_vs_letter_difference_returns_false PASSED
 tests/test_evaluation.py::test_unknown_encoding_returns_false PASSED
+tests/test_evidence_cap.py::test_cap_covers_default_window PASSED
+tests/test_evidence_cap.py::test_escape_evidence_past_cap_is_not_consulted PASSED
+tests/test_evidence_cap.py::test_exhaustive_checks_still_see_everything PASSED
+tests/test_evidence_cap.py::test_no_candidate_decoding_the_window_falls_back PASSED
+tests/test_evidence_cap.py::test_sequence_straddling_the_cap_is_still_seen PASSED
+tests/test_evidence_cap.py::test_structure_breaking_bytes_past_cap_yield_a_decodable_answer PASSED
+tests/test_evidence_cap.py::test_utf7_accept_stays_exhaustive PASSED
+tests/test_evidence_cap.py::test_utf7_validator_converges_on_cap PASSED
+tests/test_evidence_cap.py::test_valid_ascii_past_cap_keeps_utf8_candidate PASSED
+tests/test_evidence_cap.py::test_validity_hold_skips_entries_without_an_encoding PASSED
+tests/test_evidence_cap.py::test_winner_decodes_the_window_past_cap PASSED
 tests/test_github_issues.py::TestCjkShortInputs::test_chinese_gb2312_text PASSED
 tests/test_github_issues.py::TestCjkShortInputs::test_chinese_in_ascii_path PASSED
 tests/test_github_issues.py::TestCjkShortInputs::test_korean_name_euckr PASSED
@@ -9866,20 +10109,33 @@ tests/test_github_issues.py::TestWrongEncodingModernWeb::test_latin1_accented_ch
 tests/test_github_issues.py::TestWrongEncodingModernWeb::test_portuguese_iso88591 PASSED
 tests/test_github_issues.py::TestWrongEncodingModernWeb::test_smart_apostrophe_win1252 PASSED
 tests/test_github_issues.py::TestWrongEncodingModernWeb::test_subtitle_acute_apostrophes PASSED
+tests/test_internal_utils.py::test_count_deleted_chunked_matches_whole_pass PASSED
+tests/test_internal_utils.py::test_dangling_tail_invalid_bytes_is_false PASSED
+tests/test_internal_utils.py::test_dangling_tail_unknown_codec_is_false PASSED
+tests/test_internal_utils.py::test_decodes_completely_unknown_codec_is_false PASSED
+tests/test_internal_utils.py::test_decodes_without_error_chunked_sequence_straddles_chunk_edge PASSED
+tests/test_internal_utils.py::test_decodes_without_error_unknown_codec_is_false PASSED
 tests/test_kernel_pxd.py::test_guard_detects_a_dead_local PASSED
 tests/test_kernel_pxd.py::test_guard_detects_a_missing_function PASSED
 tests/test_kernel_pxd.py::test_pxd_declares_only_names_the_module_has[_kernel.py] PASSED
 tests/test_kernel_pxd.py::test_repository_has_pxd_modules_to_check PASSED
 tests/test_koi8t.py::test_koi8t_with_tajik_bytes PASSED
 tests/test_koi8t.py::test_russian_text_stays_koi8r PASSED
+tests/test_language.py::test_fill_languages_leaves_language_unset_when_no_tier_applies PASSED
 tests/test_language.py::test_fill_languages_passes_through_binary_results PASSED
 tests/test_language.py::test_fill_languages_passes_through_existing_language PASSED
-tests/test_language.py::test_fill_languages_populates_single_language_encoding PASSED
+tests/test_language.py::test_fill_languages_tier1_fills_without_the_scored_tiers PASSED
+tests/test_language.py::test_fill_languages_tier2_scores_the_encodings_own_variants PASSED
+tests/test_language.py::test_fill_languages_tier3_falls_back_to_the_utf8_models PASSED
+tests/test_language.py::test_french_paragraph_is_not_hungarian PASSED
+tests/test_language.py::test_language_weighting_leaves_the_encoding_ranking_alone PASSED
+tests/test_language.py::test_thin_ascii_breton_snippet_is_a_known_casualty PASSED
 tests/test_language.py::test_thin_rare_band_casualty_class_is_pinned PASSED
 tests/test_language.py::test_thin_rare_band_demotes_short_english_snippet PASSED
 tests/test_language.py::test_thin_rare_band_is_opt_in_and_score_preserving PASSED
 tests/test_language.py::test_thin_rare_band_keeps_genuine_celtic_snippets PASSED
 tests/test_language.py::test_thin_rare_band_rechecks_statistically_attached_labels PASSED
+tests/test_language.py::test_thin_rare_recheck_keeps_label_when_no_tier_can_score PASSED
 tests/test_language.py::test_to_utf8_passthrough PASSED
 tests/test_language.py::test_to_utf8_unknown_encoding PASSED
 tests/test_magic.py::TestZipSubtypeDetection::test_apk_detected PASSED
@@ -9967,23 +10223,89 @@ tests/test_magic.py::test_detect_magic_known_formats[wOFF\x00\x00\x00\x00\x00\x0
 tests/test_magic.py::test_detect_magic_no_match PASSED
 tests/test_magic.py::test_detect_magic_tar_too_short PASSED
 tests/test_magic.py::test_detect_magic_truncated_png PASSED
+tests/test_markup.py::test_a_head_of_unclosed_tags_still_finds_the_declaration[<?xml -<?xml version="1.0" encoding="iso-8859-1"?>] PASSED
+tests/test_markup.py::test_a_head_of_unclosed_tags_still_finds_the_declaration[<meta -<meta charset="iso-8859-1">] PASSED
+tests/test_markup.py::test_bad_declaration_does_not_hide_a_later_one PASSED
 tests/test_markup.py::test_case_insensitive_meta PASSED
 tests/test_markup.py::test_charset_beyond_scan_limit_ignored PASSED
+tests/test_markup.py::test_charset_declaration_not_honored_when_window_fails_to_decode PASSED
+tests/test_markup.py::test_charset_inside_another_attribute_does_not_hide_meta_charset PASSED
 tests/test_markup.py::test_charset_with_whitespace PASSED
 tests/test_markup.py::test_charset_within_scan_limit_found PASSED
+tests/test_markup.py::test_comment_may_close_on_its_own_dashes[<!--->] PASSED
+tests/test_markup.py::test_comment_may_close_on_its_own_dashes[<!-->] PASSED
+tests/test_markup.py::test_declaration_inside_a_comment_is_not_a_declaration PASSED
+tests/test_markup.py::test_declared_page_window_decode_budget[euc-kr-promoted] PASSED
+tests/test_markup.py::test_declared_page_window_decode_budget[shift_jis-clean] PASSED
+tests/test_markup.py::test_declared_page_window_decode_budget[single-byte] PASSED
+tests/test_markup.py::test_declared_subset_promotes_from_the_stage PASSED
+tests/test_markup.py::test_declared_subset_promotes_when_superset_bytes_sit_past_the_head PASSED
+tests/test_markup.py::test_ebcdic_declaration_ignored_for_non_mainframe_name PASSED
+tests/test_markup.py::test_ebcdic_declaration_not_honored_when_window_fails_to_decode PASSED
+tests/test_markup.py::test_ebcdic_declaration_regex_is_linear_in_whitespace PASSED
+tests/test_markup.py::test_ebcdic_meta_charset_declaration PASSED
+tests/test_markup.py::test_ebcdic_xml_declaration_reports_xml PASSED
 tests/test_markup.py::test_empty_input PASSED
+tests/test_markup.py::test_first_value_wins_when_attribute_repeats PASSED
 tests/test_markup.py::test_html4_content_type PASSED
+tests/test_markup.py::test_html4_content_type_invalid_quoted_charset[charset=""] PASSED
+tests/test_markup.py::test_html4_content_type_invalid_quoted_charset[charset="windows-1252] PASSED
+tests/test_markup.py::test_html4_content_type_quoted_or_spaced_charset[CHARSET\t=\t"windows-1252"] PASSED
+tests/test_markup.py::test_html4_content_type_quoted_or_spaced_charset[charset = windows-1252] PASSED
+tests/test_markup.py::test_html4_content_type_quoted_or_spaced_charset[charset="windows-1252"] PASSED
+tests/test_markup.py::test_html4_content_type_quoted_or_spaced_charset[charset='windows-1252'] PASSED
 tests/test_markup.py::test_html5_meta_charset PASSED
 tests/test_markup.py::test_lying_charset_declaration_rejected PASSED
+tests/test_markup.py::test_name_content_type_is_accepted PASSED
 tests/test_markup.py::test_no_markup PASSED
+tests/test_markup.py::test_no_promotion_when_better_scoring_superset_cannot_decode PASSED
 tests/test_markup.py::test_no_promotion_when_reported_codec_decodes_and_structure_ties PASSED
 tests/test_markup.py::test_non_ascii_charset_name_ignored PASSED
+tests/test_markup.py::test_non_ascii_xml_encoding_name_ignored PASSED
 tests/test_markup.py::test_null_byte_in_charset_name PASSED
+tests/test_markup.py::test_pep263_cookie_after_code_does_not_override_utf8 PASSED
+tests/test_markup.py::test_pep263_cookie_past_the_scan_limit_is_ignored PASSED
+tests/test_markup.py::test_pep263_long_first_line_then_cookie[                                                                                                                                                                                                                                                                                                            ] PASSED
+tests/test_markup.py::test_pep263_long_first_line_then_cookie[# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx] PASSED
+tests/test_markup.py::test_pep263_names_resolve_like_tokenize[ISO_LATIN_1-iso8859-1] PASSED
+tests/test_markup.py::test_pep263_names_resolve_like_tokenize[cp1251-cp1251] PASSED
+tests/test_markup.py::test_pep263_names_resolve_like_tokenize[iso-latin-1-iso8859-1] PASSED
+tests/test_markup.py::test_pep263_names_resolve_like_tokenize[latin-1-unix-iso8859-1] PASSED
+tests/test_markup.py::test_pep263_names_resolve_like_tokenize[utf-8-sig-utf-8] PASSED
+tests/test_markup.py::test_pep263_names_resolve_like_tokenize[utf_8-utf-8] PASSED
 tests/test_markup.py::test_pep263_non_ascii_coding_name PASSED
+tests/test_markup.py::test_pep263_not_honored_when_window_fails_to_decode PASSED
+tests/test_markup.py::test_pep263_second_line_after_code_is_not_a_declaration[\n-"a docstring"] PASSED
+tests/test_markup.py::test_pep263_second_line_after_code_is_not_a_declaration[\n-print("hello") # a trailing comment] PASSED
+tests/test_markup.py::test_pep263_second_line_after_code_is_not_a_declaration[\n-print("hello")] PASSED
+tests/test_markup.py::test_pep263_second_line_after_code_is_not_a_declaration[\r\n-"a docstring"] PASSED
+tests/test_markup.py::test_pep263_second_line_after_code_is_not_a_declaration[\r\n-print("hello") # a trailing comment] PASSED
+tests/test_markup.py::test_pep263_second_line_after_code_is_not_a_declaration[\r\n-print("hello")] PASSED
+tests/test_markup.py::test_pep263_second_line_after_comment_or_blank_is_a_declaration[\n- \t\x0c] PASSED
+tests/test_markup.py::test_pep263_second_line_after_comment_or_blank_is_a_declaration[\n-# ordinary comment] PASSED
+tests/test_markup.py::test_pep263_second_line_after_comment_or_blank_is_a_declaration[\n-#!/usr/bin/python] PASSED
+tests/test_markup.py::test_pep263_second_line_after_comment_or_blank_is_a_declaration[\n-] PASSED
+tests/test_markup.py::test_pep263_second_line_after_comment_or_blank_is_a_declaration[\r\n- \t\x0c] PASSED
+tests/test_markup.py::test_pep263_second_line_after_comment_or_blank_is_a_declaration[\r\n-# ordinary comment] PASSED
+tests/test_markup.py::test_pep263_second_line_after_comment_or_blank_is_a_declaration[\r\n-#!/usr/bin/python] PASSED
+tests/test_markup.py::test_pep263_second_line_after_comment_or_blank_is_a_declaration[\r\n-] PASSED
 tests/test_markup.py::test_promote_markup_superset_passthrough_none_encoding PASSED
 tests/test_markup.py::test_promote_when_reported_codec_cannot_decode PASSED
+tests/test_markup.py::test_promotion_when_superset_structure_scores_higher PASSED
+tests/test_markup.py::test_stale_prolog_does_not_hide_a_correct_meta PASSED
+tests/test_markup.py::test_unclosed_comment_hides_the_rest_of_the_head PASSED
+tests/test_markup.py::test_unclosed_meta_does_not_swallow_the_next_one PASSED
+tests/test_markup.py::test_unclosed_meta_tag_is_not_a_declaration PASSED
 tests/test_markup.py::test_unknown_encoding_returns_none PASSED
+tests/test_markup.py::test_unquoted_charset_value PASSED
+tests/test_markup.py::test_utf16_label_in_ascii_markup_reads_as_utf8[UTF-16BE] PASSED
+tests/test_markup.py::test_utf16_label_in_ascii_markup_reads_as_utf8[utf-16] PASSED
+tests/test_markup.py::test_utf16_label_in_ascii_markup_reads_as_utf8[utf-16le] PASSED
+tests/test_markup.py::test_utf16_label_in_ascii_markup_reads_as_utf8[utf-32] PASSED
+tests/test_markup.py::test_utf16_label_in_ascii_markup_reads_as_utf8[utf-32le] PASSED
+tests/test_markup.py::test_utf16_label_on_non_utf8_bytes_is_dropped PASSED
 tests/test_markup.py::test_valid_charset_declaration_accepted PASSED
+tests/test_markup.py::test_x_user_defined_reads_as_windows_1252 PASSED
 tests/test_markup.py::test_xml_encoding_declaration PASSED
 tests/test_markup.py::test_xml_single_quotes PASSED
 tests/test_mime_type.py::test_binary_result_defaults_to_octet_stream PASSED
@@ -10005,21 +10327,26 @@ tests/test_mime_type.py::test_universal_detector_mime_type PASSED
 tests/test_mime_type.py::test_universal_detector_pre_close_mime_type PASSED
 tests/test_mime_type.py::test_utf8_result_has_text_plain PASSED
 tests/test_models.py::test_all_test_data_pairs_have_models PASSED
+tests/test_models.py::test_artifacts_regenerate_from_shipped_models_bin PASSED
 tests/test_models.py::test_bigram_profile_ascii_weight PASSED
 tests/test_models.py::test_bigram_profile_empty PASSED
 tests/test_models.py::test_bigram_profile_high_byte_weight PASSED
 tests/test_models.py::test_bigram_profile_single_byte PASSED
+tests/test_models.py::test_decompress_tables_accepts_unterminated_stream PASSED
 tests/test_models.py::test_decompress_tables_chunked_matches_whole PASSED
 tests/test_models.py::test_decompress_tables_rejects_surplus_tables[1] PASSED
 tests/test_models.py::test_decompress_tables_rejects_surplus_tables[262144] PASSED
-tests/test_models.py::test_deserialize_empty_file PASSED
-tests/test_models.py::test_deserialize_missing_file PASSED
-tests/test_models.py::test_deserialize_trailing_bytes_raises PASSED
-tests/test_models.py::test_deserialize_v2_corrupt_zlib PASSED
-tests/test_models.py::test_deserialize_v2_wrong_decompressed_size PASSED
+tests/test_models.py::test_decompress_tables_truncated_streams_raise PASSED
+tests/test_models.py::test_dense_profile_gather_matches_loop PASSED
+tests/test_models.py::test_dense_profile_scores_identically_through_packed_kernel PASSED
 tests/test_models.py::test_enc_index_alias_resolution PASSED
 tests/test_models.py::test_enc_index_resolves_aliases PASSED
 tests/test_models.py::test_get_idf_weights_wrong_size PASSED
+tests/test_models.py::test_langnorm_bad_file_falls_back_with_warning[missing] PASSED
+tests/test_models.py::test_langnorm_bad_file_falls_back_with_warning[stale] PASSED
+tests/test_models.py::test_langnorm_bin_header_matches_models_bin PASSED
+tests/test_models.py::test_langnorm_matches_models PASSED
+tests/test_models.py::test_language_profile_weights_and_norm PASSED
 tests/test_models.py::test_load_models_empty_file PASSED
 tests/test_models.py::test_load_models_has_entries PASSED
 tests/test_models.py::test_load_models_missing_magic PASSED
@@ -10032,6 +10359,13 @@ tests/test_models.py::test_load_models_v2_num_models_exceeds_limit PASSED
 tests/test_models.py::test_load_models_v2_truncated_header PASSED
 tests/test_models.py::test_load_models_v2_wrong_decompressed_size PASSED
 tests/test_models.py::test_model_keys_are_strings PASSED
+tests/test_models.py::test_pack_profile_and_dot_packed_agree_with_dense_scoring PASSED
+tests/test_models.py::test_read_models_corrupt_zlib PASSED
+tests/test_models.py::test_read_models_empty_file PASSED
+tests/test_models.py::test_read_models_ignores_post_stream_bytes PASSED
+tests/test_models.py::test_read_models_missing_file PASSED
+tests/test_models.py::test_read_models_missing_magic PASSED
+tests/test_models.py::test_read_models_wrong_decompressed_size PASSED
 tests/test_models.py::test_roundtrip_empty_bigrams PASSED
 tests/test_models.py::test_roundtrip_matches_load_models PASSED
 tests/test_models.py::test_roundtrip_multiple_encodings PASSED
@@ -10040,7 +10374,9 @@ tests/test_models.py::test_roundtrip_v2_multiple_encodings PASSED
 tests/test_models.py::test_roundtrip_zero_encodings PASSED
 tests/test_models.py::test_rowmax_bin_header_matches_models_bin PASSED
 tests/test_models.py::test_rowmax_matches_models PASSED
+tests/test_models.py::test_rowmax_missing_file_falls_back_with_warning PASSED
 tests/test_models.py::test_rowmax_stale_digest_falls_back_with_warning PASSED
+tests/test_models.py::test_score_best_language_builds_the_language_profile_itself PASSED
 tests/test_models.py::test_score_best_language_empty_data PASSED
 tests/test_models.py::test_score_best_language_high_byte_weighting PASSED
 tests/test_models.py::test_score_best_language_returns_float PASSED
@@ -10048,7 +10384,9 @@ tests/test_models.py::test_score_best_language_unknown_encoding PASSED
 tests/test_models.py::test_score_with_profile_accepts_bytearray_and_memoryview PASSED
 tests/test_models.py::test_score_with_profile_all_zeros_model PASSED
 tests/test_models.py::test_score_with_profile_fallback_norm PASSED
+tests/test_models.py::test_score_with_profile_language_weighting_is_the_weighted_cosine PASSED
 tests/test_models.py::test_serialize_v2_magic PASSED
+tests/test_models.py::test_single_bigram_profile_scores_without_gather PASSED
 tests/test_orchestrator.py::test_binary_content PASSED
 tests/test_orchestrator.py::test_bom_detected PASSED
 tests/test_orchestrator.py::test_bom_utf16_be PASSED
@@ -10079,12 +10417,19 @@ tests/test_orchestrator.py::test_utf8_multibyte PASSED
 tests/test_orchestrator.py::test_xml_charset_declaration PASSED
 tests/test_output_names.py::test_apply_legacy_rename_is_alias_of_apply_preferred_superset PASSED
 tests/test_output_names.py::test_apply_preferred_superset_ascii PASSED
+tests/test_output_names.py::test_apply_preferred_superset_keeps_a_name_the_superset_cannot_decode PASSED
 tests/test_output_names.py::test_apply_preferred_superset_no_match PASSED
 tests/test_output_names.py::test_apply_preferred_superset_none PASSED
+tests/test_output_names.py::test_apply_preferred_superset_without_data_remaps_unconditionally PASSED
 tests/test_output_names.py::test_compat_names_covers_cp932 PASSED
 tests/test_output_names.py::test_compat_names_covers_windows_and_iso_families PASSED
 tests/test_output_names.py::test_compat_names_maps_codec_to_display PASSED
+tests/test_output_names.py::test_compat_rename_applied_when_display_codec_decodes PASSED
+tests/test_output_names.py::test_compat_rename_ignores_non_narrowing_names PASSED
+tests/test_output_names.py::test_compat_rename_skipped_when_display_codec_cannot_decode PASSED
+tests/test_output_names.py::test_compat_rename_unconditional_without_data PASSED
 tests/test_output_names.py::test_every_preferred_superset_target_has_compat_name PASSED
+tests/test_output_names.py::test_narrower_display_names_match_codecs PASSED
 tests/test_pipeline_types.py::test_detection_result_fields PASSED
 tests/test_pipeline_types.py::test_detection_result_is_frozen PASSED
 tests/test_pipeline_types.py::test_detection_result_mime_type_default PASSED
@@ -10095,13 +10440,60 @@ tests/test_pipeline_types.py::test_detection_result_to_dict_includes_mime_type P
 tests/test_pipeline_types.py::test_pipeline_context_defaults PASSED
 tests/test_pipeline_types.py::test_pipeline_context_is_not_frozen PASSED
 tests/test_pipeline_types.py::test_pipeline_context_mb_coverage PASSED
+tests/test_postprocess.py::test_decodable_tie_keeps_winner_when_no_rival_decodes PASSED
+tests/test_postprocess.py::test_decodes_under_public_names_rejects_undecodable PASSED
 tests/test_postprocess.py::test_demote_niche_latin PASSED
+tests/test_postprocess.py::test_demote_niche_latin_demotes_an_evidence_free_tie PASSED
+tests/test_postprocess.py::test_demote_niche_latin_demotes_when_the_target_reads_the_bytes_better PASSED
+tests/test_postprocess.py::test_demote_niche_latin_does_not_second_guess_a_decided_win PASSED
+tests/test_postprocess.py::test_demote_niche_latin_end_to_end_lone_umlaut_pair PASSED
+tests/test_postprocess.py::test_demote_niche_latin_ignores_a_common_latin_top PASSED
 tests/test_postprocess.py::test_demote_niche_latin_iso_8859_14 PASSED
-tests/test_postprocess.py::test_demote_niche_latin_no_demote_when_distinguishing PASSED
+tests/test_postprocess.py::test_demote_niche_latin_keeps_the_reading_the_models_prefer PASSED
+tests/test_postprocess.py::test_demote_niche_latin_keeps_the_reading_word_shape_prefers PASSED
+tests/test_postprocess.py::test_demote_niche_latin_needs_a_common_latin_target PASSED
+tests/test_postprocess.py::test_demote_niche_latin_single_byte_input PASSED
+tests/test_postprocess.py::test_demote_niche_latin_stands_down_on_sparse_evidence[hp-roman8-en/historic_090eae0374e5.txt-None-strip-meta-hp-roman8] PASSED
+tests/test_postprocess.py::test_demote_niche_latin_stands_down_on_sparse_evidence[hp-roman8-fr/historic_c8503b2f176c.txt-1024-raw-hp-roman8] PASSED
+tests/test_postprocess.py::test_demote_niche_latin_stands_down_on_sparse_evidence[hp-roman8-fr/historic_c8503b2f176c.txt-512-raw-hp-roman8] PASSED
+tests/test_postprocess.py::test_demote_niche_latin_stands_down_on_sparse_evidence[iso-8859-10-fi/culturax_00002.txt-None-raw-iso8859-10] PASSED
+tests/test_postprocess.py::test_demote_niche_latin_stands_down_on_sparse_evidence[iso-8859-14-cy/culturax_mC4_78730.txt-2048-raw-iso8859-14] PASSED
+tests/test_postprocess.py::test_demote_niche_latin_stands_down_on_sparse_evidence[iso-8859-14-cy/culturax_mC4_78730.txt-768-raw-iso8859-14] PASSED
+tests/test_postprocess.py::test_demote_niche_latin_survives_a_confidence_resort PASSED
+tests/test_postprocess.py::test_demote_niche_latin_swap_band_anchors_on_best_common_latin PASSED
+tests/test_postprocess.py::test_demote_niche_latin_swap_confidence_wins_outside_band PASSED
+tests/test_postprocess.py::test_demote_niche_latin_swap_equal_era_ranks_keep_confidence_order PASSED
+tests/test_postprocess.py::test_demote_niche_latin_swap_prefers_prevalent_in_dead_heat PASSED
 tests/test_postprocess.py::test_demote_niche_latin_windows_1254 PASSED
+tests/test_postprocess.py::test_era_rank_unknown_encoding_ranks_last PASSED
+tests/test_postprocess.py::test_forced_encodings_demotion_candidate_forces_latin_trio PASSED
+tests/test_postprocess.py::test_forced_encodings_empty_without_triggers PASSED
+tests/test_postprocess.py::test_forced_encodings_koi8r_forces_koi8t PASSED
+tests/test_postprocess.py::test_forced_encodings_triggers_combine PASSED
+tests/test_postprocess.py::test_high_byte_evidence_without_variants_is_absent PASSED
+tests/test_postprocess.py::test_lone_capital_accent_in_english_is_not_mac_roman PASSED
+tests/test_postprocess.py::test_mac_cr_promotion_promotes_banded_mac_candidate PASSED
+tests/test_postprocess.py::test_mac_cr_promotion_skips_art_top PASSED
+tests/test_postprocess.py::test_mac_cr_promotion_stops_at_the_band PASSED
+tests/test_postprocess.py::test_mac_cr_promotion_vetoed_by_byte_evidence PASSED
+tests/test_postprocess.py::test_postprocess_results_applies_the_niche_latin_demotion PASSED
+tests/test_postprocess.py::test_postprocess_results_runs_every_correction_in_order PASSED
+tests/test_postprocess.py::test_prevalent_dead_heat_arbitrates_a_top_with_evidence PASSED
+tests/test_postprocess.py::test_prevalent_dead_heat_keeps_a_top_that_wins_the_arbitration PASSED
+tests/test_postprocess.py::test_prevalent_dead_heat_keeps_a_top_the_arbitration_cannot_fault PASSED
+tests/test_postprocess.py::test_prevalent_dead_heat_skips_binary_entries PASSED
 tests/test_postprocess.py::test_promote_koi8t_no_promote_without_tajik_bytes PASSED
 tests/test_postprocess.py::test_promote_koi8t_returns_early_when_koi8t_absent PASSED
 tests/test_postprocess.py::test_promote_koi8t_with_tajik_bytes PASSED
+tests/test_postprocess.py::test_rare_arbitration_needs_a_prevalent_rival PASSED
+tests/test_postprocess.py::test_rare_arbitration_skips_unlabelled_rivals PASSED
+tests/test_postprocess.py::test_rare_arbitration_stops_past_the_margin PASSED
+tests/test_postprocess.py::test_scoring_floor_extends_to_strict_tier PASSED
+tests/test_postprocess.py::test_scoring_floor_ignores_top1_when_strict_tier_closed PASSED
+tests/test_postprocess.py::test_scoring_floor_trails_second_best PASSED
+tests/test_postprocess.py::test_superset_dead_heat_promotes_decoding_superset PASSED
+tests/test_postprocess.py::test_superset_dead_heat_stops_at_the_epsilon PASSED
+tests/test_postprocess.py::test_superset_dead_heat_without_superset_in_band PASSED
 tests/test_python_stdlib_limitations.py::test_python_gb18030_bom_leak_still_present PASSED
 tests/test_python_stdlib_limitations.py::test_python_utf16_le_be_do_not_strip_bom PASSED
 tests/test_python_stdlib_limitations.py::test_python_utf16_strips_bom_on_decode PASSED
@@ -10116,11 +10508,13 @@ tests/test_registry.py::test_gb18030_has_subset_aliases PASSED
 tests/test_registry.py::test_get_candidates_all_returns_everything PASSED
 tests/test_registry.py::test_get_candidates_combined_eras PASSED
 tests/test_registry.py::test_get_candidates_filters_by_era PASSED
+tests/test_registry.py::test_is_multibyte_is_a_deprecated_alias PASSED
 tests/test_registry.py::test_iso2022_jp_split_into_branches PASSED
 tests/test_registry.py::test_language_agnostic_encodings PASSED
 tests/test_registry.py::test_languages_field_exists PASSED
 tests/test_registry.py::test_lookup_encoding_alias PASSED
 tests/test_registry.py::test_lookup_encoding_by_name PASSED
+tests/test_registry.py::test_lookup_encoding_cache_is_bounded PASSED
 tests/test_registry.py::test_lookup_encoding_canonical PASSED
 tests/test_registry.py::test_lookup_encoding_codecs_fallback PASSED
 tests/test_registry.py::test_lookup_encoding_embedded_null PASSED
@@ -11109,6 +11503,163 @@ tests/test_statistical.py::test_pruned_matches_full_ranking_at_top[1] PASSED
 tests/test_statistical.py::test_pruned_matches_full_ranking_at_top[2] PASSED
 tests/test_statistical.py::test_pruned_matches_full_ranking_at_top[3] PASSED
 tests/test_statistical.py::test_pruned_matches_full_ranking_at_top[4] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[None-None/sample-1.gif] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[ascii-en/cc_lists.gnupg.org_d8c5f7d477a9.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[big5-zh/0804.blogspot.com.xml] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[big5-zh/oui-design.com.xml] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp037-en/ebcdic_gsf1_rec5000.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp037-tr/culturax_00000.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp273-de/culturax_00001.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp437-de/culturax_00002.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp437-nl/culturax_00001.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp500-es/culturax_mC4_87070.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp720-ar/culturax_mC4_98635.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp775-lv/culturax_mC4_71629.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp850-es/culturax_00002.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp850-no/culturax_00002.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp852-pl/culturax_mC4_97061.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp855-mk/culturax_mC4_102726.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp855-ru/kapranoff.ru.xml] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp857-tr/_ude_1.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp858-ga/culturax_mC4_63469.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp858-sv/culturax_00002.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp863-fr/culturax_00001.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp866-mk/culturax_00001.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp866-ru/money.rin.ru.xml] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp874-th/cc_www.klinetravel.asia_91ed62ac522f.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[cp949-ko/cc_daekhon.co.kr_25dc4f58ac4b.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[euc-jp-ja/azoz.org.xml] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[euc-kr-ko/88455a1-euc-kr.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[euc-kr-ko/jowchung.oolim.net.xml] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[gb18030-zh/cc_www.010.sh.cn_ca6e706206df.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[gb2312-zh/culturax_mC4_5.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[hp-roman8-en/historic_090eae0374e5.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[hp-roman8-ms/culturax_00000.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[hz-gb-2312-zh/usenet_3be5ab074e86.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-2022-jp-ja/usenet_b8b9c876fe1a.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-1-de/po_4bf750b3f4c1.po] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-1-fr/culturax_mC4_88375.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-1-it/archive_www_repubblica_it_20030601.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-1-pt/culturax_00002.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-13-et/culturax_00000.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-14-ga/culturax_00002.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-15-fi/po_44408f07c1c0.po] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-15-nl/culturax_00000.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-16-pl/culturax_OSCAR-2019_97062.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-2-cs/po_681f3ab15465.po] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-2-hu/honositomuhely.hu.xml] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-2-pl/po_70881a30ca37.po] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-2-sl/culturax_mC4_66689.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-4-et/cc_aarika.ee_5b47096ee34f.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-5-bg/bpm.cult.bg.9.xml] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-5-ru/aviaport.ru.xml] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-5-sr/culturax_mC4_66923.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-7-el/_uchardet_iso_8859_7.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-8-he/_ude_he3.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-9-tr/_ude_2.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-9-tr/cc_liderklimaservisi.com_ff3f42877fd1.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[iso-8859-9-tr/subtitle.srt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[koi8-r-ru/culturax_OSCAR-2019_85055.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[koi8-u-uk/_enca_koi8u_uk.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[maccyrillic-be/culturax_mC4_77018.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[maccyrillic-ru/greek.ru.xml] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[maciceland-is/culturax_mC4_77487.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[maclatin2-pl/historic_e8e8dfe13aa1.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[macroman-en/machfs_816b10d13254.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[macroman-it/culturax_mC4_92390.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[ptcp154-kk/culturax_mC4_73161.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[shift_jis-ja/archive_www_nhk_or_jp_20020601.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[shift_jis-ja/tamuyou.haun.org.xml] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16-br/culturax_OSCAR-2019_43762.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16-de/culturax_mC4_83755.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16-en/culturax_mC4_84513.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16-fa/culturax_mC4_104835.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16-he/cc_benyehuda.org_7b317d31f669.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16-it/cc_www.medicalpilates.academy_2460e28f781d.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16-ko/cc_hb1001.or.kr_887ee5c47b53.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16-mt/culturax_mC4_51488.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16-ro/culturax_mC4_78978.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16-tg/culturax_mC4_74866.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16-zh/cc_fp1989.com_722388d879d4.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16be-br/culturax_OSCAR-2019_43764.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16be-en/historic_450e5e35d3ce.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16be-fi/culturax_mC4_80363.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16be-id/culturax_mC4_114890.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16be-lv/culturax_mC4_71628.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16be-pl/culturax_mC4_97061.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16be-sv/culturax_mC4_96486.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16be-zh/culturax_mC4_5.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16le-da/culturax_mC4_83466.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16le-eo/culturax_mC4_40441.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16le-ga/culturax_mC4_63470.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16le-it/culturax_mC4_92390.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16le-ms/culturax_00000.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16le-ro/culturax_mC4_78978.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-16le-th/culturax_mC4_109133.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32-be/culturax_mC4_77015.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32-el/culturax_OSCAR-2201_103812.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32-es/culturax_mC4_87071.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32-he/culturax_OSCAR-2301_58266.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32-kk/culturax_mC4_73160.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32-mt/culturax_mC4_51490.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32-sk/culturax_mC4_95226.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32-uk/culturax_mC4_95019.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32be-br/culturax_OSCAR-2019_43762.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32be-en/historic_4d969cdba0e7.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32be-fi/culturax_mC4_80362.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32be-id/culturax_mC4_114889.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32be-lt/culturax_mC4_73447.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32be-pl/culturax_mC4_97060.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32be-sv/culturax_mC4_96485.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32be-vi/culturax_mC4_85694.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32le-cy/culturax_mC4_78728.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32le-eo/culturax_mC4_40441.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32le-ga/culturax_mC4_63470.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32le-it/culturax_mC4_92390.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32le-ms/culturax_00000.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32le-ro/culturax_mC4_78978.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-32le-th/culturax_mC4_109133.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-7-ar/historic_3e9a7856b089.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-7-de/culturax_mC4_83755.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-7-fa/culturax_mC4_104837.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-7-hu/culturax_OSCAR-2109_82419.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-7-ko/culturax_mC4_1.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-7-no/culturax_mC4_66763.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-7-sr/culturax_mC4_66918.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-7-ur/culturax_mC4_82298.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-cy/culturax_mC4_78726.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-en/boobooo.blogspot.com.xml] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-es/cc_www.00podcast.es_b516b02ee8f0.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-fr/cc_www.07.re_782ba67b4be7.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-he/cc_www.%d7%a4%d7%a8%d7%a1.co.il_78b3725cb2a6.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-it/cc_www.0-0-0.it_fa50a71340f1.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-ja/cc_0166.co.jp_dc59b2e5ce4b.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-ko/cc_000000.co.kr_d2e27d92c283.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-mt/culturax_mC4_51488.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-ro/culturax_OSCAR-2019_78977.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-sig-be/culturax_mC4_77016.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-sig-el/culturax_OSCAR-2201_103812.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-sig-fa/culturax_mC4_104836.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-sig-hu/culturax_OSCAR-2109_82419.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-sig-ko/_ude_2.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-sig-no/culturax_mC4_66762.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-sig-sl/culturax_mC4_66690.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-sig-ur/culturax_mC4_82297.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-tg/cc_magrm.com_beb0c77075b8.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-ur/culturax_mC4_82297.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[utf-8-zh/cc_www.02.ink_9971516f93e2.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[windows-1250-hu/bbc.co.uk.hu.learningenglish.xml] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[windows-1250-sk/culturax_mC4_95226.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[windows-1251-bg/bpm.cult.bg.medusa.4.xml] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[windows-1251-ru/_ude_1.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[windows-1251-ru/kapranoff.ru.xml] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[windows-1252-es/_uchardet_windows_1252.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[windows-1252-nl/culturax_00002.txt] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[windows-1253-el/cc_aytokinisi.com_6a5ee913ec67.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[windows-1256-ar/_chromium_windows-1256_with_no_encoding_specified.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[windows-1256-ar/cc_linz-arab.com_824dfb77f060.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[windows-1256-fa/cc_iranfastener.ir_8490b810641d.html] PASSED
+tests/test_statistical.py::test_pruning_contract_holds_on_corpus[windows-1257-lv/cc_eratija.forumlv.com_ed2ca7d76105.html] PASSED
 tests/test_statistical.py::test_pruning_samples_engage_pruning PASSED
 tests/test_statistical.py::test_score_candidates_empty_candidates PASSED
 tests/test_statistical.py::test_score_candidates_empty_data PASSED
@@ -11116,6 +11667,8 @@ tests/test_statistical.py::test_score_candidates_no_matching_model PASSED
 tests/test_statistical.py::test_score_candidates_returns_detection_results PASSED
 tests/test_statistical.py::test_score_candidates_returns_sorted_results PASSED
 tests/test_statistical.py::test_score_candidates_small_set_no_pool PASSED
+tests/test_statistical.py::test_split_variants_unknown_norm_never_prunes PASSED
+tests/test_statistical.py::test_split_variants_zero_norm_bounds_at_zero PASSED
 tests/test_structural.py::test_big5_does_not_recognize_hkscs_extension PASSED
 tests/test_structural.py::test_big5_scores_high_on_big5_data PASSED
 tests/test_structural.py::test_big5_trailing_lead_byte PASSED
@@ -11192,6 +11745,8 @@ tests/test_truncated_input.py::test_truncated_cjk_chunk_keeps_its_answer PASSED
 tests/test_truncated_input.py::test_truncated_tail_keeps_encoding_as_candidate PASSED
 tests/test_truncated_input.py::test_unmapped_bytes_still_eliminate_encoding PASSED
 tests/test_utf1632.py::test_all_null_bytes_returns_none PASSED
+tests/test_utf1632.py::test_detect_utf16_decodable_window_still_detected PASSED
+tests/test_utf1632.py::test_detect_utf16_undecodable_past_sample_falls_through PASSED
 tests/test_utf1632.py::test_empty_input_returns_none PASSED
 tests/test_utf1632.py::test_exactly_min_utf16_bytes PASSED
 tests/test_utf1632.py::test_exactly_min_utf32_bytes PASSED
@@ -11204,7 +11759,12 @@ tests/test_utf1632.py::test_random_bytes_returns_none PASSED
 tests/test_utf1632.py::test_real_utf16_be_still_detected PASSED
 tests/test_utf1632.py::test_real_utf16_le_cjk_still_detected PASSED
 tests/test_utf1632.py::test_result_is_detection_result_instance PASSED
+tests/test_utf1632.py::test_short_null_separated_records_are_not_utf16[five-char] PASSED
+tests/test_utf1632.py::test_short_null_separated_records_are_not_utf16[mixed-length] PASSED
+tests/test_utf1632.py::test_short_null_separated_records_are_not_utf16[three-char] PASSED
+tests/test_utf1632.py::test_short_null_separated_records_are_not_utf16[two-char] PASSED
 tests/test_utf1632.py::test_single_byte_returns_none PASSED
+tests/test_utf1632.py::test_single_character_records_are_utf16 PASSED
 tests/test_utf1632.py::test_text_quality_ascii_letters PASSED
 tests/test_utf1632.py::test_text_quality_no_letters PASSED
 tests/test_utf1632.py::test_text_quality_rejects_many_combining_marks PASSED
@@ -11212,6 +11772,7 @@ tests/test_utf1632.py::test_text_quality_rejects_many_controls PASSED
 tests/test_utf1632.py::test_text_quality_with_spaces PASSED
 tests/test_utf1632.py::test_too_short_for_utf16_returns_none PASSED
 tests/test_utf1632.py::test_too_short_for_utf32_returns_none PASSED
+tests/test_utf1632.py::test_utf16_ascii_with_an_out_of_phase_stretch_is_still_utf16 PASSED
 tests/test_utf1632.py::test_utf16_be_ascii_text PASSED
 tests/test_utf1632.py::test_utf16_be_cjk_text PASSED
 tests/test_utf1632.py::test_utf16_be_longer_text PASSED
@@ -11255,6 +11816,329 @@ tests/test_utf8.py::test_truncated_multibyte PASSED
 tests/test_utf8.py::test_valid_utf8_chinese PASSED
 tests/test_utf8.py::test_valid_utf8_emoji PASSED
 tests/test_utf8.py::test_valid_utf8_with_multibyte PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[-\xc3] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[-\xe3\x81] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[-\xe3\xff] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[-\xf0\x9f\x92] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[-\xf0\xff\xff] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[-] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[\xc3\xa9-\xc3] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[\xc3\xa9-\xe3\x81] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[\xc3\xa9-\xe3\xff] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[\xc3\xa9-\xf0\x9f\x92] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[\xc3\xa9-\xf0\xff\xff] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[\xc3\xa9-] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[\xf0\x9f\x8e\x89-\xc3] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[\xf0\x9f\x8e\x89-\xe3\x81] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[\xf0\x9f\x8e\x89-\xe3\xff] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[\xf0\x9f\x8e\x89-\xf0\x9f\x92] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[\xf0\x9f\x8e\x89-\xf0\xff\xff] PASSED
+tests/test_utf8_equivalence.py::test_chunk_boundary[\xf0\x9f\x8e\x89-] PASSED
+tests/test_utf8_equivalence.py::test_error_reported_in_chunk_after_lead PASSED
+tests/test_utf8_equivalence.py::test_every_truncation_of_valid_text PASSED
+tests/test_utf8_equivalence.py::test_mutated_valid_text PASSED
+tests/test_utf8_equivalence.py::test_random_fuzz PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\x7f] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xc0\xaf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xc1\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xc2\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xc3\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xc3] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xc3q] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xdf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xe0\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xe0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xe0\x9f\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xe0\xa0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xe0\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xe3\x81\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xe3\x81] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xe3\xff\x81] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xe3\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xe3] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xe4\xbd\xa0\xe5\xa5\xbd] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xed\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xed\x9f\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xed\xa0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xed\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xed\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xef\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf0\x80\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf0\x8f\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf0\x90\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf0\x9f\x8c\x8d] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf0\x9f\x92\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf0\x9f\x92] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf0\x9f\xff\x96] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf0\x9f\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf0\x9f] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf0\xff\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf0\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf0] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf4\x8f\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf4\x90\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf4\x90] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xf5\x80\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xfe] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-a] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-h\xc3\xa9llo] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[-hello world] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\x7f] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xc0\xaf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xc1\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xc2\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xc3\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xc3] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xc3q] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xdf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xe0\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xe0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xe0\x9f\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xe0\xa0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xe0\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xe3\x81\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xe3\x81] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xe3\xff\x81] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xe3\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xe3] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xe4\xbd\xa0\xe5\xa5\xbd] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xed\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xed\x9f\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xed\xa0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xed\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xed\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xef\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf0\x80\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf0\x8f\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf0\x90\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf0\x9f\x8c\x8d] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf0\x9f\x92\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf0\x9f\x92] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf0\x9f\xff\x96] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf0\x9f\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf0\x9f] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf0\xff\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf0\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf0] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf4\x8f\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf4\x90\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf4\x90] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xf5\x80\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xfe] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-a] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-h\xc3\xa9llo] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e-hello world] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\x7f] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xc0\xaf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xc1\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xc2\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xc3\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xc3] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xc3q] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xdf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xe0\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xe0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xe0\x9f\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xe0\xa0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xe0\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xe3\x81\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xe3\x81] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xe3\xff\x81] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xe3\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xe3] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xe4\xbd\xa0\xe5\xa5\xbd] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xed\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xed\x9f\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xed\xa0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xed\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xed\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xef\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf0\x80\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf0\x8f\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf0\x90\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf0\x9f\x8c\x8d] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf0\x9f\x92\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf0\x9f\x92] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf0\x9f\xff\x96] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf0\x9f\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf0\x9f] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf0\xff\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf0\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf0] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf4\x8f\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf4\x90\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf4\x90] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xf5\x80\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xfe] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -a] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -h\xc3\xa9llo] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[abc -hello world] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\x7f] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xc0\xaf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xc1\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xc2\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xc3\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xc3] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xc3q] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xdf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xe0\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xe0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xe0\x9f\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xe0\xa0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xe0\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xe3\x81\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xe3\x81] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xe3\xff\x81] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xe3\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xe3] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xe4\xbd\xa0\xe5\xa5\xbd] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xed\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xed\x9f\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xed\xa0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xed\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xed\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xef\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf0\x80\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf0\x8f\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf0\x90\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf0\x9f\x8c\x8d] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf0\x9f\x92\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf0\x9f\x92] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf0\x9f\xff\x96] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf0\x9f\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf0\x9f] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf0\xff\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf0\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf0] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf4\x8f\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf4\x90\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf4\x90] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xf5\x80\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xfe] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -a] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -h\xc3\xa9llo] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[valid \xc3\xbctf8 -hello world] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\x7f] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xc0\xaf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xc1\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xc2\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xc3\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xc3] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xc3q] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xdf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xe0\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xe0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xe0\x9f\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xe0\xa0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xe0\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xe3\x81\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xe3\x81] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xe3\xff\x81] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xe3\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xe3] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xe4\xbd\xa0\xe5\xa5\xbd] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xed\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xed\x9f\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xed\xa0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xed\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xed\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xef\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf0\x80\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf0\x8f\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf0\x90\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf0\x9f\x8c\x8d] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf0\x9f\x92\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf0\x9f\x92] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf0\x9f\xff\x96] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf0\x9f\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf0\x9f] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf0\xff\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf0\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf0] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf4\x8f\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf4\x90\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf4\x90] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xf5\x80\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xfe] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-a] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-h\xc3\xa9llo] PASSED
+tests/test_utf8_equivalence.py::test_snippet_after_valid_prefix[x-hello world] PASSED
+tests/test_utf8_equivalence.py::test_snippet_pairs PASSED
+tests/test_utf8_equivalence.py::test_snippets[\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\x7f] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xc0\xaf] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xc1\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xc2\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xc3\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xc3] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xc3q] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xdf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xe0\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xe0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xe0\x9f\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xe0\xa0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xe0\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xe3\x81\x00] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xe3\x81] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xe3\xff\x81] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xe3\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xe3] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xe4\xbd\xa0\xe5\xa5\xbd] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xed\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xed\x9f\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xed\xa0\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xed\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xed\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xef\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf0\x80\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf0\x8f\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf0\x90\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf0\x9f\x8c\x8d] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf0\x9f\x92\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf0\x9f\x92] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf0\x9f\xff\x96] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf0\x9f\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf0\x9f] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf0\xff\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf0\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf0] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf4\x8f\xbf\xbf] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf4\x90\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf4\x90] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xf5\x80\x80\x80] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xfe] PASSED
+tests/test_utf8_equivalence.py::test_snippets[\xff] PASSED
+tests/test_utf8_equivalence.py::test_snippets[] PASSED
+tests/test_utf8_equivalence.py::test_snippets[a] PASSED
+tests/test_utf8_equivalence.py::test_snippets[h\xc3\xa9llo] PASSED
+tests/test_utf8_equivalence.py::test_snippets[hello world] PASSED
 tests/test_utils.py::TestGetDataDir::test_cache_hit_skips_clone PASSED
 tests/test_utils.py::TestGetDataDir::test_cache_miss_triggers_reclone PASSED
 tests/test_utils.py::TestGetDataDir::test_empty_dir_triggers_clone PASSED
@@ -11275,847 +12159,699 @@ tests/test_validity.py::test_utf8_text_valid_under_utf8 PASSED
 
 =============================== warnings summary ===============================
 tests/test_accuracy.py::test_detect[ascii-en/_ude_1.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=id (encoding=ascii, file=_ude_1.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=id (encoding=ascii, file=_ude_1.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[ascii-en/book-stats.json]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=et (encoding=ascii, file=book-stats.json)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=et (encoding=ascii, file=book-stats.json)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[ascii-en/books.json]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=pt (encoding=ascii, file=books.json)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[ascii-en/cc_whitey.net_41002cca7e2a.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=mt (encoding=ascii, file=cc_whitey.net_41002cca7e2a.html)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[ascii-en/cc_www.willowgarden.net_72cc2b570f25.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=it (encoding=ascii, file=cc_www.willowgarden.net_72cc2b570f25.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=es (encoding=ascii, file=books.json)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[ascii-en/dummy-1.pem]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=pl (encoding=ascii, file=dummy-1.pem)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ms (encoding=ascii, file=dummy-1.pem)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[ascii-en/empty.json]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=None (encoding=ascii, file=empty.json)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=None (encoding=ascii, file=empty.json)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[ascii-en/parchments.json]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=cy (encoding=ascii, file=parchments.json)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[ascii-en/simple.json]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=et (encoding=ascii, file=simple.json)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=cy (encoding=ascii, file=parchments.json)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp037-en/_ude_1.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=no (encoding=cp037, file=_ude_1.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=no (encoding=cp037, file=_ude_1.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp037-en/ebcdic_gsf1_rec0.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=de (encoding=cp037, file=ebcdic_gsf1_rec0.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=de (encoding=cp037, file=ebcdic_gsf1_rec0.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp037-en/ebcdic_gsf1_rec120000.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ms (encoding=cp037, file=ebcdic_gsf1_rec120000.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ms (encoding=cp037, file=ebcdic_gsf1_rec120000.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp037-en/ebcdic_gsf1_rec20000.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=sv (encoding=cp037, file=ebcdic_gsf1_rec20000.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=sv (encoding=cp037, file=ebcdic_gsf1_rec20000.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp037-en/ebcdic_gsf1_rec200000.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=de (encoding=cp037, file=ebcdic_gsf1_rec200000.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=de (encoding=cp037, file=ebcdic_gsf1_rec200000.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp037-en/ebcdic_gsf1_rec5000.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ms (encoding=cp037, file=ebcdic_gsf1_rec5000.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ms (encoding=cp037, file=ebcdic_gsf1_rec5000.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp037-en/ebcdic_gsf1_rec60000.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ms (encoding=cp037, file=ebcdic_gsf1_rec60000.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ms (encoding=cp037, file=ebcdic_gsf1_rec60000.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp437-en/artpack_0196ciph_6aaccd2c9778.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=None (encoding=cp437, file=artpack_0196ciph_6aaccd2c9778.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=None (encoding=cp437, file=artpack_0196ciph_6aaccd2c9778.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp437-en/artpack_01adment_f7a22d9aadb5.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=None (encoding=cp437, file=artpack_01adment_f7a22d9aadb5.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=None (encoding=cp437, file=artpack_01adment_f7a22d9aadb5.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp437-en/artpack_02adment_ecdb700b997b.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=None (encoding=cp437, file=artpack_02adment_ecdb700b997b.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=None (encoding=cp437, file=artpack_02adment_ecdb700b997b.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp437-en/artpack_1-lhi-1_4173f875d1a5.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=None (encoding=cp437, file=artpack_1-lhi-1_4173f875d1a5.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=None (encoding=cp437, file=artpack_1-lhi-1_4173f875d1a5.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp437-en/artpack_1-lhi-1_65da662ee30a.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=None (encoding=cp437, file=artpack_1-lhi-1_65da662ee30a.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=None (encoding=cp437, file=artpack_1-lhi-1_65da662ee30a.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp437-en/artpack_3nt0994_afcc114eb29b.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=None (encoding=cp437, file=artpack_3nt0994_afcc114eb29b.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=None (encoding=cp437, file=artpack_3nt0994_afcc114eb29b.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp500-en/historic_056215185540.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=de (encoding=cp500, file=historic_056215185540.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=de (encoding=cp500, file=historic_056215185540.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp500-en/historic_32e575e305ca.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=de (encoding=cp500, file=historic_32e575e305ca.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=de (encoding=cp500, file=historic_32e575e305ca.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp500-en/historic_5e7db2859668.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=sv (encoding=cp500, file=historic_5e7db2859668.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=sv (encoding=cp500, file=historic_5e7db2859668.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp500-en/historic_a0a136e6fd4c.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ms (encoding=cp500, file=historic_a0a136e6fd4c.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ms (encoding=cp500, file=historic_a0a136e6fd4c.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp775-et/_ude_1.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=et, got=lt (encoding=cp775, file=_ude_1.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=et, got=lt (encoding=cp775, file=_ude_1.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp850-de/dos_101d61c5945b.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=de, got=fi (encoding=cp850, file=dos_101d61c5945b.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=de, got=fi (encoding=cp850, file=dos_101d61c5945b.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp850-de/dos_a3f0feee9c62.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=de, got=None (encoding=cp850, file=dos_a3f0feee9c62.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=de, got=None (encoding=cp850, file=dos_a3f0feee9c62.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp852-cs/_ude_1.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=cs, got=hr (encoding=cp852, file=_ude_1.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=cs, got=hr (encoding=cp852, file=_ude_1.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp858-en/historic_4173f875d1a5.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=None (encoding=cp858, file=historic_4173f875d1a5.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=None (encoding=cp858, file=historic_4173f875d1a5.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp858-en/historic_f7a22d9aadb5.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=None (encoding=cp858, file=historic_f7a22d9aadb5.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=None (encoding=cp858, file=historic_f7a22d9aadb5.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp866-mk/culturax_00000.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=mk, got=ru (encoding=cp866, file=culturax_00000.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=mk, got=ru (encoding=cp866, file=culturax_00000.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-1-de/po_29e5718b366e.po]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=de, got=en (encoding=iso-8859-1, file=po_29e5718b366e.po)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=de, got=en (encoding=iso-8859-1, file=po_29e5718b366e.po)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-1-is/cc_www.123dekk.is_667a0c710c25.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=is, got=no (encoding=iso-8859-1, file=cc_www.123dekk.is_667a0c710c25.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=is, got=no (encoding=iso-8859-1, file=cc_www.123dekk.is_667a0c710c25.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-1-is/cc_www.123dekk.is_6ccc10578ba1.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=is, got=no (encoding=iso-8859-1, file=cc_www.123dekk.is_6ccc10578ba1.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=is, got=no (encoding=iso-8859-1, file=cc_www.123dekk.is_6ccc10578ba1.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-1-pt/cc_12rcmec.net_f14d41b0712c.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=pt, got=en (encoding=iso-8859-1, file=cc_12rcmec.net_f14d41b0712c.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=pt, got=en (encoding=iso-8859-1, file=cc_12rcmec.net_f14d41b0712c.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-1-pt/cc_4funbr.net_a2629439a5ce.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=pt, got=fi (encoding=iso-8859-1, file=cc_4funbr.net_a2629439a5ce.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=pt, got=en (encoding=iso-8859-1, file=cc_4funbr.net_a2629439a5ce.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-1-pt/cc_kb.3gnt.net_7b1cd0dde6f9.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=pt, got=it (encoding=iso-8859-1, file=cc_kb.3gnt.net_7b1cd0dde6f9.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=pt, got=en (encoding=iso-8859-1, file=cc_kb.3gnt.net_7b1cd0dde6f9.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-1-pt/cc_mysticallianceuni24.1talk.net_10b882e390bb.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=pt, got=it (encoding=iso-8859-1, file=cc_mysticallianceuni24.1talk.net_10b882e390bb.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=pt, got=en (encoding=iso-8859-1, file=cc_mysticallianceuni24.1talk.net_10b882e390bb.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-1-pt/cc_mysticallianceuni24.1talk.net_a1850791ea61.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=pt, got=it (encoding=iso-8859-1, file=cc_mysticallianceuni24.1talk.net_a1850791ea61.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=pt, got=en (encoding=iso-8859-1, file=cc_mysticallianceuni24.1talk.net_a1850791ea61.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-14-gd/culturax_00000.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=gd, got=ga (encoding=iso-8859-14, file=culturax_00000.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=gd, got=ga (encoding=iso-8859-14, file=culturax_00000.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-14-gd/culturax_00001.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=gd, got=ga (encoding=iso-8859-14, file=culturax_00001.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=gd, got=ga (encoding=iso-8859-14, file=culturax_00001.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-14-gd/culturax_00002.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=gd, got=ga (encoding=iso-8859-14, file=culturax_00002.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=gd, got=ga (encoding=iso-8859-14, file=culturax_00002.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-14-gd/wikipedia_sentinel_14.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=gd, got=ga (encoding=iso-8859-14, file=wikipedia_sentinel_14.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=gd, got=ga (encoding=iso-8859-14, file=wikipedia_sentinel_14.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-14-gd/wikipedia_sentinel_5.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=gd, got=ga (encoding=iso-8859-14, file=wikipedia_sentinel_5.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=gd, got=ga (encoding=iso-8859-14, file=wikipedia_sentinel_5.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-15-fi/po_19f7015c0a1d.po]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fi, got=en (encoding=iso-8859-15, file=po_19f7015c0a1d.po)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=fi, got=en (encoding=iso-8859-15, file=po_19f7015c0a1d.po)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-15-fi/po_f6b83b6d2f73.po]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fi, got=en (encoding=iso-8859-15, file=po_f6b83b6d2f73.po)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=fi, got=en (encoding=iso-8859-15, file=po_f6b83b6d2f73.po)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-15-fr/cc_www.applicpub33.com_3b61f92c8c8e.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=en (encoding=iso-8859-15, file=cc_www.applicpub33.com_3b61f92c8c8e.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=fr, got=en (encoding=iso-8859-15, file=cc_www.applicpub33.com_3b61f92c8c8e.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-15-fr/cc_www.bdnet.com_3c37066f6f86.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=it (encoding=iso-8859-15, file=cc_www.bdnet.com_3c37066f6f86.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=fr, got=en (encoding=iso-8859-15, file=cc_www.bdnet.com_3c37066f6f86.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-15-fr/cc_www.ty-cado.com_4e6a8071e1be.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=en (encoding=iso-8859-15, file=cc_www.ty-cado.com_4e6a8071e1be.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=fr, got=en (encoding=iso-8859-15, file=cc_www.ty-cado.com_4e6a8071e1be.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-2-hr/po_75cfede70965.po]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=hr, got=sl (encoding=iso-8859-2, file=po_75cfede70965.po)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=hr, got=sl (encoding=iso-8859-2, file=po_75cfede70965.po)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-4-et/_ude_1.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=et, got=lt (encoding=iso-8859-4, file=_ude_1.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=et, got=lt (encoding=iso-8859-4, file=_ude_1.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-4-lv/cc_musee.pieces.gfx.free.fr_9679eb1e43e7.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=lv, got=lt (encoding=iso-8859-4, file=cc_musee.pieces.gfx.free.fr_9679eb1e43e7.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=lv, got=et (encoding=iso-8859-4, file=cc_musee.pieces.gfx.free.fr_9679eb1e43e7.html)
+    warnings.warn(
+
+tests/test_accuracy.py::test_detect[iso-8859-6-ar/cc_gaeb.gov.eg_96c34e80a37e.html]
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=ar, got=fa (encoding=iso-8859-6, file=cc_gaeb.gov.eg_96c34e80a37e.html)
+    warnings.warn(
+
+tests/test_accuracy.py::test_detect[iso-8859-6-ar/cc_gaeb.gov.eg_9861a21ca250.html]
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=ar, got=fa (encoding=iso-8859-6, file=cc_gaeb.gov.eg_9861a21ca250.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[maclatin2-hr/_enca_macce_hr.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=hr, got=sl (encoding=maclatin2, file=_enca_macce_hr.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=hr, got=sl (encoding=maclatin2, file=_enca_macce_hr.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-ar/cc_www.ediblearrangements.qa_bd97e1576cd9.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=ar, got=en (encoding=utf-16, file=cc_www.ediblearrangements.qa_bd97e1576cd9.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=ar, got=en (encoding=utf-16, file=cc_www.ediblearrangements.qa_bd97e1576cd9.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-da/cc_2770.nu_db679991dfb0.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=da, got=en (encoding=utf-16, file=cc_2770.nu_db679991dfb0.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=da, got=en (encoding=utf-16, file=cc_2770.nu_db679991dfb0.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-de/cc_ctibrace.ch_f3a686b38984.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=de, got=fi (encoding=utf-16, file=cc_ctibrace.ch_f3a686b38984.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=de, got=en (encoding=utf-16, file=cc_ctibrace.ch_f3a686b38984.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-de/cc_edudoc.educa.ch_de1cd6e6224a.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=de, got=en (encoding=utf-16, file=cc_edudoc.educa.ch_de1cd6e6224a.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=de, got=en (encoding=utf-16, file=cc_edudoc.educa.ch_de1cd6e6224a.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-de/cc_iccmo.de_2a553c226552.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=de, got=it (encoding=utf-16, file=cc_iccmo.de_2a553c226552.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=de, got=en (encoding=utf-16, file=cc_iccmo.de_2a553c226552.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-de/cc_iccmo.de_d45ff296c994.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=de, got=it (encoding=utf-16, file=cc_iccmo.de_d45ff296c994.html)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-16-en/cc_beltei.edu.kh_8c9e202cff33.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=no (encoding=utf-16, file=cc_beltei.edu.kh_8c9e202cff33.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=de, got=en (encoding=utf-16, file=cc_iccmo.de_d45ff296c994.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-en/cc_people.math.inha.ac.kr_e70882252d0c.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-16, file=cc_people.math.inha.ac.kr_e70882252d0c.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-16, file=cc_people.math.inha.ac.kr_e70882252d0c.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-en/iris-utf-16.csv]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=et (encoding=utf-16, file=iris-utf-16.csv)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-16-en/iris-utf-16.json]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=lt (encoding=utf-16, file=iris-utf-16.json)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-16, file=iris-utf-16.csv)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-es/cc_alcubilladeavellaneda.com_e083ece950c5.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=es, got=en (encoding=utf-16, file=cc_alcubilladeavellaneda.com_e083ece950c5.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=es, got=en (encoding=utf-16, file=cc_alcubilladeavellaneda.com_e083ece950c5.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-es/cc_hermosa.acta.es_b16cb1456c75.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=es, got=en (encoding=utf-16, file=cc_hermosa.acta.es_b16cb1456c75.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=es, got=en (encoding=utf-16, file=cc_hermosa.acta.es_b16cb1456c75.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-es/cc_www.avaluos.c-proesa.com.mx_1bbfda8d999c.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=es, got=en (encoding=utf-16, file=cc_www.avaluos.c-proesa.com.mx_1bbfda8d999c.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=es, got=en (encoding=utf-16, file=cc_www.avaluos.c-proesa.com.mx_1bbfda8d999c.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-fr/cc_ajeqsite.org_392e75fcc67b.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=ja (encoding=utf-16, file=cc_ajeqsite.org_392e75fcc67b.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=fr, got=ja (encoding=utf-16, file=cc_ajeqsite.org_392e75fcc67b.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-fr/cc_mdevmd.accesmad.org_1fe04a4e4a51.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=de (encoding=utf-16, file=cc_mdevmd.accesmad.org_1fe04a4e4a51.html)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-16-fr/cc_mdevmd.accesmad.org_297ef9947e2d.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16, file=cc_mdevmd.accesmad.org_297ef9947e2d.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=fr, got=en (encoding=utf-16, file=cc_mdevmd.accesmad.org_1fe04a4e4a51.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-fr/cc_www.ajeqsite.org_519e0f27cd80.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=ja (encoding=utf-16, file=cc_www.ajeqsite.org_519e0f27cd80.html)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-16-fr/culturax_OSCAR-2201_88371.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16, file=culturax_OSCAR-2201_88371.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-16-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16, file=culturax_OSCAR-2301_88370.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=fr, got=ja (encoding=utf-16, file=cc_www.ajeqsite.org_519e0f27cd80.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-he/cc_www.irob.org.il_f7842e00148a.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=he, got=en (encoding=utf-16, file=cc_www.irob.org.il_f7842e00148a.html)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-16-ja/cc_atem.org_15a71a5b1077.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=ja, got=it (encoding=utf-16, file=cc_atem.org_15a71a5b1077.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=he, got=en (encoding=utf-16, file=cc_www.irob.org.il_f7842e00148a.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-ko/cc_chem.yonsei.ac.kr_b467dbd03c90.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=ko, got=de (encoding=utf-16, file=cc_chem.yonsei.ac.kr_b467dbd03c90.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=ko, got=en (encoding=utf-16, file=cc_chem.yonsei.ac.kr_b467dbd03c90.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-ko/cc_hb1001.or.kr_887ee5c47b53.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=ko, got=en (encoding=utf-16, file=cc_hb1001.or.kr_887ee5c47b53.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=ko, got=en (encoding=utf-16, file=cc_hb1001.or.kr_887ee5c47b53.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-ko/cc_hb1001.or.kr_8f6edcddf70d.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=ko, got=en (encoding=utf-16, file=cc_hb1001.or.kr_8f6edcddf70d.html)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-16-mk/culturax_mC4_102724.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=mk, got=sr (encoding=utf-16, file=culturax_mC4_102724.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=ko, got=en (encoding=utf-16, file=cc_hb1001.or.kr_8f6edcddf70d.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-no/cc_troms.historielag.org_22de513d36e6.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=no, got=en (encoding=utf-16, file=cc_troms.historielag.org_22de513d36e6.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=no, got=en (encoding=utf-16, file=cc_troms.historielag.org_22de513d36e6.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-pt/cc_hhface.org_2fd702aba3ac.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=pt, got=ja (encoding=utf-16, file=cc_hhface.org_2fd702aba3ac.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=pt, got=ja (encoding=utf-16, file=cc_hhface.org_2fd702aba3ac.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-pt/cc_www.gaes.gov.mo_427d827fa881.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=pt, got=zh (encoding=utf-16, file=cc_www.gaes.gov.mo_427d827fa881.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=pt, got=zh (encoding=utf-16, file=cc_www.gaes.gov.mo_427d827fa881.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-sk/cc_1stchoiceaupairs.co.uk_8b2a1ed7a1fa.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=sk, got=en (encoding=utf-16, file=cc_1stchoiceaupairs.co.uk_8b2a1ed7a1fa.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=sk, got=en (encoding=utf-16, file=cc_1stchoiceaupairs.co.uk_8b2a1ed7a1fa.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-zh/cc_8o8.cn_59e88a7b7ab1.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=zh, got=en (encoding=utf-16, file=cc_8o8.cn_59e88a7b7ab1.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=zh, got=en (encoding=utf-16, file=cc_8o8.cn_59e88a7b7ab1.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-zh/cc_aleetacstyle.com_3f2683e3e618.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=zh, got=eo (encoding=utf-16, file=cc_aleetacstyle.com_3f2683e3e618.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=zh, got=eo (encoding=utf-16, file=cc_aleetacstyle.com_3f2683e3e618.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-zh/cc_chinaibt.com_70c0f51f2205.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=zh, got=en (encoding=utf-16, file=cc_chinaibt.com_70c0f51f2205.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=zh, got=ms (encoding=utf-16, file=cc_chinaibt.com_70c0f51f2205.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-zh/cc_fp1989.com_722388d879d4.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=zh, got=en (encoding=utf-16, file=cc_fp1989.com_722388d879d4.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=zh, got=en (encoding=utf-16, file=cc_fp1989.com_722388d879d4.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-zh/cc_hhface.org_29f332017908.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=zh, got=ja (encoding=utf-16, file=cc_hhface.org_29f332017908.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=zh, got=ja (encoding=utf-16, file=cc_hhface.org_29f332017908.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-zh/cc_huayuntielv.com_288ca00d31fd.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=zh, got=en (encoding=utf-16, file=cc_huayuntielv.com_288ca00d31fd.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=zh, got=en (encoding=utf-16, file=cc_huayuntielv.com_288ca00d31fd.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-zh/cc_www.chinaenhua.com_3f80a6bdc011.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=zh, got=it (encoding=utf-16, file=cc_www.chinaenhua.com_3f80a6bdc011.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=zh, got=en (encoding=utf-16, file=cc_www.chinaenhua.com_3f80a6bdc011.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-zh/cc_www.chinaprojector-eug.com_0b0272378564.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=zh, got=eo (encoding=utf-16, file=cc_www.chinaprojector-eug.com_0b0272378564.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=zh, got=eo (encoding=utf-16, file=cc_www.chinaprojector-eug.com_0b0272378564.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16be-en/historic_0d14cb55da52.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-16be, file=historic_0d14cb55da52.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-16be, file=historic_0d14cb55da52.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16be-en/historic_450e5e35d3ce.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-16be, file=historic_450e5e35d3ce.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=gd (encoding=utf-16be, file=historic_450e5e35d3ce.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16be-en/historic_f01bd179a307.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-16be, file=historic_f01bd179a307.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-16be, file=historic_f01bd179a307.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16be-en/nobom-utf16be.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=zh (encoding=utf-16be, file=nobom-utf16be.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-16be-fr/culturax_OSCAR-2201_88371.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16be, file=culturax_OSCAR-2201_88371.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-16be-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16be, file=culturax_OSCAR-2301_88370.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-16be-mk/culturax_mC4_102724.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=mk, got=sr (encoding=utf-16be, file=culturax_mC4_102724.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-16be, file=nobom-utf16be.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16le-en/historic_26e5e3aa9901.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-16le, file=historic_26e5e3aa9901.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=gd (encoding=utf-16le, file=historic_26e5e3aa9901.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16le-en/historic_474cd4b0fd5b.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-16le, file=historic_474cd4b0fd5b.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-16le, file=historic_474cd4b0fd5b.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16le-en/historic_9ea9f969decf.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-16le, file=historic_9ea9f969decf.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-16le, file=historic_9ea9f969decf.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16le-en/nobom-utf16le.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=zh (encoding=utf-16le, file=nobom-utf16le.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-16le-fr/culturax_OSCAR-2201_88371.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16le, file=culturax_OSCAR-2201_88371.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-16le-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16le, file=culturax_OSCAR-2301_88370.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-16le-mk/culturax_mC4_102724.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=mk, got=sr (encoding=utf-16le, file=culturax_mC4_102724.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-16le, file=nobom-utf16le.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32-en/historic_65aae76a2658.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32, file=historic_65aae76a2658.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32, file=historic_65aae76a2658.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32-en/historic_684951ba16f6.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32, file=historic_684951ba16f6.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32, file=historic_684951ba16f6.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32-en/historic_f85f5b39a997.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32, file=historic_f85f5b39a997.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32, file=historic_f85f5b39a997.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32-en/iris-utf-32.csv]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=et (encoding=utf-32, file=iris-utf-32.csv)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-32-en/iris-utf-32.json]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=lt (encoding=utf-32, file=iris-utf-32.json)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-32-es/culturax_mC4_87069.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=es, got=hu (encoding=utf-32, file=culturax_mC4_87069.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-32-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-32, file=culturax_OSCAR-2301_88370.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-32, file=iris-utf-32.csv)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32-mk/culturax_mC4_102724.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=mk, got=sr (encoding=utf-32, file=culturax_mC4_102724.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=mk, got=sr (encoding=utf-32, file=culturax_mC4_102724.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32be-en/historic_5ef73fe926fc.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32be, file=historic_5ef73fe926fc.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32be, file=historic_5ef73fe926fc.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32be-en/historic_e4be6790e41c.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32be, file=historic_e4be6790e41c.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32be, file=historic_e4be6790e41c.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32be-en/historic_eef68e56eb98.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32be, file=historic_eef68e56eb98.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32be, file=historic_eef68e56eb98.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32be-en/nobom-utf32be.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=zh (encoding=utf-32be, file=nobom-utf32be.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-32be-en/plane1-utf-32be.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=fr (encoding=utf-32be, file=plane1-utf-32be.html)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-32be-es/culturax_mC4_87069.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=es, got=hu (encoding=utf-32be, file=culturax_mC4_87069.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-32be-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-32be, file=culturax_OSCAR-2301_88370.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-32be, file=nobom-utf32be.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32be-mk/culturax_mC4_102724.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=mk, got=sr (encoding=utf-32be, file=culturax_mC4_102724.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=mk, got=sr (encoding=utf-32be, file=culturax_mC4_102724.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32le-en/historic_5100ecaf0082.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32le, file=historic_5100ecaf0082.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32le, file=historic_5100ecaf0082.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32le-en/historic_61c4115e7bf8.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32le, file=historic_61c4115e7bf8.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32le, file=historic_61c4115e7bf8.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32le-en/historic_eb9f3dfa12f3.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32le, file=historic_eb9f3dfa12f3.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ko (encoding=utf-32le, file=historic_eb9f3dfa12f3.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32le-en/nobom-utf32le.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=zh (encoding=utf-32le, file=nobom-utf32le.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-32le-en/plane1-utf-32le.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=fr (encoding=utf-32le, file=plane1-utf-32le.html)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-32le-es/culturax_mC4_87069.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=es, got=hu (encoding=utf-32le, file=culturax_mC4_87069.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-32le-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-32le, file=culturax_OSCAR-2301_88370.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-32le, file=nobom-utf32le.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32le-mk/culturax_mC4_102724.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=mk, got=sr (encoding=utf-32le, file=culturax_mC4_102724.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=mk, got=sr (encoding=utf-32le, file=culturax_mC4_102724.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-7-en/_ude_3.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=is (encoding=utf-7, file=_ude_3.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-7-es/signature_dependent_synthetic.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=es, got=hu (encoding=utf-7, file=signature_dependent_synthetic.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-7-fr/culturax_OSCAR-2201_88371.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-7, file=culturax_OSCAR-2201_88371.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-7-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-7, file=culturax_OSCAR-2301_88370.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-7-fr/signature_dependent_synthetic.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-7, file=signature_dependent_synthetic.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=nl (encoding=utf-7, file=_ude_3.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-7-it/signature_dependent_synthetic.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=it, got=vi (encoding=utf-7, file=signature_dependent_synthetic.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=it, got=fr (encoding=utf-7, file=signature_dependent_synthetic.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-7-mk/culturax_mC4_102724.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=mk, got=sr (encoding=utf-7, file=culturax_mC4_102724.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=mk, got=sr (encoding=utf-7, file=culturax_mC4_102724.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-da/cc_www.1tap.gg_ed3258beae72.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=da, got=it (encoding=utf-8, file=cc_www.1tap.gg_ed3258beae72.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=da, got=en (encoding=utf-8, file=cc_www.1tap.gg_ed3258beae72.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-en/_mozilla_bug306272_text.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=fi (encoding=utf-8, file=_mozilla_bug306272_text.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=fi (encoding=utf-8, file=_mozilla_bug306272_text.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-en/_ude_3.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=is (encoding=utf-8, file=_ude_3.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-8-en/boobooo.blogspot.com.xml]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=cs (encoding=utf-8, file=boobooo.blogspot.com.xml)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-8-en/cc_alexisbaskind.net_8b28d2d33ad5.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=no (encoding=utf-8, file=cc_alexisbaskind.net_8b28d2d33ad5.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=nl (encoding=utf-8, file=_ude_3.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-en/cc_www.00am.it_5da2030da228.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=it (encoding=utf-8, file=cc_www.00am.it_5da2030da228.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=it (encoding=utf-8, file=cc_www.00am.it_5da2030da228.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-en/cc_www.00am.it_fc6eda56a31f.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=it (encoding=utf-8, file=cc_www.00am.it_fc6eda56a31f.html)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-8-en/finnish-utf-8-latin-1-confusion.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=fi (encoding=utf-8, file=finnish-utf-8-latin-1-confusion.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=it (encoding=utf-8, file=cc_www.00am.it_fc6eda56a31f.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-en/iris-utf-8.csv]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=et (encoding=utf-8, file=iris-utf-8.csv)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-8-en/iris-utf-8.json]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=lt (encoding=utf-8, file=iris-utf-8.json)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-8, file=iris-utf-8.csv)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-en/playlist.m3u]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=ms (encoding=utf-8, file=playlist.m3u)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=ms (encoding=utf-8, file=playlist.m3u)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-es/cc_www.00podcast.es_b516b02ee8f0.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=es, got=en (encoding=utf-8, file=cc_www.00podcast.es_b516b02ee8f0.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=es, got=en (encoding=utf-8, file=cc_www.00podcast.es_b516b02ee8f0.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-es/cc_www.00podcast.es_cee86aa5cc6f.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=es, got=en (encoding=utf-8, file=cc_www.00podcast.es_cee86aa5cc6f.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=es, got=en (encoding=utf-8, file=cc_www.00podcast.es_cee86aa5cc6f.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-es/cc_www.gnu-media.org_058cbe890bad.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=es, got=en (encoding=utf-8, file=cc_www.gnu-media.org_058cbe890bad.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=es, got=en (encoding=utf-8, file=cc_www.gnu-media.org_058cbe890bad.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-et/cc_007.ee_b1a569e0994a.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=et, got=en (encoding=utf-8, file=cc_007.ee_b1a569e0994a.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=et, got=en (encoding=utf-8, file=cc_007.ee_b1a569e0994a.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-et/cc_www.%c3%b6%c3%b6jooks.ee_077a8791212c.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=et, got=fi (encoding=utf-8, file=cc_www.%c3%b6%c3%b6jooks.ee_077a8791212c.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=et, got=en (encoding=utf-8, file=cc_www.%c3%b6%c3%b6jooks.ee_077a8791212c.html)
+    warnings.warn(
+
+tests/test_accuracy.py::test_detect[utf-8-et/cc_www.01.ee_ccdec185b686.html]
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=et, got=en (encoding=utf-8, file=cc_www.01.ee_ccdec185b686.html)
+    warnings.warn(
+
+tests/test_accuracy.py::test_detect[utf-8-et/cc_www.01.ee_d47fbe18dd44.html]
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=et, got=en (encoding=utf-8, file=cc_www.01.ee_d47fbe18dd44.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-fr/cc_alexis-web.net_7d551b16bab8.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=en (encoding=utf-8, file=cc_alexis-web.net_7d551b16bab8.html)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-8-fr/cc_www.07.re_782ba67b4be7.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-8, file=cc_www.07.re_782ba67b4be7.html)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-8-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-8, file=culturax_OSCAR-2301_88370.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=fr, got=en (encoding=utf-8, file=cc_alexis-web.net_7d551b16bab8.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-it/cc_www.0-0-0.it_0e954ba7e2ff.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=it, got=de (encoding=utf-8, file=cc_www.0-0-0.it_0e954ba7e2ff.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=it, got=en (encoding=utf-8, file=cc_www.0-0-0.it_0e954ba7e2ff.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-it/cc_www.0-0-0.it_fa50a71340f1.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=it, got=de (encoding=utf-8, file=cc_www.0-0-0.it_fa50a71340f1.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=it, got=en (encoding=utf-8, file=cc_www.0-0-0.it_fa50a71340f1.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-it/cc_www.0-100.it_6dde057df324.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=it, got=en (encoding=utf-8, file=cc_www.0-100.it_6dde057df324.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=it, got=en (encoding=utf-8, file=cc_www.0-100.it_6dde057df324.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-it/cc_www.0-100.it_8f64ebb93a6b.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=it, got=en (encoding=utf-8, file=cc_www.0-100.it_8f64ebb93a6b.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=it, got=en (encoding=utf-8, file=cc_www.0-100.it_8f64ebb93a6b.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-kk/cc_alexnrock.info_7e56f529ca33.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=kk, got=ru (encoding=utf-8, file=cc_alexnrock.info_7e56f529ca33.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=kk, got=ru (encoding=utf-8, file=cc_alexnrock.info_7e56f529ca33.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-kk/cc_almakz.info_4aacd4d6f174.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=kk, got=mk (encoding=utf-8, file=cc_almakz.info_4aacd4d6f174.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=kk, got=mk (encoding=utf-8, file=cc_almakz.info_4aacd4d6f174.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-kk/cc_www.afor.academy_c5c4ee6a4853.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=kk, got=en (encoding=utf-8, file=cc_www.afor.academy_c5c4ee6a4853.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=kk, got=en (encoding=utf-8, file=cc_www.afor.academy_c5c4ee6a4853.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-ko/cc_000000.co.kr_d2e27d92c283.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=ko, got=en (encoding=utf-8, file=cc_000000.co.kr_d2e27d92c283.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=ko, got=en (encoding=utf-8, file=cc_000000.co.kr_d2e27d92c283.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-ko/cc_www.000000.co.kr_24027eee8944.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=ko, got=en (encoding=utf-8, file=cc_www.000000.co.kr_24027eee8944.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=ko, got=en (encoding=utf-8, file=cc_www.000000.co.kr_24027eee8944.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-ro/cc_0100.ro_c87da0012a54.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=ro, got=it (encoding=utf-8, file=cc_0100.ro_c87da0012a54.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=ro, got=en (encoding=utf-8, file=cc_0100.ro_c87da0012a54.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-ro/cc_07alaptare.ro_36dffa441a8b.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=ro, got=en (encoding=utf-8, file=cc_07alaptare.ro_36dffa441a8b.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=ro, got=en (encoding=utf-8, file=cc_07alaptare.ro_36dffa441a8b.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-ro/cc_www.075dermato.ro_bc2335574cf0.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=ro, got=it (encoding=utf-8, file=cc_www.075dermato.ro_bc2335574cf0.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=ro, got=it (encoding=utf-8, file=cc_www.075dermato.ro_bc2335574cf0.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-ro/cc_www.075dermato.ro_f52d9073ad8b.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=ro, got=it (encoding=utf-8, file=cc_www.075dermato.ro_f52d9073ad8b.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=ro, got=it (encoding=utf-8, file=cc_www.075dermato.ro_f52d9073ad8b.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-ru/cc_007.ee_2f338fde7d9c.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=ru, got=en (encoding=utf-8, file=cc_007.ee_2f338fde7d9c.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=ru, got=en (encoding=utf-8, file=cc_007.ee_2f338fde7d9c.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-sig-en/repo_262fb3358f9c.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-8-sig, file=repo_262fb3358f9c.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-8-sig, file=repo_262fb3358f9c.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-sig-en/repo_2de9235f1df6.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-8-sig, file=repo_2de9235f1df6.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-8-sig, file=repo_2de9235f1df6.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-sig-en/repo_30c92f017c28.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=fr (encoding=utf-8-sig, file=repo_30c92f017c28.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-8-sig-en/repo_7fdf47f7b8b4.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-8-sig, file=repo_7fdf47f7b8b4.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=fr (encoding=utf-8-sig, file=repo_30c92f017c28.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-sig-en/repo_83a5eef8ebd2.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=fr (encoding=utf-8-sig, file=repo_83a5eef8ebd2.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=fr (encoding=utf-8-sig, file=repo_83a5eef8ebd2.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-sig-en/repo_88144d06b2ff.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=fr (encoding=utf-8-sig, file=repo_88144d06b2ff.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-8-sig-en/repo_b4a7045568cb.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-8-sig, file=repo_b4a7045568cb.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[utf-8-sig-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-8-sig, file=culturax_OSCAR-2301_88370.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=en, got=fr (encoding=utf-8-sig, file=repo_88144d06b2ff.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-tg/cc_magrm.com_beb0c77075b8.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=tg, got=en (encoding=utf-8, file=cc_magrm.com_beb0c77075b8.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=tg, got=en (encoding=utf-8, file=cc_magrm.com_beb0c77075b8.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-vi/cc_101hoidap.asia_6fc302b17fa7.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=vi, got=en (encoding=utf-8, file=cc_101hoidap.asia_6fc302b17fa7.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=vi, got=en (encoding=utf-8, file=cc_101hoidap.asia_6fc302b17fa7.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-vi/cc_101hoidap.asia_dbf5922f577f.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=vi, got=en (encoding=utf-8, file=cc_101hoidap.asia_dbf5922f577f.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=vi, got=en (encoding=utf-8, file=cc_101hoidap.asia_dbf5922f577f.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-vi/cc_aag.aero_3f5fc7745352.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=vi, got=nl (encoding=utf-8, file=cc_aag.aero_3f5fc7745352.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=vi, got=nl (encoding=utf-8, file=cc_aag.aero_3f5fc7745352.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-vi/cc_aag.aero_af9c91f3a19e.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=vi, got=nl (encoding=utf-8, file=cc_aag.aero_af9c91f3a19e.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=vi, got=nl (encoding=utf-8, file=cc_aag.aero_af9c91f3a19e.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-vi/cc_www.2voz.asia_45b200e0a27e.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=vi, got=en (encoding=utf-8, file=cc_www.2voz.asia_45b200e0a27e.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=vi, got=en (encoding=utf-8, file=cc_www.2voz.asia_45b200e0a27e.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-vi/cc_www.2voz.asia_be0952afae64.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=vi, got=en (encoding=utf-8, file=cc_www.2voz.asia_be0952afae64.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=vi, got=en (encoding=utf-8, file=cc_www.2voz.asia_be0952afae64.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-zh/cc_0115.ee_2e4163613535.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=zh, got=it (encoding=utf-8, file=cc_0115.ee_2e4163613535.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=zh, got=it (encoding=utf-8, file=cc_0115.ee_2e4163613535.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1250-hu/bbc.co.uk.hu.forum.xml]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=hu, got=ro (encoding=windows-1250, file=bbc.co.uk.hu.forum.xml)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=hu, got=ro (encoding=windows-1250, file=bbc.co.uk.hu.forum.xml)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1250-hu/bbc.co.uk.hu.learningenglish.xml]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=hu, got=ro (encoding=windows-1250, file=bbc.co.uk.hu.learningenglish.xml)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=hu, got=pl (encoding=windows-1250, file=bbc.co.uk.hu.learningenglish.xml)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1250-hu/bbc.co.uk.hu.pressreview.xml]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=hu, got=pl (encoding=windows-1250, file=bbc.co.uk.hu.pressreview.xml)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=hu, got=pl (encoding=windows-1250, file=bbc.co.uk.hu.pressreview.xml)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1250-hu/bbc.co.uk.hu.xml]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=hu, got=pl (encoding=windows-1250, file=bbc.co.uk.hu.xml)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=hu, got=pl (encoding=windows-1250, file=bbc.co.uk.hu.xml)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1250-pl/cc_68lo.edu.pl_80d8c1771f2c.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=pl, got=hu (encoding=windows-1250, file=cc_68lo.edu.pl_80d8c1771f2c.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=pl, got=hu (encoding=windows-1250, file=cc_68lo.edu.pl_80d8c1771f2c.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1250-sl/_enca_cp1250_sl.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=sl, got=hr (encoding=windows-1250, file=_enca_cp1250_sl.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=sl, got=hr (encoding=windows-1250, file=_enca_cp1250_sl.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1250-sr/github_bug_672.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=sr, got=hr (encoding=windows-1250, file=github_bug_672.txt)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=sr, got=hr (encoding=windows-1250, file=github_bug_672.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1252-fr/cc_fisc.1082.be_9458e047495c.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fr, got=en (encoding=windows-1252, file=cc_fisc.1082.be_9458e047495c.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=fr, got=en (encoding=windows-1252, file=cc_fisc.1082.be_9458e047495c.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1252-pt/cc_barrosbrito.com_71ce70acaf4f.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=pt, got=en (encoding=windows-1252, file=cc_barrosbrito.com_71ce70acaf4f.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=pt, got=en (encoding=windows-1252, file=cc_barrosbrito.com_71ce70acaf4f.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1252-pt/cc_batistaprocar.com_50a2ae0e4528.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=pt, got=it (encoding=windows-1252, file=cc_batistaprocar.com_50a2ae0e4528.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=pt, got=it (encoding=windows-1252, file=cc_batistaprocar.com_50a2ae0e4528.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1252-pt/cc_fnb.co.mz_ad28ff4b69f7.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=pt, got=en (encoding=windows-1252, file=cc_fnb.co.mz_ad28ff4b69f7.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=pt, got=en (encoding=windows-1252, file=cc_fnb.co.mz_ad28ff4b69f7.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1252-pt/cc_pt.bclevr.com_3e049d83e503.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=pt, got=it (encoding=windows-1252, file=cc_pt.bclevr.com_3e049d83e503.html)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[windows-1252-pt/cc_pt.bclevr.com_dd1cece444ad.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=pt, got=it (encoding=windows-1252, file=cc_pt.bclevr.com_dd1cece444ad.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=pt, got=en (encoding=windows-1252, file=cc_pt.bclevr.com_3e049d83e503.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1256-ar/cc_afaqdubai.ae_1937c731bbd2.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=ar, got=fa (encoding=windows-1256, file=cc_afaqdubai.ae_1937c731bbd2.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=ar, got=fa (encoding=windows-1256, file=cc_afaqdubai.ae_1937c731bbd2.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1256-fa/cc_iranfastener.ir_8490b810641d.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fa, got=ar (encoding=windows-1256, file=cc_iranfastener.ir_8490b810641d.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=fa, got=ar (encoding=windows-1256, file=cc_iranfastener.ir_8490b810641d.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1256-fa/cc_iranfastener.ir_89d0d0559d0a.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=fa, got=ar (encoding=windows-1256, file=cc_iranfastener.ir_89d0d0559d0a.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=fa, got=ar (encoding=windows-1256, file=cc_iranfastener.ir_89d0d0559d0a.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1257-et/_ude_1.txt]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=et, got=lt (encoding=windows-1257, file=_ude_1.txt)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[windows-1257-et/cc_pstroika.com_ea7846af9094.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=et, got=lt (encoding=windows-1257, file=cc_pstroika.com_ea7846af9094.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=et, got=lt (encoding=windows-1257, file=_ude_1.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1257-lt/cc_www.dutymanstore.com_ecc6b5dea65c.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=lt, got=et (encoding=windows-1257, file=cc_www.dutymanstore.com_ecc6b5dea65c.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=lt, got=et (encoding=windows-1257, file=cc_www.dutymanstore.com_ecc6b5dea65c.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1257-lv/cc_5.179.20.1_81_6da6b1baf1fe.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=lv, got=et (encoding=windows-1257, file=cc_5.179.20.1_81_6da6b1baf1fe.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=lv, got=et (encoding=windows-1257, file=cc_5.179.20.1_81_6da6b1baf1fe.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1257-lv/cc_panzerkampf.org_fbd55d35805c.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=lv, got=lt (encoding=windows-1257, file=cc_panzerkampf.org_fbd55d35805c.html)
-    warnings.warn(
-
-tests/test_accuracy.py::test_detect[windows-1257-lv/cc_www.latvia.mid.ru_c9438ca0a22c.html]
-  $(@D)/tests/test_accuracy.py:144: UserWarning: Language mismatch: expected=lv, got=et (encoding=windows-1257, file=cc_www.latvia.mid.ru_c9438ca0a22c.html)
+  $(@D)/tests/test_accuracy.py:141: UserWarning: Language mismatch: expected=lv, got=lt (encoding=windows-1257, file=cc_panzerkampf.org_fbd55d35805c.html)
     warnings.warn(
 
 tests/test_api.py::test_rename_legacy_true
-  $(@D)/tests/test_api.py:145: DeprecationWarning: should_rename_legacy is deprecated, use prefer_superset instead
+  $(@D)/tests/test_api.py:194: DeprecationWarning: should_rename_legacy is deprecated, use prefer_superset instead
     result = chardet.detect(
 
 tests/test_api.py::test_rename_legacy_detect_all
-  $(@D)/tests/test_api.py:161: DeprecationWarning: should_rename_legacy is deprecated, use prefer_superset instead
+  $(@D)/tests/test_api.py:210: DeprecationWarning: should_rename_legacy is deprecated, use prefer_superset instead
     results = chardet.detect_all(b"Hello world", should_rename_legacy=True)
 
 tests/test_api.py::test_rename_legacy_detector
-  $(@D)/tests/test_api.py:173: DeprecationWarning: should_rename_legacy is deprecated, use prefer_superset instead
+  $(@D)/tests/test_api.py:222: DeprecationWarning: should_rename_legacy is deprecated, use prefer_superset instead
     det = UniversalDetector(should_rename_legacy=True)
 
 tests/test_orchestrator.py::test_encoding_era_filtering
@@ -12123,4 +12859,4 @@ tests/test_orchestrator.py::test_encoding_era_filtering
     result = testfunction(**testargs)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 11254 passed, 6 deselected, 12 xfailed, 212 warnings ========
+======== 12138 passed, 6 deselected, 12 xfailed, 175 warnings ========
