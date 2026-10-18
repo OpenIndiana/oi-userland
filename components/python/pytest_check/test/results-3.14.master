@@ -5,7 +5,8 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: tox.ini
 testpaths: tests
-collecting ... collected 106 items
+collecting ... collected 123 items
+Collected 0 items to run in parallel
 
 tests/test_alt_names.py::test_alt_names PASSED
 tests/test_any_failures.py::test_any_failures_returns_true_when_checks_fail PASSED
@@ -33,10 +34,19 @@ tests/test_functions.py::test_passing_check_functions PASSED
 tests/test_functions.py::test_failing_check_functions PASSED
 tests/test_functions.py::test_failing_check_functions_with_xfail PASSED
 tests/test_helpers.py::test_sequence_with_helper_funcs PASSED
-tests/test_locals.py::test_locals_context_manager PASSED
-tests/test_locals.py::test_locals_check_function PASSED
+tests/test_isolated_asyncio.py::test_isolated_asyncio PASSED
+tests/test_isolated_asyncio.py::test_isolated_asyncio_in_subprocess PASSED
+tests/test_locals.py::test_locals[function] PASSED
+tests/test_locals.py::test_locals[context] PASSED
+tests/test_locals.py::test_long_locals_follow_verbosity[function-default] PASSED
+tests/test_locals.py::test_long_locals_follow_verbosity[function-v] PASSED
+tests/test_locals.py::test_long_locals_follow_verbosity[function-vv] PASSED
+tests/test_locals.py::test_long_locals_follow_verbosity[context-default] PASSED
+tests/test_locals.py::test_long_locals_follow_verbosity[context-v] PASSED
+tests/test_locals.py::test_long_locals_follow_verbosity[context-vv] PASSED
 tests/test_logging.py::test_log PASSED
 tests/test_logging.py::test_print PASSED
+tests/test_logging.py::test_logging_to_a_file_example PASSED
 tests/test_maxfail.py::test_maxfail_behavior[1-expected_outcomes0-expected_lines0] PASSED
 tests/test_maxfail.py::test_maxfail_behavior[2-expected_outcomes1-expected_lines1] PASSED
 tests/test_maxfail.py::test_maxfail_behavior[3-expected_outcomes2-None] PASSED
@@ -46,6 +56,7 @@ tests/test_non_assert_exceptions.py::test_index_error PASSED
 tests/test_non_assert_exceptions.py::test_key_error PASSED
 tests/test_non_assert_exceptions.py::test_attribute_error PASSED
 tests/test_not_in_test.py::test_check_not_in_a_test PASSED
+tests/test_parallel_threads.py::test_check_failures_leak_across_parallel_threads PASSED
 tests/test_pseudo_tb_corner_cases.py::test_is_user_trace_frame_filters_internal_and_module_frames PASSED
 tests/test_pseudo_tb_corner_cases.py::test_extract_exception_summary_handles_empty_and_type_only_lines PASSED
 tests/test_pseudo_tb_corner_cases.py::test_extract_exception_summary_skips_blank_lines PASSED
@@ -71,6 +82,8 @@ tests/test_raises.py::test_raises_with_exception_value PASSED
 tests/test_raises.py::test_raises_with_empty_exception_value PASSED
 tests/test_raises.py::test_raises_with_none_exception_value PASSED
 tests/test_raises.py::test_raises_custom_msg PASSED
+tests/test_raises.py::test_raises_missing_exception_with_exitfirst[context] PASSED
+tests/test_raises.py::test_raises_missing_exception_with_exitfirst[callable] PASSED
 tests/test_red.py::test_red PASSED
 tests/test_red.py::test_no_red PASSED
 tests/test_reportlog.py::test_report_log_does_not_crash SKIPPED (req...)
@@ -96,6 +109,11 @@ tests/test_tb_style.py::test_traceback_style_no PASSED
 tests/test_tb_style.py::test_traceback_style_default PASSED
 tests/test_thread.py::test_failing_threaded_testcode PASSED
 tests/test_thread.py::test_passing_threaded_testcode PASSED
+tests/test_thread.py::test_xfailed_state_is_aggregated_from_child_thread PASSED
+tests/test_thread.py::test_thread_context_propagation_is_idempotent PASSED
+tests/test_thread.py::test_concurrent_check_failures_are_tracked_per_thread PASSED
+tests/test_thread_runner_compat.py::test_check_failures_are_isolated_across_pytest_swarm_items SKIPPED
+tests/test_thread_runner_compat.py::test_check_failures_are_isolated_across_pytest_freethreaded_workers SKIPPED
 tests/test_tracebackhide.py::test_3rd_party_traceback[site-packages/foo.py] PASSED
 tests/test_tracebackhide.py::test_3rd_party_traceback[dist-packages/bar.py] PASSED
 tests/test_tracebackhide.py::test_normal_pseudo_traceback PASSED
@@ -115,6 +133,6 @@ tests/test_xfail.py::test_xfail_raises_multiple_marks_one_matches PASSED
 tests/test_xfail.py::test_xfail_mypy PASSED
 
 =========================== short test summary info ============================
-======== 105 passed, 1 skipped ========
+======== 120 passed, 3 skipped ========
   py$(PYV): OK
   congratulations :)

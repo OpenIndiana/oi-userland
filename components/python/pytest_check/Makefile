@@ -20,17 +20,14 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_check
-HUMAN_VERSION =			2.9.1
+HUMAN_VERSION =			3.0.3
 COMPONENT_SUMMARY =		A pytest plugin that allows multiple failures per test.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2d8c9f1fe5cceb0b41c480e1454e95e9ed6a3a534bf2c7e3e0f39167b11cf88b
+	sha256:e2aa90b678b6a2e0f42b5fe034051c9867450c99b3e61393070a4e480c32ba57
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Random directory name
-COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/hatchling
@@ -38,3 +35,4 @@ REQUIRED_PACKAGES.python += library/python/packaging
 REQUIRED_PACKAGES.python += library/python/pytest
 REQUIRED_PACKAGES.python += library/python/typing-extensions
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-run-parallel
