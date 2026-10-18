@@ -1,37 +1,37 @@
 We do not need to check coverage for this project.
 
---- python_discovery-1.6.0/pyproject.toml.orig
-+++ python_discovery-1.6.0/pyproject.toml
-@@ -54,8 +54,6 @@
+--- python_discovery-1.6.3/pyproject.toml.orig
++++ python_discovery-1.6.3/pyproject.toml
+@@ -53,8 +53,6 @@
  
  [dependency-groups]
  test = [
 -  "covdefaults>=2.3",
--  "coverage>=7.5.4",
+-  "coverage>=7.6.1",
    "pytest>=8.3.5",
-   "pytest-mock>=3.14",
-   "setuptools>=75.1",
---- python_discovery-1.6.0/tox.toml.orig
-+++ python_discovery-1.6.0/tox.toml
-@@ -10,10 +10,8 @@
- pass_env = ["DIFF_AGAINST", "PYTEST_*"]
+   "pytest-mock>=3.14.1",
+   "setuptools>=75.3.4",
+--- python_discovery-1.6.3/tox.toml.orig
++++ python_discovery-1.6.3/tox.toml
+@@ -11,10 +11,8 @@
+ pass_env = [ "DIFF_AGAINST", "PYTEST_*" ]
  set_env.COVERAGE_FILE = "{work_dir}{/}.coverage.{env_name}"
  commands = [
--  ["coverage", "erase"],
+-  [ "coverage", "erase" ],
    [
 -    "coverage",
 -    "run",
 +    "python",
      "-m",
      "pytest",
-     { replace = "posargs", extend = true, default = [
-@@ -22,9 +20,6 @@
+     { replace = "posargs", default = [
+@@ -23,9 +21,6 @@
        "tests",
-     ] },
+     ], extend = true },
    ],
--  ["coverage", "combine"],
--  ["coverage", "report"],
--  ["coverage", "html", "-d", "{env_tmp_dir}{/}htmlcov"],
+-  [ "coverage", "combine" ],
+-  [ "coverage", "report" ],
+-  [ "coverage", "html", "-d", "{env_tmp_dir}{/}htmlcov" ],
  ]
  
- [env.fix]
+ [env_pkg_base]
