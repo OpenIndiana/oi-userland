@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		platformdirs
-HUMAN_VERSION =			4.11.9
+HUMAN_VERSION =			4.13.4
 COMPONENT_SUMMARY =		A small Python package for determining appropriate platform-specific dirs, e.g. a \`user data dir\`.
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/platformdirs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e2c66a8d384596cd98e3c4aea2d761df7bac95d9d8a2cc3946daa8cdafdaebc1
+	sha256:dd96496961684a7f42041923f842ec7494e09f5e87aded99117e1109cd40570e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,6 +37,13 @@ PYTHON_TEST_BOOTSTRAP = yes
 PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Testing needs the XDG_RUNTIME_DIR variable pointing to own runtime directory
+# with permissions 0700
+COMPONENT_PRE_TEST_ACTION += $(MKDIR) $(COMPONENT_TEST_BUILD_DIR)/.xdg_runtime_dir ;
+COMPONENT_PRE_TEST_ACTION += $(CHMOD) 0700 $(COMPONENT_TEST_BUILD_DIR)/.xdg_runtime_dir ;
+COMPONENT_TEST_ENV += XDG_RUNTIME_DIR=$(COMPONENT_TEST_BUILD_DIR)/.xdg_runtime_dir
+COMPONENT_POST_TEST_ACTION += $(RM) -r $(COMPONENT_TEST_BUILD_DIR)/.xdg_runtime_dir ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/hatch-vcs
