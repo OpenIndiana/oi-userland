@@ -19,13 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		soupsieve
-HUMAN_VERSION =			2.9.2
+HUMAN_VERSION =			3.0.3
 COMPONENT_SUMMARY =		A modern CSS selector implementation for Beautiful Soup.
 COMPONENT_PROJECT_URL =		https://github.com/facelessuser/soupsieve
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4a55d8cf158a9c2e587fa4922f1bbb91d68ac829e2d6f25403a85747c71daf74
+	sha256:7dcf6022eed0399eb9934a75e020148f7a2024c37b7dfcd3cf2c5505d69c364e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.md
+
+TEST_STYLE = pytest
 
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
@@ -43,9 +45,14 @@ PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_HATCH += dev
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/hatchling
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/beautifulsoup4
+TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/lxml
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
