@@ -15,18 +15,19 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lazy_object_proxy
-HUMAN_VERSION =			1.12.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.13.0
 COMPONENT_SUMMARY =		A fast and thorough lazy object proxy.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1f5a462d92fd0cfb82f1fab28b51bfb209fabbe6aabf7f0d51472c0c124c0c61
+	sha256:ce34046cb021d69c72d05ddb83821ecfd4d2d0a5d43a93c5cd01c9e34779cf14
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# Python 3.9 is not supported by lazy-object-proxy >= 1.13.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -39,3 +40,4 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools-scm
+TEST_REQUIRED_PACKAGES.python += library/python/wrapt
