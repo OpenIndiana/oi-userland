@@ -1,8 +1,8 @@
 We do not have devpi_process available (yet)
 
---- tox-4.64.7/pyproject.toml.orig
-+++ tox-4.64.7/pyproject.toml
-@@ -89,7 +89,6 @@
+--- tox-4.67.0/pyproject.toml.orig
++++ tox-4.67.0/pyproject.toml
+@@ -87,7 +87,6 @@
    "covdefaults>=2.3",
    "coverage>=7.13.4",
    "detect-test-pollution>=1.2",
@@ -10,8 +10,8 @@ We do not have devpi_process available (yet)
    "diff-cover>=10.2",
    "distlib>=0.4",
    "docutils>=0.21",
---- tox-4.64.7/src/tox/pytest.py.orig
-+++ tox-4.64.7/src/tox/pytest.py
+--- tox-4.67.0/src/tox/pytest.py.orig
++++ tox-4.67.0/src/tox/pytest.py
 @@ -17,7 +17,6 @@
  
  import pytest
@@ -36,10 +36,10 @@ We do not have devpi_process available (yet)
  def _invalid_index_fake_port() -> int:
      with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as socket_handler:
          socket_handler.bind(("", 0))
---- tox-4.64.7/tests/test_provision.py.orig
-+++ tox-4.64.7/tests/test_provision.py
+--- tox-4.67.0/tests/test_provision.py.orig
++++ tox-4.67.0/tests/test_provision.py
 @@ -20,7 +20,6 @@
-     from collections.abc import Callable, Iterator, Sequence
+     from collections.abc import Callable, Generator, Sequence
  
      from build import DistributionType
 -    from devpi_process import Index, IndexServer
@@ -139,7 +139,7 @@ We do not have devpi_process available (yet)
  def test_provision_invalid_platform_regex(tox_project: ToxProjectCreator) -> None:
      toml = """
      requires = ["p"]
-@@ -310,29 +230,6 @@
+@@ -336,29 +256,6 @@
  
  
  @pytest.mark.integration
@@ -169,7 +169,7 @@ We do not have devpi_process available (yet)
  def test_provision_plugin_runner_in_provision(tox_project: ToxProjectCreator, tmp_path: Path) -> None:
      """Ensure that provision environment can be explicitly configured."""
      log = tmp_path / "out.log"
-@@ -341,17 +238,6 @@
+@@ -367,17 +264,6 @@
          proj.run("r", "-e", "py", "--result-json", str(log))
  
  
@@ -187,7 +187,7 @@ We do not have devpi_process available (yet)
  def test_provision_acquires_file_lock(tox_project: ToxProjectCreator) -> None:
      lock_held_during_provision: dict[str, bool] = {}
  
-@@ -382,28 +268,6 @@
+@@ -408,28 +294,6 @@
      assert "unrecognized arguments: --some-unknown-flag" in result.out
  
  
@@ -216,7 +216,7 @@ We do not have devpi_process available (yet)
  @pytest.mark.parametrize("subcommand", ["r", "p", "de", "l", "d", "c", "q", "e", "le"])
  def test_provision_default_arguments_exists(tox_project: ToxProjectCreator, subcommand: str) -> None:
      ini = r"""
-@@ -420,37 +284,6 @@
+@@ -446,37 +310,6 @@
          assert hasattr(outcome.state.conf.options, argument)
  
  
