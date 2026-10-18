@@ -15,21 +15,22 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycodestyle
-HUMAN_VERSION =			2.14.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.15.0
 COMPONENT_SUMMARY =		Python style guide checker
 COMPONENT_PROJECT_URL =		https://pycodestyle.pycqa.org/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/PyCQA/pycodestyle/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ffcf4dc55f1e5fbdc6dd6acf5db0fd07ded534ae376eee23a742e1410b48d9ae
+	sha256:3cb6afba1667f13b4ca7884154299108ef8e633a36526e29412a5cec7b5db4bd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# Python 3.9 is not supported by pycodestyle >= 2.15.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
