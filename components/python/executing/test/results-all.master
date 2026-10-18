@@ -4,8 +4,14 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 226 items
+collecting ... collected 235 items
 
+tests/test_annotation_detection.py::test_annotation_header_ends_at_body[class C:\n    x: int-__annotate__] SKIPPED
+tests/test_annotation_detection.py::test_annotation_header_ends_at_body[def f(x: int) -> str: pass-__annotate__] SKIPPED
+tests/test_annotation_detection.py::test_annotation_header_ends_at_body[def f[T: int](x: T): pass-T] SKIPPED
+tests/test_annotation_detection.py::test_annotation_header_ends_at_body[def f[T: int](x: T): pass-__annotate__] SKIPPED
+tests/test_annotation_detection.py::test_annotation_header_ends_at_body[type Alias = list[int]-Alias] SKIPPED
+tests/test_annotation_detection.py::test_annotation_header_ends_at_body[x: int-__annotate__] SKIPPED
 tests/test_ipython.py::test_one_lookup PASSED
 tests/test_ipython.py::test_two_statement_lookups PASSED
 tests/test_main.py::TestFiles::test_module_files SKIPPED (These test...)
@@ -211,6 +217,7 @@ tests/test_main.py::test_small_samples[e7b78c6892baf1b134f78b3ba897ee6592b11358c
 tests/test_main.py::test_small_samples[e8a94f0a994ea84627b7cbc9132cf519ccaa6d756f8cb3458cf019e672a510a4.py] PASSED
 tests/test_main.py::test_small_samples[e920a2f2a7dd13d874987bed61fd5e18b8a63c9e838c24f6ad0aa08d3391bf04.py] PASSED
 tests/test_main.py::test_small_samples[ea94f24a1d9b57c7a7d62c428082790caae2fa16429db2e58b2f4addb67a1964.py] PASSED
+tests/test_main.py::test_small_samples[ee56048c6bc0351ee4982e39000395bb93e8ede617be00a5e8366df96f9bc410.py] PASSED
 tests/test_main.py::test_small_samples[except_cleanup.py] PASSED
 tests/test_main.py::test_small_samples[f09192915e250c0e1630b5d9add1328874fcb799cc508db1d7b6a880b2d0acea.py] PASSED
 tests/test_main.py::test_small_samples[f4486595a4c229797a00be326b58743a5a386e343d70c54d451de212f97a7a8b.py] PASSED
@@ -221,6 +228,8 @@ tests/test_main.py::test_small_samples[fc6eb521024986baa84af2634f638e40af090be4a
 tests/test_main.py::test_small_samples[fe0fdfd09575f3cc013c0bc30a257104d3219a00fd6f777303ca17401f09ad9d.py] PASSED
 tests/test_main.py::test_small_samples[ff54d68f6c5751c3d7316722b049b34801c6e28b67bb8338490b4fee32c3e4c5.py] PASSED
 tests/test_main.py::test_small_samples[load_deref.py] PASSED
+tests/test_main.py::test_small_samples[ordinary_comparison_is_not_annotation_code.py] PASSED
+tests/test_main.py::test_small_samples[pattern_matching_signed_literal.py] PASSED
 tests/test_pytest.py::test_asttext PASSED
 tests/test_pytest.py::test_bad_linecache PASSED
 tests/test_pytest.py::test_exception_catching PASSED
@@ -233,6 +242,6 @@ tests/test_pytest.py::test_pytest PASSED
 tests/test_pytest.py::test_pytest_rewrite PASSED
 tests/test_pytest.py::test_source_file_text_change PASSED
 
-======== 207 passed, 17 skipped, 2 xfailed ========
+======== 210 passed, 23 skipped, 2 xfailed ========
   py$(PYV): OK
   congratulations :)
