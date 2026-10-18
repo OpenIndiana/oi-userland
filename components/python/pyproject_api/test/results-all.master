@@ -4,31 +4,66 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 61 items
+collecting ... collected 102 items
 
 tests/test_backend.py::test_invalid_module PASSED
 tests/test_backend.py::test_invalid_request PASSED
 tests/test_backend.py::test_exception PASSED
 tests/test_backend.py::test_valid_request PASSED
 tests/test_backend.py::test_reuse_process PASSED
+tests/test_backend.py::test_reused_process_non_serializable_exit[False-Path('failure.txt')] PASSED
+tests/test_backend.py::test_reused_process_non_serializable_exit[False-b'failure'] PASSED
+tests/test_backend.py::test_reused_process_non_serializable_exit[True-Path('failure.txt')] PASSED
+tests/test_backend.py::test_reused_process_non_serializable_exit[True-b'failure'] PASSED
 tests/test_backend.py::test_read_line_success PASSED
 tests/test_backend.py::test_read_line_eof_before_newline PASSED
 tests/test_backend.py::test_read_line_eof_at_the_beginning PASSED
 tests/test_frontend.py::test_missing_backend PASSED
+tests/test_frontend.py::test_relative_project_folder PASSED
+tests/test_frontend.py::test_relative_project_folder_rejects_root_as_metadata_directory[wheel] PASSED
+tests/test_frontend.py::test_relative_project_folder_rejects_root_as_metadata_directory[editable] PASSED
+tests/test_frontend.py::test_large_command_with_backend_output[stdout] PASSED
+tests/test_frontend.py::test_large_command_with_backend_output[stderr] PASSED
+tests/test_frontend.py::test_backend_output_with_invalid_bytes[stdout] PASSED
+tests/test_frontend.py::test_backend_output_with_invalid_bytes[stderr] PASSED
+tests/test_frontend.py::test_large_command_with_failed_backend PASSED
 tests/test_frontend.py::test_missing_required_cmd[build_wheel] PASSED
 tests/test_frontend.py::test_missing_required_cmd[build_sdist] PASSED
 tests/test_frontend.py::test_empty_pyproject PASSED
+tests/test_frontend.py::test_create_args_from_folder_rejects_out_of_tree_backend_path[parent] PASSED
+tests/test_frontend.py::test_create_args_from_folder_rejects_out_of_tree_backend_path[absolute-outside] PASSED
+tests/test_frontend.py::test_create_args_from_folder_rejects_out_of_tree_backend_path[absolute-inside] PASSED
+tests/test_frontend.py::test_create_args_from_folder_rejects_out_of_tree_backend_path[symlink-outside] PASSED
+tests/test_frontend.py::test_create_args_from_folder_rejects_out_of_tree_backend_path[nul] PASSED
+tests/test_frontend.py::test_create_args_from_folder_rejects_unresolvable_backend_path PASSED
 tests/test_frontend.py::test_backend_no_prepare_wheel PASSED
 tests/test_frontend.py::test_backend_build_sdist_demo_pkg_inline PASSED
-tests/test_frontend.py::test_backend_obj PASSED
+tests/test_frontend.py::test_create_args_from_folder_rejects_bad_build_system_type[requires-string] PASSED
+tests/test_frontend.py::test_create_args_from_folder_rejects_bad_build_system_type[requires-table-entry] PASSED
+tests/test_frontend.py::test_create_args_from_folder_rejects_bad_build_system_type[backend-path-string] PASSED
+tests/test_frontend.py::test_create_args_from_folder_rejects_bad_build_system_type[build-backend-int] PASSED
+tests/test_frontend.py::test_create_args_from_folder_rejects_bad_build_system_type[not-a-table] PASSED
+tests/test_frontend.py::test_backend_obj[attribute] PASSED
+tests/test_frontend.py::test_backend_obj[trailing-colon] PASSED
+tests/test_frontend.py::test_backend_obj[nested] PASSED
+tests/test_frontend.py::test_backend_obj[deeply-nested] PASSED
 tests/test_frontend.py::test_get_requires_for_build_missing[wheel] PASSED
 tests/test_frontend.py::test_get_requires_for_build_missing[sdist] PASSED
 tests/test_frontend.py::test_bad_return_type_get_requires_for_build[sdist] PASSED
 tests/test_frontend.py::test_bad_return_type_get_requires_for_build[wheel] PASSED
 tests/test_frontend.py::test_bad_return_type_build_sdist PASSED
 tests/test_frontend.py::test_bad_return_type_build_wheel PASSED
+tests/test_frontend.py::test_non_serializable_hook_result[Path('demo.whl')] PASSED
+tests/test_frontend.py::test_non_serializable_hook_result[b'demo.whl'] PASSED
+tests/test_frontend.py::test_non_serializable_hook_result[{'demo.whl'}] PASSED
 tests/test_frontend.py::test_bad_return_type_prepare_metadata_for_build_wheel PASSED
 tests/test_frontend.py::test_prepare_metadata_for_build_wheel_meta_is_root PASSED
+tests/test_frontend.py::test_prepare_metadata_rejects_ancestor_directory[directory-prepare_metadata_for_build_wheel] PASSED
+tests/test_frontend.py::test_prepare_metadata_rejects_ancestor_directory[directory-prepare_metadata_for_build_editable] PASSED
+tests/test_frontend.py::test_prepare_metadata_rejects_ancestor_directory[symlink-prepare_metadata_for_build_wheel] PASSED
+tests/test_frontend.py::test_prepare_metadata_rejects_ancestor_directory[symlink-prepare_metadata_for_build_editable] PASSED
+tests/test_frontend.py::test_prepare_metadata_allows_sibling_directory[prepare_metadata_for_build_wheel] PASSED
+tests/test_frontend.py::test_prepare_metadata_allows_sibling_directory[prepare_metadata_for_build_editable] PASSED
 tests/test_frontend.py::test_no_wheel_prepare_metadata_for_build_wheel PASSED
 tests/test_frontend.py::test_metadata_from_built_wheel[wheel] PASSED
 tests/test_frontend.py::test_metadata_from_built_wheel[editable] PASSED
@@ -54,6 +89,12 @@ tests/test_frontend_setuptools.py::test_setuptools_missing_command PASSED
 tests/test_frontend_setuptools.py::test_setuptools_exception PASSED
 tests/test_frontend_setuptools.py::test_bad_message PASSED
 tests/test_frontend_setuptools.py::test_result_missing PASSED
+tests/test_main.py::test_cli_build_relative_to_caller[default-outdir-sdist] PASSED
+tests/test_main.py::test_cli_build_relative_to_caller[default-outdir-wheel] PASSED
+tests/test_main.py::test_cli_build_relative_to_caller[default-outdir-editable] PASSED
+tests/test_main.py::test_cli_build_relative_to_caller[relative-outdir-sdist] PASSED
+tests/test_main.py::test_cli_build_relative_to_caller[relative-outdir-wheel] PASSED
+tests/test_main.py::test_cli_build_relative_to_caller[relative-outdir-editable] PASSED
 tests/test_main.py::test_parse_args[cli_args0-srcdir0-outdir0-hooks0] PASSED
 tests/test_main.py::test_parse_args[cli_args1-srcdir1-outdir1-hooks1] PASSED
 tests/test_main.py::test_parse_args[cli_args2-srcdir2-outdir2-hooks2] PASSED
@@ -69,6 +110,6 @@ tests/test_util.py::test_ensure_empty_dir_on_path_symlink_to_folder PASSED
 tests/test_version.py::test_version PASSED
 
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
-======== 61 passed ========
+======== 102 passed ========
   py$(PYV): OK
   congratulations :)
