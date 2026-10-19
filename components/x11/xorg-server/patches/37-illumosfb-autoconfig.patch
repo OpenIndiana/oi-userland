@@ -1,37 +1,106 @@
-Autoconfigure the illumosfb driver on illumos framebuffer consoles.
+Restore vesa on consoles with an initialized legacy video BIOS.
 
-When the kernel console is gfxp_bitmap (VIS identifier "illumos_fb", e.g. a
-UEFI GOP framebuffer), list illumosfb after any driver matched for the
-primary PCI device and do not list vesa. vesa needs a video BIOS, which UEFI
-systems do not have, and a vesa PCI claim together with illumosfb's
-framebuffer claim makes xf86PostProbe() abort. A specific PCI driver that
-claims the device still wins, because illumosfb then cannot claim the
-framebuffer slot.
+VIS identifier illumos_fb identifies both BIOS VBE and UEFI GOP consoles;
+it is not evidence that vesa is unusable. Prefer modesetting when its default
+DRM endpoint has connectors. Otherwise retain PCI matching and vesa, reserving
+illumosfb for bitmap consoles without an initialized legacy video BIOS.
+Unknown BIOS capability retains vesa. Explicit Device sections are unchanged.
 
-Not suitable for upstream as is: it depends on OpenIndiana's Solaris autoconfig
-changes and the out-of-tree illumosfb driver.
+Do not put vesa and illumosfb in the same fallback list: their PCI/framebuffer
+claims conflict before PreInit. This patch is specific to illumos.
 
 --- a/hw/xfree86/common/xf86AutoConfig.c
 +++ b/hw/xfree86/common/xf86AutoConfig.c
-@@ -238,7 +238,35 @@
-         xf86Msg(X_ERROR, "Error parsing the built-in default configuration.\n");
- 
+@@ -198,6 +198,110 @@
      return ret == CONFIG_OK;
+ }
+
++#if defined(__sun) && (defined(__i386__) || defined(__amd64__))
++#include <libdrm/drm.h>
++#include <libdrm/drm_mode.h>
++
++/* Match the default endpoint and connector test in modesetting's probe_hw(). */
++static Bool
++sunKmsDevice(void)
++{
++    struct drm_mode_card_res res = { 0 };
++    const char *dev = getenv("KMSDEVICE");
++    int fd = -1, ret;
++
++    if (dev)
++        fd = open(dev, O_RDWR);
++    if (fd < 0)
++        fd = open("/dev/dri/card0", O_RDWR);
++    if (fd < 0)
++        return FALSE;
++    SYSCALL(ret = ioctl(fd, DRM_IOCTL_MODE_GETRESOURCES, &res));
++    close(fd);
++    return ret == 0 && res.count_connectors > 0;
 +}
 +
-+#if defined(__sun) && (defined(__i386__) || defined(__amd64__))
 +/*
-+ * On illumos a linear framebuffer console (UEFI GOP, or a VESA mode set by
-+ * the loader) is provided by gfxp_bitmap, which identifies itself as
-+ * "illumos_fb". The illumosfb driver can drive it; vesa cannot without a
-+ * video BIOS, and its PCI claim would conflict with illumosfb's framebuffer
-+ * claim.
++ * Return 1 for an initialized legacy video BIOS, 0 for its absence, and -1
++ * when it cannot be inspected. EFI boot and VIS_GETIDENTIFIER do not tell us
++ * whether vesa is usable (UEFI systems can retain a compatibility video BIOS).
++ * Match generic int10's primary BIOS selection, including its early rejection
++ * of an uninitialized INT10 vector. Like int10_check_bios(), accept a bad
++ * checksum: int10 only warns about it.
 + */
++static int
++sunLegacyVbios(void)
++{
++#ifdef XSERVER_LIBPCIACCESS
++    struct pci_device_iterator *iter = pci_slot_match_iterator_create(NULL);
++    struct pci_device *dev;
++    unsigned char *ivt, *rom;
++    unsigned int segments[3], seg, off, size;
++    int i, result = 0;
++    void *map;
++
++    if (!iter)
++        return -1;
++    while ((dev = pci_device_next(iter)) != NULL)
++        if (xf86IsPrimaryPci(dev))
++            break;
++    pci_iterator_destroy(iter);
++    if (!dev || pci_device_map_legacy(dev, 0, 4096, 0, &map) != 0)
++        return -1;
++    ivt = map;
++    segments[0] = ivt[0x42] | (ivt[0x43] << 8);
++    segments[1] = ivt[0x10a] | (ivt[0x10b] << 8);
++    segments[2] = 0xc000;
++    pci_device_unmap_legacy(dev, map, 4096);
++    if (segments[0] < 0xc000)
++        return 0;
++    if (pci_device_map_legacy(dev, 0xc0000, 0x40000, 0, &map) != 0)
++        return -1;
++    rom = map;
++    for (i = 0; i < 3; i++) {
++        seg = segments[i];
++        if (seg < 0xc000)
++            break;
++        if ((seg & 0x1f) || seg >= 0x10000)
++            continue;
++        off = (seg << 4) - 0xc0000;
++        size = rom[off + 2] * 512;
++        if (rom[off] == 0x55 && rom[off + 1] == 0xaa && size &&
++            off + size <= 0x40000) {
++            result = 1;
++            break;
++        }
++    }
++    pci_device_unmap_legacy(dev, map, 0x40000);
++    return result;
++#else
++    return -1;
++#endif
++}
++
 +static Bool
-+sunBitmapConsole(void)
++sunUseIllumosFb(void)
 +{
 +    struct vis_identifier visid;
-+    int fd, iret = -1;
++    int fd, iret = -1, bios;
 +
 +    if (xf86Info.consoleFd >= 0)
 +        SYSCALL(iret = ioctl(xf86Info.consoleFd, VIS_GETIDENTIFIER, &visid));
@@ -39,27 +108,42 @@ changes and the out-of-tree illumosfb driver.
 +        SYSCALL(iret = ioctl(fd, VIS_GETIDENTIFIER, &visid));
 +        close(fd);
 +    }
-+    if (iret < 0)
++    if (iret < 0 || strcmp(visid.name, "illumos_fb") != 0)
 +        return FALSE;
-+
-+    xf86Msg(X_PROBED, "console driver: %s\n", visid.name);
-+    return strcmp(visid.name, "illumos_fb") == 0;
- }
++    bios = sunLegacyVbios();
++    xf86Msg(X_PROBED, "illumos framebuffer: legacy video BIOS %s\n",
++            bios > 0 ? "present; retaining vesa" :
++            bios == 0 ? "absent; using illumosfb fallback" :
++            "unknown; retaining vesa");
++    return bios == 0;
++}
 +#endif
- 
++
  static void
  listPossibleVideoDrivers(char *matches[], int nmatches)
-@@ -263,6 +291,30 @@
-     matches[i++] = xnfstrdup("modesetting");
+ {
+@@ -271,6 +375,13 @@
+             matches[i++] = xnfstrdup(sbusDriver);
+     }
  #endif
- 
 +#if defined(__sun) && (defined(__i386__) || defined(__amd64__))
-+    /*
-+     * Try any specific PCI driver first; if it claims the device, illumosfb
-+     * cannot claim the framebuffer slot and stays unused. Otherwise
-+     * illumosfb replaces vesa.
-+     */
-+    if (sunBitmapConsole()) {
++    if (sunKmsDevice()) {
++        if (i < (nmatches - 1))
++            matches[i++] = xnfstrdup("modesetting");
++        return;
++    }
++#endif
+ #ifdef XSERVER_LIBPCIACCESS
+     if (i < (nmatches - 1))
+         i += xf86PciMatchDriver(&matches[i], nmatches - i);
+@@ -278,6 +389,25 @@
+
+ #if defined(__linux__)
+     matches[i++] = xnfstrdup("modesetting");
++#endif
++
++#if defined(__sun) && (defined(__i386__) || defined(__amd64__))
++    if (sunUseIllumosFb()) {
 +        int j, k;
 +
 +        for (j = k = 0; j < i; j++) {
@@ -75,8 +159,6 @@ changes and the out-of-tree illumosfb driver.
 +            matches[i++] = xnfstrdup("illumosfb");
 +        return;
 +    }
-+#endif
-+
+ #endif
+
  #if !defined(__sun)
-     /* Fallback to platform default frame buffer driver */
-     if (i < (nmatches - 1)) {
