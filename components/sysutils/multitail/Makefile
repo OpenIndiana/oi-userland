@@ -27,14 +27,13 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		multitail
-COMPONENT_VERSION=	7.1.5
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	7.1.6
 COMPONENT_SUMMARY=	Tail multiple files on console with ncurses
 COMPONENT_PROJECT_URL=	https://www.vanheusden.com/multitail/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/folkertvanheusden/multitail/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b0c92bf5f504b39591bf3e2e30a1902925c11556e14b89a07cfa7533f9bd171b
+COMPONENT_ARCHIVE_HASH=	sha256:bf614c53c212238bccc86bb7ab220b6b11f3997c1900a5767df4b1a79885f421
 COMPONENT_FMRI=				file/multitail
 COMPONENT_CLASSIFICATION= 	Applications/System Utilities
 COMPONENT_LICENSE=			Apache 2.0
