@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		texttable
-HUMAN_VERSION =			1.7.1
+HUMAN_VERSION =			1.7.2
 COMPONENT_SUMMARY =		module to create simple ASCII tables
 COMPONENT_PROJECT_URL =		https://github.com/foutaise/texttable/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ce71fc5928ede6cd7a60dbe3cb2845e6df8f5598fe435252ea1b31722415fda7
+	sha256:dc16ea6b35fbf5291ba6ef79d79e37d9b3ca6acd7bae3ca3450488d7c2e19c99
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
