@@ -15,17 +15,16 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pymongo
-HUMAN_VERSION =			4.18.3
-COMPONENT_REVISION =		22
+HUMAN_VERSION =			4.19.0
+COMPONENT_REVISION =		23
 COMPONENT_SUMMARY =		PyMongo - the Official MongoDB Python driver
 COMPONENT_PROJECT_URL =		https://www.mongodb.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5dd6e659b6014288a1c53458929402a58f44a032e6f29bcef44e7477c5268e48
+	sha256:3c510dd3c5d9b392d3b33bb5d2a594758acfe8f026fca654253f947ce0af9d40
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,6 +34,9 @@ TEST_STYLE = pytest
 # It later disappeared because it was created mistakenly but since IPS cannot
 # downgrade we need to keep it.
 COMPONENT_VERSION =		10.10.10.10
+
+# Python 3.9 is not supported by pymongo >= 4.19.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -52,6 +54,5 @@ REQUIRED_PACKAGES.python += library/python/hatch-requirements-txt
 REQUIRED_PACKAGES.python += library/python/hatchling
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio

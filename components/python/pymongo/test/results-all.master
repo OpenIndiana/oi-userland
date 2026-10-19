@@ -5,7 +5,7 @@ rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: test
 asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=session, asyncio_default_test_loop_scope=function
-collecting ... collected 9139 items / 859 deselected / 1 skipped / 8280 selected
+collecting ... collected 9307 items / 955 deselected / 1 skipped / 8352 selected
 
 test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_cancellation_aborts_transaction SKIPPED
 test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_cancellation_closes_change_stream SKIPPED
@@ -14,6 +14,10 @@ test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_
 test/asynchronous/test_async_contextvars_reset.py::TestAsyncContextVarsReset::test_context_vars_are_reset_in_executor SKIPPED
 test/asynchronous/test_async_loop_safety.py::TestClientLoopSafety::test_client_errors_on_different_loop PASSED
 test/asynchronous/test_async_loop_unblocked.py::TestClientLoopUnblocked::test_client_does_not_block_loop SKIPPED
+test/asynchronous/test_async_network_layer.py::TestAsyncBlockingSocketCall::test_cancellation_waits_for_worker PASSED
+test/asynchronous/test_async_network_layer.py::TestAsyncBlockingSocketCall::test_returns_result PASSED
+test/asynchronous/test_async_network_layer.py::TestAsyncBlockingSocketCall::test_second_cancellation_does_not_interrupt_cleanup PASSED
+test/asynchronous/test_async_network_layer.py::TestAsyncBlockingSocketCall::test_timeout_waits_for_worker PASSED
 test/asynchronous/test_async_network_layer.py::TestAsyncSocketReceive::test_raises_on_connection_closed PASSED
 test/asynchronous/test_async_network_layer.py::TestBufferUpdated::test_nonpositive_uncompressed_size_closes_connection PASSED
 test/asynchronous/test_async_network_layer.py::TestBufferUpdated::test_oversized_uncompressed_size_closes_connection PASSED
@@ -267,6 +271,13 @@ test/asynchronous/test_client.py::AsyncClientUnitTest::test_kwargs_codec_options
 test/asynchronous/test_client.py::AsyncClientUnitTest::test_max_adaptive_retries PASSED
 test/asynchronous/test_client.py::AsyncClientUnitTest::test_max_pool_size_zero PASSED
 test/asynchronous/test_client.py::AsyncClientUnitTest::test_metadata PASSED
+test/asynchronous/test_client.py::AsyncClientUnitTest::test_metadata_append_is_bounded PASSED
+test/asynchronous/test_client.py::AsyncClientUnitTest::test_metadata_appends_driver_info PASSED
+test/asynchronous/test_client.py::AsyncClientUnitTest::test_metadata_bad_driver_options PASSED
+test/asynchronous/test_client.py::AsyncClientUnitTest::test_metadata_deduplicates_none_and_empty PASSED
+test/asynchronous/test_client.py::AsyncClientUnitTest::test_metadata_recreates_platform_after_truncation PASSED
+test/asynchronous/test_client.py::AsyncClientUnitTest::test_metadata_truncates_driver_info PASSED
+test/asynchronous/test_client.py::AsyncClientUnitTest::test_metadata_truncation_drops_blank_pairs_first PASSED
 test/asynchronous/test_client.py::AsyncClientUnitTest::test_primary_read_pref_with_tags PASSED
 test/asynchronous/test_client.py::AsyncClientUnitTest::test_read_preference PASSED
 test/asynchronous/test_client.py::AsyncClientUnitTest::test_repr_redacts_aws_session_token PASSED
@@ -367,6 +378,7 @@ test/asynchronous/test_client.py::TestExhaustCursor::test_exhaust_getmore_networ
 test/asynchronous/test_client.py::TestExhaustCursor::test_exhaust_getmore_server_error SKIPPED
 test/asynchronous/test_client.py::TestExhaustCursor::test_exhaust_query_network_error SKIPPED
 test/asynchronous/test_client.py::TestExhaustCursor::test_exhaust_query_server_error SKIPPED
+test/asynchronous/test_client.py::TestExhaustCursor::test_gevent_kill_churn_deadlock SKIPPED
 test/asynchronous/test_client.py::TestExhaustCursor::test_gevent_task SKIPPED
 test/asynchronous/test_client.py::TestExhaustCursor::test_gevent_timeout SKIPPED
 test/asynchronous/test_client.py::TestExhaustCursor::test_gevent_timeout_when_creating_connection SKIPPED
@@ -2079,11 +2091,22 @@ test/asynchronous/test_dns.py::TestDNSSharded::test_srvMaxHosts-equal_to_srv_rec
 test/asynchronous/test_dns.py::TestDNSSharded::test_srvMaxHosts-greater_than_srv_records SKIPPED
 test/asynchronous/test_dns.py::TestDNSSharded::test_srvMaxHosts-less_than_srv_records SKIPPED
 test/asynchronous/test_dns.py::TestDNSSharded::test_srvMaxHosts-zero SKIPPED
+test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_10_accept_a_mixed_case_returned_address_with_srv_allowed_hosts_suffix PASSED
+test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_11_throw_when_srv_host_validator_is_not_callable PASSED
+test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_12_accept_a_reserved_single_label_as_srv_allowed_hosts_suffix PASSED
+test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_13_throw_when_srv_host_validator_is_used_with_a_non_srv_uri PASSED
+test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_14_throw_when_srv_host_validator_returns_a_non_boolean_value PASSED
+test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_15_accept_an_underscore_in_srv_allowed_hosts_suffix PASSED
 test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_1_allow_srv_hosts_with_fewer_than_three_dot_separated_parts PASSED
 test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_2_throw_when_return_address_does_not_end_with_srv_domain PASSED
 test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_3_throw_when_return_address_is_identical_to_srv_hostname PASSED
 test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_4_throw_when_return_address_does_not_contain_dot_separating_shared_part_of_domain PASSED
-test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_5_when_srv_hostname_has_three_or_more_dot_separated_parts_it_is_valid_for_the_returned_hostname_to_be_identical PASSED
+test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_5_srv_host_validator_accepts_a_host_the_default_verification_would_reject PASSED
+test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_6_reject_a_host_the_default_verification_would_accept PASSED
+test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_7_the_validator_receives_the_normalized_host_name PASSED
+test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_8_wrap_an_error_raised_by_the_validator PASSED
+test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_9_throw_when_both_srv_allowed_hosts_suffix_and_srv_host_validator_are_configured PASSED
+test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_srv_hostname_with_three_or_more_parts_may_equal_the_returned_hostname PASSED
 test/asynchronous/test_dns.py::TestParsingErrors::test_invalid_host PASSED
 test/asynchronous/test_dns.py::TestPublicSuffixListParsing::test_1_multi_label_ordinary_rule PASSED
 test/asynchronous/test_dns.py::TestPublicSuffixListParsing::test_2_long_wildcard_rule PASSED
@@ -2342,7 +2365,9 @@ test/asynchronous/test_operation_id_retry.py::TestOperationIdRetry::test_retryab
 test/asynchronous/test_operation_id_retry.py::TestOperationIdRetry::test_retryable_writes_reuse_operation_id SKIPPED
 test/asynchronous/test_periodic_executor.py::TestAsyncPeriodicExecutor::test_join_without_open_is_safe PASSED
 test/asynchronous/test_periodic_executor.py::TestAsyncPeriodicExecutor::test_open_after_target_returns_false PASSED
+test/asynchronous/test_periodic_executor.py::TestAsyncPeriodicExecutor::test_open_non_daemon_thread PASSED
 test/asynchronous/test_periodic_executor.py::TestAsyncPeriodicExecutor::test_skip_sleep_flag_skips_interval PASSED
+test/asynchronous/test_periodic_executor.py::TestAsyncPeriodicExecutor::test_subinterpreter_shutdown PASSED
 test/asynchronous/test_periodic_executor.py::TestAsyncPeriodicExecutor::test_target_exception_stops_executor PASSED
 test/asynchronous/test_periodic_executor.py::TestAsyncPeriodicExecutor::test_target_returning_false_stops_executor PASSED
 test/asynchronous/test_periodic_executor.py::TestAsyncPeriodicExecutor::test_update_interval_changes_next_wait PASSED
@@ -2355,6 +2380,11 @@ test/asynchronous/test_pooling.py::TestPoolMaxSize::test_max_pool_size SKIPPED
 test/asynchronous/test_pooling.py::TestPoolMaxSize::test_max_pool_size_none SKIPPED
 test/asynchronous/test_pooling.py::TestPoolMaxSize::test_max_pool_size_with_connection_failure SKIPPED
 test/asynchronous/test_pooling.py::TestPoolMaxSize::test_max_pool_size_zero SKIPPED
+test/asynchronous/test_pooling.py::TestPooling::test_checkout_error_accounting_no_double_decrement SKIPPED
+test/asynchronous/test_pooling.py::TestPooling::test_checkout_error_accounting_on_connect_keyboard_interrupt SKIPPED
+test/asynchronous/test_pooling.py::TestPooling::test_checkout_error_accounting_on_kill_during_acquire SKIPPED
+test/asynchronous/test_pooling.py::TestPooling::test_checkout_error_accounting_on_kill_during_pending_cleanup SKIPPED
+test/asynchronous/test_pooling.py::TestPooling::test_checkout_error_accounting_on_kill_during_pending_notify SKIPPED
 test/asynchronous/test_pooling.py::TestPooling::test_checkout_event_listener_failure_no_leak SKIPPED
 test/asynchronous/test_pooling.py::TestPooling::test_checkout_more_than_max_pool_size SKIPPED
 test/asynchronous/test_pooling.py::TestPooling::test_connection_timeout_message SKIPPED
@@ -2375,6 +2405,7 @@ test/asynchronous/test_pooling.py::TestPooling::test_socket_checker SKIPPED
 test/asynchronous/test_pooling.py::TestPooling::test_socket_closed SKIPPED
 test/asynchronous/test_pooling.py::TestPooling::test_socket_timeout_message SKIPPED
 test/asynchronous/test_pooling.py::TestPooling::test_wait_queue_timeout SKIPPED
+test/asynchronous/test_pooling.py::TestWrapSocketTLS::test_wrap_socket_tls_without_ssl_context_returns_same_socket PASSED
 test/asynchronous/test_raw_bson.py::TestRawBSONDocument::test_raw_bson_document_embedded SKIPPED
 test/asynchronous/test_raw_bson.py::TestRawBSONDocument::test_round_trip SKIPPED
 test/asynchronous/test_raw_bson.py::TestRawBSONDocument::test_round_trip_codec_options SKIPPED
@@ -3253,6 +3284,9 @@ test/asynchronous/test_sessions_unified.py::TestSessionsSnapshotSessionsUnsuppor
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_10_all_dns_selected PASSED
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_11_all_dns_selected PASSED
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_12_new_dns_randomly_selected PASSED
+test/asynchronous/test_srv_polling.py::TestSrvPolling::test_14_the_validator_is_consulted_when_srv_records_are_rescanned PASSED
+test/asynchronous/test_srv_polling.py::TestSrvPolling::test_15_a_rejecting_or_raising_validator_does_not_raise_or_stop_polling 
+test/asynchronous/test_srv_polling.py::TestSrvPolling::test_15_a_rejecting_or_raising_validator_does_not_raise_or_stop_polling PASSED
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_addition PASSED
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_dns_failures PASSED
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_dns_failures_logging PASSED
@@ -3265,6 +3299,8 @@ test/asynchronous/test_srv_polling.py::TestSrvPolling::test_removal PASSED
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_replace_both_with_one PASSED
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_replace_both_with_two PASSED
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_replace_one PASSED
+test/asynchronous/test_srv_polling.py::TestSrvPolling::test_rescan_skips_only_the_hosts_that_fail_verification 
+test/asynchronous/test_srv_polling.py::TestSrvPolling::test_rescan_skips_only_the_hosts_that_fail_verification PASSED
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_srv_service_name PASSED
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_srv_waits_to_poll PASSED
 test/asynchronous/test_ssl.py::TestClientSSL::test_async_configured_protocol_injects_session_via_sslobject_class PASSED
@@ -3299,6 +3335,8 @@ test/asynchronous/test_streaming_protocol.py::TestStreamingProtocol::test_failCo
 test/asynchronous/test_streaming_protocol.py::TestStreamingProtocol::test_heartbeat_awaited_flag SKIPPED
 test/asynchronous/test_streaming_protocol.py::TestStreamingProtocol::test_monitor_waits_after_server_check_error SKIPPED
 test/asynchronous/test_streaming_protocol.py::TestStreamingProtocol::test_streaming_rtt SKIPPED
+test/asynchronous/test_subinterpreters.py::TestSubinterpreters::test_interpreter_pool_executor SKIPPED
+test/asynchronous/test_subinterpreters.py::TestSubinterpreters::test_subinterpreters SKIPPED
 test/asynchronous/test_transactions.py::TestOptionsInsideTransactionProse::test_case_1 SKIPPED
 test/asynchronous/test_transactions.py::TestTransactions::test_create_collection SKIPPED
 test/asynchronous/test_transactions.py::TestTransactions::test_gridfs_does_not_support_transactions SKIPPED
@@ -3796,10 +3834,18 @@ test/test_bson.py::TestBSON::test_dates PASSED
 test/test_bson.py::TestBSON::test_datetime_encode_decode PASSED
 test/test_bson.py::TestBSON::test_dbpointer PASSED
 test/test_bson.py::TestBSON::test_decode_all_buffer_protocol PASSED
+test/test_bson.py::TestBSON::test_decode_all_invalid_message_size 
+test/test_bson.py::TestBSON::test_decode_all_invalid_message_size PASSED
+test/test_bson.py::TestBSON::test_decode_all_partial_document 
+test/test_bson.py::TestBSON::test_decode_all_partial_document PASSED
+test/test_bson.py::TestBSON::test_decode_all_truncated_document 
+test/test_bson.py::TestBSON::test_decode_all_truncated_document PASSED
 test/test_bson.py::TestBSON::test_decode_buffer_protocol PASSED
 test/test_bson.py::TestBSON::test_doc_in_invalid_document_error_as_property PASSED
 test/test_bson.py::TestBSON::test_doc_in_invalid_document_error_as_property_mapping PASSED
 test/test_bson.py::TestBSON::test_dst PASSED
+test/test_bson.py::TestBSON::test_element_overlaps_document_terminator 
+test/test_bson.py::TestBSON::test_element_overlaps_document_terminator PASSED
 test/test_bson.py::TestBSON::test_encode_size_limit PASSED
 test/test_bson.py::TestBSON::test_encode_then_decode PASSED
 test/test_bson.py::TestBSON::test_encode_then_decode_any_mapping PASSED
@@ -4141,6 +4187,13 @@ test/test_client.py::ClientUnitTest::test_kwargs_codec_options PASSED
 test/test_client.py::ClientUnitTest::test_max_adaptive_retries PASSED
 test/test_client.py::ClientUnitTest::test_max_pool_size_zero PASSED
 test/test_client.py::ClientUnitTest::test_metadata PASSED
+test/test_client.py::ClientUnitTest::test_metadata_append_is_bounded PASSED
+test/test_client.py::ClientUnitTest::test_metadata_appends_driver_info PASSED
+test/test_client.py::ClientUnitTest::test_metadata_bad_driver_options PASSED
+test/test_client.py::ClientUnitTest::test_metadata_deduplicates_none_and_empty PASSED
+test/test_client.py::ClientUnitTest::test_metadata_recreates_platform_after_truncation PASSED
+test/test_client.py::ClientUnitTest::test_metadata_truncates_driver_info PASSED
+test/test_client.py::ClientUnitTest::test_metadata_truncation_drops_blank_pairs_first PASSED
 test/test_client.py::ClientUnitTest::test_primary_read_pref_with_tags PASSED
 test/test_client.py::ClientUnitTest::test_read_preference PASSED
 test/test_client.py::ClientUnitTest::test_repr_redacts_aws_session_token PASSED
@@ -4241,6 +4294,7 @@ test/test_client.py::TestExhaustCursor::test_exhaust_getmore_network_error SKIPP
 test/test_client.py::TestExhaustCursor::test_exhaust_getmore_server_error SKIPPED
 test/test_client.py::TestExhaustCursor::test_exhaust_query_network_error SKIPPED
 test/test_client.py::TestExhaustCursor::test_exhaust_query_server_error SKIPPED
+test/test_client.py::TestExhaustCursor::test_gevent_kill_churn_deadlock SKIPPED
 test/test_client.py::TestExhaustCursor::test_gevent_task SKIPPED (Ca...)
 test/test_client.py::TestExhaustCursor::test_gevent_timeout SKIPPED
 test/test_client.py::TestExhaustCursor::test_gevent_timeout_when_creating_connection SKIPPED
@@ -6060,11 +6114,22 @@ test/test_dns.py::TestDNSSharded::test_srvMaxHosts-equal_to_srv_records SKIPPED
 test/test_dns.py::TestDNSSharded::test_srvMaxHosts-greater_than_srv_records SKIPPED
 test/test_dns.py::TestDNSSharded::test_srvMaxHosts-less_than_srv_records SKIPPED
 test/test_dns.py::TestDNSSharded::test_srvMaxHosts-zero SKIPPED (Can...)
+test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_10_accept_a_mixed_case_returned_address_with_srv_allowed_hosts_suffix PASSED
+test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_11_throw_when_srv_host_validator_is_not_callable PASSED
+test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_12_accept_a_reserved_single_label_as_srv_allowed_hosts_suffix PASSED
+test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_13_throw_when_srv_host_validator_is_used_with_a_non_srv_uri PASSED
+test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_14_throw_when_srv_host_validator_returns_a_non_boolean_value PASSED
+test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_15_accept_an_underscore_in_srv_allowed_hosts_suffix PASSED
 test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_1_allow_srv_hosts_with_fewer_than_three_dot_separated_parts PASSED
 test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_2_throw_when_return_address_does_not_end_with_srv_domain PASSED
 test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_3_throw_when_return_address_is_identical_to_srv_hostname PASSED
 test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_4_throw_when_return_address_does_not_contain_dot_separating_shared_part_of_domain PASSED
-test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_5_when_srv_hostname_has_three_or_more_dot_separated_parts_it_is_valid_for_the_returned_hostname_to_be_identical PASSED
+test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_5_srv_host_validator_accepts_a_host_the_default_verification_would_reject PASSED
+test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_6_reject_a_host_the_default_verification_would_accept PASSED
+test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_7_the_validator_receives_the_normalized_host_name PASSED
+test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_8_wrap_an_error_raised_by_the_validator PASSED
+test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_9_throw_when_both_srv_allowed_hosts_suffix_and_srv_host_validator_are_configured PASSED
+test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_srv_hostname_with_three_or_more_parts_may_equal_the_returned_hostname PASSED
 test/test_dns.py::TestParsingErrors::test_invalid_host PASSED
 test/test_dns.py::TestPublicSuffixListParsing::test_1_multi_label_ordinary_rule PASSED
 test/test_dns.py::TestPublicSuffixListParsing::test_2_long_wildcard_rule PASSED
@@ -6470,7 +6535,9 @@ test/test_operations.py::TestIndexModel::test_repr PASSED
 test/test_operations.py::TestSearchIndexModel::test_repr PASSED
 test/test_periodic_executor.py::TestPeriodicExecutor::test_join_without_open_is_safe PASSED
 test/test_periodic_executor.py::TestPeriodicExecutor::test_open_after_target_returns_false PASSED
+test/test_periodic_executor.py::TestPeriodicExecutor::test_open_non_daemon_thread PASSED
 test/test_periodic_executor.py::TestPeriodicExecutor::test_skip_sleep_flag_skips_interval PASSED
+test/test_periodic_executor.py::TestPeriodicExecutor::test_subinterpreter_shutdown PASSED
 test/test_periodic_executor.py::TestPeriodicExecutor::test_target_exception_stops_executor PASSED
 test/test_periodic_executor.py::TestPeriodicExecutor::test_target_returning_false_stops_executor PASSED
 test/test_periodic_executor.py::TestPeriodicExecutor::test_update_interval_changes_next_wait PASSED
@@ -6483,6 +6550,11 @@ test/test_pooling.py::TestPoolMaxSize::test_max_pool_size SKIPPED (C...)
 test/test_pooling.py::TestPoolMaxSize::test_max_pool_size_none SKIPPED
 test/test_pooling.py::TestPoolMaxSize::test_max_pool_size_with_connection_failure SKIPPED
 test/test_pooling.py::TestPoolMaxSize::test_max_pool_size_zero SKIPPED
+test/test_pooling.py::TestPooling::test_checkout_error_accounting_no_double_decrement SKIPPED
+test/test_pooling.py::TestPooling::test_checkout_error_accounting_on_connect_keyboard_interrupt SKIPPED
+test/test_pooling.py::TestPooling::test_checkout_error_accounting_on_kill_during_acquire SKIPPED
+test/test_pooling.py::TestPooling::test_checkout_error_accounting_on_kill_during_pending_cleanup SKIPPED
+test/test_pooling.py::TestPooling::test_checkout_error_accounting_on_kill_during_pending_notify SKIPPED
 test/test_pooling.py::TestPooling::test_checkout_event_listener_failure_no_leak SKIPPED
 test/test_pooling.py::TestPooling::test_checkout_more_than_max_pool_size SKIPPED
 test/test_pooling.py::TestPooling::test_connection_timeout_message SKIPPED
@@ -6503,6 +6575,7 @@ test/test_pooling.py::TestPooling::test_socket_checker SKIPPED (Cann...)
 test/test_pooling.py::TestPooling::test_socket_closed SKIPPED (Canno...)
 test/test_pooling.py::TestPooling::test_socket_timeout_message SKIPPED
 test/test_pooling.py::TestPooling::test_wait_queue_timeout SKIPPED (...)
+test/test_pooling.py::TestWrapSocketTLS::test_wrap_socket_tls_without_ssl_context_returns_same_socket PASSED
 test/test_pymongo.py::TestPyMongo::test_get_version_tuple PASSED
 test/test_pymongo.py::TestPyMongo::test_mongo_client_alias PASSED
 test/test_pyopenssl_context.py::TestIsIpAddress::test_hostname_is_not_ip SKIPPED
@@ -7480,6 +7553,9 @@ test/test_son.py::TestSON::test_to_dict PASSED
 test/test_srv_polling.py::TestSrvPolling::test_10_all_dns_selected PASSED
 test/test_srv_polling.py::TestSrvPolling::test_11_all_dns_selected PASSED
 test/test_srv_polling.py::TestSrvPolling::test_12_new_dns_randomly_selected PASSED
+test/test_srv_polling.py::TestSrvPolling::test_14_the_validator_is_consulted_when_srv_records_are_rescanned PASSED
+test/test_srv_polling.py::TestSrvPolling::test_15_a_rejecting_or_raising_validator_does_not_raise_or_stop_polling 
+test/test_srv_polling.py::TestSrvPolling::test_15_a_rejecting_or_raising_validator_does_not_raise_or_stop_polling PASSED
 test/test_srv_polling.py::TestSrvPolling::test_addition PASSED
 test/test_srv_polling.py::TestSrvPolling::test_dns_failures PASSED
 test/test_srv_polling.py::TestSrvPolling::test_dns_failures_logging PASSED
@@ -7492,6 +7568,8 @@ test/test_srv_polling.py::TestSrvPolling::test_removal PASSED
 test/test_srv_polling.py::TestSrvPolling::test_replace_both_with_one PASSED
 test/test_srv_polling.py::TestSrvPolling::test_replace_both_with_two PASSED
 test/test_srv_polling.py::TestSrvPolling::test_replace_one PASSED
+test/test_srv_polling.py::TestSrvPolling::test_rescan_skips_only_the_hosts_that_fail_verification 
+test/test_srv_polling.py::TestSrvPolling::test_rescan_skips_only_the_hosts_that_fail_verification PASSED
 test/test_srv_polling.py::TestSrvPolling::test_srv_service_name PASSED
 test/test_srv_polling.py::TestSrvPolling::test_srv_waits_to_poll PASSED
 test/test_ssl.py::TestClientSSL::test_async_configured_protocol_injects_session_via_sslobject_class SKIPPED
@@ -7529,6 +7607,8 @@ test/test_streaming_protocol.py::TestStreamingProtocol::test_failCommand_streami
 test/test_streaming_protocol.py::TestStreamingProtocol::test_heartbeat_awaited_flag SKIPPED
 test/test_streaming_protocol.py::TestStreamingProtocol::test_monitor_waits_after_server_check_error SKIPPED
 test/test_streaming_protocol.py::TestStreamingProtocol::test_streaming_rtt SKIPPED
+test/test_subinterpreters.py::TestSubinterpreters::test_interpreter_pool_executor SKIPPED
+test/test_subinterpreters.py::TestSubinterpreters::test_subinterpreters SKIPPED
 test/test_threads.py::TestThreads::test_safe_insert SKIPPED (Cannot ...)
 test/test_threads.py::TestThreads::test_safe_update SKIPPED (Cannot ...)
 test/test_threads.py::TestThreads::test_threading SKIPPED (Cannot co...)
@@ -8314,4 +8394,4 @@ test/test_grid_file.py::TestGridFileNoConnect::test_grid_in_custom_opts
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/xunit-results/TEST-results.xml -
 =========================== short test summary info ============================
-======== 1648 passed, 6635 skipped, 859 deselected, 2 warnings, 54 subtests passed ========
+======== 1704 passed, 6651 skipped, 955 deselected, 2 warnings, 79 subtests passed ========
