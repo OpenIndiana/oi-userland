@@ -122,10 +122,10 @@ claims conflict before PreInit. This patch is specific to illumos.
  static void
  listPossibleVideoDrivers(char *matches[], int nmatches)
  {
-@@ -271,6 +375,13 @@
-             matches[i++] = xnfstrdup(sbusDriver);
+@@ -208,6 +312,13 @@
      }
- #endif
+     i = 0;
+
 +#if defined(__sun) && (defined(__i386__) || defined(__amd64__))
 +    if (sunKmsDevice()) {
 +        if (i < (nmatches - 1))
@@ -133,9 +133,9 @@ claims conflict before PreInit. This patch is specific to illumos.
 +        return;
 +    }
 +#endif
- #ifdef XSERVER_LIBPCIACCESS
-     if (i < (nmatches - 1))
-         i += xf86PciMatchDriver(&matches[i], nmatches - i);
+ #ifdef XSERVER_PLATFORM_BUS
+     i = xf86PlatformMatchDriver(matches, nmatches);
+ #endif
 @@ -278,6 +389,25 @@
 
  #if defined(__linux__)
