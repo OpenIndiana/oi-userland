@@ -19,13 +19,17 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2026 Till Wegmueller
 #
+BUILD_BITS= 64
+BUILD_STYLE= justmake
+TEST_TARGET= $(NO_TESTS)
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cdrtools
 COMPONENT_VERSION=      3.02a09
 IPS_COMPONENT_VERSION=	3.0.2
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=	CD/DVD/BluRay command line recording software
 COMPONENT_DESCRIPTION=	the cdrtools CD/DVD/BluRay recording software
 COMPONENT_SRC=          $(COMPONENT_NAME)-3.02
@@ -38,20 +42,21 @@ COMPONENT_FMRI=	media/cdrtools
 COMPONENT_CLASSIFICATION=       System/Media
 COMPONENT_LICENSE=      CDDLv1.0, GPLv2, LGPLv2.1, BSD 2 clause
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=	$(GCC_ROOT)/bin:/usr/bin:/usr/gnu/bin
 
-COMPONENT_INSTALL_ARGS +=  GMAKE_NOWARN=true
-COMPONENT_BUILD_ARGS += GMAKE_NOWARN=true
+# The bundled configure checks and sources predate C99.
+CFLAGS += -std=gnu89
 
-build:          $(BUILD_32)
+# Create the platform rule links before GNU make reads the configure rules.
+COMPONENT_PRE_CONFIGURE_ACTION = \
+	(cd $(@D)/RULES && $(SHELL) ./MKLINKS) && \
+	(cd $(@D)/TEMPLATES && $(SHELL) ./MKLINKS)
 
-install:        $(INSTALL_32)
-
-test:		$(NO_TESTS)
+# Schily's build system selects the data model through CCOM.
+COMPONENT_INSTALL_ARGS += GMAKE_NOWARN=true CCOM=gcc64 COPTX="$(CFLAGS)"
+COMPONENT_BUILD_ARGS += GMAKE_NOWARN=true CCOM=gcc64 COPTX="$(CFLAGS)"
 
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += system/library
