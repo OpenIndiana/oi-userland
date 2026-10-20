@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2026 Till Wegmueller
 #
 BUILD_BITS= 64
 BUILD_STYLE= justmake
