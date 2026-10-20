@@ -15,23 +15,24 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mistune
-HUMAN_VERSION =			3.3.4
+HUMAN_VERSION =			3.4.0
 COMPONENT_SUMMARY =		A sane and fast Markdown parser with useful plugins and renderers
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:58b5c96d6fcb61190dfe5fae498d2b2065f99cf61e9649418fd54cf1ada86dfe
+	sha256:2eaf7952af928ca8d33b779762effc1da517b62c6ad85ec8ca957e3b07b9782a
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
+# Python 3.9 is not supported by mistune >= 3.4.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
-REQUIRED_PACKAGES.python += library/python/typing-extensions
 REQUIRED_PACKAGES.python += runtime/python
