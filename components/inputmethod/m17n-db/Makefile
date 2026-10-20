@@ -15,11 +15,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           m17n-db
-COMPONENT_VERSION=        1.8.11
+COMPONENT_VERSION=        1.8.15
 COMPONENT_SUMMARY=        m17n-db - The data files for m17n
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=   sha256:b5791f38e66d0a452730331e027ac9b52d5c43c6d8709289db640069f68487f4
+COMPONENT_ARCHIVE_HASH=   sha256:e16b22aea4384cc4c16a084352afdd7cf6a3ec9aef298520e8ddd0eaf2e4edf1
 COMPONENT_ARCHIVE_URL=    https://download.savannah.nongnu.org/releases/m17n/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=           system/input-method/library/m17n/db
 COMPONENT_CLASSIFICATION= System/Localizations
