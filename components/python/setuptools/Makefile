@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			80.10.2
-COMPONENT_SUMMARY =		Easily download, build, install, upgrade, and uninstall Python packages
+HUMAN_VERSION =			82.0.1
+COMPONENT_SUMMARY =		Most extensible Python build backend with support for C/C++ extension modules
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8b0e9d10c784bf7d262c4e5ec5d4ec94127ce206e8738f29a437945fbc219b70
+	sha256:7d872682c5d01cfde07da7bccc7b65469d3dca203318515ada1de5eda35efbf9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -59,9 +59,6 @@ PYTEST_ADDOPTS += --deselect setuptools/tests/test_egg_info.py::TestEggInfo::tes
 # https://github.com/pypa/setuptools/issues/5097
 PYTEST_ADDOPTS += --deselect setuptools/tests/test_bdist_wheel.py::test_universal_deprecated
 
-# Random directory name
-COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
@@ -77,7 +74,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/jaraco-text
 TEST_REQUIRED_PACKAGES.python += library/python/more-itertools
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pip
-TEST_REQUIRED_PACKAGES.python += library/python/platformdirs
 TEST_REQUIRED_PACKAGES.python += library/python/pyproject-hooks
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
