@@ -31,14 +31,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		valgrind
 COMPONENT_VERSION=	3.27.1
-COMPONENT_FMRI=		developer/debug/valgrind
-COMPONENT_CLASSIFICATION=Development/System
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	Valgrind: instrumentation framework and tools to detect memory and threading problems
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha256:5d589152eb8071c02feab8ce6ab719e431a1fbc3e2b1700f5432632a8b9264dc
 COMPONENT_ARCHIVE_URL=	https://sourceware.org/pub/valgrind/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =	https://valgrind.org
-COMPONENT_SUMMARY=	Valgrind: instrumentation framework and tools to detect memory and threading problems
+COMPONENT_FMRI=		developer/debug/valgrind
+COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
 
@@ -70,11 +71,8 @@ COMPONENT_POST_CONFIGURE_ACTION += ( cp $(@D)/config.h $(SOURCE_DIR) )
 
 COMPONENT_POST_BUILD_ACTION += ( cd $(@D)/docs && $(ENV) $(GMAKE) man-pages )
 
-#
-# currently 3.27.0
-# == 919 tests, 5 stderr failures, 0 stdout failures, 8 stderrB failures, 3 stdoutB failures, 1 post failure ==
-#
 COMPONENT_TEST_TARGETS = regtest
+
 # check just overal test results
 COMPONENT_TEST_TRANSFORMS += '-n -e "/^== /p"'
 
