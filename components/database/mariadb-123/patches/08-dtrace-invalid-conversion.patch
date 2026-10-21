@@ -1,0 +1,200 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sql/filesort.cc a/sql/filesort.cc
+--- a~/sql/filesort.cc	1970-01-01 00:00:00
++++ a/sql/filesort.cc	1970-01-01 00:00:00
+@@ -239,7 +239,7 @@ SORT_INFO *filesort(THD *thd, TABLE *tab
+   SORT_INFO *sort;
+   TABLE_LIST *tab= table->pos_in_table_list;
+   Item_subselect *subselect= tab ? tab->containing_subselect() : 0;
+-  MYSQL_FILESORT_START(table->s->db.str, table->s->table_name.str);
++  MYSQL_FILESORT_START((char*)table->s->db.str, (char*)table->s->table_name.str);
+   DEBUG_SYNC(thd, "filesort_start");
+ 
+   if (!(sort= new SORT_INFO))    // Note that this is not automatically freed!
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sql/handler.cc a/sql/handler.cc
+--- a~/sql/handler.cc	1970-01-01 00:00:00
++++ a/sql/handler.cc	1970-01-01 00:00:00
+@@ -7468,18 +7468,18 @@ int handler::ha_external_lock(THD *thd,
+   {
+     if (lock_type == F_RDLCK)
+     {
+-      MYSQL_HANDLER_RDLOCK_START(table_share->db.str,
+-                                 table_share->table_name.str);
++      MYSQL_HANDLER_RDLOCK_START((char*)table_share->db.str,
++                                 (char*)table_share->table_name.str);
+     }
+     else if (lock_type == F_WRLCK)
+     {
+-      MYSQL_HANDLER_WRLOCK_START(table_share->db.str,
+-                                 table_share->table_name.str);
++      MYSQL_HANDLER_WRLOCK_START((char*)table_share->db.str,
++                                 (char*)table_share->table_name.str);
+     }
+     else if (lock_type == F_UNLCK)
+     {
+-      MYSQL_HANDLER_UNLOCK_START(table_share->db.str,
+-                                 table_share->table_name.str);
++      MYSQL_HANDLER_UNLOCK_START((char*)table_share->db.str,
++                                 (char*)table_share->table_name.str);
+     }
+   }
+ 
+@@ -7994,7 +7994,7 @@ int handler::ha_write_row(const uchar *b
+     }
+   }
+ 
+-  MYSQL_INSERT_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_INSERT_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str);
+   mark_trx_read_write();
+   increment_statistics(&SSV::ha_write_count);
+ 
+@@ -8045,7 +8045,7 @@ int handler::ha_update_row(const uchar *
+   if (error)
+     return error;
+ 
+-  MYSQL_UPDATE_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_UPDATE_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str);
+   mark_trx_read_write();
+   increment_statistics(&SSV::ha_update_count);
+ 
+@@ -8126,7 +8126,7 @@ int handler::ha_delete_row(const uchar *
+   DBUG_ASSERT(buf == table->record[0] ||
+               buf == table->record[1]);
+ 
+-  MYSQL_DELETE_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_DELETE_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str);
+   mark_trx_read_write();
+   increment_statistics(&SSV::ha_delete_count);
+ 
+@@ -8185,7 +8185,7 @@ int handler::ha_delete_row(const uchar *
+ int handler::ha_direct_update_rows(ha_rows *update_rows, ha_rows *found_rows)
+ {
+   int error;
+-  MYSQL_UPDATE_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_UPDATE_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str);
+   mark_trx_read_write();
+ 
+   error= direct_update_rows(update_rows, found_rows);
+@@ -8212,7 +8212,7 @@ int handler::ha_direct_delete_rows(ha_ro
+   /* Ensure we are not using binlog row */
+   DBUG_ASSERT(!table->in_use->is_current_stmt_binlog_format_row());
+ 
+-  MYSQL_DELETE_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_DELETE_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str);
+   mark_trx_read_write();
+ 
+   error = direct_delete_rows(delete_rows);
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sql/sql_class.h a/sql/sql_class.h
+--- a~/sql/sql_class.h	1970-01-01 00:00:00
++++ a/sql/sql_class.h	1970-01-01 00:00:00
+@@ -7885,7 +7885,7 @@ inline int handler::ha_read_first_row(uc
+ inline int handler::ha_write_tmp_row(uchar *buf)
+ {
+   int error;
+-  MYSQL_INSERT_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_INSERT_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str);
+   increment_statistics(&SSV::ha_tmp_write_count);
+   TABLE_IO_WAIT(tracker, PSI_TABLE_WRITE_ROW, MAX_KEY, error,
+           { error= write_row(buf); })
+@@ -7896,7 +7896,7 @@ inline int handler::ha_write_tmp_row(uch
+ inline int handler::ha_delete_tmp_row(uchar *buf)
+ {
+   int error;
+-  MYSQL_DELETE_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_DELETE_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str);
+   increment_statistics(&SSV::ha_tmp_delete_count);
+   TABLE_IO_WAIT(tracker, PSI_TABLE_DELETE_ROW, MAX_KEY, error,
+                 { error= delete_row(buf); })
+@@ -7907,7 +7907,7 @@ inline int handler::ha_delete_tmp_row(uc
+ inline int handler::ha_update_tmp_row(const uchar *old_data, uchar *new_data)
+ {
+   int error;
+-  MYSQL_UPDATE_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_UPDATE_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str);
+   increment_statistics(&SSV::ha_tmp_update_count);
+   TABLE_IO_WAIT(tracker, PSI_TABLE_UPDATE_ROW, active_index, error,
+           { error= update_row(old_data, new_data);})
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sql/sql_cursor.cc a/sql/sql_cursor.cc
+--- a~/sql/sql_cursor.cc	1970-01-01 00:00:00
++++ a/sql/sql_cursor.cc	1970-01-01 00:00:00
+@@ -125,7 +125,7 @@ int mysql_open_cursor(THD *thd, select_r
+ 
+   MYSQL_QUERY_EXEC_START(thd->query(),
+                          thd->thread_id,
+-                         thd->get_db(),
++                         (char*)thd->get_db(),
+                          &thd->security_ctx->priv_user[0],
+                          (char *) thd->security_ctx->host_or_ip,
+                          2);
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sql/sql_parse.cc a/sql/sql_parse.cc
+--- a~/sql/sql_parse.cc	1970-01-01 00:00:00
++++ a/sql/sql_parse.cc	1970-01-01 00:00:00
+@@ -1869,7 +1869,7 @@ dispatch_command_return dispatch_command
+     if (unlikely(alloc_query(thd, packet, packet_length)))
+       break;					// fatal error is set
+     MYSQL_QUERY_START(thd->query(), thd->thread_id,
+-                      thd->get_db(),
++                      (char*)thd->get_db(),
+                       &thd->security_ctx->priv_user[0],
+                       (char *) thd->security_ctx->host_or_ip);
+     char *packet_end= thd->query() + thd->query_length();
+@@ -1955,7 +1955,7 @@ dispatch_command_return dispatch_command
+ 
+       /* DTRACE begin */
+       MYSQL_QUERY_START(beginning_of_next_stmt, thd->thread_id,
+-                        thd->get_db(),
++                        (char*)thd->get_db(),
+                         &thd->security_ctx->priv_user[0],
+                         (char *) thd->security_ctx->host_or_ip);
+ 
+@@ -7680,7 +7680,7 @@ static void wsrep_prepare_for_autocommit
+ 
+   /* DTRACE begin */
+   MYSQL_QUERY_START(rawbuf, thd->thread_id,
+-                    thd->get_db(),
++                    (char *)thd->get_db(),
+                     &thd->security_ctx->priv_user[0],
+                     (char *) thd->security_ctx->host_or_ip);
+ 
+@@ -7889,7 +7889,7 @@ void mysql_parse(THD *thd, char *rawbuf,
+           lex->set_trg_event_type_for_tables();
+           MYSQL_QUERY_EXEC_START(thd->query(),
+                                  thd->thread_id,
+-                                 thd->get_db(),
++                                 (char*)thd->get_db(),
+                                  &thd->security_ctx->priv_user[0],
+                                  (char *) thd->security_ctx->host_or_ip,
+                                  0);
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sql/sql_prepare.cc a/sql/sql_prepare.cc
+--- a~/sql/sql_prepare.cc	1970-01-01 00:00:00
++++ a/sql/sql_prepare.cc	1970-01-01 00:00:00
+@@ -5071,7 +5071,7 @@ bool Prepared_statement::execute(String
+     if (query_cache_send_result_to_client(thd, thd->query(),
+                                           thd->query_length()) <= 0)
+     {
+-      MYSQL_QUERY_EXEC_START(thd->query(), thd->thread_id, thd->get_db(),
++      MYSQL_QUERY_EXEC_START(thd->query(), thd->thread_id, (char *)thd->get_db(),
+                              &thd->security_ctx->priv_user[0],
+                              (char *) thd->security_ctx->host_or_ip, 1);
+       /*
+diff -wpruN --no-dereference '--exclude=*.orig' a~/storage/csv/ha_tina.cc a/storage/csv/ha_tina.cc
+--- a~/storage/csv/ha_tina.cc	1970-01-01 00:00:00
++++ a/storage/csv/ha_tina.cc	1970-01-01 00:00:00
+@@ -1245,7 +1245,7 @@ int ha_tina::rnd_next(uchar *buf)
+ {
+   int rc;
+   DBUG_ENTER("ha_tina::rnd_next");
+-  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str,
++  MYSQL_READ_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str,
+                        TRUE);
+ 
+   if (share->crashed)
+@@ -1300,7 +1300,7 @@ int ha_tina::rnd_pos(uchar * buf, uchar
+ {
+   int rc;
+   DBUG_ENTER("ha_tina::rnd_pos");
+-  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str,
++  MYSQL_READ_ROW_START((char*)table_share->db.str, (char*)table_share->table_name.str,
+                        FALSE);
+   current_position= my_get_ptr(pos,ref_length);
+   rc= find_current_row(buf);
+

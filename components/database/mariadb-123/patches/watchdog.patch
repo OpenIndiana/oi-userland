@@ -1,0 +1,54 @@
+--- mariadb-12.3.3/storage/rocksdb/././rdb_io_watchdog.h	2026-10-17 20:56:20.052575309 +0200
++++ mariadb-12.3.3/storage/rocksdb/././rdb_io_watchdog.h.orig	2026-10-17 20:57:33.387231978 +0200
+@@ -60,7 +60,11 @@
+       ret = timer_delete(m_io_check_watchdog_timer);
+ 
+       if (!ret) {
++#if defined(OS_SOLARIS)
++        m_io_check_watchdog_timer = 0;
++#else
+         m_io_check_watchdog_timer = nullptr;
++#endif
+       }
+     }
+ 
+@@ -68,7 +72,11 @@
+       ret = timer_delete(m_io_check_timer);
+ 
+       if (!ret) {
++#if defined(OS_SOLARIS)
++        m_io_check_timer = 0;
++#else
+         m_io_check_timer = nullptr;
++#endif
+       }
+     }
+ 
+@@ -93,8 +101,13 @@
+ 
+  public:
+   explicit Rdb_io_watchdog(std::vector<std::string> &&directories)
++#if defined(OS_SOLARIS)
++      : m_io_check_timer(0),
++        m_io_check_watchdog_timer(0),
++#else
+       : m_io_check_timer(nullptr),
+         m_io_check_watchdog_timer(nullptr),
++#endif
+         m_io_in_progress(false),
+         m_dirs_to_check(std::move(directories)),
+         m_buf(nullptr) {
+--- mariadb-12.3.3/storage/rocksdb/rdb_io_watchdog.cc	2026-08-20 08:33:31.000000000 +0200
++++ mariadb-12.3.3/storage/rocksdb/rdb_io_watchdog.cc.orig	2026-10-18 20:48:50.697971444 +0200
+@@ -111,7 +111,11 @@
+     sql_print_warning("Deleting the watchdog I/O timer failed with %d.", errno);
+   }
+ 
++#if defined(OS_SOLARIS)
++  m_io_check_watchdog_timer = 0;
++#else
+   m_io_check_watchdog_timer = nullptr;
++#endif
+ 
+   RDB_MUTEX_UNLOCK_CHECK(m_reset_mutex);
+ }
