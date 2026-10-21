@@ -1,9 +1,9 @@
 Restore vesa on consoles with an initialized legacy video BIOS.
 
 VIS identifier illumos_fb identifies both BIOS VBE and UEFI GOP consoles;
-it is not evidence that vesa is unusable. Prefer modesetting when its default
-DRM endpoint has connectors. Otherwise retain PCI matching and vesa, reserving
-illumosfb for bitmap consoles without an initialized legacy video BIOS.
+it is not evidence that vesa is unusable. Preserve upstream PCI matching and
+vesa, reserving illumosfb for bitmap consoles without an initialized legacy
+video BIOS. Do not change selection of existing PCI drivers such as intel.
 Unknown BIOS capability retains vesa. Explicit Device sections are unchanged.
 
 Do not put vesa and illumosfb in the same fallback list: their PCI/framebuffer
@@ -11,33 +11,11 @@ claims conflict before PreInit. This patch is specific to illumos.
 
 --- a/hw/xfree86/common/xf86AutoConfig.c
 +++ b/hw/xfree86/common/xf86AutoConfig.c
-@@ -198,6 +198,110 @@
+@@ -198,6 +198,91 @@
      return ret == CONFIG_OK;
  }
 
 +#if defined(__sun) && (defined(__i386__) || defined(__amd64__))
-+#include <libdrm/drm.h>
-+#include <libdrm/drm_mode.h>
-+
-+/* Match the default endpoint and connector test in modesetting's probe_hw(). */
-+static Bool
-+sunKmsDevice(void)
-+{
-+    struct drm_mode_card_res res = { 0 };
-+    const char *dev = getenv("KMSDEVICE");
-+    int fd = -1, ret;
-+
-+    if (dev)
-+        fd = open(dev, O_RDWR);
-+    if (fd < 0)
-+        fd = open("/dev/dri/card0", O_RDWR);
-+    if (fd < 0)
-+        return FALSE;
-+    SYSCALL(ret = ioctl(fd, DRM_IOCTL_MODE_GETRESOURCES, &res));
-+    close(fd);
-+    return ret == 0 && res.count_connectors > 0;
-+}
-+
 +/*
 + * Return 1 for an initialized legacy video BIOS, 0 for its absence, and -1
 + * when it cannot be inspected. EFI boot and VIS_GETIDENTIFIER do not tell us
@@ -108,7 +86,10 @@ claims conflict before PreInit. This patch is specific to illumos.
 +        SYSCALL(iret = ioctl(fd, VIS_GETIDENTIFIER, &visid));
 +        close(fd);
 +    }
-+    if (iret < 0 || strcmp(visid.name, "illumos_fb") != 0)
++    if (iret < 0)
++        return FALSE;
++    xf86Msg(X_PROBED, "console driver: %s\n", visid.name);
++    if (strcmp(visid.name, "illumos_fb") != 0)
 +        return FALSE;
 +    bios = sunLegacyVbios();
 +    xf86Msg(X_PROBED, "illumos framebuffer: legacy video BIOS %s\n",
@@ -122,21 +103,7 @@ claims conflict before PreInit. This patch is specific to illumos.
  static void
  listPossibleVideoDrivers(char *matches[], int nmatches)
  {
-@@ -208,6 +312,13 @@
-     }
-     i = 0;
-
-+#if defined(__sun) && (defined(__i386__) || defined(__amd64__))
-+    if (sunKmsDevice()) {
-+        if (i < (nmatches - 1))
-+            matches[i++] = xnfstrdup("modesetting");
-+        return;
-+    }
-+#endif
- #ifdef XSERVER_PLATFORM_BUS
-     i = xf86PlatformMatchDriver(matches, nmatches);
- #endif
-@@ -278,6 +389,25 @@
+@@ -278,6 +363,25 @@
 
  #if defined(__linux__)
      matches[i++] = xnfstrdup("modesetting");
