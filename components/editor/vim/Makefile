@@ -120,6 +120,7 @@ REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/security/libsodium
 REQUIRED_PACKAGES += shell/ksh93
