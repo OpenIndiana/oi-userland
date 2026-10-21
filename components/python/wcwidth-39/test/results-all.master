@@ -1,6 +1,4 @@
 py$(PYV): commands_pre[0]> $(PYTHON) setup.py build_ext --inplace
-$(PYTHON_DIR)/vendor-packages/nose/plugins/manager.py:417: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
-  import pkg_resources
 
         ********************************************************************************
         Please consider removing the following classifiers in favor of a SPDX license expression:
@@ -31,7 +29,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: tox.ini
-collecting ... collected 1755 items
+collecting ... collected 1762 items
 
 tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\xa1-INVERTED_EXCLAMATION] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\xa7-SECTION_SIGN] PASSED
@@ -850,6 +848,12 @@ tests/test_hyperlink.py::test_hyperlinkparams_parse_valid[\x1b]8;id=a;http://exa
 tests/test_hyperlink.py::test_hyperlinkparams_parse_invalid[not an escape] PASSED
 tests/test_hyperlink.py::test_hyperlinkparams_parse_invalid[\x1b[31m] PASSED
 tests/test_hyperlink.py::test_hyperlinkparams_parse_invalid[] PASSED
+tests/test_hyperlink.py::test_hyperlinkparams_parse_invalid[\x1b]8;;https://example.com\x07text] PASSED
+tests/test_hyperlink.py::test_hyperlinkparams_parse_invalid[\x1b]8;;https://example.com\x07\n] PASSED
+tests/test_hyperlink.py::test_hyperlinkparams_parse_invalid[\x1b]8;;https://example.com\x07\x1b[31m] PASSED
+tests/test_hyperlink.py::test_hyperlinkparams_parse_invalid[\x1b]8;;https://example.com\x1b\\text] PASSED
+tests/test_hyperlink.py::test_hyperlinkparams_parse_invalid[\x1b]8;;https://example.com\x1b\\\n] PASSED
+tests/test_hyperlink.py::test_hyperlinkparams_parse_invalid[\x1b]8;;https://example.com\x1b\\\x1b[31m] PASSED
 tests/test_hyperlink.py::test_hyperlinkparams_make_open PASSED
 tests/test_hyperlink.py::test_hyperlinkparams_make_close PASSED
 tests/test_hyperlink.py::test_hyperlink_parse_valid PASSED
@@ -1491,11 +1495,12 @@ tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[Go \x1b]8;;http://exam
 tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;id=my-link;http://example.com\x1b\\Click here\x1b]8;;\x1b\\-6-expected12] PASSED
 tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x1b\\one two three\x1b]8;;\x1b\\-5-expected13] PASSED
 tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x1b\\ab cd\x1b]8;;\x1b\\ \x1b]8;;http://example.com\x07ef gh\x1b]8;;\x07-4-expected14] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x1b\\abcdefgh\x1b]8;;\x1b\\-3-expected15] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;foo=bar;http://example.com\x1b\\Click here\x1b]8;;\x1b\\-6-expected16] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;foo=bar:id=mylink;http://example.com\x1b\\Click here\x1b]8;;\x1b\\-6-expected17] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;u\x07\U0001f600-1-expected18] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;u\x07\u3042-1-expected19] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;id=first;https://a\x07aa bb\x1b]8;;\x07 \x1b]8;id=second;https://b\x07cc dd ee\x1b]8;;\x07-5-expected15] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x1b\\abcdefgh\x1b]8;;\x1b\\-3-expected16] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;foo=bar;http://example.com\x1b\\Click here\x1b]8;;\x1b\\-6-expected17] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;foo=bar:id=mylink;http://example.com\x1b\\Click here\x1b]8;;\x1b\\-6-expected18] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;u\x07\U0001f600-1-expected19] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;u\x07\u3042-1-expected20] PASSED
 tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[The quick brown fox jumps over the lazy dog-kwargs0] PASSED
 tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[1234567890 1234567890 extra-kwargs1] PASSED
 tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[1234567890 1234567890-kwargs2] PASSED
@@ -1793,6 +1798,6 @@ wcwidth/textwrap.py::wcwidth.textwrap.wrap PASSED
 
 - generated xml file: $(@D)/.tox/results.py$(PYV).xml -
 ============================= slowest 10 durations =============================
-======== 1744 passed, 11 skipped ========
+======== 1751 passed, 11 skipped ========
   py$(PYV): OK
   congratulations :)
