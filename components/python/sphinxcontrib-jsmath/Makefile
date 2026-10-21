@@ -11,22 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project sphinxcontrib-jsmath
+#   $WS_TOOLS/python-integrate-project -d python/sphinxcontrib-jsmath sphinxcontrib_jsmath
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		sphinxcontrib-jsmath
-HUMAN_VERSION =			1.0.1
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		A sphinx extension which renders display math in HTML via JavaScript
-COMPONENT_PROJECT_URL =		http://sphinx-doc.org/
+COMPONENT_NAME =		sphinxcontrib_jsmath
+HUMAN_VERSION =			2.0.0
+COMPONENT_SUMMARY =		sphinxcontrib-jsmath is a sphinx extension which renders displayed maths in HTML via JavaScript
+COMPONENT_PROJECT_URL =		https://www.sphinx-doc.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a9925e4a4587247ed2191a22df5f6970656cb8ca2bd6284309578f2153e0c4b8
+	sha256:551f780cf9687f9c3c74f0cf9f18aca06e0d6958853453f3803fe4d357c5b924
 COMPONENT_LICENSE =		BSD-2-Clause
-COMPONENT_LICENSE_FILE =	LICENSE
+COMPONENT_LICENSE_FILE =	LICENCE.rst
 
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
@@ -42,9 +41,7 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/flit-core
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
-TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
