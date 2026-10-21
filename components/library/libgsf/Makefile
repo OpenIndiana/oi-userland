@@ -19,10 +19,9 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgsf
-HUMAN_VERSION=		1.14.56
-COMPONENT_REVISION=	1
+HUMAN_VERSION=		1.14.60
 COMPONENT_SUMMARY= GNOME Structured File Library
-COMPONENT_ARCHIVE_HASH= sha256:9d21d30df1d12feaf03e181afd6067f65e3048ab69cb6ad174a3c5b72b92d297
+COMPONENT_ARCHIVE_HASH= sha256:83e12c36a099a8a7019bf425e2c24af66eeb2ef5874251e694431a07d9805dae
 COMPONENT_FMRI= library/desktop/libgsf
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	LGPL-2.1-only
@@ -44,7 +43,7 @@ CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-zlib
 CONFIGURE_OPTIONS += --enable-introspection
 
-# Testing fails with valgrind installed
+# Both valgrind tests fail with valgrind installed
 TEST_CONFLICTING_PACKAGES += developer/debug/valgrind
 
 # Manually added build dependencies
