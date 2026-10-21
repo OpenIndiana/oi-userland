@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			82.0.1
+HUMAN_VERSION =			84.2.1
 COMPONENT_SUMMARY =		Most extensible Python build backend with support for C/C++ extension modules
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7d872682c5d01cfde07da7bccc7b65469d3dca203318515ada1de5eda35efbf9
+	sha256:3ff8b3b5492a0aa66960f4419365a86b84e013070d4313e4d4a6894f5d64d6bc
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -41,6 +41,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 # - trove-classifiers (test bootstrap)
 # - zipp
 PYTHON_BOOTSTRAP = yes
+
+# Python 3.9 is not supported by setuptools >= 83.0.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -63,7 +66,6 @@ PYTEST_ADDOPTS += --deselect setuptools/tests/test_bdist_wheel.py::test_universa
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/filelock
-TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
 TEST_REQUIRED_PACKAGES.python += library/python/ini2toml
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-develop
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-envs
@@ -81,7 +83,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-home
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-subprocess
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
-TEST_REQUIRED_PACKAGES.python += library/python/tomli
 TEST_REQUIRED_PACKAGES.python += library/python/tomli-w
 TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
 TEST_REQUIRED_PACKAGES.python += library/python/wheel

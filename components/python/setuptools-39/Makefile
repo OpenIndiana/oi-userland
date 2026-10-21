@@ -1,0 +1,75 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project -d python/setuptools-39 setuptools
+#
+
+BUILD_STYLE = pyproject
+
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME =		setuptools
+HUMAN_VERSION =			82.0.1
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Most extensible Python build backend with support for C/C++ extension modules
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:7d872682c5d01cfde07da7bccc7b65469d3dca203318515ada1de5eda35efbf9
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
+
+# setuptools >= 83.0.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
+
+include $(WS_MAKE_RULES)/common.mk
+
+# nose causes the test_pyproject_sets_attribute test to fail
+TEST_CONFLICTING_PACKAGES.python += library/python/nose
+# many tests are failing with recent setuptools-scm
+TEST_CONFLICTING_PACKAGES.python += library/python/setuptools-scm
+
+# fails with tox-current-env
+PYTEST_ADDOPTS += --deselect setuptools/tests/config/test_setupcfg.py::TestOptions::test_cmdclass
+PYTEST_ADDOPTS += --deselect setuptools/tests/test_extern.py::test_distribution_picklable
+
+# https://github.com/pypa/setuptools/issues/5094
+PYTEST_ADDOPTS += --deselect setuptools/tests/test_egg_info.py::TestEggInfo::test_setup_cfg_license_file_license_files
+
+# https://github.com/pypa/setuptools/issues/5097
+PYTEST_ADDOPTS += --deselect setuptools/tests/test_bdist_wheel.py::test_universal_deprecated
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/build
+TEST_REQUIRED_PACKAGES.python += library/python/filelock
+TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
+TEST_REQUIRED_PACKAGES.python += library/python/ini2toml
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-develop
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-envs
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-functools
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-path
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-test
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-text
+TEST_REQUIRED_PACKAGES.python += library/python/more-itertools
+TEST_REQUIRED_PACKAGES.python += library/python/packaging
+TEST_REQUIRED_PACKAGES.python += library/python/pip
+TEST_REQUIRED_PACKAGES.python += library/python/pyproject-hooks
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-home
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-subprocess
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
+TEST_REQUIRED_PACKAGES.python += library/python/tomli
+TEST_REQUIRED_PACKAGES.python += library/python/tomli-w
+TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
+TEST_REQUIRED_PACKAGES.python += library/python/wheel
