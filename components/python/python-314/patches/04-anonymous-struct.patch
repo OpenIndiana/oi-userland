@@ -1,0 +1,18 @@
+--- Python-3.14.9/Lib/test/test_cext/__init__.py.orig
++++ Python-3.14.9/Lib/test/test_cext/__init__.py
+@@ -135,6 +135,7 @@
+ class TestPublicCpp(BaseTests, unittest.TestCase):
+     LANGUAGE = 'C++'
+ 
++    @unittest.skip("https://github.com/python/cpython/issues/160208")
+     def test_build(self):
+         self.check_build('_test_cppext')
+ 
+@@ -162,6 +163,7 @@
+     def test_build_intel_asm(self):
+         self.check_build('_test_cppext_intel_asm', extra_cflags='-masm=intel')
+ 
++    @unittest.skip("https://github.com/python/cpython/issues/160208")
+     def test_build_limited(self):
+         self.check_build('_test_cppext_limited', limited=True)
+ 
