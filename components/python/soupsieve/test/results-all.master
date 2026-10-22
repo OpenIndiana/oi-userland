@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 412 items
+collecting ... collected 425 items
 
 tests/test_api.py::TestSoupSieve::test_cache PASSED
 tests/test_api.py::TestSoupSieve::test_closest_match_complex_parent PASSED
@@ -14,9 +14,13 @@ tests/test_api.py::TestSoupSieve::test_copy_pickle PASSED
 tests/test_api.py::TestSoupSieve::test_equal_hash_collision PASSED
 tests/test_api.py::TestSoupSieve::test_equal_shared PASSED
 tests/test_api.py::TestSoupSieve::test_escape_ctrl PASSED
+tests/test_api.py::TestSoupSieve::test_escape_del_c1_ctrl PASSED
 tests/test_api.py::TestSoupSieve::test_escape_hyphen PASSED
+tests/test_api.py::TestSoupSieve::test_escape_non_ascii_ident PASSED
+tests/test_api.py::TestSoupSieve::test_escape_non_ascii_non_ident PASSED
 tests/test_api.py::TestSoupSieve::test_escape_null PASSED
 tests/test_api.py::TestSoupSieve::test_escape_numbers PASSED
+tests/test_api.py::TestSoupSieve::test_escape_round_trip PASSED
 tests/test_api.py::TestSoupSieve::test_escape_special PASSED
 tests/test_api.py::TestSoupSieve::test_escape_wide_unicode PASSED
 tests/test_api.py::TestSoupSieve::test_filter_list PASSED
@@ -36,6 +40,7 @@ tests/test_api.py::TestSoupSieve::test_select_limit PASSED
 tests/test_api.py::TestSoupSieve::test_select_one PASSED
 tests/test_api.py::TestSoupSieve::test_select_one_none PASSED
 tests/test_api.py::TestSoupSieve::test_select_order PASSED
+tests/test_api.py::TestSoupSieve::test_unescaped_non_ascii_identifiers PASSED
 tests/test_api.py::TestInvalid::test_excessive_custom_and_normal_selectors PASSED
 tests/test_api.py::TestInvalid::test_excessive_custom_selectors PASSED
 tests/test_api.py::TestInvalid::test_excessive_group_selectors PASSED
@@ -104,6 +109,14 @@ tests/test_extra/test_soup_contains_own.py::TestSoupContainsOwn::test_contains_o
 tests/test_extra/test_soup_contains_own.py::TestSoupContainsOwn::test_contains_own_cdata_py_html PASSED
 tests/test_extra/test_soup_contains_own.py::TestSoupContainsOwn::test_contains_own_cdata_xml PASSED
 tests/test_extra/test_soup_contains_own.py::TestSoupContainsOwn::test_contains_own_descendants PASSED
+tests/test_extra/test_soup_contains_own.py::TestSoupContainsOwn::test_contains_own_mixed 
+tests/test_extra/test_soup_contains_own.py::TestSoupContainsOwn::test_contains_own_mixed PASSED
+tests/test_extra/test_soup_contains_own.py::TestSoupContainsOwn::test_contains_own_mixed_empty 
+tests/test_extra/test_soup_contains_own.py::TestSoupContainsOwn::test_contains_own_mixed_empty PASSED
+tests/test_extra/test_soup_contains_own.py::TestSoupContainsOwn::test_contains_own_mixed_nested 
+tests/test_extra/test_soup_contains_own.py::TestSoupContainsOwn::test_contains_own_mixed_nested PASSED
+tests/test_extra/test_soup_contains_own.py::TestSoupContainsOwn::test_contains_own_mixed_text_boundaries 
+tests/test_extra/test_soup_contains_own.py::TestSoupContainsOwn::test_contains_own_mixed_text_boundaries PASSED
 tests/test_extra/test_soup_contains_own.py::TestSoupContainsOwn::test_contains_own_with_broken_text PASSED
 tests/test_level1/test_active.py::TestActive::test_active PASSED
 tests/test_level1/test_at_rule.py::TestAtRule::test_at_rule PASSED
@@ -291,6 +304,7 @@ tests/test_level4/test_default.py::TestDefault::test_nested_form PASSED
 tests/test_level4/test_default.py::TestDefault::test_nested_form_fail PASSED
 tests/test_level4/test_defined.py::TestDefined::test_defined_html PASSED
 tests/test_level4/test_defined.py::TestDefined::test_defined_xml PASSED
+tests/test_level4/test_dir.py::TestDir::test_dir_auto_nested PASSED
 tests/test_level4/test_dir.py::TestDir::test_dir_auto_root PASSED
 tests/test_level4/test_dir.py::TestDir::test_dir_bidi_detect PASSED
 tests/test_level4/test_dir.py::TestDir::test_dir_conflict PASSED
@@ -333,6 +347,7 @@ tests/test_level4/test_in_range.py::TestInRange::test_in_range_date PASSED
 tests/test_level4/test_in_range.py::TestInRange::test_in_range_date_time PASSED
 tests/test_level4/test_in_range.py::TestInRange::test_in_range_month PASSED
 tests/test_level4/test_in_range.py::TestInRange::test_in_range_number PASSED
+tests/test_level4/test_in_range.py::TestInRange::test_in_range_numeric_exponents PASSED
 tests/test_level4/test_in_range.py::TestInRange::test_in_range_range PASSED
 tests/test_level4/test_in_range.py::TestInRange::test_in_range_time PASSED
 tests/test_level4/test_in_range.py::TestInRange::test_in_range_week PASSED
@@ -379,6 +394,7 @@ tests/test_level4/test_not.py::TestNot::test_multi_nested_not PASSED
 tests/test_level4/test_nth_child.py::TestNthChild::test_nth_child_of_s_complex PASSED
 tests/test_level4/test_nth_child.py::TestNthChild::test_nth_child_of_s_simple PASSED
 tests/test_level4/test_nth_last_child.py::TestNthLastChild::test_nth_child_of_s_complex PASSED
+tests/test_level4/test_nth_last_child.py::TestNthLastChild::test_nth_child_of_s_first_sibling_not_matching PASSED
 tests/test_level4/test_open.py::TestOpen::test_not_open PASSED
 tests/test_level4/test_open.py::TestOpen::test_open PASSED
 tests/test_level4/test_open.py::TestOpen::test_targted_open PASSED
@@ -388,6 +404,7 @@ tests/test_level4/test_out_of_range.py::TestOutOfRange::test_out_of_range_date P
 tests/test_level4/test_out_of_range.py::TestOutOfRange::test_out_of_range_date_time PASSED
 tests/test_level4/test_out_of_range.py::TestOutOfRange::test_out_of_range_month PASSED
 tests/test_level4/test_out_of_range.py::TestOutOfRange::test_out_of_range_number PASSED
+tests/test_level4/test_out_of_range.py::TestOutOfRange::test_out_of_range_numeric_exponents PASSED
 tests/test_level4/test_out_of_range.py::TestOutOfRange::test_out_of_range_range PASSED
 tests/test_level4/test_out_of_range.py::TestOutOfRange::test_out_of_range_time PASSED
 tests/test_level4/test_out_of_range.py::TestOutOfRange::test_out_of_range_week PASSED
@@ -418,4 +435,4 @@ tests/test_versions.py::TestVersion::test_version_comparison PASSED
 tests/test_versions.py::TestVersion::test_version_output PASSED
 tests/test_versions.py::TestVersion::test_version_parsing PASSED
 
-======== 395 passed, 17 skipped ========
+======== 408 passed, 17 skipped, 12 subtests passed ========
