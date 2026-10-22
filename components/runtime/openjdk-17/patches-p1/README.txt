@@ -3,6 +3,14 @@ considerably modified. Cut from the jdk15 patches as of jdk15+32.
 
 See also README-zero.txt for patches to build a project zero variant.
 
+17.0.21
+
+No changes.
+
+17.0.20.1
+
+No changes.
+
 17.0.19
 
 Trivial patch noise.
