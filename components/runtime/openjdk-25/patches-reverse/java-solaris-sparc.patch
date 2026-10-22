@@ -184,7 +184,26 @@
          comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib powrprof.lib uuid.lib \
 --- old/make/autoconf/platform.m4	2020-05-20 17:58:42.328582435 -0700
 +++ new/make/autoconf/platform.m4	2020-05-20 17:58:41.904574294 -0700
-@@ -202,10 +202,6 @@
+@@ -174,18 +174,6 @@
+       VAR_CPU_BITS=64
+       VAR_CPU_ENDIAN=big
+       ;;
+-    sparc)
+-      VAR_CPU=sparc
+-      VAR_CPU_ARCH=sparc
+-      VAR_CPU_BITS=32
+-      VAR_CPU_ENDIAN=big
+-      ;;
+-    sparcv9|sparc64)
+-      VAR_CPU=sparcv9
+-      VAR_CPU_ARCH=sparc
+-      VAR_CPU_BITS=64
+-      VAR_CPU_ENDIAN=big
+-      ;;
+     *)
+       AC_MSG_ERROR([unsupported cpu $1])
+       ;;
+@@ -202,10 +190,6 @@
        VAR_OS=linux
        VAR_OS_TYPE=unix
        ;;
@@ -195,7 +214,7 @@
      *darwin*)
        VAR_OS=macosx
        VAR_OS_TYPE=unix
-@@ -613,9 +609,6 @@
+@@ -613,9 +597,6 @@
  
  AC_DEFUN([PLATFORM_SET_RELEASE_FILE_OS_VALUES],
  [
@@ -384,7 +403,7 @@
  ################################################################################
  # Setup compilation of the main Hotspot native library (libjvm).
  
-@@ -184,7 +181,6 @@
+@@ -186,7 +183,6 @@
      EXCLUDES := $(JVM_EXCLUDES), \
      EXCLUDE_FILES := $(JVM_EXCLUDE_FILES), \
      EXCLUDE_PATTERNS := $(JVM_EXCLUDE_PATTERNS), \
@@ -1327,23 +1346,21 @@
  
 --- old/src/java.base/unix/native/libjava/ProcessImpl_md.c	2020-05-20 18:01:09.319404766 -0700
 +++ new/src/java.base/unix/native/libjava/ProcessImpl_md.c	2020-05-20 18:01:08.935397393 -0700
-@@ -231,14 +231,7 @@
+@@ -231,12 +231,7 @@
  static const char*
  defaultPath(void)
  {
 -#ifdef __solaris__
--    /* These really are the Solaris defaults! */
--    return (geteuid() == 0 || getuid() == 0) ?
--        "/usr/xpg4/bin:/usr/bin:/opt/SUNWspro/bin:/usr/sbin" :
--        "/usr/xpg4/bin:/usr/bin:/opt/SUNWspro/bin:";
+-    /* Keep xpg4 for older systems. */
+-    return "/usr/xpg4/bin:/usr/bin:/usr/sbin";
 -#else
--    return ":/bin:/usr/bin";    /* glibc */
+-    return ":/bin:/usr/bin";
 -#endif
 +    return ":/bin:/usr/bin";
  }
  
  static const char*
-@@ -496,7 +489,7 @@
+@@ -494,7 +489,7 @@
  #endif
  
  /* vfork(2) is deprecated on Darwin */
@@ -1352,7 +1369,7 @@
  static pid_t
  vforkChild(ChildStuff *c) {
      volatile pid_t resultPid;
-@@ -662,7 +655,7 @@
+@@ -660,7 +655,7 @@
  startChild(JNIEnv *env, jobject process, ChildStuff *c, const char *helperpath) {
      switch (c->mode) {
  /* vfork(2) is deprecated on Darwin*/
@@ -1602,7 +1619,7 @@
  #elif defined(_AIX)
  static const char *ETC_ENVIRONMENT_FILE = "/etc/environment";
  
-@@ -679,15 +488,6 @@
+@@ -709,15 +518,6 @@
              free((void *) freetz);
          }
  #else
@@ -1776,7 +1793,7 @@
  #if defined(_ALLBSD_SOURCE)
  #include <net/ethernet.h>
  #include <net/if_dl.h>
-@@ -1663,265 +1658,6 @@
+@@ -1674,265 +1669,6 @@
  
  #endif /* _AIX */
  

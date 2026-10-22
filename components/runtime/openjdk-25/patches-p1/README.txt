@@ -4,6 +4,16 @@ IMPORTANT: note that the build target has changed, from 'all' to
 'product-images', as 'all' tries to build a static image which doesn't
 work.
 
+25.0.5
+
+Add ipv6 fix
+
+25.0.4.1
+
+No changes.
+
+Cleanup: defaultPath() no longer includes SUNWspro.
+
 25.0.4
 
 Types of physical_memory, free_memory, available_memory have changed.
