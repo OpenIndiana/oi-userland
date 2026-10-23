@@ -1,3 +1,14 @@
+--- php-8.4.27/TSRM/TSRM.h.~1~	Mon Oct 19 07:38:59 2026
++++ php-8.4.27/TSRM/TSRM.h	Thu Oct 22 15:58:50 2026
+@@ -153,7 +153,7 @@
+ #endif
+ 
+ #if !__has_attribute(tls_model) || defined(__FreeBSD__) || defined(__NetBSD__) \
+-	|| defined(__MUSL__) || defined(__HAIKU__) || defined(_AIX)
++	|| defined(__MUSL__) || defined(__HAIKU__) || defined(_AIX) || defined(__solaris__)
+ # define TSRM_TLS_MODEL_ATTR
+ # define TSRM_TLS_MODEL_DEFAULT
+ #elif __PIC__
 --- php-8.4.1/TSRM/TSRM.c	2024-11-20 10:48:35.000000000 +0100
 +++ php-8.4.1/TSRM/TSRM.c.orig	2024-11-29 20:39:05.598446180 +0100
 @@ -778,7 +778,7 @@
@@ -9,3 +20,14 @@
  	size_t ret;
  
  	asm ("movq _tsrm_ls_cache@gottpoff(%%rip),%0"
+--- php-8.4.27/ext/opcache/jit/zend_jit_ir.c.~1~	Mon Oct 19 07:38:59 2026
++++ php-8.4.27/ext/opcache/jit/zend_jit_ir.c	Thu Oct 22 17:09:03 2026
+@@ -3500,7 +3500,7 @@
+ 	tsrm_ls_cache_tcb_offset = tsrm_get_ls_cache_tcb_offset();
+ 	if (tsrm_ls_cache_tcb_offset == 0) {
+ #if defined(__has_attribute) && __has_attribute(tls_model) && !defined(__FreeBSD__) && \
+-	!defined(__NetBSD__) && !defined(__OpenBSD__) && !defined(__MUSL__)
++	!defined(__NetBSD__) && !defined(__OpenBSD__) && !defined(__MUSL__) && !defined(__solaris__)
+ 		size_t ret;
+ 
+ 		asm ("movq _tsrm_ls_cache@gottpoff(%%rip),%0"
