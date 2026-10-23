@@ -21,6 +21,7 @@ COMPONENT_MNR_VERSION=	12
 COMPONENT_SUMMARY=      PHP 8.5
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
@@ -43,7 +44,7 @@ PHP_PREFIX=		/usr/php/$(COMPONENT_MJR_VERSION)
 PHP_SYSCONFDIR=		/etc/php/$(COMPONENT_MJR_VERSION)
 PHP_DATADIR=		/var/php/$(COMPONENT_MJR_VERSION)
 
-CFLAGS +=        	$(CC_BITS) -D_XPG6 -D__EXTENSIONS__
+CFLAGS +=        	$(CC_BITS) -D_XPG6 -D__EXTENSIONS__ -D__solaris__
 CFLAGS +=		-I/usr/include/openldap
 CPPFLAGS +=      	$(CPP_XPG6MODE) 
 LDFLAGS +=       	-lldap_r
