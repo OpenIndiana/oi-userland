@@ -1,0 +1,55 @@
+glamor: enable DRI3 only when dma-bufs can be imported and exported.
+
+DRI3 passes buffers as dma-bufs. A PixmapFromBuffer request (and a PRIME
+import) reaches gbm_bo_import(GBM_BO_IMPORT_FD), which calls the DRI
+driver's createImageFromFds. Mesa 21.3.9 on illumos builds its Gallium
+drivers without dma-buf import (PIPE_CAP_DMABUF is 1 only on Linux and the
+BSDs), so the function pointer is NULL, and GBM calls it without checking:
+one DRI3 client request made Xorg with glamor on virtio-gpu die with
+SIGSEGV at address 0 in glamor_back_pixmap_from_fd(). Kernel drivers
+without PRIME (the legacy gfx-drm i915) cannot pass dma-bufs at all.
+
+Turn DRI3 on only when the kernel reports PRIME import and export and EGL
+offers EGL_EXT_image_dma_buf_import, which Mesa sets exactly when the
+driver's import exists. Otherwise GLX clients use DRI2, as before.
+
+The same checks are missing upstream (21.1 reaches GBM_BO_IMPORT_FD
+unconditionally); the crash itself is Mesa's (GBM should fail with ENOSYS).
+
+--- a/glamor/glamor_egl.c
++++ b/glamor/glamor_egl.c
+@@ -846,10 +846,32 @@
+      */
+     lastGLContext = NULL;
+ #ifdef GLAMOR_HAS_GBM
++    /*
++     * DRI3 passes buffers as dma-bufs: PixmapFromBuffer (and a PRIME
++     * import) goes through gbm_bo_import(GBM_BO_IMPORT_FD), BufferFromPixmap
++     * through gbm_bo_get_fd(). That needs PRIME import and export in the
++     * kernel and the DRI driver's dma-buf import, which Mesa advertises as
++     * EGL_EXT_image_dma_buf_import. Mesa 21.3's GBM calls a missing import
++     * function anyway, and the server crashes.
++     */
+     if (epoxy_has_egl_extension(glamor_egl->display,
+                                 "EGL_KHR_gl_texture_2D_image") &&
+-        epoxy_has_gl_extension("GL_OES_EGL_image"))
+-        glamor_egl->dri3_capable = TRUE;
++        epoxy_has_gl_extension("GL_OES_EGL_image")) {
++        uint64_t prime = 0;
++
++        if (drmGetCap(glamor_egl->fd, DRM_CAP_PRIME, &prime) != 0 ||
++            !(prime & DRM_PRIME_CAP_IMPORT) || !(prime & DRM_PRIME_CAP_EXPORT))
++            xf86DrvMsg(scrn->scrnIndex, X_INFO,
++                       "glamor: DRI3 disabled: the kernel driver lacks "
++                       "PRIME import or export\n");
++        else if (!epoxy_has_egl_extension(glamor_egl->display,
++                                          "EGL_EXT_image_dma_buf_import"))
++            xf86DrvMsg(scrn->scrnIndex, X_INFO,
++                       "glamor: DRI3 disabled: the EGL driver cannot "
++                       "import dma-bufs (no EGL_EXT_image_dma_buf_import)\n");
++        else
++            glamor_egl->dri3_capable = TRUE;
++    }
+ #endif
+ 
+     glamor_egl->saved_free_screen = scrn->FreeScreen;
