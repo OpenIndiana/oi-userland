@@ -11,20 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project Brotli
+#   $WS_TOOLS/python-integrate-project -d python/Brotli brotli
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Brotli
-HUMAN_VERSION =			1.1.0
-COMPONENT_REVISION =		1
+COMPONENT_NAME =		brotli
+HUMAN_VERSION =			1.2.1
 COMPONENT_SUMMARY =		Python bindings for the Brotli compression library
 COMPONENT_PROJECT_URL =		https://github.com/google/brotli
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:81de08ac11bcb85841e440c13611c00b67d3bf82698314928d0b676362546724
+	sha256:02b2f7b5a83485efe448a44ddf7983def05c3bb1dcf917d4f7154070260e13de
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,5 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/pkgconfig
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
