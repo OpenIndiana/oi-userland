@@ -1,0 +1,22 @@
+--- php-8.4.27/TSRM/TSRM.h.~1~	Mon Oct 19 07:38:59 2026
++++ php-8.4.27/TSRM/TSRM.h	Thu Oct 22 15:58:50 2026
+@@ -153,7 +153,7 @@
+ #endif
+ 
+ #if !__has_attribute(tls_model) || defined(__FreeBSD__) || defined(__NetBSD__) \
+-	|| defined(__MUSL__) || defined(__HAIKU__) || defined(_AIX)
++	|| defined(__MUSL__) || defined(__HAIKU__) || defined(_AIX) || defined(__solaris__)
+ # define TSRM_TLS_MODEL_ATTR
+ # define TSRM_TLS_MODEL_DEFAULT
+ #elif __PIC__
+--- php-8.5.12/TSRM/TSRM.c.~1~	Mon Oct 19 10:02:46 2026
++++ php-8.5.12/TSRM/TSRM.c	Thu Oct 22 17:32:29 2026
+@@ -778,7 +778,7 @@
+ 	return 0;
+ #elif defined(__x86_64__) && defined(__GNUC__) && !defined(__FreeBSD__) && \
+ 	!defined(__NetBSD__) && !defined(__OpenBSD__) && !defined(__MUSL__) && \
+-	!defined(__HAIKU__) && !defined(__CYGWIN__)
++	!defined(__HAIKU__) && !defined(__CYGWIN__) && !defined(__solaris)
+ 	size_t ret;
+ 
+ 	asm ("movq _tsrm_ls_cache@gottpoff(%%rip),%0"
