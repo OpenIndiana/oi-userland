@@ -45,8 +45,8 @@
 /* Support SHM */
 #define HAS_SHM 1
 
-/* Define to 1 if you have the `ffs' function. */
-#define HAVE_FFS 1
+/* Define to 1 if you have the `reallocarray' function. */
+#define HAVE_REALLOCARRAY 1
 
 /* Define to 1 if you have the `strcasecmp' function. */
 #define HAVE_STRCASECMP 1
@@ -75,6 +75,9 @@
 /* Internal define for Xinerama */
 #define PANORAMIX 1
 
+/* Support Present extension */
+#define PRESENT 1
+
 /* Support RANDR extension */
 #define RANDR 1
 
@@ -96,17 +99,8 @@
 /* Support TCP socket connections */
 #define TCPCONN 1
 
-/* Enable touchscreen support */
-/* #undef TOUCHSCREEN */
-
-/* Support tslib touchscreen abstraction library */
-/* #undef TSLIB */
-
 /* Support UNIX socket connections */
 #define UNIXCONN 1
-
-/* unaligned word accesses behave as expected */
-/* #undef WORKING_UNALIGNED_INT */
 
 /* Support XCMisc extension */
 #define XCMISC 1
@@ -132,9 +126,6 @@
 /* XKB default rules */
 #define XKB_DFLT_RULES "base"
 
-/* Support loadable input and output drivers */
-/* #undef XLOADABLE */
-
 /* Build DRI extension */
 /* #define XF86DRI 1 */
 
@@ -144,11 +135,8 @@
 /* Build Xorg server */
 #define XORGSERVER 1
 
-/* Vendor release */
-/* #undef XORG_RELEASE */
-
 /* Current Xorg version */
-#define XORG_VERSION_CURRENT (((1) * 10000000) + ((19) * 100000) + ((5) * 1000) + 0)
+#define XORG_VERSION_CURRENT ((10000000) + ((21) * 100000) + ((1) * 1000) + 24)
 
 /* Build Xv Extension */
 #define XvExtension 1
@@ -181,7 +169,7 @@
 #define __VENDORDWEBSUPPORT__ "http://openindiana.org"
 
 /* Location of configuration file */
-#define __XCONFIGFILE__ "xorg.conf"
+#define XCONFIGFILE "xorg.conf"
 
 /* Name of X server */
 #define __XSERVERNAME__ "Xorg"

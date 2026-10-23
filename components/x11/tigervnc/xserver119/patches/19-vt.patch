@@ -1,0 +1,115 @@
+--- a/dix/main.c	2017-02-01 15:05:08.248943479 -0800
++++ b/dix/main.c	2017-02-01 15:07:26.499207921 -0800
+@@ -78,6 +78,8 @@
+ #include <version-config.h>
+ #endif
+ 
++#include <sys/stat.h>
++#include <stdio.h>
+ #include <X11/X.h>
+ #include <X11/Xos.h>            /* for unistd.h  */
+ #include <X11/Xproto.h>
+@@ -125,6 +127,36 @@
+ 
+ extern void Dispatch(void);
+ 
++#if defined(sun)
++extern const char * GetAuthFilename(void);
++static char sym_authfile[40];
++
++#define LOCK_PREFIX    "/var/xauth/"
++
++/*
++ * Setup /var/xauth/$DISPLAY, which is a symlink to the
++ * actually auth file.
++*/
++static void
++SetupXauthFile(char *filename)
++{
++        struct stat buf;
++
++        snprintf(sym_authfile, 40, LOCK_PREFIX "%s", display);
++
++        mkdir(LOCK_PREFIX, S_IRWXU);
++
++        remove(sym_authfile);
++        symlink(filename, sym_authfile);
++}
++
++void
++RemoveXauthSymFile(void)
++{
++        remove(sym_authfile);
++}
++#endif
++
+ CallbackListPtr RootWindowFinalizeCallback = NULL;
+ 
+ int
+@@ -132,6 +164,9 @@
+ {
+     int i;
+     HWEventQueueType alwaysCheckForInput[2];
++#if defined(sun)
++    char *xauthfile = NULL;
++#endif
+ 
+     display = "0";
+ 
+@@ -145,6 +180,12 @@
+ 
+     ProcessCommandLine(argc, argv);
+ 
++#if defined(sun)
++    xauthfile = GetAuthFilename();
++    if (xauthfile)
++        SetupXauthFile(xauthfile);
++#endif
++
+     alwaysCheckForInput[0] = 0;
+     alwaysCheckForInput[1] = 1;
+     while (1) {
+--- a/hw/xfree86/os-support/solaris/sun_init.c	2017-02-01 15:07:50.575551326 -0800
++++ b/hw/xfree86/os-support/solaris/sun_init.c	2017-02-01 15:08:25.999117101 -0800
+@@ -46,6 +46,9 @@
+ #define	CONSOLE_VTNO	1
+ #define	SOL_CONSOLE_DEV	"/dev/console"
+ 
++/* For use of VT_SETDISPLOGIN in dtlogin.c */
++extern int xf86ConsoleFd;
++
+ static Bool KeepTty = FALSE;
+ static Bool UseConsole = FALSE;
+ 
+@@ -232,6 +235,8 @@
+ 
+             if (ioctl(xf86Info.consoleFd, VT_SETDISPINFO, atoi(display)) < 0)
+                 xf86Msg(X_WARNING, "xf86OpenConsole: VT_SETDISPINFO failed\n");
++
++	    xf86ConsoleFd = xf86Info.consoleFd;
+         }
+ #endif
+ 
+--- a/os/log.c	2017-02-01 15:08:49.899272429 -0800
++++ b/os/log.c	2017-02-01 15:09:43.768274981 -0800
+@@ -108,6 +108,10 @@
+ void (*OsVendorVErrorFProc) (const char *, va_list args) = NULL;
+ #endif
+ 
++#ifdef sun
++extern void RemoveXauthSymFile(void);
++#endif
++
+ static FILE *logFile = NULL;
+ static int logFileFd = -1;
+ static Bool logFlush = FALSE;
+@@ -1007,6 +1011,9 @@
+     VErrorFSigSafe(f, args);
+     va_end(args);
+     ErrorFSigSafe("\n");
++#ifdef sun
++    RemoveXauthSymFile();
++#endif
+     if (!beenhere)
+         OsVendorFatalError(f, args2);
+     va_end(args2);

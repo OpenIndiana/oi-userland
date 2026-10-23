@@ -1,8 +1,13 @@
-diff --git a/Makefile.am b/Makefile.am
-index f0fa2d8..2127601 100644
---- a/Makefile.am
-+++ b/Makefile.am
-@@ -58,6 +58,7 @@ SUBDIRS = \
+Taken from Oracle solaris-userland b83a793,
+components/x11/xserver/xorg/patches/08-IA.patch (xorg-server 21.1.24).
+
+Solaris-specific support for the SolarisIA extension
+
+Not suitable for upstream
+
+--- xorg-server-21.1.20/Makefile.am
++++ xorg-server-21.1.20/Makefile.am
+@@ -58,6 +58,7 @@ $(COMPOSITE_DIR) \
  	$(GLX_DIR) \
  	$(PRESENT_DIR) \
  	$(DRI3_DIR) \
@@ -10,11 +15,9 @@ index f0fa2d8..2127601 100644
  	exa \
  	$(GLAMOR_DIR) \
  	config \
-diff --git a/configure.ac b/configure.ac
-index c7379de..e09f020 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -1421,6 +1421,10 @@ AC_DEFINE(XINPUT, 1, [Support X Input extension])
+--- xorg-server-21.1.20/configure.ac
++++ xorg-server-21.1.20/configure.ac
+@@ -1341,6 +1341,10 @@ AC_DEFINE(XINPUT, 1, [Support X Input ex
  XI_LIB='$(top_builddir)/Xi/libXi.la'
  XI_INC='-I$(top_srcdir)/Xi'
  
@@ -24,19 +27,17 @@ index c7379de..e09f020 100644
 +
  AM_CONDITIONAL(XF86UTILS, test "x$XF86UTILS" = xyes)
  AM_CONDITIONAL(VGAHW, test "x$VGAHW" = xyes)
- AM_CONDITIONAL(VBE, test "x$VBE" = xyes)
-@@ -2636,3 +2640,6 @@ xserver.ent
+ AM_CONDITIONAL(INT10MODULE, test "x$INT10MODULE" = xyes)
+@@ -2385,3 +2389,6 @@ xserver.ent
  xorg-server.pc
  ])
  AC_OUTPUT
 +
 +# Add Sun IA extension
 +AC_OUTPUT([IA/Makefile])
-diff --git a/include/extinit.h b/include/extinit.h
-index fa5f293..62a0ab2 100644
---- a/include/extinit.h
-+++ b/include/extinit.h
-@@ -121,6 +121,14 @@ extern _X_EXPORT Bool noMITShmExtension;
+--- xorg-server-21.1.20/include/extinit.h
++++ xorg-server-21.1.20/include/extinit.h
+@@ -115,6 +115,14 @@ extern _X_EXPORT Bool noMITShmExtension;
  extern void ShmExtensionInit(void);
  #endif
  
@@ -51,35 +52,21 @@ index fa5f293..62a0ab2 100644
  extern void SyncExtensionInit(void);
  
  extern void XCMiscExtensionInit(void);
-diff --git a/mi/miinitext.c b/mi/miinitext.c
-index 5872bf5..a9a3826 100644
---- a/mi/miinitext.c
-+++ b/mi/miinitext.c
-@@ -150,6 +150,9 @@ static ExtensionToggle ExtensionToggleList[] = {
- #ifdef XCSECURITY
-     {"SECURITY", &noSecurityExtension},
+--- xorg-server-21.1.20/mi/miinitext.c
++++ xorg-server-21.1.20/mi/miinitext.c
+@@ -167,6 +167,9 @@ #ifdef XV
+     {XvExtensionInit, "XVideo", &noXvExtension},
+     {XvMCExtensionInit, "XVideo-MotionCompensation", &noXvExtension},
  #endif
 +#ifdef SolarisIAExtension
-+    { IANAME /* "SolarisIA" */, &noIAExtension },
++    {IAExtensionInit, "SolarisIA", &noIAExtension},
 +#endif
- #ifdef RES
-     {"X-Resource", &noResExtension},
+ #ifdef XSELINUX
+     {SELinuxExtensionInit, "SELinux", &noSELinuxExtension},
  #endif
-@@ -296,6 +299,9 @@ static const ExtensionModule staticExtensions[] = {
- #ifdef RES
-     {ResExtensionInit, XRES_NAME, &noResExtension},
- #endif
-+#ifdef SolarisIAExtension
-+    {IAExtensionInit, IANAME, &noIAExtension},
-+#endif
- #ifdef XV
-     {XvExtensionInit, XvName, &noXvExtension},
-     {XvMCExtensionInit, XvMCName, &noXvExtension},
-diff --git a/os/utils.c b/os/utils.c
-index 1a070de..efaeef7 100644
---- a/os/utils.c
-+++ b/os/utils.c
-@@ -184,6 +184,9 @@ Bool noXvExtension = FALSE;
+--- xorg-server-21.1.20/os/utils.c
++++ xorg-server-21.1.20/os/utils.c
+@@ -177,6 +177,9 @@ #endif
  #ifdef DRI2
  Bool noDRI2Extension = FALSE;
  #endif

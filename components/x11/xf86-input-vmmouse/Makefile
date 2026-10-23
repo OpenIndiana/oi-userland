@@ -19,6 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-input-vmmouse
 COMPONENT_VERSION= 13.2.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-input-vmmouse - VMWare guest mouse input driver for the Xorg X server
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:56f077580ab8f02e2f40358c5c46b0ae3e1828fc77744526b24adf1ceea339b8

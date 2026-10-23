@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-dummy
 COMPONENT_VERSION= 0.3.8
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-dummy
 COMPONENT_SUMMARY= \
   xf86-video-dummy - virtual/offscreen frame buffer driver for the Xorg X server
@@ -28,12 +28,15 @@ COMPONENT_ARCHIVE_HASH= \
 
 include $(WS_MAKE_RULES)/common.mk
 
+# autoconf 2.72+ selects -std=gnu23, where the driver's unprototyped
+# function pointers (Bool (*)()) no longer match the server's types.
+CONFIGURE_ENV += ac_cv_prog_cc_c23=no
+
 # Paths to find libraries/modules to link with 
 
 LD_OPTIONS= \
         -L$(X11_SERVERMODS_DIR) -R$(X11_SERVERMODS_DIR) \
-        -L$(X11_SERVERLIBS_DIR) -R$(X11_SERVERLIBS_DIR) \
-        -lfb
+        -L$(X11_SERVERLIBS_DIR) -R$(X11_SERVERLIBS_DIR)
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/header/x11-protocols

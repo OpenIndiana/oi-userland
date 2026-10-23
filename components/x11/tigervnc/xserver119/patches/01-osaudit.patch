@@ -1,0 +1,93 @@
+#
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+7010804 Xorg should audit connections and disconnections.
+
+diff --git a/configure.ac b/configure.ac
+index 67b1eb4..77ad53d 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -309,6 +309,12 @@ AC_CHECK_HEADER([execinfo.h],[
+     ])]
+ )
+ 
++# Solaris auditing
++AC_CHECK_LIB([bsm], [adt_start_session], [HAVE_LIBBSM=yes ; SYS_LIBS=-lbsm ;
++    AC_DEFINE([HAVE_LIBBSM], [],
++        [Define to 1 if you have the Solaris auditing library (-lbsm)])])
++AM_CONDITIONAL([HAVE_LIBBSM], [test "x$HAVE_LIBBSM" = xyes])
++
+ dnl ---------------------------------------------------------------------------
+ dnl Bus options and CPU capabilities.  Replaces logic in
+ dnl hw/xfree86/os-support/bus/Makefile.am, among others.
+diff --git a/dix/main.c b/dix/main.c
+index fb935c9..e2ec177 100644
+--- a/dix/main.c
++++ b/dix/main.c
+@@ -201,6 +201,7 @@ main(int argc, char *argv[], char *envp[])
+         dixResetRegistry();
+         ResetFontPrivateIndex();
+         InitCallbackManager();
++        OSAuditInit(); /* Must be after InitCallbackManager() */
+         InitOutput(&screenInfo, argc, argv);
+ 
+         if (screenInfo.numScreens < 1)
+diff --git a/include/dix-config.h.in b/include/dix-config.h.in
+index 578f249..8acca13 100644
+--- a/include/dix-config.h.in
++++ b/include/dix-config.h.in
+@@ -115,6 +115,9 @@
+ /* Build a standalone xpbproxy */
+ #undef STANDALONE_XPBPROXY
+ 
++/* Define to 1 if you have the Solaris BSM auditing library (-lbsm) */
++#undef HAVE_LIBBSM
++
+ /* Define to 1 if you have the `m' library (-lm). */
+ #undef HAVE_LIBM
+ 
+diff --git a/include/os.h b/include/os.h
+index 9e323f3..01cea99 100644
+--- a/include/os.h
++++ b/include/os.h
+@@ -680,4 +680,8 @@ LogPrintMarkers(void);
+ extern _X_EXPORT void
+ xorg_backtrace(void);
+ 
++/* in osaudit.c */
++extern void
++OSAuditInit (void);
++
+ #endif                          /* OS_H */
+diff --git a/os/Makefile.am b/os/Makefile.am
+index 8891485..c4825ad 100644
+--- a/os/Makefile.am
++++ b/os/Makefile.am
+@@ -15,6 +15,7 @@ libos_la_SOURCES = 	\
+ 	connection.c	\
+ 	io.c		\
+ 	mitauth.c	\
++	osaudit.c	\
+ 	oscolor.c	\
+ 	osdep.h		\
+ 	osinit.c	\

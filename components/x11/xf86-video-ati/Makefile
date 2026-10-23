@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-ati
 COMPONENT_VERSION= 6.14.6
-COMPONENT_REVISION= 6
+COMPONENT_REVISION= 7
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-ati
 COMPONENT_SUMMARY= xf86-video-ati - ATI Radeon video driver for the Xorg X server
 COMPONENT_ARCHIVE_HASH= \
@@ -27,6 +27,16 @@ COMPONENT_ARCHIVE_HASH= \
 
 CONFIGURE_DEFAULT_DIRS = no
 include $(WS_MAKE_RULES)/common.mk
+
+# GCC 14 makes these errors. configure does not find exa.h (as in the
+# packages built so far), so the driver is built without EXA: radeon.h then
+# does not declare R600LoadShaders() or exaGetPixmapDriverPrivate(), which
+# radeon_driver.c (DRI on R600 and later) and the EMIT_* macros of the
+# command submission paths still call; radeon_modes.c passes the server's
+# const char ** mode list as char **.
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=int-conversion
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 COMPONENT_PREP_ACTION = \
  ( cd $(@D) && \

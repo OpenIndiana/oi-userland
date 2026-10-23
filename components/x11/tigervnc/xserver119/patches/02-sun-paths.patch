@@ -1,0 +1,82 @@
+diff --git a/hw/xfree86/common/xf86Config.c b/hw/xfree86/common/xf86Config.c
+index 486752b..c2cfc90 100644
+--- a/hw/xfree86/common/xf86Config.c
++++ b/hw/xfree86/common/xf86Config.c
+@@ -74,9 +74,9 @@
+  */
+ #ifndef ALL_CONFIGPATH
+ #define ALL_CONFIGPATH	"%A," "%R," \
+-			"/etc/X11/%R," "%P/etc/X11/%R," \
++			"/etc/X11/%R," "%P/lib/X11/%R," \
+ 			"%E," "%F," \
+-			"/etc/X11/%F," "%P/etc/X11/%F," \
++			"/etc/X11/%F," "%P/lib/X11/%F," \
+ 			"/etc/X11/%X," "/etc/%X," \
+ 			"%P/etc/X11/%X.%H," \
+ 			"%P/etc/X11/%X," \
+@@ -84,8 +84,8 @@
+ 			"%P/lib/X11/%X"
+ #endif
+ #ifndef RESTRICTED_CONFIGPATH
+-#define RESTRICTED_CONFIGPATH	"/etc/X11/%S," "%P/etc/X11/%S," \
+-			"/etc/X11/%G," "%P/etc/X11/%G," \
++#define RESTRICTED_CONFIGPATH	"/etc/X11/%S," "%P/lib/X11/%S," \
++			"/etc/X11/%G," "%P/lib/X11/%G," \
+ 			"/etc/X11/%X," "/etc/%X," \
+ 			"%P/etc/X11/%X.%H," \
+ 			"%P/etc/X11/%X," \
+diff --git a/hw/xfree86/common/xf86Globals.c b/hw/xfree86/common/xf86Globals.c
+index 7df7a80..74e503c 100644
+--- a/hw/xfree86/common/xf86Globals.c
++++ b/hw/xfree86/common/xf86Globals.c
+@@ -141,7 +141,8 @@ xf86InfoRec xf86Info = {
+ 
+ const char *xf86ConfigFile = NULL;
+ const char *xf86ConfigDir = NULL;
+-const char *xf86ModulePath = DEFAULT_MODULE_PATH;
++/* Sun: add old module path for compatibility with out-of-tree driver packages */
++const char *xf86ModulePath = DEFAULT_MODULE_PATH ",/usr/X11/lib/modules/";
+ MessageType xf86ModPathFrom = X_DEFAULT;
+ const char *xf86LogFile = DEFAULT_LOGPREFIX;
+ MessageType xf86LogFileFrom = X_DEFAULT;
+diff --git a/hw/xfree86/man/xorg.conf.man b/hw/xfree86/man/xorg.conf.man
+index 5d92bbe..2b5a8f6 100644
+--- a/hw/xfree86/man/xorg.conf.man
++++ b/hw/xfree86/man/xorg.conf.man
+@@ -36,9 +36,9 @@ server is started as a normal user:
+ .RS 4
+ .nf
+ .IR /etc/X11/ <cmdline>
+-.IR __projectroot__/etc/X11/ <cmdline>
++.IR __projectroot__/lib/X11/ <cmdline>
+ .IB /etc/X11/ $XORGCONFIG
+-.IB __projectroot__/etc/X11/ $XORGCONFIG
++.IB __projectroot__/lib/X11/ $XORGCONFIG
+ .I /etc/X11/xorg.conf
+ .I /etc/xorg.conf
+ .IR __projectroot__/etc/X11/xorg.conf. <hostname>
+@@ -67,10 +67,10 @@ search locations are as follows:
+ .nf
+ <cmdline>
+ .IR /etc/X11/ <cmdline>
+-.IR __projectroot__/etc/X11/ <cmdline>
++.IR __projectroot__/lib/X11/ <cmdline>
+ .B $XORGCONFIG
+ .IB /etc/X11/ $XORGCONFIG
+-.IB __projectroot__/etc/X11/ $XORGCONFIG
++.IB __projectroot__/lib/X11/ $XORGCONFIG
+ .I /etc/X11/xorg.conf
+ .I /etc/xorg.conf
+ .IR __projectroot__/etc/X11/xorg.conf. <hostname>
+diff --git a/include/xorg-server.h.in b/include/xorg-server.h.in
+index 81935be..9473e34 100644
+--- a/include/xorg-server.h.in
++++ b/include/xorg-server.h.in
+@@ -208,6 +208,7 @@
+ /* Have X server platform bus support */
+ #undef XSERVER_PLATFORM_BUS
+ 
++#include <sys/isa_defs.h> /* Ensure _LP64 is defined when needed on Solaris */
+ #ifdef _LP64
+ #define _XSERVER64 1
+ #endif

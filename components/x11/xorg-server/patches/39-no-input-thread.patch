@@ -1,0 +1,21 @@
+Define ddxInputThreadInit() when the input thread is disabled.
+
+os.h declares it as an exported function in any case, so sdksyms.c refers
+to it, and Xorg failed to link with --disable-input-thread. Other DDXs
+(Xvfb, Xephyr) define it unconditionally.
+
+diff --git a/hw/xfree86/common/xf86Init.c b/hw/xfree86/common/xf86Init.c
+index 5695e71..4ae6ff6 100644
+--- a/hw/xfree86/common/xf86Init.c
++++ b/hw/xfree86/common/xf86Init.c
+@@ -1351,4 +1351,10 @@ ddxInputThreadInit(void)
+ {
+     xf86OSInputThreadInit();
+ }
++#else
++/* os.h declares it for modules in any case; sdksyms.c refers to it. */
++void
++ddxInputThreadInit(void)
++{
++}
+ #endif
