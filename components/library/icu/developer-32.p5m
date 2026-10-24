@@ -1,0 +1,70 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2026 Marcel Telka
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# Make sure common ICU developer files (includes, man page, etc.) are always
+# installed
+depend type=require fmri=developer/icu
+
+# suppress 'unresolvable target' lint error
+<transform link target=current/ -> default pkg.linted.userland.action002.0 True>
+
+file path=usr/bin/$(MACH32)/derb
+file path=usr/bin/$(MACH32)/genbrk
+file path=usr/bin/$(MACH32)/gencfu
+file path=usr/bin/$(MACH32)/gencnval
+file path=usr/bin/$(MACH32)/gendict
+file path=usr/bin/$(MACH32)/genrb
+file path=usr/bin/$(MACH32)/icu-config
+file path=usr/bin/$(MACH32)/icuexportdata
+file path=usr/bin/$(MACH32)/icuinfo
+file path=usr/bin/$(MACH32)/makeconv
+file path=usr/bin/$(MACH32)/pkgdata
+file path=usr/bin/$(MACH32)/uconv
+file path=usr/lib/icu/$(HUMAN_VERSION)/Makefile.inc
+file path=usr/lib/icu/$(HUMAN_VERSION)/pkgdata.inc
+link path=usr/lib/icu/Makefile.inc target=current/Makefile.inc
+link path=usr/lib/icu/current target=$(HUMAN_VERSION)
+link path=usr/lib/icu/pkgdata.inc target=current/pkgdata.inc
+link path=usr/lib/libicudata.so target=libicudata.so.$(HUMAN_VERSION)
+link path=usr/lib/libicui18n.so target=libicui18n.so.$(HUMAN_VERSION)
+link path=usr/lib/libicuio.so target=libicuio.so.$(HUMAN_VERSION)
+link path=usr/lib/libicutest.so target=libicutest.so.$(HUMAN_VERSION)
+link path=usr/lib/libicutest.so.$(COMPONENT_VERSION_MAJOR) \
+    target=libicutest.so.$(HUMAN_VERSION)
+file path=usr/lib/libicutest.so.$(HUMAN_VERSION)
+link path=usr/lib/libicutu.so target=libicutu.so.$(HUMAN_VERSION)
+link path=usr/lib/libicutu.so.$(COMPONENT_VERSION_MAJOR) \
+    target=libicutu.so.$(HUMAN_VERSION)
+file path=usr/lib/libicutu.so.$(HUMAN_VERSION)
+link path=usr/lib/libicuuc.so target=libicuuc.so.$(HUMAN_VERSION)
+file path=usr/lib/pkgconfig/icu-i18n.pc
+file path=usr/lib/pkgconfig/icu-io.pc
+file path=usr/lib/pkgconfig/icu-uc.pc
+file path=usr/sbin/$(MACH32)/escapesrc
+file path=usr/sbin/$(MACH32)/genccode
+file path=usr/sbin/$(MACH32)/gencmn
+file path=usr/sbin/$(MACH32)/gennorm2
+file path=usr/sbin/$(MACH32)/gensprep
+file path=usr/sbin/$(MACH32)/icupkg

@@ -694,3 +694,4 @@ REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/c++\/protobuf-/{p;s/-[^-]*$$//}'
 # If a component needs the runtime ICU library then it also needs the ICU
 # development files for building.  Add such dependency automatically here.
 REQUIRED_PACKAGES_TRANSFORM += -e '/ \$$(ICU_LIBRARY_PKG)$$/{p;s/\$$(ICU_LIBRARY_PKG)$$/developer\/icu/}'
+REQUIRED_PACKAGES_TRANSFORM += -e '/ \$$(ICU_LIBRARY_PKG)\/32$$/{p;s/\$$(ICU_LIBRARY_PKG)$$/developer\/icu\/32/}'
