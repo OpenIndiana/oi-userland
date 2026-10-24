@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 129 items
+collecting ... collected 149 items
 
 importlib_metadata/__init__.py::importlib_metadata.EntryPoint PASSED
 importlib_metadata/__init__.py::importlib_metadata.EntryPoint._disallow_dist PASSED
@@ -18,9 +18,14 @@ importlib_metadata/__init__.py::importlib_metadata._get_toplevel_name PASSED
 importlib_metadata/__init__.py::importlib_metadata.packages_distributions PASSED
 importlib_metadata/_adapters.py::importlib_metadata._adapters.Message PASSED
 importlib_metadata/_collections.py::importlib_metadata._collections.FreezableDefaultDict PASSED
+importlib_metadata/_compat/localize.py::importlib_metadata._compat.localize.dist PASSED
+importlib_metadata/_compat/localize.py::importlib_metadata._compat.localize.message PASSED
+importlib_metadata/_compat/localize.py::importlib_metadata._compat.localize.package_path PASSED
 importlib_metadata/_context.py::importlib_metadata._context.ExceptionTrap PASSED
 importlib_metadata/_context.py::importlib_metadata._context.ExceptionTrap.passes PASSED
 importlib_metadata/_context.py::importlib_metadata._context.ExceptionTrap.raises PASSED
+importlib_metadata/_functools.py::importlib_metadata._functools.apply PASSED
+importlib_metadata/_functools.py::importlib_metadata._functools.compose PASSED
 importlib_metadata/_functools.py::importlib_metadata._functools.method_cache PASSED
 importlib_metadata/_functools.py::importlib_metadata._functools.noop PASSED
 importlib_metadata/_functools.py::importlib_metadata._functools.pass_none PASSED
@@ -33,6 +38,19 @@ tests/_context.py::tests._context.suppress PASSED
 tests/_path.py::tests._path.Recording PASSED
 tests/_path.py::tests._path.build PASSED
 tests/compat/py$(PYV).py::tests.compat.py$(PYV).frozendict PASSED
+tests/compat/test_localize.py::StdlibProviderTests::test_discover_localized PASSED
+tests/compat/test_localize.py::StdlibProviderTests::test_entry_points_selectable PASSED
+tests/compat/test_localize.py::StdlibProviderTests::test_files_localized PASSED
+tests/compat/test_localize.py::StdlibProviderTests::test_from_name_localized PASSED
+tests/compat/test_localize.py::StdlibProviderTests::test_metadata_localized PASSED
+tests/compat/test_localize.py::CustomProviderTests::test_conforming_provider_is_not_warned_about PASSED
+tests/compat/test_localize.py::CustomProviderTests::test_dist_without_metadata_is_deferred PASSED
+tests/compat/test_localize.py::ConformanceCheckTests::test_exempt_members_are_not_required SKIPPED
+tests/compat/test_localize.py::ConformanceCheckTests::test_properties_are_not_evaluated PASSED
+tests/compat/test_protocols.py::StdlibProtocolTests::test_stdlib_distribution_conforms PASSED
+tests/compat/test_protocols.py::StdlibProtocolTests::test_stdlib_distribution_matches_protocol PASSED
+tests/compat/test_protocols.py::StdlibProtocolTests::test_stdlib_metadata_matches_protocol PASSED
+tests/compat/test_protocols.py::StdlibProtocolTests::test_stdlib_package_path_matches_protocol PASSED
 tests/test_api.py::APITests::test_as_json PASSED
 tests/test_api.py::APITests::test_as_json_egg_info PASSED
 tests/test_api.py::APITests::test_as_json_odd_case PASSED
@@ -81,6 +99,8 @@ tests/test_api.py::PreparedTests::test_normalize PASSED
 tests/test_integration.py::IntegrationTests::test_package_spec_installed PASSED
 tests/test_integration.py::FinderTests::test_finder_without_module PASSED
 tests/test_main.py::BasicTests::test_abc_enforced PASSED
+tests/test_main.py::BasicTests::test_detects_metadata_by_reading 
+tests/test_main.py::BasicTests::test_detects_metadata_by_reading PASSED
 tests/test_main.py::BasicTests::test_for_name_does_not_exist PASSED
 tests/test_main.py::BasicTests::test_invalid_inputs_to_from_name 
 tests/test_main.py::BasicTests::test_invalid_inputs_to_from_name PASSED
@@ -94,13 +114,11 @@ tests/test_main.py::NameNormalizationTests::test_dashes_in_dist_name_found_as_un
 tests/test_main.py::NameNormalizationTests::test_dist_name_found_as_any_case PASSED
 tests/test_main.py::NameNormalizationTests::test_unique_distributions PASSED
 tests/test_main.py::InvalidMetadataTests::test_diagnose_reports_invalid PASSED
+tests/test_main.py::InvalidMetadataTests::test_entry_points_from_valid_dist PASSED
+tests/test_main.py::InvalidMetadataTests::test_invalid_dists_deferred PASSED
 tests/test_main.py::InvalidMetadataTests::test_missing_metadata PASSED
 tests/test_main.py::InvalidMetadataTests::test_missing_required_metadata PASSED
 tests/test_main.py::InvalidMetadataTests::test_valid_dists_preferred PASSED
-tests/test_main.py::MultipleVersionsTests::test_discovery_order PASSED
-tests/test_main.py::MultipleVersionsTests::test_greater_version_preferred PASSED
-tests/test_main.py::MultipleVersionsTests::test_greater_version_preferred_in_eggs PASSED
-tests/test_main.py::MultipleVersionsTests::test_validity_preferred_to_version PASSED
 tests/test_main.py::NonASCIITests::test_metadata_loads PASSED
 tests/test_main.py::NonASCIITests::test_metadata_loads_egg_info PASSED
 tests/test_main.py::DiscoveryTests::test_interleaved_discovery PASSED
@@ -126,6 +144,9 @@ tests/test_main.py::PackagesDistributionsTest::test_packages_distributions_neith
 tests/test_main.py::PackagesDistributionsTest::test_packages_distributions_symlinked_top_level PASSED
 tests/test_main.py::PackagesDistributionsEggTest::test_packages_distributions_on_eggs PASSED
 tests/test_main.py::EditableDistributionTest::test_origin PASSED
+tests/test_protocols.py::ProtocolTests::test_distribution_matches_protocol PASSED
+tests/test_protocols.py::ProtocolTests::test_metadata_matches_protocol PASSED
+tests/test_protocols.py::ProtocolTests::test_package_path_matches_protocol PASSED
 tests/test_zip.py::TestZip::test_case_insensitive PASSED
 tests/test_zip.py::TestZip::test_fastpath_cache_cleared_in_forked_child PASSED
 tests/test_zip.py::TestZip::test_files PASSED
@@ -144,6 +165,6 @@ tests/test_zip.py::TestEgg::test_zip_entry_points PASSED
 tests/test_zip.py::TestEgg::test_zip_version PASSED
 tests/test_zip.py::TestEgg::test_zip_version_does_not_match PASSED
 
-======== 129 passed, 40 subtests passed ========
+======== 148 passed, 1 skipped, 42 subtests passed ========
   py$(PYV): OK
   congratulations :)
