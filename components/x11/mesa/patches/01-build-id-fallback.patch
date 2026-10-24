@@ -1,0 +1,145 @@
+Identify the driver build without a GNU build-id note (illumos ld emits none).
+
+iris, crocus and virgl assert a build-id note and dereference it when they
+create the disk cache, and anv refuses to create a physical device without
+one.  Without the note, fall back to disk_cache_get_function_identifier()
+(the driver's modification time, as radeonsi and llvmpipe use); with it,
+the cache keys stay what they were.  Upstreamable.
+
+--- src/gallium/drivers/crocus/crocus_disk_cache.c.orig
++++ src/gallium/drivers/crocus/crocus_disk_cache.c
+@@ -243,15 +243,23 @@
+       snprintf(renderer, sizeof(renderer), "crocus_%04x", screen->pci_id);
+    assert(len == sizeof(renderer) - 2);
+ 
++   char timestamp[41];
+    const struct build_id_note *note =
+       build_id_find_nhdr_for_addr(crocus_disk_cache_init);
+-   assert(note && build_id_length(note) == 20); /* sha1 */
+-
+-   const uint8_t *id_sha1 = build_id_data(note);
+-   assert(id_sha1);
+-
+-   char timestamp[41];
+-   _mesa_sha1_format(timestamp, id_sha1);
++   if (note && build_id_length(note) == 20) {
++      _mesa_sha1_format(timestamp, build_id_data(note));
++   } else {
++      /* No GNU build-id note (the illumos link-editor emits none): identify
++       * the build by the driver's modification time.
++       */
++      struct mesa_sha1 id_ctx;
++      uint8_t id_sha1[20];
++      _mesa_sha1_init(&id_ctx);
++      if (!disk_cache_get_function_identifier(crocus_disk_cache_init, &id_ctx))
++         return;
++      _mesa_sha1_final(&id_ctx, id_sha1);
++      _mesa_sha1_format(timestamp, id_sha1);
++   }
+ 
+    const uint64_t driver_flags =
+       elk_get_compiler_config_value(screen->compiler);
+--- src/gallium/drivers/iris/iris_disk_cache.c.orig
++++ src/gallium/drivers/iris/iris_disk_cache.c
+@@ -372,15 +372,23 @@
+       assert(len < ARRAY_SIZE(renderer) - 1);
+    }
+ 
++   char timestamp[41];
+    const struct build_id_note *note =
+       build_id_find_nhdr_for_addr(iris_disk_cache_init);
+-   assert(note && build_id_length(note) == 20); /* sha1 */
+-
+-   const uint8_t *id_sha1 = build_id_data(note);
+-   assert(id_sha1);
+-
+-   char timestamp[41];
+-   _mesa_sha1_format(timestamp, id_sha1);
++   if (note && build_id_length(note) == 20) {
++      _mesa_sha1_format(timestamp, build_id_data(note));
++   } else {
++      /* No GNU build-id note (the illumos link-editor emits none): identify
++       * the build by the driver's modification time.
++       */
++      struct mesa_sha1 id_ctx;
++      uint8_t id_sha1[20];
++      _mesa_sha1_init(&id_ctx);
++      if (!disk_cache_get_function_identifier(iris_disk_cache_init, &id_ctx))
++         return;
++      _mesa_sha1_final(&id_ctx, id_sha1);
++      _mesa_sha1_format(timestamp, id_sha1);
++   }
+ 
+    const uint64_t driver_flags =
+ #ifdef INTEL_USE_ELK
+--- src/gallium/drivers/virgl/virgl_screen.c.orig
++++ src/gallium/drivers/virgl/virgl_screen.c
+@@ -903,21 +903,11 @@
+ {
+    struct mesa_sha1 sha1_ctx;
+    _mesa_sha1_init(&sha1_ctx);
+-
+-#ifdef HAVE_DL_ITERATE_PHDR
+-   const struct build_id_note *note =
+-      build_id_find_nhdr_for_addr(virgl_disk_cache_create);
+-   assert(note);
+-
+-   unsigned build_id_len = build_id_length(note);
+-   assert(build_id_len == 20); /* sha1 */
+ 
+-   const uint8_t *id_sha1 = build_id_data(note);
+-   assert(id_sha1);
++   if (!disk_cache_get_function_identifier(virgl_disk_cache_create,
++                                           &sha1_ctx))
++      return;
+ 
+-   _mesa_sha1_update(&sha1_ctx, id_sha1, build_id_len);
+-#endif
+-
+    /* When we switch the host the caps might change and then we might have to
+     * apply different lowering. */
+    _mesa_sha1_update(&sha1_ctx, &screen->caps, sizeof(screen->caps));
+--- src/intel/vulkan/anv_physical_device.c.orig
++++ src/intel/vulkan/anv_physical_device.c
+@@ -2313,18 +2313,21 @@
+ {
+    const struct build_id_note *note =
+       build_id_find_nhdr_for_addr(anv_physical_device_init_uuids);
+-   if (!note) {
+-      return vk_errorf(device, VK_ERROR_INITIALIZATION_FAILED,
+-                       "Failed to find build-id");
+-   }
+-
+-   unsigned build_id_len = build_id_length(note);
+-   if (build_id_len < 20) {
+-      return vk_errorf(device, VK_ERROR_INITIALIZATION_FAILED,
+-                       "build-id too short.  It needs to be a SHA");
++   if (note && build_id_length(note) >= 20) {
++      memcpy(device->driver_build_sha1, build_id_data(note), 20);
++   } else {
++      /* No GNU build-id note (e.g. the illumos link-editor emits none):
++       * identify the build by the driver's modification time instead.
++       */
++      struct mesa_sha1 id_ctx;
++      _mesa_sha1_init(&id_ctx);
++      if (!disk_cache_get_function_identifier(anv_physical_device_init_uuids,
++                                              &id_ctx)) {
++         return vk_errorf(device, VK_ERROR_INITIALIZATION_FAILED,
++                          "Failed to identify the driver build");
++      }
++      _mesa_sha1_final(&id_ctx, device->driver_build_sha1);
+    }
+-
+-   memcpy(device->driver_build_sha1, build_id_data(note), 20);
+ 
+    struct mesa_sha1 sha1_ctx;
+    uint8_t sha1[20];
+@@ -2334,7 +2337,7 @@
+     * invalid.  It needs both a driver build and the PCI ID of the device.
+     */
+    _mesa_sha1_init(&sha1_ctx);
+-   _mesa_sha1_update(&sha1_ctx, build_id_data(note), build_id_len);
++   _mesa_sha1_update(&sha1_ctx, device->driver_build_sha1, 20);
+    brw_device_sha1_update(&sha1_ctx, &device->info);
+    bool always_use_bindless = !!(device->instance->debug & ANV_DEBUG_BINDLESS);
+    _mesa_sha1_update(&sha1_ctx, &always_use_bindless,
