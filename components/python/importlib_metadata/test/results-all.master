@@ -4,12 +4,13 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 120 items
+collecting ... collected 129 items
 
 importlib_metadata/__init__.py::importlib_metadata.EntryPoint PASSED
 importlib_metadata/__init__.py::importlib_metadata.EntryPoint._disallow_dist PASSED
 importlib_metadata/__init__.py::importlib_metadata.EntryPoint.matches PASSED
 importlib_metadata/__init__.py::importlib_metadata.FastPath PASSED
+importlib_metadata/__init__.py::importlib_metadata.PathDistribution.__str__ PASSED
 importlib_metadata/__init__.py::importlib_metadata.PathDistribution._name_from_stem PASSED
 importlib_metadata/__init__.py::importlib_metadata.Prepared PASSED
 importlib_metadata/__init__.py::importlib_metadata.Sectioned PASSED
@@ -27,6 +28,7 @@ importlib_metadata/_functools.py::importlib_metadata._functools.passthrough PASS
 importlib_metadata/_itertools.py::importlib_metadata._itertools.always_iterable PASSED
 importlib_metadata/_itertools.py::importlib_metadata._itertools.bucket PASSED
 importlib_metadata/_text.py::importlib_metadata._text.FoldedCase PASSED
+importlib_metadata/diagnose.py::importlib_metadata.diagnose.describe PASSED
 tests/_context.py::tests._context.suppress PASSED
 tests/_path.py::tests._path.Recording PASSED
 tests/_path.py::tests._path.build PASSED
@@ -37,6 +39,7 @@ tests/test_api.py::APITests::test_as_json_odd_case PASSED
 tests/test_api.py::APITests::test_entry_points PASSED
 tests/test_api.py::APITests::test_entry_points_allows_no_attributes PASSED
 tests/test_api.py::APITests::test_entry_points_distribution PASSED
+tests/test_api.py::APITests::test_entry_points_invalid_value_in_other_group PASSED
 tests/test_api.py::APITests::test_entry_points_missing_group PASSED
 tests/test_api.py::APITests::test_entry_points_missing_name PASSED
 tests/test_api.py::APITests::test_entry_points_unique_packages_normalized PASSED
@@ -90,8 +93,14 @@ tests/test_main.py::ImportTests::test_resolve_without_attr PASSED
 tests/test_main.py::NameNormalizationTests::test_dashes_in_dist_name_found_as_underscores PASSED
 tests/test_main.py::NameNormalizationTests::test_dist_name_found_as_any_case PASSED
 tests/test_main.py::NameNormalizationTests::test_unique_distributions PASSED
+tests/test_main.py::InvalidMetadataTests::test_diagnose_reports_invalid PASSED
 tests/test_main.py::InvalidMetadataTests::test_missing_metadata PASSED
+tests/test_main.py::InvalidMetadataTests::test_missing_required_metadata PASSED
 tests/test_main.py::InvalidMetadataTests::test_valid_dists_preferred PASSED
+tests/test_main.py::MultipleVersionsTests::test_discovery_order PASSED
+tests/test_main.py::MultipleVersionsTests::test_greater_version_preferred PASSED
+tests/test_main.py::MultipleVersionsTests::test_greater_version_preferred_in_eggs PASSED
+tests/test_main.py::MultipleVersionsTests::test_validity_preferred_to_version PASSED
 tests/test_main.py::NonASCIITests::test_metadata_loads PASSED
 tests/test_main.py::NonASCIITests::test_metadata_loads_egg_info PASSED
 tests/test_main.py::DiscoveryTests::test_interleaved_discovery PASSED
@@ -135,6 +144,6 @@ tests/test_zip.py::TestEgg::test_zip_entry_points PASSED
 tests/test_zip.py::TestEgg::test_zip_version PASSED
 tests/test_zip.py::TestEgg::test_zip_version_does_not_match PASSED
 
-======== 120 passed, 40 subtests passed ========
+======== 129 passed, 40 subtests passed ========
   py$(PYV): OK
   congratulations :)
