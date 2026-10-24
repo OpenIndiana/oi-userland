@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= opal
 COMPONENT_VERSION= 3.16.2
-COMPONENT_REVISION= 5
+COMPONENT_REVISION= 6
 COMPONENT_SUMMARY= OPAL - Open Phone Abstraction Library
 COMPONENT_PROJECT_URL = https://www.gnome.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,8 +49,8 @@ COMPONENT_POST_CONFIGURE_ACTION = ( \
 	$(CP) $(@D)/src/rtp/libsrtp/Makefile $(SOURCE_DIR)/src/rtp/libsrtp; \
 	echo "install: ;  @\$$(MAKE) --file=$(SOURCE_DIR)/Makefile \$$(MAKECMDGOALS)" >> $(@D)/Makefile )
 
-CXXFLAGS += -I$(@D)/src/rtp/libsrtp/crypto/include -fpic
-CFLAGS += -I$(@D)/src/rtp/libsrtp/include -I$(@D)/src/rtp/libsrtp/crypto/include -fpic
+CXXFLAGS += -I$(@D)/src/rtp/libsrtp/crypto/include -fpic #-std=c++11
+CFLAGS += -I$(@D)/src/rtp/libsrtp/include -I$(@D)/src/rtp/libsrtp/crypto/include -fpic -std=c11 -D__EXTENSIONS__
 
 CONFIGURE_OPTIONS += --enable-localsrtp
 CONFIGURE_OPTIONS += --enable-localopenh264
