@@ -21,17 +21,16 @@
 # Copyright (c) 2015, Apostolos Syropoulos. All rights reserved.
 # Copyright (c) 2015-207, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS= 32_and_64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         librevenge
-COMPONENT_VERSION=      0.0.5
-COMPONENT_REVISION=		2
+COMPONENT_VERSION=	0.0.6
 COMPONENT_SUMMARY=      librevenge - base library for writing document import filters
 COMPONENT_PROJECT_URL=  https://sourceforge.net/p/libwpd/wiki/librevenge/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:106d0c44bb6408b1348b9e0465666fa83b816177665a22cd017e886c1aaeeb34
+COMPONENT_ARCHIVE_HASH=	sha256:19eacf5ce55d7fe6a990a45142589cdf7da0c7b68701797f133482cb44f189fa
 COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/libwpd/files/librevenge/librevenge-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/c++/librevenge
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -40,9 +39,19 @@ COMPONENT_LICENSE=      LGPLv2.1 MPLv2
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+# helper target
+update-license-file: patch
+	( \
+		printf -- '--- COPYING.LGPL ----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LGPL ; \
+		printf '\n\n--- COPYING.MPL -----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.MPL \
+	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
+
 # Fix threading detection issue introduced with boost 1.64
 CXXFLAGS += -pthread
 
+CONFIGURE_OPTIONS += --without-docs
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-werror
