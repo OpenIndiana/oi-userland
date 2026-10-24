@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycparser
-HUMAN_VERSION =			3.11
+HUMAN_VERSION =			3.12
 COMPONENT_SUMMARY =		C parser in Python
 COMPONENT_PROJECT_URL =		https://github.com/eliben/pycparser
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d875f09c3507d00e1aba0eecc6dcadc1352f30fff09dc6bff2f1c2935e97c2bc
+	sha256:f03387877eab82ce01bbdfd0ba7252ee55a90b1c708d5129e2ce915475cf1db6
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
