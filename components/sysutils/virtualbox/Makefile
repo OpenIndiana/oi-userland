@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 gcc_OPT =
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      7.2.14
+COMPONENT_VERSION=      7.2.20
 COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
@@ -101,7 +101,7 @@ LOCAL_CONFIG += '\nVBOX_WITH_VBOXDRV = 1'
 LOCAL_CONFIG += '\nVBOX_WITH_NETFLT = 1'
 LOCAL_CONFIG += '\nVBOX_WITH_NETADP = 1'
 
-# Disable audio/video-recording 
+# Disable audio/video-recording
 LOCAL_CONFIG += '\nVBOX_WITH_VIDEOREC ='
 LOCAL_CONFIG += '\nVBOX_WITH_AUDIO_VIDEOREC ='
 
@@ -243,6 +243,7 @@ REQUIRED_PACKAGES += developer/object-file
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/xz
