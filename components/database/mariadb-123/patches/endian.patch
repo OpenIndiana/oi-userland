@@ -1,0 +1,13 @@
+--- mariadb-12.3.3/storage/rocksdb/././rdb_buff.h	2026-08-20 08:33:31.000000000 +0200
++++ mariadb-12.3.3/storage/rocksdb/././rdb_buff.h.orig	2026-10-17 20:05:21.768006684 +0200
+@@ -40,6 +40,10 @@
+ #define be16toh(x) OSSwapBigToHostInt16(x)
+ #endif
+ 
++#if defined(OS_SOLARIS)
++#include <endian.h>
++#endif
++
+ /* MySQL header files */
+ #include "./my_global.h"
+ 

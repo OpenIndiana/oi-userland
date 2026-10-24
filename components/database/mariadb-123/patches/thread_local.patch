@@ -1,0 +1,33 @@
+--- mariadb-12.3.3/storage/rocksdb/rocksdb/monitoring/perf_context.cc	2026-08-20 08:33:36.000000000 +0200
++++ mariadb-12.3.3/storage/rocksdb/rocksdb/monitoring/perf_context.cc.orig	2026-10-17 14:17:10.331806569 +0200
+@@ -9,19 +9,19 @@
+ 
+ namespace ROCKSDB_NAMESPACE {
+ 
+-#if defined(NPERF_CONTEXT)
++//#if defined(NPERF_CONTEXT)
+ // Should not be used because the counters are not thread-safe.
+ // Put here just to make get_perf_context() simple without ifdef.
+-PerfContext perf_context;
+-#elif defined(ROCKSDB_SUPPORT_THREAD_LOCAL)
+-#if defined(OS_SOLARIS)
+-__thread PerfContext perf_context;
+-#else   // OS_SOLARIS
+-thread_local PerfContext perf_context;
+-#endif  // OS_SOLARIS
+-#else
+-#error "No thread-local support. Disable perf context with -DNPERF_CONTEXT."
+-#endif
++//PerfContext perf_context;
++//#elif defined(ROCKSDB_SUPPORT_THREAD_LOCAL)
++//#if defined(OS_SOLARIS)
++//__thread PerfContext perf_context;
++//#else   // OS_SOLARIS
++//thread_local PerfContext perf_context;
++//#endif  // OS_SOLARIS
++//#else
++//#error "No thread-local support. Disable perf context with -DNPERF_CONTEXT."
++//#endif
+ 
+ PerfContext* get_perf_context() {
+   return &perf_context;
