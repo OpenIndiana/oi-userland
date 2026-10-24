@@ -30,12 +30,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		valgrind
-COMPONENT_VERSION=	3.27.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.28.0
 COMPONENT_SUMMARY=	Valgrind: instrumentation framework and tools to detect memory and threading problems
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:5d589152eb8071c02feab8ce6ab719e431a1fbc3e2b1700f5432632a8b9264dc
+COMPONENT_ARCHIVE_HASH=	sha256:9f7a18d128f05d3a80fea53e6953f34aad7200a425ceaee46099a8a798a7dd9c
 COMPONENT_ARCHIVE_URL=	https://sourceware.org/pub/valgrind/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =	https://valgrind.org
 COMPONENT_FMRI=		developer/debug/valgrind
