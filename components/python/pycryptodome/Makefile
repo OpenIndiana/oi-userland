@@ -15,15 +15,16 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycryptodome
-HUMAN_VERSION =			4.1.0
+HUMAN_VERSION =			4.2.0
 COMPONENT_SUMMARY =		Cryptographic library for Python
 COMPONENT_PROJECT_URL =		https://www.pycryptodome.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3fff8aab4d99b0295729f011d0f7226b3de59d70a5fb9232b61d3b950c6c8da6
+	sha256:21d7fdba239d6ef863d3d08388801c683453a3bb4897c2b27f27847aad89bdf7
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
