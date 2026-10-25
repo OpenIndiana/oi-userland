@@ -1,0 +1,21 @@
+Avoid sending signals to pid 0 -- which actually sends the signal to
+the entire process group likely including the test runner.
+
+Observed with test sapi/fpm/tests/bug80024-socket-reduced-inherit.phpt
+
+--- php-8.3.36/sapi/fpm/tests/tester.inc.~1~	Mon Oct 19 07:00:34 2026
++++ php-8.3.36/sapi/fpm/tests/tester.inc	Sat Oct 24 11:24:00 2026
+@@ -1127,8 +1127,12 @@
+      */
+     public function signal($signal, int $pid = null)
+     {
+-        if (is_null($pid)) {
++        if (is_null($pid) || $pid == "0") {
+             $pid = $this->getPid();
++	    if (is_null($pid) || $pid == "0") {
++	        $this->trace('getPid() returned a null or zero pid');
++		return;
++	    }
+         }
+         $cmd = "kill -$signal $pid";
+         $this->trace('Sending signal using command', $cmd, true);
