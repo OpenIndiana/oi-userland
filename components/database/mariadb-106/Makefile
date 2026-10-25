@@ -14,7 +14,7 @@
 # Copyright 2019, Michal Nowak
 # Copyright 2022, erwinlem
 # Copyright 2022, Daniel Bell
-# Copyright 2023,2024 Friedrich Kink
+# Copyright 2023,2026 Friedrich Kink
 #
 
 BUILD_STYLE= cmake
@@ -22,16 +22,15 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mariadb
-COMPONENT_VERSION=	10.6.18
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	10.6.28
 COMPONENT_MAJOR_VERSION=$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(HUMAN_VERSION))))
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:6898a1111f47130709e28ba2c7bd1a57e4bb57101f6e109e597d51e6d385cf18
+COMPONENT_ARCHIVE_HASH=	sha256:13d9330f3120c739757b215a3220a9c9e2ddf3c3c1b8beff5cd43942868f3d72
 COMPONENT_PROJECT_URL=	https://www.mariadb.org/
 # For the source files look at https://dlm.mariadb.com/browse/mariadb_server/163
-COMPONENT_ARCHIVE_URL=	https://dlm.mariadb.com/3795487/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=	https://dlm.mariadb.com/3795488/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE).asc
+COMPONENT_ARCHIVE_URL= https://dlm.mariadb.com/4795575/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=     https://dlm.mariadb.com/4795584/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE).asc
 COMPONENT_LICENSE=	GPL-2.0-only
 COMPONENT_LICENSE_FILE=	COPYING
 
