@@ -21,7 +21,7 @@ COMPONENT_MNR_VERSION=	27
 COMPONENT_SUMMARY=      PHP 8.4
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
@@ -62,10 +62,8 @@ CONFIGURE_OPTIONS += --sysconfdir=$(PHP_SYSCONFDIR)
 CONFIGURE_OPTIONS += --datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS += --mandir=$(PHP_PREFIX)/share/man
 CONFIGURE_OPTIONS += --localstatedir=$(PHP_DATADIR)
-CONFIGURE_OPTIONS += OPENSSL_CFLAGS=-I$(OPENSSL_INCDIR)
-CONFIGURE_OPTIONS += OPENSSL_LIBS="-L$(OPENSSL_LIBDIR) -lssl -lcrypto"
 CONFIGURE_OPTIONS += KERBEROS_CFLAGS=-I/usr/include/kerberosv5
-CONFIGURE_OPTIONS += KERBEROS_LIBS="-L/usr/lib/$(MACH64) -lgss -lkrb5"
+CONFIGURE_OPTIONS += KERBEROS_LIBS="-lgss -lkrb5"
 CONFIGURE_OPTIONS += PCRE2_CFLAGS="-I/usr/include/pcre"
 CONFIGURE_OPTIONS += ODBC_CFLAGS="-I/usr/include/odbc"
 
@@ -97,6 +95,7 @@ CONFIGURE_OPTIONS += --enable-dtrace
 # Due to ordering quirks of PHP's build and test scripts, these modules
 # cannot be built as shared, as the tests load modules that depend on
 # these modules before loading them.
+# See https://github.com/php/php-src/issues/9727
 CONFIGURE_OPTIONS += --enable-pdo
 CONFIGURE_OPTIONS += --enable-mysqlnd
 
@@ -191,7 +190,6 @@ CONFIGURE_ENV += EXTENSION_DIR=$(PHP_PREFIX)/extensions
 CONFIGURE_ENV += ICU_CONFIG=/usr/bin/icu-config
 CONFIGURE_ENV += PG_CONFIG=$(PG_BINDIR)/pg_config
 CONFIGURE_ENV += MYSQL_CONFIG=$(MYSQL_CONFIG)
-CONFIGURE_ENV += PKG_CONFIG_PATH=$(OPENSSL_PREFIX)/lib/$(MACH64)/pkgconfig
 
 # Note: there are on the order of 20,000 test cases.
 # You can run a subset by specifying a specific test case or subdirectory with:
@@ -212,7 +210,6 @@ COMPONENT_TEST_TRANSFORMS += \
 # Manually added build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += $(PG_SERVICE_PKG)
-REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += web/server/apache-24
 
