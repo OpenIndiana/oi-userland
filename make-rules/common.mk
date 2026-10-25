@@ -48,6 +48,9 @@ ifeq ($(strip $(SINGLE_PERL_VERSION)),yes)
 PERL_VERSIONS = $(PERL_VERSION)
 endif
 
+# Save the list of our fully supported Python versions before we override it.
+_PYTHON_VERSIONS := $(PYTHON_VERSIONS)
+
 # The SINGLE_PYTHON_VERSION variable is used to select building a component for
 # single or multiple Python versions.  By default we build for single Python
 # version only unless the component is a Python project.  If the default value
