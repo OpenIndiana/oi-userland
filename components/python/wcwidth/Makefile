@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wcwidth
-HUMAN_VERSION =			0.9.3
+HUMAN_VERSION =			0.9.4
 COMPONENT_SUMMARY =		Measures the displayed width of unicode strings in a terminal
 COMPONENT_PROJECT_URL =		https://github.com/jquast/wcwidth
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dfe7cfbd4cb59db9fe0931bd6091ab4a95b3acc5d56bfb50fa9fef0ccba5dc5c
+	sha256:fd8d57d3cdfe570e3265c8fab1885c24e34ef40889c0759c0c304a19e9835954
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
