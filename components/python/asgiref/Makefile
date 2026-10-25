@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		asgiref
-HUMAN_VERSION =			3.12.1
+HUMAN_VERSION =			3.13.0
 COMPONENT_SUMMARY =		ASGI specs, helper code, and adapters
 COMPONENT_PROJECT_URL =		https://github.com/django/asgiref/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:59dcb51c272ad209d59bed5708a64a333083e86017d7fcdd67498eeab7784340
+	sha256:034cc8cbf72d00553b4be256703ac545120b4e50af13b49dec99da899aeeecb4
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,9 +35,13 @@ include $(WS_MAKE_RULES)/common.mk
 # https://github.com/django/asgiref/issues/450
 COMPONENT_TEST_TRANSFORMS += "-e '/^task: /d'"
 
+# https://github.com/django/asgiref/issues/607
+PYTEST_ADDOPTS += --ignore tests/test_benchmark_local.py
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
