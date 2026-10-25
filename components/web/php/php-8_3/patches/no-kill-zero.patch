@@ -1,21 +1,47 @@
-Avoid sending signals to pid 0 -- which actually sends the signal to
-the entire process group likely including the test runner.
+This is the fix for bug https://github.com/php/php-src/issues/24695 as
+integrated into PHP 8.4, 8.5, and 8.6 branches, found in pull request
+https://github.com/php/php-src/pull/24698
 
-Observed with test sapi/fpm/tests/bug80024-socket-reduced-inherit.phpt
+Without this patch, if a test case in sapi/fpm/tests fails to start
+php-fpm, it can run 'kill -USR2 0' which sends that signal to all
+processes in the current process group including the test-runner,
+prematurely aborting the test run.
 
---- php-8.3.36/sapi/fpm/tests/tester.inc.~1~	Mon Oct 19 07:00:34 2026
-+++ php-8.3.36/sapi/fpm/tests/tester.inc	Sat Oct 24 11:24:00 2026
-@@ -1127,8 +1127,12 @@
-      */
-     public function signal($signal, int $pid = null)
+We hit this bug on illumos because the regression test
+bug80024-socket-reduced-inherit.phpt depends on the "ondemand"
+process manager which needs edge-triggered event handling, which is
+only implemented for the kqueue and epoll modules but not from the
+event-port module sapi/fpm/fpm/events/port.c which is (for good
+reasons) preferred over epoll when available.
+
+From 810ce5e5f6e4bc64a01f998e30fd4c9418289e2c Mon Sep 17 00:00:00 2001
+From: Lazizbek Ergashev <lazerg2@gmail.com>
+Date: Tue, 27 Oct 2026 14:12:06 +0500
+Subject: [PATCH] Fix GH-24695: FPM tester sends signal to process group when
+ PID is missing (#24698)
+
+When FPM fails to start, getPid() reports the missing PID file and
+returns 0, and signal() then runs kill -USR2 0. That signals the whole
+process group and takes down run-tests.php along with the test. Now
+signal() returns early in that case, so the test just fails and the run
+keeps going.
+
+Co-authored-by: Bill Sommerfeld <sommerfeld@hamachi.org>
+---
+ sapi/fpm/tests/tester.inc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/sapi/fpm/tests/tester.inc b/sapi/fpm/tests/tester.inc
+index 8e67d17430a6..c98252292489 100644
+--- a/sapi/fpm/tests/tester.inc
++++ b/sapi/fpm/tests/tester.inc
+@@ -1119,6 +1119,9 @@ class Tester
      {
--        if (is_null($pid)) {
-+        if (is_null($pid) || $pid == "0") {
+         if (is_null($pid)) {
              $pid = $this->getPid();
-+	    if (is_null($pid) || $pid == "0") {
-+	        $this->trace('getPid() returned a null or zero pid');
-+		return;
-+	    }
++            if ($pid === 0) {
++                return '';
++            }
          }
          $cmd = "kill -$signal $pid";
          $this->trace('Sending signal using command', $cmd, true);
