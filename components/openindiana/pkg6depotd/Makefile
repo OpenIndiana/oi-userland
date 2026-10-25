@@ -48,6 +48,9 @@ include $(WS_MAKE_RULES)/common.mk
 # A Cargo workspace: build only the shipped binaries.
 COMPONENT_BUILD_ARGS +=	--locked
 COMPONENT_BUILD_ARGS +=	-p pkg6depotd -p pkg6repo -p pkg6recv
+# Pin the target directory: a cargo config.toml in a parent directory of the
+# workspace (as on the CI builders) may otherwise move it.
+COMPONENT_BUILD_ARGS +=	--target-dir $(BUILD_DIR_64)/target
 
 # cargo install cannot install from a virtual workspace manifest, so stage
 # the built binaries and the upstream service, configuration and manual
