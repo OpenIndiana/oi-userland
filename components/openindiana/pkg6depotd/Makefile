@@ -83,3 +83,7 @@ REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+
+# The git source rule writes the archive without creating the archives
+# directory; a fresh workspace (CI) has none.
+$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE): | $(USERLAND_ARCHIVES)
