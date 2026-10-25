@@ -12,7 +12,7 @@
 # Copyright 2025-2026 Friedrich Kink. All rights reserved.
 #
 
-USE_PARALLEL_BUILD = yes
+USE_PARALLEL_BUILD=	yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
@@ -21,7 +21,7 @@ COMPONENT_MNR_VERSION=	12
 COMPONENT_SUMMARY=      PHP 8.5
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
@@ -44,9 +44,11 @@ PHP_PREFIX=		/usr/php/$(COMPONENT_MJR_VERSION)
 PHP_SYSCONFDIR=		/etc/php/$(COMPONENT_MJR_VERSION)
 PHP_DATADIR=		/var/php/$(COMPONENT_MJR_VERSION)
 
+# -D__solaris__ is very important to trigger TSRM related stuff
+# otherwise mod_php85.so crashes
 CFLAGS +=        	$(CC_BITS) -D_XPG6 -D__EXTENSIONS__ -D__solaris__
 CFLAGS +=		-I/usr/include/openldap
-CPPFLAGS +=      	$(CPP_XPG6MODE) 
+CPPFLAGS +=      	$(CPP_XPG6MODE)
 LDFLAGS +=       	-lldap_r
 
 # Configure Options
@@ -60,13 +62,11 @@ CONFIGURE_OPTIONS += --sysconfdir=$(PHP_SYSCONFDIR)
 CONFIGURE_OPTIONS += --datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS += --mandir=$(PHP_PREFIX)/share/man
 CONFIGURE_OPTIONS += --localstatedir=$(PHP_DATADIR)
-CONFIGURE_OPTIONS += OPENSSL_CFLAGS=-I$(OPENSSL_INCDIR)
-CONFIGURE_OPTIONS += OPENSSL_LIBS=-L$(OPENSSL_LIBDIR)
 CONFIGURE_OPTIONS += KERBEROS_CFLAGS=-I/usr/include/kerberosv5
-CONFIGURE_OPTIONS += KERBEROS_LIBS="-L/usr/lib/$(MACH64) -lgss -lkrb5"
+CONFIGURE_OPTIONS += KERBEROS_LIBS="-lgss -lkrb5"
 CONFIGURE_OPTIONS += PCRE2_CFLAGS="-I/usr/include/pcre"
 CONFIGURE_OPTIONS += ODBC_CFLAGS="-I/usr/include/odbc"
-CONFIGURE_OPTIONS += ARGON2_LIBS="-L/usr/lib/$(MACH64) -largon2"
+CONFIGURE_OPTIONS += ARGON2_LIBS="-largon2"
 
 # SAPI modules
 CONFIGURE_OPTIONS += --with-apxs2=$(AP_PREFIX)/bin/apxs
@@ -89,6 +89,13 @@ CONFIGURE_OPTIONS += --enable-rtld-now
 CONFIGURE_OPTIONS += --with-cdb
 CONFIGURE_OPTIONS += --with-readline
 CONFIGURE_OPTIONS += --enable-dtrace
+
+# Modules that shared extensions depend on.
+# Due to ordering quirks of PHP's build and test scripts, these modules
+# cannot be built as shared, as the tests load modules that depend on
+# these modules before loading them.
+# See https://github.com/php/php-src/issues/9727
+CONFIGURE_OPTIONS += --enable-pdo
 CONFIGURE_OPTIONS += --enable-mysqlnd
 
 # Shared Extensions
@@ -114,13 +121,11 @@ CONFIGURE_OPTIONS += --enable-exif=shared
 CONFIGURE_OPTIONS += --enable-dom=shared
 CONFIGURE_OPTIONS += --enable-ftp=shared
 CONFIGURE_OPTIONS += --enable-intl=shared
-CONFIGURE_OPTIONS += --enable-pdo=shared
 CONFIGURE_OPTIONS += --enable-mbstring=shared
 CONFIGURE_OPTIONS += --enable-xmlreader=shared
 CONFIGURE_OPTIONS += --enable-xmlwriter=shared
 CONFIGURE_OPTIONS += --enable-soap=shared
 CONFIGURE_OPTIONS += --enable-sockets=shared
-CONFIGURE_OPTIONS += --enable-mysqlnd=shared
 CONFIGURE_OPTIONS += --with-snmp=shared
 CONFIGURE_OPTIONS += --with-mysqli=shared,mysqlnd
 CONFIGURE_OPTIONS += --with-pdo-mysql=shared,mysqlnd
@@ -184,9 +189,10 @@ CONFIGURE_ENV += EXTENSION_DIR=$(PHP_PREFIX)/extensions
 CONFIGURE_ENV += ICU_CONFIG=/usr/bin/icu-config
 CONFIGURE_ENV += PG_CONFIG=$(PG_BINDIR)/pg_config
 CONFIGURE_ENV += MYSQL_CONFIG=$(MYSQL_CONFIG)
-CONFIGURE_ENV += PKG_CONFIG_PATH=$(OPENSSL_PREFIX)/lib/$(MACH64)/pkgconfig
-CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/pkgconfig
 
+# Note: there are on the order of 20,000 test cases.
+# You can run a subset by specifying a specific test case or subdirectory with:
+# gmake test COMPONENT_TEST_ARGS="TESTS=..."
 COMPONENT_TEST_TARGETS = test
 
 COMPONENT_TEST_ENV += NO_INTERACTION=yes
@@ -204,14 +210,13 @@ COMPONENT_TEST_TRANSFORMS += \
 # Manually added build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += $(PG_SERVICE_PKG)
-REQUIRED_PACKAGES += $(OPENSSL_PKG)
-REQUIRED_PACKAGES += library/icu-78
 REQUIRED_PACKAGES += web/server/apache-24
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += SUNWcs
