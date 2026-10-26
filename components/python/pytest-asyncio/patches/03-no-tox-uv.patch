@@ -1,0 +1,30 @@
+--- pytest_asyncio-1.4.1/tox.ini.orig
++++ pytest_asyncio-1.4.1/tox.ini
+@@ -1,14 +1,11 @@
+ [tox]
+ minversion = 4.28.0
+-requires =
+-    tox-uv>=1.26
+ envlist = build, py310, py311, py312, py313, py314, py314t, py315, py315t, py310-lower-bounds, docs, pyright
+ isolated_build = true
+ passenv =
+     CI
+ 
+ [testenv]
+-runner = uv-venv-lock-runner
+ package = wheel
+ dependency_groups = test
+ commands = make test
+@@ -27,12 +24,10 @@
+ 
+ [testenv:py310-lower-bounds]
+ description = Run tests with the lowest supported direct dependency versions
+-runner = uv-venv-runner
+ uv_resolution = lowest-direct
+ 
+ [testenv:pytest-dev]
+ description = Run tests against pytest main
+-runner = uv-venv-runner
+ deps =
+     pytest @ git+https://github.com/pytest-dev/pytest.git
+ 
