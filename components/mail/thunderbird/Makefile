@@ -45,7 +45,7 @@ include ../../../make-rules/shared-macros.mk
 # CANDIDATE_BETA= 5
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	158.0.1
+COMPONENT_VERSION =	159.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,7 +57,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC).source.tar.xz
 endif
 
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:3a1a9af721332779481cba4e498468a2c7a56a4f1094b0f84474b76538c2f055
+	 sha256:b4cbc4e010deaa66a51a5c647586c8dc41579c136155fe8baa8253f7c8b3927e
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
@@ -264,11 +264,14 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	);
 endif
 
+# gfxtest and libxul dlopen libdrm.so.2; OI installs it outside the default
+# library search path.  Keep the probe and the browser on the same path.
+THUNDERBIRD_RUNPATH = $(GCC_LIBDIR):$(THUNDERBIRD_LIBDIR)/thunderbird:/usr/lib/xorg/$(MACH64)
+
 COMPONENT_POST_INSTALL_ACTION  += \
-    for file in `find $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird -name "*.so"`; \
-          do \
-        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(THUNDERBIRD_LIBDIR)/thunderbird:$$ORIGIN"' $$file ; \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(THUNDERBIRD_LIBDIR)/thunderbird:$$ORIGIN"' $$file ; \
+    for file in `find $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/ -name "*.so"` \
+        $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/gfxtest; do \
+        /usr/bin/elfedit -e 'dyn:runpath $(THUNDERBIRD_RUNPATH)' $$file || exit 1 ; \
     done ;
 
 COMPONENT_POST_INSTALL_ACTION += \
@@ -341,6 +344,9 @@ REQUIRED_PACKAGES += library/http-parser
 REQUIRED_PACKAGES += runtime/nodejs-24
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += web/browser/lynx
+
+# Loaded dynamically by gfxtest and the GTK dma-buf backend.
+REQUIRED_PACKAGES += x11/library/libdrm
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
