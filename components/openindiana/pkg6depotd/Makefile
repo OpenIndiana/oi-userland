@@ -31,7 +31,7 @@ COMPONENT_CLASSIFICATION=	System/Packaging
 GIT_REPO=		https://code.aopc.cloud/OpenIndiana/ips.git
 GIT_BRANCH=		v$(HUMAN_VERSION)
 GIT_COMMIT_ID=		dc8e5e0f91ea2536d08e865044d6f61e5ed27d46
-GIT_HASH=
+GIT_HASH=		sha256:8666668e1aff3a729f7f1f9bcf617a8c12fe833e9909858af06e786be1f0094f
 COMPONENT_SRC=		ips-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 # Not a crates.io crate: no download URL besides the git repository.
