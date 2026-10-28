@@ -18,7 +18,7 @@ BUILD_STYLE=		cargo
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkg6depotd
-HUMAN_VERSION=		1.0.0-rc.15
+HUMAN_VERSION=		1.0.0
 COMPONENT_VERSION=	1.0.0
 COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=	pkg6 IPS repository depot server and operator tools
@@ -28,10 +28,10 @@ COMPONENT_FMRI=		package/pkg6/depotd
 COMPONENT_CLASSIFICATION=	System/Packaging
 # Anonymous archive downloads are disabled on code.aopc.cloud; the source
 # archive is created from an anonymous git clone of the release tag.
-GIT_REPO=		https://code.aopc.cloud/toasterson/ips.git
+GIT_REPO=		https://code.aopc.cloud/OpenIndiana/ips.git
 GIT_BRANCH=		v$(HUMAN_VERSION)
-GIT_COMMIT_ID=		93c7607a22beb5e65c9303da2675ba1480e02906
-GIT_HASH=		sha256:c70bd6f70de553ed6cbf0669532fa13b70d5b8c610e3283fe3533203122c9e24
+GIT_COMMIT_ID=		dc8e5e0f91ea2536d08e865044d6f61e5ed27d46
+GIT_HASH=
 COMPONENT_SRC=		ips-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 # Not a crates.io crate: no download URL besides the git repository.
