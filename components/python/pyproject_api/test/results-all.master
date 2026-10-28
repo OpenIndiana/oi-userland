@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 102 items
+collecting ... collected 139 items
 
 tests/test_backend.py::test_invalid_module PASSED
 tests/test_backend.py::test_invalid_request PASSED
@@ -18,8 +18,10 @@ tests/test_backend.py::test_reused_process_non_serializable_exit[True-b'failure'
 tests/test_backend.py::test_read_line_success PASSED
 tests/test_backend.py::test_read_line_eof_before_newline PASSED
 tests/test_backend.py::test_read_line_eof_at_the_beginning PASSED
+tests/test_backend.py::test_backend_output_with_unencodable_path PASSED
 tests/test_frontend.py::test_missing_backend PASSED
 tests/test_frontend.py::test_relative_project_folder PASSED
+tests/test_frontend.py::test_backend_path_with_trailing_space PASSED
 tests/test_frontend.py::test_relative_project_folder_rejects_root_as_metadata_directory[wheel] PASSED
 tests/test_frontend.py::test_relative_project_folder_rejects_root_as_metadata_directory[editable] PASSED
 tests/test_frontend.py::test_large_command_with_backend_output[stdout] PASSED
@@ -27,6 +29,9 @@ tests/test_frontend.py::test_large_command_with_backend_output[stderr] PASSED
 tests/test_frontend.py::test_backend_output_with_invalid_bytes[stdout] PASSED
 tests/test_frontend.py::test_backend_output_with_invalid_bytes[stderr] PASSED
 tests/test_frontend.py::test_large_command_with_failed_backend PASSED
+tests/test_frontend.py::test_interrupted_frontend_cleans_up_backend[keyboard-interrupt] PASSED
+tests/test_frontend.py::test_interrupted_frontend_cleans_up_backend[system-exit] PASSED
+tests/test_frontend.py::test_interrupted_frontend_cleans_up_backend[runtime-error] PASSED
 tests/test_frontend.py::test_missing_required_cmd[build_wheel] PASSED
 tests/test_frontend.py::test_missing_required_cmd[build_sdist] PASSED
 tests/test_frontend.py::test_empty_pyproject PASSED
@@ -36,6 +41,19 @@ tests/test_frontend.py::test_create_args_from_folder_rejects_out_of_tree_backend
 tests/test_frontend.py::test_create_args_from_folder_rejects_out_of_tree_backend_path[symlink-outside] PASSED
 tests/test_frontend.py::test_create_args_from_folder_rejects_out_of_tree_backend_path[nul] PASSED
 tests/test_frontend.py::test_create_args_from_folder_rejects_unresolvable_backend_path PASSED
+tests/test_frontend.py::test_build_output_from_caller_directory[relative-sdist] PASSED
+tests/test_frontend.py::test_build_output_from_caller_directory[relative-wheel] PASSED
+tests/test_frontend.py::test_build_output_from_caller_directory[relative-editable] PASSED
+tests/test_frontend.py::test_build_output_from_caller_directory[absolute-sdist] PASSED
+tests/test_frontend.py::test_build_output_from_caller_directory[absolute-wheel] PASSED
+tests/test_frontend.py::test_build_output_from_caller_directory[absolute-editable] PASSED
+tests/test_frontend.py::test_prepare_metadata_from_caller_directory[relative-wheel] PASSED
+tests/test_frontend.py::test_prepare_metadata_from_caller_directory[relative-editable] PASSED
+tests/test_frontend.py::test_prepare_metadata_from_caller_directory[absolute-wheel] PASSED
+tests/test_frontend.py::test_prepare_metadata_from_caller_directory[absolute-editable] PASSED
+tests/test_frontend.py::test_build_with_relative_metadata_directory[wheel] PASSED
+tests/test_frontend.py::test_build_with_relative_metadata_directory[editable] PASSED
+tests/test_frontend.py::test_generic_command_retains_relative_path PASSED
 tests/test_frontend.py::test_backend_no_prepare_wheel PASSED
 tests/test_frontend.py::test_backend_build_sdist_demo_pkg_inline PASSED
 tests/test_frontend.py::test_create_args_from_folder_rejects_bad_build_system_type[requires-string] PASSED
@@ -79,6 +97,25 @@ tests/test_frontend.py::test_backend_build_editable PASSED
 tests/test_frontend.py::test_backend_build_wheel PASSED
 tests/test_frontend.py::test_backend_build_editable_bad PASSED
 tests/test_frontend.py::test_backend_failed_str_repr PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result0-0] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result0-1] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result0-2] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result0-3] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result0-4] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result0-5] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result1-0] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result1-1] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result1-2] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result1-3] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result1-4] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result1-5] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result2-0] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result2-1] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result2-2] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result2-3] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result2-4] PASSED
+tests/test_frontend.py::test_backend_failed_pickle[result2-5] PASSED
+tests/test_frontend.py::test_backend_failed_process_pool PASSED
 tests/test_frontend_setuptools.py::test_setuptools_get_requires_for_build_sdist PASSED
 tests/test_frontend_setuptools.py::test_setuptools_get_requires_for_build_wheel PASSED
 tests/test_frontend_setuptools.py::test_setuptools_prepare_metadata_for_build_wheel PASSED
@@ -110,6 +147,6 @@ tests/test_util.py::test_ensure_empty_dir_on_path_symlink_to_folder PASSED
 tests/test_version.py::test_version PASSED
 
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
-======== 102 passed ========
+======== 139 passed ========
   py$(PYV): OK
   congratulations :)
