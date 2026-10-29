@@ -23,13 +23,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=.*/(idle_)?tests?/.* -> default facet.optional.test true>
-
-# All symlinks with unversioned path should be mediated
-<transform link path=(?!.*$(PYVER_RE)) -> default mediator python>
-<transform link path=(?!.*$(PYVER_RE)) -> default mediator-version $(PYVER)>
-
-link path=usr/bin/idle target=idle$(PYVER)
 file path=usr/bin/idle$(PYVER)
 link path=usr/bin/idle3 target=idle$(PYVER)
 file path=usr/lib/python$(PYVER)/idlelib/CREDITS.txt
