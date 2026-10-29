@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_security
-HUMAN_VERSION =			8.4
+HUMAN_VERSION =			8.5
 COMPONENT_SUMMARY =		Zope Security Framework
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:917b33a868bd63f57f6edbb63d73dec71b5ae5ce528976ac10e3df2bde92da0d
+	sha256:24f851caf94a63d957f3fb9be092f0510c0c839cb387e5825c099fbe925502ca
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
