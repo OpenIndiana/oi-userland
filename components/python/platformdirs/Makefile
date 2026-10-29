@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		platformdirs
-HUMAN_VERSION =			4.13.6
+HUMAN_VERSION =			4.14.8
 COMPONENT_SUMMARY =		A small Python package for determining appropriate platform-specific dirs, e.g. a \`user data dir\`.
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/platformdirs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:211d176e24674b5895dedf9021c262bcf9fad008a70610bfb147d4a8d6d8fe1b
+	sha256:96893d686e84e9e6f358a9ea41a8de544df66dbf2ba6cda250e7dc73acf85b9b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -45,10 +45,14 @@ COMPONENT_PRE_TEST_ACTION += $(CHMOD) 0700 $(COMPONENT_TEST_BUILD_DIR)/.xdg_runt
 COMPONENT_TEST_ENV += XDG_RUNTIME_DIR=$(COMPONENT_TEST_BUILD_DIR)/.xdg_runtime_dir
 COMPONENT_POST_TEST_ACTION += $(RM) -r $(COMPONENT_TEST_BUILD_DIR)/.xdg_runtime_dir ;
 
+# Testing needs the XDG_CONFIG_HOME variable
+COMPONENT_TEST_ENV += XDG_CONFIG_HOME=$(COMPONENT_TEST_BUILD_DIR)/.xdg_config_home
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/hatch-fancy-pypi-readme
 REQUIRED_PACKAGES.python += library/python/hatch-vcs
 REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/python-sbom
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/appdirs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
