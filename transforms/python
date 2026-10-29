@@ -13,16 +13,43 @@
 # Copyright 2022 Marcel Telka
 #
 
-# Create mediated symlinks in /usr/bin for python binaries
-<transform file path=usr/bin/[^/]+-3\.\d+$ -> default tmp.fmri %{pkg.fmri} >
-<transform file path=(usr/bin/)([^/]+)-(3\.\d+)$ tmp.fmri=.*runtime/python -> emit \
-    link path=%<1>%<2> target=%<2>-%<3> mediator=python mediator-version=%<3> >
-<transform file path=(usr/bin/)([^/]+)-(3\.\d+)$ tmp.fmri=.*library/python/ -> emit \
-    link path=%<1>%<2> target=%<2>-%<3> mediator=python mediator-version=%<3> >
-<transform file tmp.fmri=.* -> delete tmp.fmri .* >
-
-# Bypass automatic detection of Python dependencies for files in
+# Bypass automatic detection of Python dependencies for Python files in
 # vendor-packages directory.  Such dependencies are generated from Python
 # project's metadata.
-<transform file path=usr/lib/python3\.\d+/vendor-packages/ -> add \
-    pkg.depend.bypass-generate usr/lib/python3.* >
+<transform file path=usr/lib/python$(PYVER_RE)/vendor-packages/.*\.py$ -> \
+    add pkg.depend.bypass-generate usr/lib/python.* >
+
+# Fix 64-bit object in 32-bit path lint error
+<transform file path=usr/lib/python$(PYVER_RE)/lib-dynload/.*\.so$ -> \
+    default pkg.linted.userland.action001.2 true >
+
+# Facet for test files
+<transform file path=usr/lib/python$(PYVER_RE)/(idlelib/idle_)?test/ -> \
+    default facet.optional.test true >
+
+# pkgdepend generates a dependency on __main__ that's then unable to resolve
+<transform file path=usr/lib/python$(PYVER_RE)/test/support/smtpd\.py$ -> \
+    add pkg.depend.bypass-generate .* >
+
+# Python files intentionally distributed without their .pyc counterparts
+<transform file path=usr/lib/python$(PYVER_RE)/config-$(PYVER_RE)/python-config\.py$ -> \
+    default pkg.tmp.autopyc false >
+<transform file path=usr/lib/python$(PYVER_RE)/test/tokenizedata/bad.*\.py$ -> \
+    default pkg.tmp.autopyc false >
+<transform file path=usr/lib/python$(PYVER_RE)/test/test_lazy_import/data/badsyntax/.*\.py$ -> \
+    default pkg.tmp.autopyc false >
+<transform file path=usr/lib/python$(PYVER_RE)/test/test_future_stmt/badsyntax_future\.py$ -> \
+    default pkg.tmp.autopyc false >
+
+# Drop all unversioned symlinks without python mediator
+<transform link -> default tmp.fmri %{pkg.fmri} >
+<transform link path=(?!.*$(PYVER_RE)) tmp.fmri=.*runtime/python|.*library/python/ -> \
+    default mediator drop >
+<transform link path=(?!.*$(PYVER_RE)) tmp.fmri=.*runtime/python|.*library/python/ \
+    mediator=drop -> drop >
+<transform link tmp.fmri=.* -> delete tmp.fmri .* >
+
+# Versioned Python needs to depend on unversioned Python runtime to make sure
+# the expected default Python version is always installed
+<transform file path=usr/bin/python$(PYVER_RE)$ -> emit \
+    depend type=require fmri=runtime/python >
