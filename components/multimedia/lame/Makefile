@@ -15,20 +15,26 @@
 #
 
 BUILD_BITS= 64_and_32
+DROP_STATIC_LIBRARIES = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= lame
 COMPONENT_VERSION= 3.101
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= LAME is a high quality MPEG Audio Layer III (MP3) encoder licensed under the LGPL 
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:7578af6eebd578b2bd64e468fac4ae1f03670a7e028166e67f855674b9b6aeac
 COMPONENT_ARCHIVE_URL= https://downloads.sourceforge.net/sourceforge/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://lame.sourceforge.io/
-COMPONENT_LICENSE= LGPLv2
+COMPONENT_LICENSE= LGPL-2.0-only
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION= System/Media
 COMPONENT_FMRI= audio/lame
+
+COMPONENT_FMRI.lame-32 =	$(COMPONENT_FMRI)/32
+COMPONENT_SUMMARY.lame-32 =	$(COMPONENT_SUMMARY) (32-bit)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -39,8 +45,8 @@ CONFIGURE_OPTIONS += --with-fileio=sndfile
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-rpath
 
-# Manually added dependencies
-REQUIRED_PACKAGES += library/libsndfile/32
+# We do not need 32 bit lame frontend
+CONFIGURE_OPTIONS.32 += --disable-frontend
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += audio/mpg123
