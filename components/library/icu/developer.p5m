@@ -24,21 +24,17 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# 32 bit files used to live in this package
+#
+# The dependency should be removed once these components are rebuilt:
+#
+# - library/libxml2
+#
+depend type=require fmri=$(COMPONENT_FMRI)/32
+
 # suppress 'unresolvable target' lint error
 <transform link target=current/ -> default pkg.linted.userland.action002.0 True>
 
-file path=usr/bin/$(MACH32)/derb
-file path=usr/bin/$(MACH32)/genbrk
-file path=usr/bin/$(MACH32)/gencfu
-file path=usr/bin/$(MACH32)/gencnval
-file path=usr/bin/$(MACH32)/gendict
-file path=usr/bin/$(MACH32)/genrb
-file path=usr/bin/$(MACH32)/icu-config
-file path=usr/bin/$(MACH32)/icuexportdata
-file path=usr/bin/$(MACH32)/icuinfo
-file path=usr/bin/$(MACH32)/makeconv
-file path=usr/bin/$(MACH32)/pkgdata
-file path=usr/bin/$(MACH32)/uconv
 file path=usr/bin/derb
 file path=usr/bin/genbrk
 file path=usr/bin/gencfu
@@ -276,32 +272,6 @@ link path=usr/lib/$(MACH64)/libicuuc.so target=libicuuc.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/icu-i18n.pc
 file path=usr/lib/$(MACH64)/pkgconfig/icu-io.pc
 file path=usr/lib/$(MACH64)/pkgconfig/icu-uc.pc
-file path=usr/lib/icu/$(HUMAN_VERSION)/Makefile.inc
-file path=usr/lib/icu/$(HUMAN_VERSION)/pkgdata.inc
-link path=usr/lib/icu/Makefile.inc target=current/Makefile.inc
-link path=usr/lib/icu/current target=$(HUMAN_VERSION)
-link path=usr/lib/icu/pkgdata.inc target=current/pkgdata.inc
-link path=usr/lib/libicudata.so target=libicudata.so.$(HUMAN_VERSION)
-link path=usr/lib/libicui18n.so target=libicui18n.so.$(HUMAN_VERSION)
-link path=usr/lib/libicuio.so target=libicuio.so.$(HUMAN_VERSION)
-link path=usr/lib/libicutest.so target=libicutest.so.$(HUMAN_VERSION)
-link path=usr/lib/libicutest.so.$(COMPONENT_VERSION_MAJOR) \
-    target=libicutest.so.$(HUMAN_VERSION)
-file path=usr/lib/libicutest.so.$(HUMAN_VERSION)
-link path=usr/lib/libicutu.so target=libicutu.so.$(HUMAN_VERSION)
-link path=usr/lib/libicutu.so.$(COMPONENT_VERSION_MAJOR) \
-    target=libicutu.so.$(HUMAN_VERSION)
-file path=usr/lib/libicutu.so.$(HUMAN_VERSION)
-link path=usr/lib/libicuuc.so target=libicuuc.so.$(HUMAN_VERSION)
-file path=usr/lib/pkgconfig/icu-i18n.pc
-file path=usr/lib/pkgconfig/icu-io.pc
-file path=usr/lib/pkgconfig/icu-uc.pc
-file path=usr/sbin/$(MACH32)/escapesrc
-file path=usr/sbin/$(MACH32)/genccode
-file path=usr/sbin/$(MACH32)/gencmn
-file path=usr/sbin/$(MACH32)/gennorm2
-file path=usr/sbin/$(MACH32)/gensprep
-file path=usr/sbin/$(MACH32)/icupkg
 file path=usr/sbin/escapesrc
 file path=usr/sbin/genccode
 file path=usr/sbin/gencmn

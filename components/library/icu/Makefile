@@ -20,12 +20,12 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		icu
-COMPONENT_VERSION =		78.3
+COMPONENT_VERSION =		79.1
 COMPONENT_REVISION =		0
 COMPONENT_SUMMARY =		International Components for Unicode
 COMPONENT_SRC =			$(COMPONENT_NAME)
 COMPONENT_ARCHIVE =		icu4c-$(HUMAN_VERSION)-sources.tgz
-COMPONENT_ARCHIVE_HASH =	sha256:3a2e7a47604ba702f345878308e6fefeca612ee895cf4a5f222e7955fabfe0c0
+COMPONENT_ARCHIVE_HASH =	sha256:06fa63ecb521048f8082f12ad988f6b678d90cbd88aafce24cbc94902b191d99
 COMPONENT_PROJECT_URL =		https://icu.unicode.org/
 COMPONENT_ARCHIVE_URL =		https://github.com/unicode-org/icu/releases/download/release-$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_VERSION_MAJOR =	$(firstword $(subst ., ,$(HUMAN_VERSION)))
@@ -41,6 +41,9 @@ COMPONENT_SUMMARY.library-32 =	$(COMPONENT_SUMMARY) (32-bit)
 ifeq ($(strip $(COMPONENT_VERSION_MAJOR)),$(strip $(ICU_VERSION)))
 COMPONENT_FMRI.developer =	developer/icu
 COMPONENT_SUMMARY.developer =	$(COMPONENT_SUMMARY) (development files)
+
+COMPONENT_FMRI.developer-32 =	$(COMPONENT_FMRI.developer)/32
+COMPONENT_SUMMARY.developer-32 =$(COMPONENT_SUMMARY) (32-bit development files)
 endif
 
 include $(WS_MAKE_RULES)/common.mk
