@@ -1,18 +1,14 @@
---- Python-3.14.9/Lib/test/test_cext/__init__.py.orig
-+++ Python-3.14.9/Lib/test/test_cext/__init__.py
-@@ -135,6 +135,7 @@
- class TestPublicCpp(BaseTests, unittest.TestCase):
-     LANGUAGE = 'C++'
- 
-+    @unittest.skip("https://github.com/python/cpython/issues/160208")
-     def test_build(self):
-         self.check_build('_test_cppext')
- 
-@@ -162,6 +163,7 @@
-     def test_build_intel_asm(self):
-         self.check_build('_test_cppext_intel_asm', extra_cflags='-masm=intel')
- 
-+    @unittest.skip("https://github.com/python/cpython/issues/160208")
-     def test_build_limited(self):
-         self.check_build('_test_cppext_limited', limited=True)
- 
+https://github.com/python/cpython/pull/160562
+
+--- Python-3.14.10/Include/object.h.orig
++++ Python-3.14.10/Include/object.h
+@@ -109,7 +109,8 @@
+ #ifndef Py_GIL_DISABLED
+ struct _object {
+ #if (defined(__GNUC__) || defined(__clang__)) \
+-        && !(defined __STDC_VERSION__ && __STDC_VERSION__ >= 201112L)
++        && (!defined(__STDC_VERSION__) || __STDC_VERSION__ < 201112L \
++            || defined(__cplusplus))
+     // On C99 and older, anonymous union is a GCC and clang extension
+     __extension__
+ #endif

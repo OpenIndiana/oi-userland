@@ -31,14 +31,14 @@ USE_CTF = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Python
-COMPONENT_VERSION =		3.14.9
+COMPONENT_VERSION =		3.14.10
 PYTHON_VERSION =		$(basename $(COMPONENT_VERSION))
 PYV =				$(subst .,,$(PYTHON_VERSION))
 COMPONENT_SUMMARY =		The Python interpreter, libraries and utilities
 COMPONENT_PROJECT_URL =		https://python.org/
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH =	sha256:e02d9ac21cebda6e46435369744a92c65cc7cd8669697694122cf97ffacd1e53
+COMPONENT_ARCHIVE_HASH =	sha256:de414a57119abef52784d8993e341d53aed635fc2b05c2607d9f98a2c5b72032
 COMPONENT_ARCHIVE_URL =		$(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =		runtime/python-$(PYV)
 COMPONENT_CLASSIFICATION =	Development/Python
@@ -83,17 +83,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 		_sysconfigdata__sunos5_.py config-$(PYTHON_VERSION)/Makefile ; \
 	LD_LIBRARY_PATH=$(PROTOUSRLIBDIR.$(BITS)) $(PROTO_DIR)$(PYTHON) -m py_compile _sysconfigdata__sunos5_.py ) ;
 
-# Create symlinks without ending '3' for binaries
-COMPONENT_POST_INSTALL_ACTION += \
-	for f in idle pydoc python ; do \
-		$(SYMLINK) $${f}$(PYTHON_VERSION) $(PROTOUSRBINDIR)/$$f ; \
-	done ; \
-	$(SYMLINK) python$(PYTHON_VERSION)-config $(PROTOUSRBINDIR)/python-config ;
-
-# Create symlink without ending '3' for the man page
-COMPONENT_POST_INSTALL_ACTION += \
-	$(SYMLINK) python$(PYTHON_VERSION).1 $(PROTOUSRSHAREMAN1DIR)/python.1 ;
-
 # Allow mediated libpython3.so stable ABI
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MV) $(PROTOUSRLIBDIR.$(BITS))/libpython3.so $(PROTOUSRLIBDIR.$(BITS))/libpython$(PYV).so ; \
@@ -132,12 +121,8 @@ PKGDEPEND_GENERATE_ENV += LD_LIBRARY_PATH=$(PROTOUSRLIBDIR.64)
 # Replace Python version by $(PYVER) really everywhere.  The default transforms
 # misses some occurrences.  Also replace the stripped down Python version by
 # $(PYV).
-PYVER_RE = $(subst .,\.,$(PYTHON_VERSION))
 GENERATE_EXTRA_SED += -e 's/$(PYVER_RE)/$$(PYVER)/g'
 GENERATE_EXTRA_SED += -e 's/$(PYV)/$$(PYV)/g'
-
-# PYVER_RE is needed to process manifests
-PKG_VARS += PYVER_RE
 
 # Need to preserve timestamp for Grammar files.  If the pickle files are older,
 # Python will try to rebuild them.
