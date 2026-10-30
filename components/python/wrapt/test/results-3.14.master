@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1369 items
+collecting ... collected 1381 items
 
 tests/core/test_adapter.py::TestAdapterAttributes::test_doc_string PASSED
 tests/core/test_adapter.py::TestAdapterAttributes::test_module_name PASSED
@@ -87,9 +87,15 @@ tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_descriptor_optio
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_fspath PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_fspath_not_pathlike PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_fspath_pathlib PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_instance_attributes_are_not_awaitable PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_instance_attributes_are_not_special_methods PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_instance_dir_does_not_hide_special_methods PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_iter PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_length_hint PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_next PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_wrapped_class_is_not_awaitable_or_iterable PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_wrapped_class_is_not_descriptor PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_wrapped_class_metaclass_iter PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_aiter_added_on_reassignment PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_aiter_removed_on_reassignment PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_anext_added_on_reassignment PASSED
@@ -104,6 +110,8 @@ tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_fspa
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_fspath_removed_on_reassignment PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_get_added_on_reassignment PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_get_removed_on_reassignment PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_instance_attributes_are_not_awaitable_on_reassignment PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_instance_attributes_are_not_special_methods_on_reassignment PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_iter_added_on_reassignment PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_iter_removed_on_reassignment PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_length_hint_added_on_reassignment PASSED
@@ -114,6 +122,8 @@ tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_set_
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_set_name_added_on_reassignment PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_set_name_removed_on_reassignment PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_set_removed_on_reassignment PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_wrapped_class_is_not_descriptor_on_reassignment PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_wrapped_class_metaclass_iter_on_reassignment PASSED
 tests/core/test_callable_binding_no_args.py::TestCallableBindingNoArgs::test_bound_access_succeeds PASSED
 tests/core/test_callable_binding_no_args.py::TestCallableBindingNoArgs::test_callable_binding_no_args_calls_wrapper PASSED
 tests/core/test_callable_binding_no_args.py::TestCallableBindingNoArgs::test_callable_binding_with_instance_arg_succeeds PASSED
@@ -488,11 +498,13 @@ tests/core/test_instancemethod.py::TestCallingInstanceMethodNewStyle::test_insta
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_descriptor_optional_owner 
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_descriptor_optional_owner PASSED
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_descriptor_optional_owner_required_by_wrapped PASSED
+tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_lazy_class_is_not_descriptor PASSED
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_lazy_import PASSED
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_lazy_import_attribute PASSED
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_lazy_import_callable PASSED
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_lazy_import_dotted PASSED
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_lazy_import_iterable PASSED
+tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_lazy_instance_attributes_are_not_special_methods PASSED
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_lazy_object_proxy PASSED
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_pathlike_interface_is_lazy 
 tests/core/test_lazy_object_proxy.py::TestLazyObjectProxy::test_pathlike_interface_is_lazy PASSED
@@ -1388,6 +1400,6 @@ tests/core/test_wrapper_chain.py::TestUnwrapped::test_lazy_proxy PASSED
 tests/core/test_wrapper_chain.py::TestUnwrapped::test_unwrapped_object PASSED
 tests/core/test_wrapper_chain.py::TestUnwrapped::test_wrapper_stack PASSED
 
-======== 1369 passed, 43 subtests passed ========
+======== 1381 passed, 43 subtests passed ========
   py$(PYV): OK
   congratulations :)
