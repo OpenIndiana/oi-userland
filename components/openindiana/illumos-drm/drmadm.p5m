@@ -1,0 +1,66 @@
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+#
+# IPS manifest of drmadm(8) (tools/drmadm), which shows and selects the DRM
+# stack that binds the GPU: the legacy stack of driver/graphics/drm
+# (gfx-drm's misc/drm and i915) or this repository's (misc/drm_core and its
+# drivers). Publish from a directory holding tools/drmadm/drmadm as
+# usr/sbin/drmadm, tools/drmadm/drmadm.8 as usr/share/man/man8/drmadm.8
+# and this repository's LICENSE and packaging/20-modesetting.conf:
+#
+#   pkgsend publish -s <repo> -d <proto> -d . packaging/drmadm.p5m
+#
+# with packaging/drm-perms.xml as lib/svc/manifest/system/drm-perms.xml
+# in <proto>.
+#
+# It is a package of its own, which driver/graphics/drm-core requires, so
+# that it stays when the new stack's packages are removed: its
+# /etc/system.d fragment (written by drmadm, delivered by no package)
+# keeps excluding the legacy modules until "drmadm select legacy" runs.
+#
+# The service svc:/system/graphics/drm-perms (packaging/drm-perms.xml, as
+# lib/svc/manifest/system/drm-perms.xml) runs "drmadm perms" at every boot
+# before console-login and the display managers; it also reconciles the
+# generic Xorg configuration for the stack selected since this boot.
+# Before console-login: ttymon(8) applies the /etc/logindevperm rule
+# "/dev/dri/*" when it opens the console and would set the device nodes of
+# this repository's drivers to 0600 root root, which devfs keeps across
+# reboots (see drmadm(8) and the README's "Device node permissions"). It
+# is in this package, not in drm-core, because the restricted rule it
+# leaves in /etc/logindevperm names the legacy drivers and stays right
+# after the new stack's packages are removed.
+#
+# Neither hardware driver binds a GPU at installation: virtio_gpu ships
+# alias data only and i915n ships no aliases. Xorg reads no packaged new-stack
+# configuration until drmadm installs its copy at boot after select new.
+# No package of this repository binds an Intel GPU at installation: the
+# Intel driver (reserved name i915n) is delivered without aliases, and
+# drmadm moves the aliases of the legacy i915 to it when the new stack is
+# selected (IPS refuses to install a driver action whose alias another
+# driver action in the image declares).
+#
+set name=pkg.fmri value=pkg:/driver/graphics/drmadm@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Select the DRM driver stack (drmadm)"
+set name=pkg.description value="drmadm(8) shows which DRM driver stack is installed, loaded and selected, and selects the legacy stack (misc/drm, i915) or the illumos-drm stack (misc/drm_core and its drivers) for the next boot: it moves the Intel GPU aliases between the two Intel drivers, binds virtio GPU aliases only for the new stack, and excludes the other stack's kernel modules. Its service svc:/system/graphics/drm-perms keeps the device nodes of the illumos-drm drivers at their /etc/minor_perm permissions and reconciles its generic Xorg configuration at boot."
+set name=info.classification value="org.opensolaris.category.2008:System/Administration and Configuration"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=userland
+dir  path=lib owner=root group=bin mode=0755
+dir  path=lib/svc owner=root group=bin mode=0755
+dir  path=lib/svc/manifest owner=root group=sys mode=0755
+dir  path=lib/svc/manifest/system owner=root group=sys mode=0755
+file path=lib/svc/manifest/system/drm-perms.xml owner=root group=sys \
+    mode=0444 restart_fmri=svc:/system/manifest-import:default
+dir  path=usr owner=root group=sys mode=0755
+dir  path=usr/sbin owner=root group=bin mode=0755
+file path=usr/sbin/drmadm owner=root group=bin mode=0555
+dir  path=usr/share owner=root group=sys mode=0755
+dir  path=usr/share/man owner=root group=bin mode=0755
+dir  path=usr/share/man/man8 owner=root group=bin mode=0755
+dir  path=usr/share/drmadm owner=root group=bin mode=0755
+# Inactive template: drmadm perms reconciles its owned active copy at boot.
+file path=usr/share/drmadm/20-modesetting.conf owner=root group=bin mode=0444
+file path=usr/share/man/man8/drmadm.8 owner=root group=bin mode=0444
+license LICENSE license=MPL-2.0
