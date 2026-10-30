@@ -18,12 +18,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
-COMPONENT_VERSION=	8.1.3
+COMPONENT_VERSION=	9.0.2
 FFMPEG_VERSION=		$(firstword $(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_SUMMARY=      A very fast video and audio converter
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:7138d28c96d9d3e3af4ee3d8cad72741f8ffb40da90c1112235dea3ecd3178a3
+COMPONENT_ARCHIVE_HASH=	sha256:8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e
 COMPONENT_PROJECT_URL=  https://www.ffmpeg.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         video/ffmpeg
@@ -112,6 +112,9 @@ CONFIGURE_OPTIONS += --pkgconfigdir=$(PKG_CONFIG_DIR)/ffmpeg-$(FFMPEG_VERSION)
 COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR) ;
 # We do not need examples and other share files needed for programs
 COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRSHAREDIR)/ffmpeg ;
+
+# Manually added build dependency for /usr/bin/ffplay
+REQUIRED_PACKAGES += library/sdl2
 endif
 
 COMPONENT_TEST_ENV += PATH=$(PROTO_DIR)/$(CONFIGURE_BINDIR.$(BITS)):$(PATH)
