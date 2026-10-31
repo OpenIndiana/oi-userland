@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		boost
 COMPONENT_VERSION=	1.92.0
+COMPONENT_REVISION=	1
 COMPONENT_SRC_VERSION=	$(subst .,_,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	boost - free peer-reviewed portable C++ source libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)_$(COMPONENT_SRC_VERSION)
@@ -27,10 +28,13 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha256:5c1d40cb8e19adbf740a4ec2da35b3e58f3f5804b1dce44deb53df72193cbc6c
 COMPONENT_ARCHIVE_URL=	https://archives.boost.io/release/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.boost.org
-COMPONENT_FMRI=		system/library/boost
+COMPONENT_FMRI=		developer/boost
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	Boost Software license
 COMPONENT_LICENSE_FILE=	LICENSE_1_0.txt
+
+COMPONENT_FMRI.library =	library/boost-$(subst .,,$(HUMAN_VERSION))
+COMPONENT_SUMMARY.library =	Runtime libraries for boost $(HUMAN_VERSION)
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -90,10 +94,6 @@ COMPONENT_POST_INSTALL_ACTION=  \
 			-o -name \*.gif -o -name \*.jpg -o -name \*.png -o -name \*.PNG -o -name \*.ico \
 			-o -name \*.qbk -o -name \*.pattern \) | \
 		$(GTAR) -cf - --files-from=- | $(GTAR) -C $(PROTO_DIR)$(DOCDIR) -xf - ;
-
- 
-# Build dependencies for boost locale
-REQUIRED_PACKAGES += developer/icu
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
