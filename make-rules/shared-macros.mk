@@ -619,7 +619,7 @@ COMPONENT_TEST_CMD =	$(GMAKE)
 COMPONENT_TEST_TARGETS =	check
 
 # set the default directory for test of the component
-COMPONENT_TEST_DIR =	$(@D)
+COMPONENT_TEST_DIR =	$(@D)$(COMPONENT_SUBDIR:%=/%)
 
 # prepare the testing environment before we run tests
 COMPONENT_TEST_DEP += component-test-environment-prep
