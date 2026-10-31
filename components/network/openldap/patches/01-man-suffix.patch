@@ -1,0 +1,32 @@
+--- openldap-2.6.16/build/man.mk.orig
++++ openldap-2.6.16/build/man.mk
+@@ -16,7 +16,7 @@
+ # Makefile Template for Manual Pages
+ #
+ 
+-MANDIR=$(mandir)/man$(MANSECT)
++MANDIR=$(mandir)/man$(MANSECT)oldap
+ TMP_SUFFIX=tmp
+ 
+ all-common:
+@@ -41,14 +41,14 @@
+ 	-$(MKDIR) $(DESTDIR)$(MANDIR)
+ 	PAGES=`cd $(srcdir); echo *.$(MANSECT)`; \
+ 	for page in $$PAGES; do \
+-		echo "installing $$page in $(DESTDIR)$(MANDIR)"; \
+-		$(RM) $(DESTDIR)$(MANDIR)/$$page; \
+-		$(INSTALL) $(INSTALLFLAGS) -m 644 $$page.$(TMP_SUFFIX) $(DESTDIR)$(MANDIR)/$$page; \
++		echo "installing $${page}oldap in $(DESTDIR)$(MANDIR)"; \
++		$(RM) $(DESTDIR)$(MANDIR)/$${page}oldap; \
++		$(INSTALL) $(INSTALLFLAGS) -m 644 $$page.$(TMP_SUFFIX) $(DESTDIR)$(MANDIR)/$${page}oldap; \
+ 		if test -f "$(srcdir)/$$page.links" ; then \
+ 			for link in `$(CAT) $(srcdir)/$$page.links`; do \
+-				echo "installing $$link in $(DESTDIR)$(MANDIR) as link to $$page"; \
+-				$(RM) $(DESTDIR)$(MANDIR)/$$link ; \
+-				$(LN_S) $(DESTDIR)$(MANDIR)/$$page $(DESTDIR)$(MANDIR)/$$link; \
++				echo "installing $${link}oldap in $(DESTDIR)$(MANDIR) as link to $${page}oldap"; \
++				$(RM) $(DESTDIR)$(MANDIR)/$${link}oldap ; \
++				$(LN_S) $(DESTDIR)$(MANDIR)/$${page}oldap $(DESTDIR)$(MANDIR)/$${link}oldap; \
+ 			done; \
+ 		fi; \
+ 	done

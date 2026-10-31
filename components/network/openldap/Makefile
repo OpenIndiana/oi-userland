@@ -27,11 +27,12 @@
 
 
 USE_PARALLEL_BUILD=yes
-BUILD_BITS= 64_and_32
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openldap
 COMPONENT_VERSION=      2.6.16
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
@@ -43,20 +44,20 @@ COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      The OpenLDAP Public License
 COMPONENT_LICENSE_FILE= LICENSE
 
-TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
+CLONEY_MODE =
 
 # we need to enable large file support and build PIC for our shared libraries
 CFLAGS += $(CPP_LARGEFILES) $(CC_PIC)
 # check below for a newer release is still needed for a gcc14 build.
 CFLAGS += -Wno-implicit-function-declaration
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR$(BITS))
-CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)/openldap
-CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/openldap
+# Set non-default directories
+CONFIGURE_LIBEXECDIR =		$(CONFIGURE_LIBDIR)
+CONFIGURE_LOCALSTATEDIR :=	$(CONFIGURE_LOCALSTATEDIR)/openldap
+CONFIGURE_INCLUDEDIR :=		$(CONFIGURE_INCLUDEDIR)/openldap
+
 CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-dynamic
@@ -66,23 +67,17 @@ CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-crypt
 
 # SLAPD related options
-# Note: we build 64-bit slapd only
-CONFIGURE_OPTIONS.32 += --disable-slapd
-CONFIGURE_OPTIONS.32 += --disable-cleartext
-CONFIGURE_OPTIONS.32 += --disable-mdb
-CONFIGURE_OPTIONS.32 += --disable-relay
-CONFIGURE_OPTIONS.32 += --disable-syncprov
-CONFIGURE_OPTIONS.64 += --enable-modules
-CONFIGURE_OPTIONS.64 += --enable-rlookups
-CONFIGURE_OPTIONS.64 += --enable-dynacl
-CONFIGURE_OPTIONS.64 += --enable-aci
-CONFIGURE_OPTIONS.64 += --enable-wrappers
+CONFIGURE_OPTIONS += --enable-modules
+CONFIGURE_OPTIONS += --enable-rlookups
+CONFIGURE_OPTIONS += --enable-dynacl
+CONFIGURE_OPTIONS += --enable-aci
+CONFIGURE_OPTIONS += --enable-wrappers
 #enable all backends but wt
-CONFIGURE_OPTIONS.64 += --enable-backends=mod
-CONFIGURE_OPTIONS.64 += --enable-wt=no
+CONFIGURE_OPTIONS += --enable-backends=mod
+CONFIGURE_OPTIONS += --enable-wt=no
 #enable all overlays
-CONFIGURE_OPTIONS.64 += --enable-overlays=mod
-CONFIGURE_OPTIONS.64 += --enable-argon2
+CONFIGURE_OPTIONS += --enable-overlays=mod
+CONFIGURE_OPTIONS += --enable-argon2
 
 #CONFIGURE_OPTIONS += --enable-balancer
 CONFIGURE_OPTIONS += --without-systemd
@@ -99,7 +94,7 @@ CONFIGURE_ENV += PERLBIN=$(PERL)
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH="$(PROTOUSRLIBDIR):$(PROTOUSRLIBDIR64):"
 # Put /usr/gnu/bin before /usr/bin first as the test suite uses "date -d"
-COMPONENT_TEST_ENV += PATH="$(PROTOUSRSBINDIR):$(PROTOUSRBINDIR):$(PATH.gnu):/usr/bin"
+COMPONENT_TEST_ENV += PATH="$(PROTOUSRSBINDIR):$(PROTOUSRBINDIR):$(PATH.gnu)"
 
 # Tests take about 40 minutes to run.  Note that many of the
 # replication tests are flaky.  The increased sleep times help, as
@@ -112,7 +107,8 @@ COMPONENT_TEST_ENV += SLEEP1=20
 COMPONENT_TEST_ENV += SLEEP2=40
 
 # to remove plugin.la dependency
-COMPONENT_POST_INSTALL_ACTION.64 = $(GSED) -i -e 's:.la$$:.so:' $(PROTOETCDIR)/$(COMPONENT_NAME)/slapd.*
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -i -e 's:.la$$:.so:' $(PROTOETCDIR)/$(COMPONENT_NAME)/slapd.* ;
 
 COMPONENT_TEST_TRANSFORMS += \
 	' -n ' \
@@ -126,7 +122,6 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
-REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libtool/libltdl
