@@ -422,6 +422,7 @@ CONFIGURE_OPTIONS += --with-system-icu
 CONFIGURE_OPTIONS += --with-system-poppler
 CONFIGURE_OPTIONS += --with-system-curl
 CONFIGURE_OPTIONS += --with-system-boost
+CONFIGURE_OPTIONS += --with-boost-libdir=$(USRLIBDIR64)
 CONFIGURE_OPTIONS += --with-system-nss
 # library/libneon < 0.31.2
 # CONFIGURE_OPTIONS += --with-system-neon
