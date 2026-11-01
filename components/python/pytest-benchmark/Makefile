@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_benchmark
-HUMAN_VERSION =			5.3.0
+HUMAN_VERSION =			5.3.1
 COMPONENT_SUMMARY =		A \`\`pytest\`\` fixture for benchmarking code. It will group the tests into rounds that are calibrated to the chosen timer.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:358444d4e89be901ee2b6404fb043ac3d7684002ad7f3563cc153fca6339c965
+	sha256:c1ee70a58f9bfb1ac955cc634247a340b0df7bcb949071cfca396f16c6fc3516
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
