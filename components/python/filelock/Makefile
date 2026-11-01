@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		filelock
-HUMAN_VERSION =			4.2.4
+HUMAN_VERSION =			4.2.6
 COMPONENT_SUMMARY =		A platform independent file lock.
-COMPONENT_PROJECT_URL =		https://github.com/tox-dev/py-filelock
+COMPONENT_PROJECT_URL =		https://github.com/tox-dev/filelock
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c6d8663535e1650ee430507b4ffbac7b464dd64b7647ea0112a9f406499d163d
+	sha256:ee7af8ede36dcaf12e1016d9f7c3a63ecd5497d46f85dab21b8c779b8f944e97
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -43,6 +43,7 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{12\}/\$$(POINTER)/g'"
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES.python += library/python/hatch-fancy-pypi-readme
 REQUIRED_PACKAGES.python += library/python/hatch-vcs
 REQUIRED_PACKAGES.python += library/python/hatchling
 REQUIRED_PACKAGES.python += runtime/python
