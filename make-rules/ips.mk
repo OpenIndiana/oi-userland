@@ -699,3 +699,7 @@ REQUIRED_PACKAGES_TRANSFORM += -e '/ \$$(ICU_LIBRARY_PKG)\/32$$/{p;s/\$$(ICU_LIB
 # If a component needs a runtime boost library then it also needs the boost
 # development files for building.  Add such dependency automatically here.
 REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/boost-/{p;s/library\/boost-[0-9]*$$/developer\/boost/}'
+
+# If a component needs a runtime spdlog library then it also needs the spdlog
+# development files for building.  Add such dependency automatically here.
+REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/c++\/spdlog-/{p;s/-[^-]*$$//}'
