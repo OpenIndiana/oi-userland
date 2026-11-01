@@ -23,6 +23,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# Runtime libraries for spdlog 1.15 used to live in this package.
+# Drop this dependency once nothing depends on library/c++/spdlog for runtime.
+depend type=require fmri=library/c++/spdlog-115
+
 file path=usr/include/spdlog/async.h
 file path=usr/include/spdlog/async_logger-inl.h
 file path=usr/include/spdlog/async_logger.h
@@ -132,8 +136,5 @@ file path=usr/lib/$(MACH64)/cmake/spdlog/spdlogConfig.cmake
 file path=usr/lib/$(MACH64)/cmake/spdlog/spdlogConfigTargets-release.cmake
 file path=usr/lib/$(MACH64)/cmake/spdlog/spdlogConfigTargets.cmake
 file path=usr/lib/$(MACH64)/cmake/spdlog/spdlogConfigVersion.cmake
-link path=usr/lib/$(MACH64)/libspdlog.so target=libspdlog.so.1.16
-file path=usr/lib/$(MACH64)/libspdlog.so.$(HUMAN_VERSION)
-link path=usr/lib/$(MACH64)/libspdlog.so.1.16 \
-    target=libspdlog.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libspdlog.so target=libspdlog.so.1.17
 file path=usr/lib/$(MACH64)/pkgconfig/spdlog.pc

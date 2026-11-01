@@ -26,21 +26,27 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		spdlog
-COMPONENT_VERSION=	1.16.0
+COMPONENT_VERSION=	1.17.0
 COMPONENT_SUMMARY=      spdlog - Fast C++ logging library
 COMPONENT_PROJECT_URL=	https://github.com/gabime/spdlog
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:8741753e488a78dd0d0024c980e1fb5b5c85888447e309d9cb9d949bdb52aa3e
+COMPONENT_ARCHIVE_HASH=	sha256:d8862955c6d74e5846b3f580b1605d2428b11d97a410d86e2fb13e857cd3a744
 COMPONENT_ARCHIVE_URL=	https://github.com/gabime/spdlog/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=     	library/c++/spdlog
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE=	LICENSE
 
+COMPONENT_FMRI.library =	$(COMPONENT_FMRI)-$(subst .,,$(basename $(HUMAN_VERSION)))
+COMPONENT_SUMMARY.library =	Runtime libraries for $(COMPONENT_NAME) $(basename $(HUMAN_VERSION))
+
 # Tests now require Catch2 which we don't have yet.
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+# Do not create gpatch backup files because they pollute the generated manifest
+GPATCH_BACKUP =
 
 CMAKE_OPTIONS += -DSPDLOG_BUILD_SHARED=ON
 
