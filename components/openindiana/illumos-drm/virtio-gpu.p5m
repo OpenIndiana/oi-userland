@@ -1,0 +1,55 @@
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+#
+# IPS manifest of the virtio-gpu DRM driver (drivers/virtio-gpu). Publish
+# from a directory holding the linked module as kernel/drv/amd64/virtio_gpu
+# (tools/test/run-r4-test.sh links it), this repository's LICENSE and
+# packaging/virtio-gpu.aliases (the opt-in alias data):
+#
+#   pkgsend publish -s <repo> -d <proto> -d . packaging/virtio-gpu.p5m
+#
+# The module is linked with -N misc/drm_core, so the package depends on the
+# package that delivers misc/drm_core (modules/drm_core).
+#
+# The driver action has no aliases. drmadm select new binds the aliases
+# in /usr/share/drmadm/virtio-gpu.aliases; select legacy removes them.
+# This keeps virtio-vga on the stock VGA console until explicitly selected.
+# The old unconditional etc/X11/xorg.conf.d/20-virtio-gpu.conf action
+# is removed: pkg removes the old packaged copy on upgrade.
+# The driver action gives the card and render nodes "* 0666 root sys": any
+# process may open a render node, and the DRM core decides which file of
+# the card node is the DRM master. ttymon's /etc/logindevperm rule for
+# /dev/dri would set them to 0600 root root at every boot; the service
+# drm-perms of driver/graphics/drmadm (required through drm-core) keeps
+# them at these permissions (README, "Device node permissions"). The
+# devlink attribute makes devfsadm create
+# /dev/dri/card<N> and /dev/dri/renderD<128+N> where the SUNW_drm_link
+# module of driver/graphics/drm is not installed (see devlink.tab).
+#
+set name=pkg.fmri value=pkg:/driver/graphics/virtio-gpu@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="virtio-gpu DRM driver (Rust)"
+set name=pkg.description value="The illumos-drm Rust driver for the virtio GPU device of QEMU and other hypervisors: kernel mode setting with EDID and a cursor, and virgl 3D acceleration through the host's virglrenderer for Mesa's virtio_gpu driver."
+set name=info.classification value=org.opensolaris.category.2008:Drivers/Display
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=userland
+dir  path=usr owner=root group=sys mode=0755
+dir  path=usr/share owner=root group=sys mode=0755
+dir  path=usr/share/drmadm owner=root group=bin mode=0755
+file path=usr/share/drmadm/virtio-gpu.aliases owner=root group=bin mode=0444
+dir  path=kernel owner=root group=sys mode=0755
+dir  path=kernel/drv owner=root group=sys mode=0755
+dir  path=kernel/drv/amd64 owner=root group=sys mode=0755
+file path=kernel/drv/amd64/virtio_gpu owner=root group=sys mode=0755 preserve=false reboot-needed=true
+driver name=virtio_gpu perms="* 0666 root sys" \
+    devlink=type=ddi_display:drm;name=virtio_gpu\tdri/\M0
+# The facade is unstable (major version 0): the driver is built for this
+# version of the core only.
+depend fmri=pkg:/driver/graphics/drm-core@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=incorporate
+license LICENSE license=MPL-2.0
+# These kernel providers are absent from a non-global build zone. Declare
+# their verified IPS owners explicitly; retain generation for stack imports.
+<transform file path=kernel/.* -> add pkg.depend.bypass-generate (specfs|virtio)>
+depend fmri=pkg:/system/kernel type=require
+depend fmri=pkg:/driver/misc/virtio type=require

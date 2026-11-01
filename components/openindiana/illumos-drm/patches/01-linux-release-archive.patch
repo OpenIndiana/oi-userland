@@ -1,0 +1,84 @@
+--- a/drivers/i915/fetch-and-patch.sh
++++ b/drivers/i915/fetch-and-patch.sh
+@@ -38,18 +38,13 @@
+ . "$HERE/PIN"
+ dest=${1:?usage: fetch-and-patch.sh <directory>}
+ 
+-if ! git -C "$dest" rev-parse --git-dir >/dev/null 2>&1; then
+-	mkdir -p "$dest"
+-	git -C "$dest" init -q
+-	git -C "$dest" remote add origin "$LINUX_REPO"
+-	git -C "$dest" fetch -q --depth 1 origin "$LINUX_REV"
+-	git -C "$dest" checkout -q FETCH_HEAD
+-fi
+-head=$(git -C "$dest" rev-parse HEAD)
+-if [ "$head" != "$LINUX_REV" ]; then
+-	echo "fetch-and-patch: $dest is at $head, not the pinned $LINUX_REV" >&2
+-	exit 1
+-fi
++# oi-userland unpacks and verifies the pinned kernel.org release archive.
++# This path is deliberately offline and accepts only a fresh archive tree
++# or the same patch series applied earlier to that tree.
++[ -f "$dest/Makefile" ] || { echo "missing Linux release tree: $dest" >&2; exit 1; }
++[ "$(sed -n 's/^VERSION = //p' "$dest/Makefile")" = 7 ] &&
++[ "$(sed -n 's/^PATCHLEVEL = //p' "$dest/Makefile")" = 2 ] &&
++[ "$(sed -n 's/^SUBLEVEL = //p' "$dest/Makefile")" = 0 ] || exit 1
+ 
+ I915=drivers/gpu/drm/i915
+ TRACE_HEADERS="$I915/i915_trace.h $I915/intel_uncore_trace.h"
+@@ -61,12 +56,6 @@
+ REPLACED="$REPLACED drivers/gpu/drm/display/drm_dp_mst_topology_internal.h"
+ REPLACED="$REPLACED carried/drm_kms/illumos/drm_dp_mst_topology_internal.h"
+ REPO=$(cd "$HERE/../.." && pwd)
+-# git pathspecs that leave out the generated and replaced headers
+-keep=()
+-for h in $TRACE_HEADERS; do keep+=(":(exclude)$h"); done
+-set -- $REPLACED
+-while [ $# -ge 2 ]; do keep+=(":(exclude)$1"); shift 2; done
+-
+ # The series: i915's patches, then misc/drm_kms', as paths relative to
+ # the repository (each group in name order).
+ series=$( (cd "$REPO" && { ls drivers/i915/patches/*.patch 2>/dev/null | sort
+@@ -77,27 +66,14 @@
+ if [ -f "$stamp" ] && [ "$(sed -n 1p "$stamp")" = "$sum" ]; then
+ 	echo "fetch-and-patch: series already applied ($sum)"
+ else
+-	# A tree that carries an earlier series of this script: take that
+-	# series off again (the copies kept at the time), newest first.
+-	if [ -f "$stamp" ] && [ -d "$dest/.illumos/series" ]; then
+-		# shellcheck disable=SC2086
+-		git -C "$dest" checkout -- $TRACE_HEADERS $(echo $REPLACED | awk '{ for (i = 1; i <= NF; i += 2) print $i }')
+-		for p in $(ls "$dest/.illumos/series" | sort -r); do
+-			echo "fetch-and-patch: reverting the earlier $p"
+-			git -C "$dest" apply -R --whitespace=nowarn "$dest/.illumos/series/$p"
+-		done
+-		rm -rf "$dest/.illumos/series" "$stamp"
+-	fi
+-	if [ -n "$(git -C "$dest" status --porcelain --untracked-files=no -- . "${keep[@]}")" ]; then
+-		echo "fetch-and-patch: $dest has changes that are not this series;" \
+-		    "check them out (git -C $dest checkout -- .) yourself" >&2
+-		exit 1
+-	fi
+-	# shellcheck disable=SC2086
+-	git -C "$dest" checkout -- $TRACE_HEADERS $(echo $REPLACED | awk '{ for (i = 1; i <= NF; i += 2) print $i }')
++	[ ! -f "$stamp" ] || { echo "patch series changed: unpack Linux again" >&2; exit 1; }
++	mkdir -p "$dest/.illumos/original"
++	for h in $TRACE_HEADERS; do
++		cp "$dest/$h" "$dest/.illumos/original/$(basename "$h")"
++	done
+ 	for p in $series; do
+ 		echo "fetch-and-patch: applying $p"
+-		git -C "$dest" apply --whitespace=nowarn "$REPO/$p"
++		GIT_CEILING_DIRECTORIES="$(dirname "$dest")" git -C "$dest" apply --whitespace=nowarn "$REPO/$p"
+ 	done
+ 	# Copies named in application order, so that a later run can take
+ 	# them off newest first (sort -r) without the repository's files.
+@@ -113,7 +89,7 @@
+ # The tracepoint headers: MIT no-op replacements (see above), from the
+ # pinned originals.
+ for h in $TRACE_HEADERS; do
+-	git -C "$dest" show "HEAD:$h" > "$dest/.illumos/$(basename "$h").orig"
++	cp "$dest/.illumos/original/$(basename "$h")" "$dest/.illumos/$(basename "$h").orig"
+ 	python3 "$HERE/illumos/gen-trace-stubs.py" "$dest/.illumos/$(basename "$h").orig" "$dest/$h"
+ 	rm -f "$dest/.illumos/$(basename "$h").orig"
+ done
