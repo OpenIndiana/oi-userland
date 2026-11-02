@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyfakefs
-HUMAN_VERSION =			6.2.0
+HUMAN_VERSION =			6.3.0
 COMPONENT_SUMMARY =		Implements a fake file system that mocks the Python file system modules.
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pyfakefs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e59a36db447bf509ce9c97ab3d1510c08cc51895c5311325a560a5e5b5dc1940
+	sha256:b24c4922b485170cf42c00e503b7d2ef38171e23358a4b73db80a3a6ce1bbf3f
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	COPYING
 
