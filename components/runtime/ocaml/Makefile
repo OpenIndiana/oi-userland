@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ocaml
 COMPONENT_VERSION_MAJOR=	5.5
-COMPONENT_VERSION=		$(COMPONENT_VERSION_MAJOR).1
+COMPONENT_VERSION=		$(COMPONENT_VERSION_MAJOR).2
 COMPONENT_SUMMARY=		Objective Caml compiler and programming environment
 COMPONENT_DESCRIPTION=	Objective Caml is a high-level, strongly-typed, functional and object-oriented programming language \
 from the ML family of languages. This package comprises two batch compilers \
@@ -39,7 +39,7 @@ COMPONENT_PROJECT_URL=		https://ocaml.org
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_SRC=	$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ae47728d0a876665ccc7b745e3a8d8c9ca5ba63c4f7a11d4db6cdbd1dbeef4bb
+COMPONENT_ARCHIVE_HASH=	sha256:bb3ffef5e4fce4f04915b9f254f570663311e1f227fd669aa87a5ef7de9a1523
 COMPONENT_ARCHIVE_URL=	https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/$(COMPONENT_ARCHIVE_SRC)
 COMPONENT_FMRI=			runtime/ocaml
 COMPONENT_CLASSIFICATION=	Development/System
