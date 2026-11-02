@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		fastjsonschema
-HUMAN_VERSION =			2.22.2
+HUMAN_VERSION =			2.22.3
 COMPONENT_SUMMARY =		Fastest Python implementation of JSON schema
 COMPONENT_PROJECT_URL =		https://github.com/horejsek/python-fastjsonschema
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:72064e12356a7d6ef02165be2946b9abadbdf238536e07eb587e3dbaa33099cf
+	sha256:8330c91b027dcf941efcb7b1f0998515ff95d177ea15bbabdfe8671965620901
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,9 +36,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # We are not interested in benchmarks
 PYTEST_ADDOPTS += -m 'not benchmark'
-
-# Random directory name
-COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
