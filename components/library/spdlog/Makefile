@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		spdlog
 COMPONENT_VERSION=	1.17.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=      spdlog - Fast C++ logging library
 COMPONENT_PROJECT_URL=	https://github.com/gabime/spdlog
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
