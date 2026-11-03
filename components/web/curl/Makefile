@@ -23,11 +23,13 @@
 # Copyright (c) 2022, Niklas Poslovski
 #
 
+USE_PARALLEL_BUILD = yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         curl
 COMPONENT_VERSION=      8.23.0
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -65,22 +67,29 @@ CONFIGURE_ENV += CPPFLAGS="-I$(OPENSSL_INCDIR) $(CPPFLAGS) -I/usr/include/openld
 
 CONFIGURE_OPTIONS += LDFLAGS="-L$(OPENSSL_LIBDIR.$(BITS)) $(LDFLAGS)"
 CONFIGURE_OPTIONS += --disable-dependency-tracking
-#CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --enable-http --enable-ftp
-CONFIGURE_OPTIONS += --enable-file --enable-dict
-CONFIGURE_OPTIONS += --enable-manual --disable-libgcc
-CONFIGURE_OPTIONS += --enable-rtsp --enable-proxy
-CONFIGURE_OPTIONS += --enable-telnet --enable-tftp --enable-pop3
-CONFIGURE_OPTIONS += --enable-imap --enable-smtp
-CONFIGURE_OPTIONS += --enable-ipv6 --enable-nonblocking
-CONFIGURE_OPTIONS += --enable-thread --enable-verbose
-CONFIGURE_OPTIONS += --disable-sspi --enable-crypto-auth
-CONFIGURE_OPTIONS += --enable-cookies --disable-hidden-symbols
-CONFIGURE_OPTIONS += --disable-soname-bump
-CONFIGURE_OPTIONS += --enable-ldap --with-random=/dev/urandom
-CONFIGURE_OPTIONS += --enable-ares
+CONFIGURE_OPTIONS += --enable-http
+CONFIGURE_OPTIONS += --enable-ftp
+CONFIGURE_OPTIONS += --enable-file
+CONFIGURE_OPTIONS += --enable-dict
+CONFIGURE_OPTIONS += --enable-manual
+CONFIGURE_OPTIONS += --disable-libgcc
+CONFIGURE_OPTIONS += --enable-rtsp
+CONFIGURE_OPTIONS += --enable-proxy
+CONFIGURE_OPTIONS += --enable-telnet
+CONFIGURE_OPTIONS += --enable-tftp
+CONFIGURE_OPTIONS += --enable-pop3
+CONFIGURE_OPTIONS += --enable-imap
+CONFIGURE_OPTIONS += --enable-smtp
+CONFIGURE_OPTIONS += --enable-ipv6
+CONFIGURE_OPTIONS += --enable-verbose
+CONFIGURE_OPTIONS += --disable-sspi
+CONFIGURE_OPTIONS += --enable-cookies
+CONFIGURE_OPTIONS += --enable-ldap
+# Use the system name service switch (including NIS) without blocking IPS transfers.
+CONFIGURE_OPTIONS += --disable-ares
+CONFIGURE_OPTIONS += --enable-threaded-resolver
 CONFIGURE_OPTIONS += --enable-websockets
 CONFIGURE_OPTIONS += --with-openssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS += --with-ldap-lib=ldap_r-2.4
@@ -89,10 +98,9 @@ CONFIGURE_OPTIONS += --with-gssapi-includes=/usr/include/gssapi
 CONFIGURE_OPTIONS += --with-gssapi-libs=$(GSSAPI_LIBDIR_$(BITS))
 CONFIGURE_OPTIONS += --with-gssapi=/usr --without-ca-bundle
 CONFIGURE_OPTIONS += --with-ca-path=/etc/openssl/certs
-CONFIGURE_OPTIONS += --with-zlib=/usr --with-libidn=/usr
+CONFIGURE_OPTIONS += --with-zlib=/usr
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-libssh2
-CONFIGURE_OPTIONS += --without-librtmp
 CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
 
 # Generate configuration scripts form .am-files
@@ -116,7 +124,6 @@ COMPONENT_TEST_TRANSFORMS += \
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/brotli
-REQUIRED_PACKAGES += library/libcares
 REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/libpsl
 REQUIRED_PACKAGES += library/libssh2
