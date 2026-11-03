@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycryptodome_test_vectors
-HUMAN_VERSION =			1.0.26
+HUMAN_VERSION =			1.0.28
 COMPONENT_SUMMARY =		Test vectors for PyCryptodome
 COMPONENT_PROJECT_URL =		https://www.pycryptodome.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c2ccaa260d3a47b3158b7ecd35b4e63e6538c277185caa93a498d91ebf23dcc8
+	sha256:c32f32f6b69196f2edff6be46577131451cdaaa8a46b4dac36cb5236d069fb41
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
