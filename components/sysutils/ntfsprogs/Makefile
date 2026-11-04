@@ -13,18 +13,18 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 # Copyright 2016 Adam Stevko.  All rights reserved.
 # Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
-# Copyright 2021-2022 Jean-Pierre André. All rights reserved.
+# Copyright 2021-2026 Jean-Pierre André. All rights reserved.
 # Copyright 2023 Niklas Poslovski
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ntfs-3g_ntfsprogs
-COMPONENT_VERSION= 2022.10.3
+COMPONENT_VERSION= 2026.9.28
 COMPONENT_SUMMARY= ntfsprogs - Utilities that provide access to NTFS
 COMPONENT_SRC= ntfs-3g-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:8bd7749ea9d8534c9f0664d48b576e90b96d45ec8803c9427f6ffaa2f0dde299
+COMPONENT_ARCHIVE_HASH= sha256:8a75293f07bf40df5701d296de32a4cb0e46d6ae135abb4f41b438df9868a390
 COMPONENT_ARCHIVE_URL= https://github.com/tuxera/ntfs-3g/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = https://github.com/tuxera/ntfs-3g/
 COMPONENT_FMRI= system/file-system/ntfsprogs
@@ -44,6 +44,7 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
 CONFIGURE_OPTIONS += --exec-prefix=/usr
 CONFIGURE_OPTIONS += --enable-xattr-mappings
+CONFIGURE_OPTIONS += --enable-extras
 CONFIGURE_OPTIONS += --with-fuse=external
 CONFIGURE_OPTIONS += --disable-static
 
