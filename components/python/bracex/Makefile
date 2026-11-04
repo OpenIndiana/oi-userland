@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bracex
-HUMAN_VERSION =			3.2
+HUMAN_VERSION =			3.2.1
 COMPONENT_SUMMARY =		Bash style brace expander.
 COMPONENT_PROJECT_URL =		https://github.com/facelessuser/bracex
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0a3d40bfae4caae4d3bfd0ea715874799fab711c38fd4012cc35343e815405cd
+	sha256:07a9b2100ceecc0c24afa1a1714bf8d4a6abb43d592939455f662b682ac9baa4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
