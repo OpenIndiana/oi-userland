@@ -1,0 +1,57 @@
+'sun' is predefined macro. See `cpp -dM < /dev/null`.
+
+--- libotr-4.1.1/tests/regression/client/client.c.orig
++++ libotr-4.1.1/tests/regression/client/client.c
+@@ -719,10 +719,10 @@
+ 					goto end;
+ 				} else if (event & EPOLLIN) {
+ 					socklen_t len;
+-					struct sockaddr_un sun;
++					struct sockaddr_un address;
+ 
+ 					/* Connection from Bob, accept it so we can handle it. */
+-					sock_from_bob = accept(fd, (struct sockaddr *) &sun,
++					sock_from_bob = accept(fd, (struct sockaddr *) &address,
+ 							&len);
+ 					ret = add_sock_to_pollset(epfd, sock_from_bob,
+ 							EPOLLIN | EPOLLERR | EPOLLHUP);
+@@ -841,10 +841,10 @@
+ 					goto end;
+ 				} else if (event & (EPOLLIN | EPOLLHUP)) {
+ 					socklen_t len;
+-					struct sockaddr_un sun;
++					struct sockaddr_un address;
+ 
+ 					/* Connection from Alice, accept it so we can handle it. */
+-					sock_from_alice = accept(fd, (struct sockaddr *) &sun,
++					sock_from_alice = accept(fd, (struct sockaddr *) &address,
+ 							&len);
+ 					ret = add_sock_to_pollset(epfd, sock_from_alice,
+ 							EPOLLIN | EPOLLERR | EPOLLHUP);
+@@ -971,7 +971,7 @@
+ }
+ 
+ static int create_unix_socket(const char *pathname,
+-		struct sockaddr_un *sun)
++		struct sockaddr_un *address)
+ {
+ 	int sock, ret;
+ 
+@@ -982,12 +982,12 @@
+ 		goto error;
+ 	}
+ 
+-	memset(sun, 0, sizeof(struct sockaddr_un));
+-	sun->sun_family = AF_UNIX;
+-	strncpy(sun->sun_path, pathname, sizeof(sun->sun_path));
+-	sun->sun_path[sizeof(sun->sun_path) - 1] = '\0';
++	memset(address, 0, sizeof(struct sockaddr_un));
++	address->sun_family = AF_UNIX;
++	strncpy(address->sun_path, pathname, sizeof(address->sun_path));
++	address->sun_path[sizeof(address->sun_path) - 1] = '\0';
+ 
+-	ret = bind(sock, (struct sockaddr *) sun, sizeof(struct sockaddr_un));
++	ret = bind(sock, (struct sockaddr *) address, sizeof(struct sockaddr_un));
+ 	if (ret < 0) {
+ 		perror("bind unix sock");
+ 		goto error;
