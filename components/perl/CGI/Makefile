@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		CGI
-HUMAN_VERSION =			4.72
+HUMAN_VERSION =			5.02
 COMPONENT_SUMMARY =		Handle Common Gateway Interface requests and responses
 COMPONENT_CPAN_AUTHOR =		LEEJO
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:babc1ca72db188083a1c3812debe88c4473b943b1f7c662281cd57c580a8bdd9
+	sha256:47637ad0413c527e00e1249d14dba0c234073ad4bef09746fafd73dd85ded665
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,7 +37,6 @@ REQUIRED_PACKAGES.perl += library/perl-5/encode
 REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 REQUIRED_PACKAGES.perl += library/perl-5/file-temp
 REQUIRED_PACKAGES.perl += library/perl-5/html-parser
-REQUIRED_PACKAGES.perl += library/perl-5/parent
 REQUIRED_PACKAGES.perl += library/perl-5/uri
 REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-nowarnings
