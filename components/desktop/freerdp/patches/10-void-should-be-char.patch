@@ -1,0 +1,16 @@
+FreeRDP-3.33.0/winpr/libwinpr/sspi/Kerberos/kerberos.c:256:50: error: invalid use of void expression
+  256 |                                 reply->data[len] = '\0';
+
+void* data can't be assigned a char
+
+--- FreeRDP-3.33.0/winpr/libwinpr/sspi/Kerberos/kerberos.c.old
++++ FreeRDP-3.33.0/winpr/libwinpr/sspi/Kerberos/kerberos.c
+@@ -253,7 +253,7 @@
+ 
+ 			memcpy(reply->data, data, len);
+ 			if (len < reply->length)
+-				reply->data[len] = '\0';
++				((char*)reply->data)[len] = '\0';
+ 			reply->length = (UINT32)len;
+ 		}
+ 	}
