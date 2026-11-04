@@ -28,10 +28,6 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=usr/lib/$(MACH64)/gimp/3.0/plug-ins/.*/.*.py -> add pkg.depend.bypass-generate .*>
 <transform file path=etc/gimp/3.0/.* -> default preserve true>
 
-# Suppress the following pkglint error:
-# ERROR userland.action002.0        link usr/share/doc/gimp-3.0/images/gimp-devel-logo.png has unresolvable target '/usr/share/gimp/3.0/images/gimp-devel-logo.png'
-<transform link path=usr/share/doc/gimp-3.0/images/gimp-devel-logo.png -> default pkg.linted.userland.action002.0 true>
-
 depend type=require fmri=pkg:/image/graphviz
 depend type=require fmri=pkg:/library/mypaint-brushes
 # welcome dialog box needs an emoji font to be installed
@@ -309,6 +305,7 @@ file path=usr/include/gimp-3.0/libgimpwidgets/gimpzoommodel.h
 file path=usr/lib/$(MACH64)/gimp/3.0/environ/default.env
 file path=usr/lib/$(MACH64)/gimp/3.0/extensions/org.gimp.extension.goat-exercises/goat-exercise-c
 file path=usr/lib/$(MACH64)/gimp/3.0/extensions/org.gimp.extension.goat-exercises/goat-exercise-c.c
+file path=usr/lib/$(MACH64)/gimp/3.0/extensions/org.gimp.extension.goat-exercises/goat-exercise-gjs.js
 file path=usr/lib/$(MACH64)/gimp/3.0/extensions/org.gimp.extension.goat-exercises/goat-exercise-py3.py
 file path=usr/lib/$(MACH64)/gimp/3.0/extensions/org.gimp.extension.goat-exercises/goat-exercise-vala
 file path=usr/lib/$(MACH64)/gimp/3.0/extensions/org.gimp.extension.goat-exercises/goat-exercise-vala.vala
@@ -520,44 +517,44 @@ file path=usr/lib/$(MACH64)/gimp/3.0/plug-ins/web-browser/web-browser
 file path=usr/lib/$(MACH64)/girepository-1.0/Gimp-3.0.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/GimpUi-3.0.typelib
 link path=usr/lib/$(MACH64)/libgimp-3.0.so target=libgimp-3.0.so.0
-link path=usr/lib/$(MACH64)/libgimp-3.0.so.0 target=libgimp-3.0.so.0.206.0
-file path=usr/lib/$(MACH64)/libgimp-3.0.so.0.206.0
+link path=usr/lib/$(MACH64)/libgimp-3.0.so.0 target=libgimp-3.0.so.0.206.2
+file path=usr/lib/$(MACH64)/libgimp-3.0.so.0.206.2
 link path=usr/lib/$(MACH64)/libgimp-scriptfu-3.0.so \
     target=libgimp-scriptfu-3.0.so.0
 link path=usr/lib/$(MACH64)/libgimp-scriptfu-3.0.so.0 \
-    target=libgimp-scriptfu-3.0.so.0.206.0
-file path=usr/lib/$(MACH64)/libgimp-scriptfu-3.0.so.0.206.0
+    target=libgimp-scriptfu-3.0.so.0.206.2
+file path=usr/lib/$(MACH64)/libgimp-scriptfu-3.0.so.0.206.2
 link path=usr/lib/$(MACH64)/libgimpbase-3.0.so target=libgimpbase-3.0.so.0
 link path=usr/lib/$(MACH64)/libgimpbase-3.0.so.0 \
-    target=libgimpbase-3.0.so.0.206.0
-file path=usr/lib/$(MACH64)/libgimpbase-3.0.so.0.206.0
+    target=libgimpbase-3.0.so.0.206.2
+file path=usr/lib/$(MACH64)/libgimpbase-3.0.so.0.206.2
 link path=usr/lib/$(MACH64)/libgimpcolor-3.0.so target=libgimpcolor-3.0.so.0
 link path=usr/lib/$(MACH64)/libgimpcolor-3.0.so.0 \
-    target=libgimpcolor-3.0.so.0.206.0
-file path=usr/lib/$(MACH64)/libgimpcolor-3.0.so.0.206.0
+    target=libgimpcolor-3.0.so.0.206.2
+file path=usr/lib/$(MACH64)/libgimpcolor-3.0.so.0.206.2
 link path=usr/lib/$(MACH64)/libgimpconfig-3.0.so target=libgimpconfig-3.0.so.0
 link path=usr/lib/$(MACH64)/libgimpconfig-3.0.so.0 \
-    target=libgimpconfig-3.0.so.0.206.0
-file path=usr/lib/$(MACH64)/libgimpconfig-3.0.so.0.206.0
+    target=libgimpconfig-3.0.so.0.206.2
+file path=usr/lib/$(MACH64)/libgimpconfig-3.0.so.0.206.2
 link path=usr/lib/$(MACH64)/libgimpmath-3.0.so target=libgimpmath-3.0.so.0
 link path=usr/lib/$(MACH64)/libgimpmath-3.0.so.0 \
-    target=libgimpmath-3.0.so.0.206.0
-file path=usr/lib/$(MACH64)/libgimpmath-3.0.so.0.206.0
+    target=libgimpmath-3.0.so.0.206.2
+file path=usr/lib/$(MACH64)/libgimpmath-3.0.so.0.206.2
 link path=usr/lib/$(MACH64)/libgimpmodule-3.0.so target=libgimpmodule-3.0.so.0
 link path=usr/lib/$(MACH64)/libgimpmodule-3.0.so.0 \
-    target=libgimpmodule-3.0.so.0.206.0
-file path=usr/lib/$(MACH64)/libgimpmodule-3.0.so.0.206.0
+    target=libgimpmodule-3.0.so.0.206.2
+file path=usr/lib/$(MACH64)/libgimpmodule-3.0.so.0.206.2
 link path=usr/lib/$(MACH64)/libgimpthumb-3.0.so target=libgimpthumb-3.0.so.0
 link path=usr/lib/$(MACH64)/libgimpthumb-3.0.so.0 \
-    target=libgimpthumb-3.0.so.0.206.0
-file path=usr/lib/$(MACH64)/libgimpthumb-3.0.so.0.206.0
+    target=libgimpthumb-3.0.so.0.206.2
+file path=usr/lib/$(MACH64)/libgimpthumb-3.0.so.0.206.2
 link path=usr/lib/$(MACH64)/libgimpui-3.0.so target=libgimpui-3.0.so.0
-link path=usr/lib/$(MACH64)/libgimpui-3.0.so.0 target=libgimpui-3.0.so.0.206.0
-file path=usr/lib/$(MACH64)/libgimpui-3.0.so.0.206.0
+link path=usr/lib/$(MACH64)/libgimpui-3.0.so.0 target=libgimpui-3.0.so.0.206.2
+file path=usr/lib/$(MACH64)/libgimpui-3.0.so.0.206.2
 link path=usr/lib/$(MACH64)/libgimpwidgets-3.0.so target=libgimpwidgets-3.0.so.0
 link path=usr/lib/$(MACH64)/libgimpwidgets-3.0.so.0 \
-    target=libgimpwidgets-3.0.so.0.206.0
-file path=usr/lib/$(MACH64)/libgimpwidgets-3.0.so.0.206.0
+    target=libgimpwidgets-3.0.so.0.206.2
+file path=usr/lib/$(MACH64)/libgimpwidgets-3.0.so.0.206.2
 file path=usr/lib/$(MACH64)/pkgconfig/gimp-3.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gimpthumb-3.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gimpui-3.0.pc
@@ -567,7 +564,7 @@ file path=usr/libexec/gimp-debug-tool-3.2
 file path=usr/share/applications/gimp.desktop
 file path=usr/share/bash-completion/completions/gimp-3.2
 link path=usr/share/doc/gimp-3.0/images/gimp-devel-logo.png \
-    target=/usr/share/gimp/3.0/images/gimp-devel-logo.png
+    target=../../../gimp/3.0/images/gimp-devel-logo.png
 file path=usr/share/doc/gimp-3.0/libgimp-3.0/RedHatDisplay-Black.woff
 file path=usr/share/doc/gimp-3.0/libgimp-3.0/RedHatDisplay-Black.woff2
 file path=usr/share/doc/gimp-3.0/libgimp-3.0/RedHatDisplay-BlackItalic.woff
