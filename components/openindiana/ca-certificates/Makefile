@@ -22,14 +22,14 @@ BUILD_BITS = NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ca-certificates
-COMPONENT_VERSION= 3.131.1
+COMPONENT_VERSION= 3.133
 COMPONENT_VERSION_U= $(subst .,_,$(COMPONENT_VERSION))
 # See also https://curl.se/docs/caextract.html
-HUMAN_VERSION=	20261020
+HUMAN_VERSION=	20261105
 COMPONENT_SUMMARY=	Common CA certificates
 COMPONENT_SRC=		nss-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b1dbc1d9e7f3f8455dfb6d58ec8f7229d8a8450c629a9e69ef2ef6081f359056
+COMPONENT_ARCHIVE_HASH=	sha256:4d752526b9846a1d962588cfbd09b7cc2a4f6a4effbd9157d58a30e8a2573065
 COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/security/nss/releases/NSS_$(COMPONENT_VERSION_U)_RTM/src/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 COMPONENT_FMRI=		crypto/ca-certificates
