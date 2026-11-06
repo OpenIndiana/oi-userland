@@ -1,0 +1,52 @@
+--- golang-1.27.3/src/cmd/cgo/internal/testfortran/fortran_test.go.orig	Sun Oct 25 14:15:08 2026
++++ golang-1.27.3/src/cmd/cgo/internal/testfortran/fortran_test.go	Sun Oct 25 14:49:02 2026
+@@ -43,21 +43,31 @@
+ 		// Find libgfortran. If the FORTRAN compiler isn't bundled
+ 		// with the C linker, this may be in a path the C linker can't
+ 		// find on its own. (See #14544)
+-		libExt := "so"
++		libExts := []string{"so"}
+ 		switch runtime.GOOS {
+ 		case "darwin":
+-			libExt = "dylib"
++			libExts[0] = "dylib"
+ 		case "aix", "openbsd", "windows":
+-			libExt = "a"
++			libExts[0] = "a"
++		case "illumos":
++			libExts = append(libExts, "a")
+ 		}
+-		libName := "libgfortran." + libExt
+-		b, err := exec.Command(fc, append([]string{"-print-file-name=" + libName}, fcExtra...)...).CombinedOutput()
+-		if err != nil {
+-			t.Fatalf("error invoking %s: %s", fc, err)
++		var libPath string
++		found := false
++		for _, libExt := range libExts {
++			libName := "libgfortran." + libExt
++			b, err := exec.Command(fc, append([]string{"-print-file-name=" + libName}, fcExtra...)...).CombinedOutput()
++			if err != nil {
++				t.Fatalf("error invoking %s: %s", fc, err)
++			}
++			libPath = strings.TrimSpace(string(b))
++			if libPath != libName {
++				found = true
++				break
++			}
+ 		}
+-		libPath := strings.TrimSpace(string(b))
+-		if libPath == libName {
+-			t.Fatalf("Failed to get full library path for %q", libName)
++		if !found {
++			t.Fatalf("Failed to get full library path for libgfortran.%v", libExts)
+ 		}
+ 		libDir := filepath.Dir(libPath)
+ 		cgoLDFlags := os.Getenv("CGO_LDFLAGS")
+@@ -67,7 +77,6 @@
+ 		}
+ 		t.Logf("CGO_LDFLAGS=%s", cgoLDFlags)
+ 		os.Setenv("CGO_LDFLAGS", cgoLDFlags)
+-
+ 	}
+ 
+ 	// Do a test build that doesn't involve Go FORTRAN support.
