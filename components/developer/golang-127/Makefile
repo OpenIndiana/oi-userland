@@ -32,13 +32,13 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=			golang
 COMPONENT_MJR_VERSION=	1.27
 COMPONENT_MJR_VERSION_NUM=	$(subst .,,$(COMPONENT_MJR_VERSION))
-COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).3
+COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).4
 COMPONENT_SUMMARY=		The Go Programming Language version $(COMPONENT_MJR_VERSION)
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=		https://golang.org
 COMPONENT_ARCHIVE=		go$(COMPONENT_VERSION).src.tar.gz
 COMPONENT_ARCHIVE_URL=		$(COMPONENT_PROJECT_URL)/dl/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:6e7749035cf360f06b2575d162ea79df9fda8ef671889e5c375f8e50777f26bb
+COMPONENT_ARCHIVE_HASH=		sha256:73cfb8571aec0c01177687db87163d46aa20e9779672772891aa17654d9a6099
 COMPONENT_FMRI=			developer/golang
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_LICENSE=		BSD-style, Patent Grant
@@ -104,21 +104,20 @@ ASLR_MODE = $(ASLR_DISABLE)
 
 COMPONENT_TEST_ENV +=	PATH="$(@D)/bin:$(PATH)"
 COMPONENT_TEST_ENV +=	GOROOT="$(@D)"
-COMPONENT_TEST_ENV += 	GOCACHE="$(SOURCE_DIR)/gocache"
+COMPONENT_TEST_ENV += 	GOCACHE="$(BUILD_DIR)/go-cache"
 COMPONENT_TEST_ENV +=	TMPDIR="/var/tmp"
 COMPONENT_TEST_DIR =	$(@D)/src
 COMPONENT_TEST_CMD =	./run.bash
 COMPONENT_TEST_TARGETS =
 # Remove measured times (eg. 11.106s, 0.312s or 1,16s):
-COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9][0-9].[0-9][0-9][0-9]s//" '
-COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9][0-9]s//" '
-COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9].[0-9][0-9]s//" '
+COMPONENT_TEST_TRANSFORMS += '-e "s/\(\s\)\([0-9]\+\([.,][0-9]*\)\?s\)\(\s\|$$\)/\1\4/" '
 # Remove occurrences of "(cached)":
 COMPONENT_TEST_TRANSFORMS += '-e "s/(cached)//" '
 # Replace port numbers with nnnnn on localhost:
 COMPONENT_TEST_TRANSFORMS += '-e "s/127.0.0.1\:[0-9]*/127.0.0.1\:nnnnn/" '
 # Remove trailing random numbers on TestReadOnlyWriteFile: 
 COMPONENT_TEST_TRANSFORMS += '-e "s/TestReadOnlyWriteFile[0-9]*/TestReadOnlyWriteFile/" '
+# Starting with Go 1.27, `gmake test` may prompt for a "Password:". This prompt can safely be ignored; no password needs to be entered.
 
 # Use this Command to copy the Go Source tree into the proto area. In order to deliver the Go SDK under GOROOT
 # Additionally nuke all the funky binary files used for test suites. They keep bothering the packaging tools
@@ -137,7 +136,7 @@ define COMPONENT_INSTALL_ACTION=
 	(rm -r $(COMPONENT_TARGET_DIR)/pkg/obj); \
 	($(MKDIR) -p $(MEDIATEDUSRSHAREMAN1DIR)); \
 	/usr/gnu/bin/find $(COMPONENT_TARGET_DIR)/src -type f \
-       	| egrep -v '\.go|\.s|\.bash|\.txt|\.c|\.tmpl|\.h|\.pl|\.md|\.S|\.py|\.dist|\.rc|\.bat|README|Makefile|\.awk|\.rules|\.mod|\.json|LICENSE|PATENTS|\.bin'\
+	| egrep -v '\.go|\.s|\.bash|\.txt|\.c|\.tmpl|\.h|\.pl|\.md|\.S|\.py|\.dist|\.rc|\.bat|README|Makefile|\.awk|\.rules|\.mod|\.json|LICENSE|PATENTS|\.bin'\
 	| xargs rm;
 endef
 
