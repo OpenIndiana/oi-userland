@@ -19,14 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		watchdog
-HUMAN_VERSION =			6.0.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			7.1.0
 COMPONENT_SUMMARY =		Filesystem events monitoring
 COMPONENT_PROJECT_URL =		https://github.com/gorakhargosh/watchdog
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9ddf7c82fda3ae8e24decda1338ede66e1c99883db93711d8fb941eaa2d8c282
+	sha256:d3861e255416f49a1384474cb2efa097de165fb330d4c5432ce6708b509ed922
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# Python 3.9 is not supported by watchdog >= 7.0.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -41,4 +43,5 @@ REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/flaky
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/pyyaml
