@@ -1,0 +1,54 @@
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+#
+# IPS manifest of misc/drm_core (modules/drm_core), the DRM core of illumos-drm as a
+# kernel module, with the C facade every DRM driver links against
+# (include/drm): devices, files, GEM objects, PRIME, fences, sync objects
+# and the table of DRM device numbers (formerly misc/drm_minor). Every
+# driver module is linked with -N misc/drm_core, and its package depends on
+# this one. Publish from a directory holding the module linked with its
+# symbol-scope mapfile as kernel/misc/amd64/drm_core, and this repository's
+# LICENSE:
+#
+#   modules/drm_core/ctf/build-ctf.sh    # drm_facade_ctf.o: the facade's CTF
+#   ld -ztype=kmod -N fs/specfs -B reduce -M modules/drm_core/drm_core.mapfile \
+#       -z allextract drm_module.a -z defaultextract drm_facade_ctf.o \
+#       -o <proto>/kernel/misc/amd64/drm_core
+#   pkgsend publish -s <repo> -d <proto> -d . packaging/drm-core.p5m
+#
+# The module is misc/drm_core, not misc/drm: OpenIndiana's
+# driver/graphics/drm (gfx-drm) delivers /kernel/misc/amd64/drm, the C
+# core of its legacy drivers (i915, radeon), and libdrm requires that
+# package. Both packages install together, but the two stacks are never
+# loaded at once: misc/drm_core's _init refuses while the legacy misc/drm
+# is loaded, and gfx-drm's misc/drm refuses while misc/drm_core is loaded.
+# drmadm(8) (driver/graphics/drmadm, which this package requires) selects
+# the stack that binds the GPU and loads at boot. Some facade names are
+# also gfx-drm's (drm_dev_register), so qualify fbt probes with the
+# module: fbt:drm_core:drm_dev_register:entry.
+#
+# The module has no device nodes and no driver action; the kernel loads it
+# with the first driver that needs it and refuses to unload it while a
+# driver depends on it or a DRM device is registered.
+#
+set name=pkg.fmri value=pkg:/driver/graphics/drm-core@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="DRM core and facade of illumos-drm (misc/drm_core)"
+set name=pkg.description value="misc/drm_core, the DRM core of illumos-drm as a kernel module: card and render nodes, per-file state, GEM objects, PRIME, fences, sync objects and mode setting for every DRM driver, which uses it through its C interface, the DRM facade, whether written in C or in Rust."
+set name=info.classification value=org.opensolaris.category.2008:Drivers/Display
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=userland
+dir  path=kernel owner=root group=sys mode=0755
+dir  path=kernel/misc owner=root group=sys mode=0755
+dir  path=kernel/misc/amd64 owner=root group=sys mode=0755
+file path=kernel/misc/amd64/drm_core owner=root group=sys mode=0755 preserve=false reboot-needed=true
+depend fmri=pkg:/driver/graphics/drmadm@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+license LICENSE license=MPL-2.0
+# These kernel providers are absent from a non-global build zone. Declare
+# their verified IPS owners explicitly; retain generation for stack imports.
+<transform file path=kernel/.* -> add pkg.depend.bypass-generate specfs>
+depend fmri=pkg:/system/kernel type=require
+
+# The legacy core refuses to load beside misc/drm_core only from gfx-drm e95220c (component revision 104).
+depend type=optional fmri=pkg:/driver/graphics/drm@0.5.11-2026.0.0.104

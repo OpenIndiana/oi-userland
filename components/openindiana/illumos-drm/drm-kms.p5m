@@ -1,0 +1,40 @@
+#
+# SPDX-License-Identifier: MIT
+# Copyright 2026 The illumos-drm authors
+#
+# IPS manifest of misc/drm_kms (carried/drm_kms/), Linux v7.2's DRM
+# mode-setting code (the KMS object model, the atomic core and its uAPI
+# handlers, vblank, modes, EDID, the KMS, DP, HDMI, DSC and SCDC helpers,
+# HDMI infoframes; MIT) carried for the Linux display drivers of the
+# illumos-drm stack (i915n), on misc/linuxkpi and the facade 2.0 Linux-KMS
+# hooks of misc/drm_core. Publish from a directory holding the module
+# linked by carried/drm_kms/build.sh as kernel/misc/amd64/drm_kms and its
+# licence file written by drivers/i915/gen-license.sh as LICENSE.drm_kms:
+#
+#   carried/drm_kms/build.sh all     # $OUT/drm_kms
+#   cp $OUT/drm_kms <proto>/kernel/misc/amd64/drm_kms
+#   MODULE=drm_kms drivers/i915/gen-license.sh $LINUX \
+#       <proto>/LICENSE.drm_kms $OUT/linux-inputs.txt
+#   pkgsend publish -s <repo> -d <proto> packaging/drm-kms.p5m
+#
+# The module is linked with -N misc/drm_core -N misc/linuxkpi
+# -N misc/drm_helpers, so it belongs to the illumos-drm stack: drmadm's
+# exclusion of misc/drm_core under `drmadm select legacy` keeps it from
+# loading with the legacy stack. It has no device nodes and no driver
+# action; the kernel loads it with the first driver that depends on it
+# (-N misc/drm_kms) and keeps it while one does.
+#
+set name=pkg.fmri value=pkg:/driver/graphics/drm-kms@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Linux DRM mode setting for C display drivers (misc/drm_kms)"
+set name=pkg.description value="misc/drm_kms, Linux v7.2's DRM mode-setting code (KMS objects, atomic mode setting and its ioctls, vblank, modes, EDID, the KMS, DisplayPort, HDMI, DSC and SCDC helpers, HDMI infoframes), MIT-licensed and carried for the Linux display drivers of the illumos-drm stack (i915n), on the DRM core and misc/linuxkpi."
+set name=info.classification value=org.opensolaris.category.2008:Drivers/Display
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=userland
+dir  path=kernel owner=root group=sys mode=0755
+dir  path=kernel/misc owner=root group=sys mode=0755
+dir  path=kernel/misc/amd64 owner=root group=sys mode=0755
+file path=kernel/misc/amd64/drm_kms owner=root group=sys mode=0755 preserve=false reboot-needed=true
+# Built against facade 2.0 and the LinuxKPI ABI of this version.
+depend fmri=pkg:/driver/graphics/drm-core@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=incorporate
+depend fmri=pkg:/driver/graphics/linuxkpi@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=incorporate
+license LICENSE.drm_kms license=MIT-drm_kms
