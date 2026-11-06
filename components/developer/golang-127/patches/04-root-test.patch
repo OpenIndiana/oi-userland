@@ -1,0 +1,21 @@
+--- golang-1.27.3/src/os/root_test.go.orig	Tue Oct 20 00:20:36 2026
++++ golang-1.27.3/src/os/root_test.go	Sun Oct 25 13:55:36 2026
+@@ -2273,6 +2273,18 @@
+ 		}
+ 	}
+ 
++	if runtime.GOOS == "illumos" {
++		// link and linkat behave inconsistently on illumos:
++		//   link("/tmp/source", "/tmp/target/") silently creates a regular file
++		//     named /tmp/target, which is incorrect;
++		//   linkat(tmpFd, "source", tmpFd, "target/"), where tmpFd is the file
++		//     descriptor for /tmp/, fails with "No such file or directory", which
++		//     is the expected behavior.
++		if rootTest.source.anySlashSuffix() || rootTest.target.anySlashSuffix() {
++			return
++		}
++	}
++
+ 	osResult, osErr := f(t, osTest)
+ 
+ 	t.Cleanup(func() {
