@@ -1,0 +1,28 @@
+libsync: _IOWR is in <sys/ioccom.h> on illumos; virgl uses Mesa's own libsync.h.
+
+virgl included <libsync.h>, which picks up libdrm's copy when libdrm's
+include directory comes first.  Upstreamable.
+
+--- src/util/libsync.h.orig
++++ src/util/libsync.h
+@@ -35,6 +35,9 @@
+ #include <stdint.h>
+ #include <string.h>
+ #include <sys/ioctl.h>
++#if defined(__sun)
++#include <sys/ioccom.h>
++#endif
+ #include <unistd.h>
+ #include <stdlib.h>
+ #include <time.h>
+--- src/gallium/drivers/virgl/virgl_context.c.orig
++++ src/gallium/drivers/virgl/virgl_context.c
+@@ -23,7 +23,7 @@
+ 
+ #include <string.h>
+ #ifndef _WIN32
+-#include <libsync.h>
++#include "util/libsync.h"
+ #endif
+ 
+ #include "pipe/p_shader_tokens.h"

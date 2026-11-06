@@ -1,0 +1,16 @@
+illumos has no pthread_getcpuclockid(); report no per-thread CPU time.
+
+util_thread_get_time_nano() only feeds the HUD and debug statistics, so
+return 0 as on Haiku and Apple.  Upstreamable.
+
+--- src/util/u_thread.c.orig
++++ src/util/u_thread.c
+@@ -154,7 +154,7 @@
+ int64_t
+ util_thread_get_time_nano(thrd_t thread)
+ {
+-#if defined(HAVE_PTHREAD) && !defined(__APPLE__) && !defined(__HAIKU__) && !defined(__managarm__)
++#if defined(HAVE_PTHREAD) && !defined(__APPLE__) && !defined(__HAIKU__) && !defined(__managarm__) && !defined(__sun)
+    struct timespec ts;
+    clockid_t cid;
+ 

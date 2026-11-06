@@ -1,0 +1,89 @@
+egl/device: backport upstream c9b298660774 (in Mesa 26.2.3): with
+LIBGL_ALWAYS_SOFTWARE, use the software path for EGL device displays.
+
+Without it, LIBGL_ALWAYS_SOFTWARE=1 eglinfo dereferences a NULL swrast
+loader in drisw_init_screen() when it initializes the virtio_gpu device.
+
+--- src/egl/drivers/dri2/platform_device.c
++++ src/egl/drivers/dri2/platform_device.c
+@@ -260,12 +260,7 @@ static bool
+ device_probe_device(_EGLDisplay *disp)
+ {
+    struct dri2_egl_display *dri2_dpy = dri2_egl_display(disp);
+-   bool request_software =
+-      debug_get_bool_option("LIBGL_ALWAYS_SOFTWARE", false);
+ 
+-   if (request_software)
+-      _eglLog(_EGL_WARNING, "Not allowed to force software rendering when "
+-                            "API explicitly selects a hardware device.");
+    dri2_dpy->fd_render_gpu = device_get_fd(disp, disp->Device);
+    if (dri2_dpy->fd_render_gpu < 0)
+       return false;
+@@ -277,7 +272,7 @@ device_probe_device(_EGLDisplay *disp)
+       goto err_name;
+ 
+    /* this is software fallback */
+-   if (disp->Options.ForceSoftware && !request_software) {
++   if (disp->Options.ForceSoftware) {
+       /* When doing software rendering, some times user still want to explicitly
+       * choose the render node device since cross node import doesn't work between
+       * vgem/virtio_gpu yet. It would be nice to have a new EXTENSION for this.
+@@ -327,15 +322,22 @@ dri2_initialize_device(_EGLDisplay *disp)
+ {
+    const char *err;
+    struct dri2_egl_display *dri2_dpy = dri2_egl_display(disp);
++   bool request_software =
++      debug_get_bool_option("LIBGL_ALWAYS_SOFTWARE", false);
+ 
+    /* Extension requires a PlatformDisplay - the EGLDevice. */
+    disp->Device = disp->PlatformDisplay;
+ 
++   if (request_software)
++      _eglLog(_EGL_WARNING, "Not allowed to force software rendering when "
++                            "API explicitly selects a hardware device.");
++
+    err = "DRI2: failed to load driver";
+-   if (_eglDeviceSupports(disp->Device, _EGL_DEVICE_DRM)) {
++   /* device-drm platform cannot be explicit sw (because explicit sw is llvmpipe) */
++   if (!request_software && _eglDeviceSupports(disp->Device, _EGL_DEVICE_DRM)) {
+       if (!device_probe_device(disp))
+          goto cleanup;
+-   } else if (_eglDeviceSupports(disp->Device, _EGL_DEVICE_SOFTWARE)) {
++   } else if (request_software || _eglDeviceSupports(disp->Device, _EGL_DEVICE_SOFTWARE)) {
+       if (!device_probe_device_sw(disp))
+          goto cleanup;
+    } else {
+--- src/egl/main/egldevice.c
++++ src/egl/main/egldevice.c
+@@ -30,6 +30,7 @@
+ #endif
+ #include "util/compiler.h"
+ #include "util/macros.h"
++#include "util/u_debug.h"
+ 
+ #include "eglcurrent.h"
+ #include "egldevice.h"
+@@ -464,6 +465,8 @@ _eglQueryDevicesEXT(EGLint max_devices, _EGLDevice **devices,
+ {
+    _EGLDevice *dev, *devs, *swrast;
+    int i = 0, num_devs;
++   bool request_software =
++      debug_get_bool_option("LIBGL_ALWAYS_SOFTWARE", false);
+ 
+    if ((devices && max_devices <= 0) || !num_devices)
+       return _eglError(EGL_BAD_PARAMETER, "eglQueryDevicesEXT");
+@@ -485,7 +488,13 @@ _eglQueryDevicesEXT(EGLint max_devices, _EGLDevice **devices,
+ 
+    /* bail early if we only care about the count */
+    if (!devices) {
+-      *num_devices = num_devs;
++      *num_devices = request_software ? !!swrast : num_devs;
++      goto out;
++   }
++
++   if (request_software) {
++      *num_devices = !!swrast;
++      devices[0] = swrast;
+       goto out;
+    }
+ 
