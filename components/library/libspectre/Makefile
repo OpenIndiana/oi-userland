@@ -21,11 +21,12 @@
 # Copyright (c) 2013-2017, Aurelien Larcher. All rights reserved.
 # Copyright 2014 Andrzej Szeszo.  All rights reserved.
 #
-BUILD_BITS= 64_and_32
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libspectre
 COMPONENT_VERSION=      0.2.12
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      libspectre - A small library for rendering Postscript documents
 COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/libspectre/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -34,12 +35,10 @@ COMPONENT_ARCHIVE_HASH= sha256:55a7517cd3572bd2565df0cf450944a04d5273b279ebb369a
 COMPONENT_ARCHIVE_URL=	https://libspectre.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/libspectre
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE=	GPL-2.0-only
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
-
-COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) ) 
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
