@@ -15,8 +15,6 @@
 # Copyright 2023 Niklas Poslovski
 #
 
-<transform path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/.*\.so -> default pkg.linted.userland.action001.2 true>
-
 set name=pkg.fmri	value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="OpenJDK $(COMPONENT_VERSION) Runtime Environment"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
@@ -26,8 +24,17 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-dir path=usr/jdk/instances/$(OPENJDK_INSTANCE)
-link path=usr/jdk/$(COMPONENT_NAME)$(OPENJDK_VERSION) target=instances/$(OPENJDK_INSTANCE)
+# (work around symlink dangling PR 28182 breakage):
+# oi-userland/components/runtime/openjdk-11-11.0.33/build/manifest-i386-openjdk.depend has unresolved dependency '
+#     depend type=require fmri=__TBD \
+#         pkg.debug.depend.file=usr/jdk/instances/openjdk11.0.33'.
+<transform link -> default pkg.tmp.allow-dangling true>
+
+# (work around symlink dangling PR 28182 breakage):
+# ERROR userland.action002.0        link usr/jdk/instances/openjdk11.0.33/openjdk11.0.33 has unresolvable target 'instances/openjdk11.0.33'
+<transform link path=.* -> default pkg.linted.userland.action002.0 true>
+
+<transform path=usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/.*\.so -> default pkg.linted.userland.action001.2 true>
 
 ## as long as the two links are defined in openjdk8 they can't be used here
 # link path=usr/jdk/latest target=$(OPENJDK_INSTANCE) pkg.linted.userland.action002.0=true
@@ -1012,4 +1019,7 @@ file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/rmid.1
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/rmiregistry.1
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/serialver.1
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/man/man1/unpack200.1
+link path=usr/jdk/instances/openjdk$(HUMAN_VERSION)/openjdk$(HUMAN_VERSION) \
+    target=instances/openjdk$(HUMAN_VERSION)
 file path=usr/jdk/instances/$(OPENJDK_INSTANCE)/release
+link path=usr/jdk/openjdk11 target=instances/openjdk$(HUMAN_VERSION)
