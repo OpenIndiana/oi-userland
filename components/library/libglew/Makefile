@@ -12,41 +12,29 @@
 # Copyright 2016 Jim Klimov <jimklimov@gmail.com>
 #
 
-# NOTE: This project links with /usr/openwin/lib/libGL.so.1, which unrolls
-# to /usr/lib/GL/libGL.so.1 which is a symlink to run-time (hardware-related?)
-# mediator in the ../../../var/run/opengl/lib/libGL.so.1. So far so good...
-# In my case (GZ on a VirtualBox host, even though it is dual-booted and runs
-# OI/Hipster natively at the moment) this library symlink points back to
-# /usr/lib/mesa/libGL.so.1 and this one object points to /usr/lib/VBoxOGL.so
-# rather than the nearby mesa objects. This breaks the build because pkgmogrify
-# insists on objects coming from known repo's, and because ultimate objects do
-# refer to virtualbox rather than libs expected available on all deployments!
-# Perhaps we should *require* do the builds in a dedicated local zone?..
-# TODO: Find out the root-cause and attach a patch-file with a fix to this.
+BUILD_STYLE = justmake
+DROP_STATIC_LIBRARIES = yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glew
-COMPONENT_VERSION=	1.13.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.3.1
 COMPONENT_SUMMARY=	The OpenGL Extension Wrangler Library
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_FMRI=		x11/library/lib$(COMPONENT_NAME)
-COMPONENT_LICENSE=	GLEW,Mesa3D,Khronos
+COMPONENT_LICENSE=	BSD-3-Clause AND MIT
 COMPONENT_LICENSE_FILE=	LICENSE.txt
 COMPONENT_PROJECT_URL=	http://$(COMPONENT_NAME).sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:aa25dc48ed84b0b64b8d41cdd42c8f40f149c37fa2ffa39cd97f42c78d128bc7
+	sha256:b64790f94b926acd7e8f84c5d6000a86cb43967bd1e688b03089079799c9e889
 COMPONENT_ARCHIVE_URL= \
-	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+	https://github.com/nigels-com/$(COMPONENT_NAME)/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 
-PATH=/usr/gnu/bin:/usr/bin
+TEST_TARGET = $(NO_TESTS)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CUSTOM.LDFLAGS.GL = -lGL
 COMPONENT_PREP_ACTION = \
@@ -61,16 +49,11 @@ CFLAGS +=	-D_FILE_OFFSET_BITS=64
 # the custom Makefile.illumos-gcc to append common oi-userland flag values
 # and not override the project's CFLAGS etc. in whole.
 
-LIBDIR.32=$(USRLIBDIR)
-LIBDIR.64=$(USRLIBDIR64)
-
 COMPONENT_COMMON_ARGS  =	SYSTEM=illumos-gcc
-COMPONENT_COMMON_ARGS +=	BINDIR="$(USRBINDIR$(BITS))"
-COMPONENT_COMMON_ARGS +=	LIBDIR="$(LIBDIR.$(BITS))"
-COMPONENT_COMMON_ARGS +=	INCDIR="$(USRINCDIR)"
-COMPONENT_COMMON_ARGS +=	DESTDIR="$(PROTO_DIR)"
 COMPONENT_COMMON_ARGS +=	GLEW_PREFIX="$(USRDIR)"
 COMPONENT_COMMON_ARGS +=	GLEW_DEST="$(USRDIR)"
+COMPONENT_COMMON_ARGS +=	LIBDIR="$(USRLIBDIR.$(BITS))"
+COMPONENT_COMMON_ARGS +=	PKGDIR="$(PKG_CONFIG_DIR.$(BITS))"
 COMPONENT_COMMON_ARGS +=	CC="$(CC)"
 COMPONENT_COMMON_ARGS +=	CUSTOM.CFLAGS.EXTRA="$(CFLAGS)"
 COMPONENT_COMMON_ARGS +=	LD="$(CC)"
@@ -90,12 +73,7 @@ COMPONENT_BUILD_TARGETS =	all
 COMPONENT_INSTALL_ARGS +=	$(COMPONENT_COMMON_ARGS)
 COMPONENT_INSTALL_TARGETS =	install.all
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
-REQUIRED_PACKAGES += SUNWcs
+# Auto-generated dependencies
+REQUIRED_PACKAGES += service/opengl/ogl-select
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
