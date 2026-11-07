@@ -22,12 +22,11 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-plugins-bad
-COMPONENT_VERSION=	1.28.7
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.28.9
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:dc525383c18b2c265bbe6a43d498656cd918aaa130aa4e3abeabcdaa741c3ffe
+COMPONENT_ARCHIVE_HASH=	sha256:4a4e0b7bf84f868378c48f143a7ac3a98923b488a5b74f1a35ba46bc3c43f6b1
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer/plugin/bad
@@ -99,7 +98,7 @@ REQUIRED_PACKAGES += library/video/libde265
 REQUIRED_PACKAGES += library/video/libdvdnav
 REQUIRED_PACKAGES += library/video/libdvdread
 REQUIRED_PACKAGES += library/video/x265
-REQUIRED_PACKAGES += library/video/x265-41
+REQUIRED_PACKAGES += library/video/x265-43
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += video/rtmpdump
