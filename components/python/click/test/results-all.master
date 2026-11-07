@@ -5,8 +5,16 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 33016 items / 31000 deselected / 2016 selected
+collecting ... collected 33459 items / 31000 deselected / 2459 selected
 
+tests/test_abort_interrupt.py::test_interrupt_while_reporting_abort[prompt-None] PASSED
+tests/test_abort_interrupt.py::test_interrupt_while_reporting_abort[prompt-1] PASSED
+tests/test_abort_interrupt.py::test_interrupt_while_reporting_abort[body-None] PASSED
+tests/test_abort_interrupt.py::test_interrupt_while_reporting_abort[body-1] PASSED
+tests/test_abort_interrupt.py::test_interrupt_while_reporting_abort[body-2] PASSED
+tests/test_abort_interrupt.py::test_interrupt_while_reporting_error PASSED
+tests/test_abort_interrupt.py::test_late_interrupt_with_disabled_standalone_mode PASSED
+tests/test_abort_interrupt.py::test_interrupt_while_exiting_after_success PASSED
 tests/test_arguments.py::test_nargs_star PASSED
 tests/test_arguments.py::test_nargs_tup PASSED
 tests/test_arguments.py::test_nargs_tup_composite[opts0] PASSED
@@ -45,6 +53,13 @@ tests/test_arguments.py::test_required_argument[Sentinel.UNSET-True-None] PASSED
 tests/test_arguments.py::test_implicit_non_required PASSED
 tests/test_arguments.py::test_argument_help PASSED
 tests/test_arguments.py::test_argument_help_options_only_no_arguments_section PASSED
+tests/test_arguments.py::test_argument_help_lists_undocumented_arguments PASSED
+tests/test_arguments.py::test_argument_help_undocumented_arguments_only_no_section PASSED
+tests/test_arguments.py::test_argument_help_deprecated_without_help_lists_all PASSED
+tests/test_arguments.py::test_argument_help_empty_string_lists_all PASSED
+tests/test_arguments.py::test_argument_get_help_record_never_none[None] PASSED
+tests/test_arguments.py::test_argument_get_help_record_never_none[empty] PASSED
+tests/test_arguments.py::test_argument_get_help_record_never_none[documented] PASSED
 tests/test_arguments.py::test_argument_help_optional_metavar PASSED
 tests/test_arguments.py::test_deprecated_usage PASSED
 tests/test_arguments.py::test_argument_metavar_marks_optional[kwargs0-FOO] PASSED
@@ -218,6 +233,13 @@ tests/test_basic.py::test_version_option_unknown_package_errors PASSED
 tests/test_basic.py::test_custom_version_option[args0] PASSED
 tests/test_basic.py::test_custom_version_option[args1] PASSED
 tests/test_basic.py::test_custom_version_option_receives_context PASSED
+tests/test_basic.py::test_cast_multi_default[2-False-None-None] PASSED
+tests/test_basic.py::test_cast_multi_default[2-False-default1-expect1] PASSED
+tests/test_basic.py::test_cast_multi_default[None-True-None-expect2] PASSED
+tests/test_basic.py::test_cast_multi_default[None-True-default3-expect3] PASSED
+tests/test_basic.py::test_cast_multi_default[2-True-None-expect4] PASSED
+tests/test_basic.py::test_cast_multi_default[2-True-default5-expect5] PASSED
+tests/test_basic.py::test_cast_multi_default[-1-None-None-expect6] PASSED
 tests/test_chain.py::test_basic_chaining PASSED
 tests/test_chain.py::test_chaining_help[args0-COMMAND1 [ARGS]... [COMMAND2 [ARGS]...]...] PASSED
 tests/test_chain.py::test_chaining_help[args1-ROOT HELP] PASSED
@@ -336,6 +358,7 @@ tests/test_commands.py::test_deprecated_empty_help_no_leading_space[-True] PASSE
 tests/test_commands.py::test_deprecated_empty_help_no_leading_space[-USE OTHER COMMAND INSTEAD] PASSED
 tests/test_commands.py::test_deprecated_empty_help_no_leading_space[None-True] PASSED
 tests/test_commands.py::test_deprecated_empty_help_no_leading_space[None-USE OTHER COMMAND INSTEAD] PASSED
+tests/test_commands.py::test_deprecated_help_text_is_not_translated PASSED
 tests/test_commands.py::test_deprecated_in_invocation[True] PASSED
 tests/test_commands.py::test_deprecated_in_invocation[USE OTHER COMMAND INSTEAD] PASSED
 tests/test_commands.py::test_command_parse_args_collects_option_prefixes PASSED
@@ -576,6 +599,9 @@ tests/test_defaults.py::test_lookup_default_returns_hides_sentinel[default_map4-
 tests/test_defaults.py::test_lookup_default_returns_hides_sentinel[default_map5-key-0] PASSED
 tests/test_defaults.py::test_lookup_default_returns_hides_sentinel[default_map6-key-] PASSED
 tests/test_defaults.py::test_lookup_default_returns_hides_sentinel[default_map7-key-False] PASSED
+tests/test_defaults.py::test_lookup_default_returns_hides_sentinel[default_map8-key-expected8] PASSED
+tests/test_defaults.py::test_lookup_default_returns_hides_sentinel[default_map9-key-expected9] PASSED
+tests/test_defaults.py::test_lookup_default_returns_hides_sentinel[default_map10-key-expected10] PASSED
 tests/test_defaults.py::test_lookup_default_callable_in_default_map PASSED
 tests/test_defaults.py::test_default_map_source[args0-default_map0-cli-COMMANDLINE] PASSED
 tests/test_defaults.py::test_default_map_source[args1-default_map1-mapped-DEFAULT_MAP] PASSED
@@ -621,13 +647,14 @@ tests/test_deprecations.py::test_attr_deprecated[click.utils-KeepOpenFile-_KeepO
 tests/test_deprecations.py::test_attr_deprecated[click.utils-make_default_short_help-_make_default_short_help] PASSED
 tests/test_deprecations.py::test_attr_deprecated[click.utils-PacifyFlushWrapper-_PacifyFlushWrapper] PASSED
 tests/test_deprecations.py::test_attr_deprecated[click.utils-safecall-_safecall] PASSED
-tests/test_deprecations.py::test_attr_deprecated[click-__version__-8.5.0] PASSED
+tests/test_deprecations.py::test_attr_deprecated[click-__version__-8.5.1] PASSED
 tests/test_deprecations.py::test_unknown_attribute_raises[click] PASSED
 tests/test_deprecations.py::test_unknown_attribute_raises[click.core] PASSED
 tests/test_deprecations.py::test_unknown_attribute_raises[click.parser] PASSED
 tests/test_deprecations.py::test_unknown_attribute_raises[click.utils] PASSED
 tests/test_deprecations.py::test_context_protected_args_deprecated PASSED
 tests/test_deprecations.py::test_isolated_filesystem_deprecated PASSED
+tests/test_exceptions/test_FileError.py::test_file_error_surrogates PASSED
 tests/test_formatting.py::test_basic_functionality PASSED
 tests/test_formatting.py::test_wrapping_long_options_strings PASSED
 tests/test_formatting.py::test_wrapping_long_command_name PASSED
@@ -688,10 +715,20 @@ tests/test_info_dict.py::test_command[Group] PASSED
 tests/test_info_dict.py::test_command[Nested Group] PASSED
 tests/test_info_dict.py::test_context PASSED
 tests/test_info_dict.py::test_paramtype_no_name PASSED
-tests/test_info_dict.py::test_argument_to_info_dict_help[None] PASSED
-tests/test_info_dict.py::test_argument_to_info_dict_help[empty] PASSED
-tests/test_info_dict.py::test_argument_to_info_dict_help[single-line] PASSED
-tests/test_info_dict.py::test_argument_to_info_dict_help[multi-line] PASSED
+tests/test_info_dict.py::test_param_to_info_dict_help[None-option] PASSED
+tests/test_info_dict.py::test_param_to_info_dict_help[None-argument] PASSED
+tests/test_info_dict.py::test_param_to_info_dict_help[empty-option] PASSED
+tests/test_info_dict.py::test_param_to_info_dict_help[empty-argument] PASSED
+tests/test_info_dict.py::test_param_to_info_dict_help[single-line-option] PASSED
+tests/test_info_dict.py::test_param_to_info_dict_help[single-line-argument] PASSED
+tests/test_info_dict.py::test_param_to_info_dict_help[multi-line-option] PASSED
+tests/test_info_dict.py::test_param_to_info_dict_help[multi-line-argument] PASSED
+tests/test_info_dict.py::test_param_to_info_dict_deprecated_help[no-help-option] PASSED
+tests/test_info_dict.py::test_param_to_info_dict_deprecated_help[no-help-argument] PASSED
+tests/test_info_dict.py::test_param_to_info_dict_deprecated_help[help-option] PASSED
+tests/test_info_dict.py::test_param_to_info_dict_deprecated_help[help-argument] PASSED
+tests/test_info_dict.py::test_param_to_info_dict_deprecated_help[custom-label-option] PASSED
+tests/test_info_dict.py::test_param_to_info_dict_deprecated_help[custom-label-argument] PASSED
 tests/test_info_dict.py::test_argument_to_info_dict_nargs PASSED
 tests/test_info_dict.py::test_command_to_info_dict_multiple_arguments PASSED
 tests/test_normalization.py::test_option_normalization PASSED
@@ -705,6 +742,14 @@ tests/test_options.py::test_deprecated_empty_help_no_leading_space[-True-(DEPREC
 tests/test_options.py::test_deprecated_empty_help_no_leading_space[-USE B INSTEAD-(DEPRECATED: USE B INSTEAD)] PASSED
 tests/test_options.py::test_deprecated_empty_help_no_leading_space[None-True-(DEPRECATED)] PASSED
 tests/test_options.py::test_deprecated_empty_help_no_leading_space[None-USE B INSTEAD-(DEPRECATED: USE B INSTEAD)] PASSED
+tests/test_options.py::test_help_spec[False-param_decls0-kwargs0--v, --verbose] PASSED
+tests/test_options.py::test_help_spec[False-param_decls1-kwargs1---config TEXT] PASSED
+tests/test_options.py::test_help_spec[False-param_decls2-kwargs2---color / --no-color] PASSED
+tests/test_options.py::test_help_spec[False-param_decls3-kwargs3-/debug; /no-debug] PASSED
+tests/test_options.py::test_help_spec[True-param_decls0-kwargs0--v, --verbose] PASSED
+tests/test_options.py::test_help_spec[True-param_decls1-kwargs1---config TEXT] PASSED
+tests/test_options.py::test_help_spec[True-param_decls2-kwargs2---color / --no-color] PASSED
+tests/test_options.py::test_help_spec[True-param_decls3-kwargs3-/debug; /no-debug] PASSED
 tests/test_options.py::test_deprecated_warning[True] PASSED
 tests/test_options.py::test_deprecated_warning[USE B INSTEAD] PASSED
 tests/test_options.py::test_deprecated_required PASSED
@@ -771,6 +816,7 @@ tests/test_options.py::test_bad_defaults_for_multiple[True-2-default15-ValueErro
 tests/test_options.py::test_empty_envvar[MYPATH] PASSED
 tests/test_options.py::test_empty_envvar[AUTO_MYPATH] PASSED
 tests/test_options.py::test_multiple_envvar PASSED
+tests/test_options.py::test_envvar_container_type PASSED
 tests/test_options.py::test_boolean_flag_envvar[SHOUT-true-True] PASSED
 tests/test_options.py::test_boolean_flag_envvar[SHOUT-false-False] PASSED
 tests/test_options.py::test_boolean_flag_envvar[SHOUT-True-True] PASSED
@@ -835,8 +881,15 @@ tests/test_options.py::test_boolean_envvar_bad_values[x:y] PASSED
 tests/test_options.py::test_boolean_envvar_bad_values[i/o] PASSED
 tests/test_options.py::test_multiple_default_help PASSED
 tests/test_options.py::test_show_default_default_map PASSED
+tests/test_options.py::test_show_default_container_defaults PASSED
 tests/test_options.py::test_multiple_default_type PASSED
 tests/test_options.py::test_multiple_default_composite_type PASSED
+tests/test_options.py::test_type_from_default_container[default0] PASSED
+tests/test_options.py::test_type_from_default_container[default1] PASSED
+tests/test_options.py::test_type_from_default_container[default2] PASSED
+tests/test_options.py::test_type_from_default_container[default3] PASSED
+tests/test_options.py::test_type_from_default_container[default4] PASSED
+tests/test_options.py::test_type_from_default_container[default5] PASSED
 tests/test_options.py::test_parse_multiple_default_composite_type PASSED
 tests/test_options.py::test_dynamic_default_help_unset PASSED
 tests/test_options.py::test_dynamic_default_help_text PASSED
@@ -852,6 +905,12 @@ tests/test_options.py::test_nargs_envvar PASSED
 tests/test_options.py::test_show_envvar PASSED
 tests/test_options.py::test_show_envvar_auto_prefix PASSED
 tests/test_options.py::test_show_envvar_auto_prefix_dash_in_command PASSED
+tests/test_options.py::test_show_envvar_empty[None-  --units TEXT\n-None] PASSED
+tests/test_options.py::test_show_envvar_empty[None-  --units TEXT\n-envvar1] PASSED
+tests/test_options.py::test_show_envvar_empty[None-  --units TEXT\n-] PASSED
+tests/test_options.py::test_show_envvar_empty[WEATHER-  --units TEXT  [env var: WEATHER_UNITS]\n-None] PASSED
+tests/test_options.py::test_show_envvar_empty[WEATHER-  --units TEXT  [env var: WEATHER_UNITS]\n-envvar1] PASSED
+tests/test_options.py::test_show_envvar_empty[WEATHER-  --units TEXT  [env var: WEATHER_UNITS]\n-] PASSED
 tests/test_options.py::test_custom_validation PASSED
 tests/test_options.py::test_callback_validates_prompt PASSED
 tests/test_options.py::test_winstyle_options PASSED
@@ -872,6 +931,12 @@ tests/test_options.py::test_required_option[value12-False-{}] PASSED
 tests/test_options.py::test_missing_required_flag PASSED
 tests/test_options.py::test_missing_choice PASSED
 tests/test_options.py::test_missing_envvar PASSED
+tests/test_options.py::test_missing_envvar_sequence[UNITS-'--units' (env var: 'UNITS')] PASSED
+tests/test_options.py::test_missing_envvar_sequence[envvar1-'--units' (env var: 'UNITS')] PASSED
+tests/test_options.py::test_missing_envvar_sequence[envvar2-'--units' (env var: 'WEATHER_UNITS', 'UNITS')] PASSED
+tests/test_options.py::test_missing_envvar_sequence[envvar3-'--units' (env var: 'WEATHER_UNITS', 'UNITS')] PASSED
+tests/test_options.py::test_missing_envvar_sequence[envvar4-'--units'] PASSED
+tests/test_options.py::test_missing_envvar_sequence[-'--units'] PASSED
 tests/test_options.py::test_case_insensitive_choice PASSED
 tests/test_options.py::test_case_insensitive_choice_returned_exactly PASSED
 tests/test_options.py::test_option_help_preserve_paragraphs PASSED
@@ -1248,18 +1313,20 @@ tests/test_options.py::test_callable_flag_value_get_default_override[opt_params1
 tests/test_options.py::test_callable_flag_value_get_default_override[opt_params2-custom-custom] PASSED
 tests/test_options.py::test_callable_flag_value_get_default_override[opt_params3-Sentinel.UNSET-Sentinel.UNSET] PASSED
 tests/test_options.py::test_flag_value_not_stringified_for_custom_types PASSED
-tests/test_options.py::test_custom_type_frozenset_flag_value PASSED
+tests/test_options.py::test_custom_type_container_flag_value[set-flag_value0-default0-{'git'}-set()] PASSED
+tests/test_options.py::test_custom_type_container_flag_value[frozenset-flag_value1-default1-frozenset({'git'})-frozenset()] PASSED
+tests/test_options.py::test_custom_type_container_flag_value[dict-flag_value2-default2-{'git': True}-{}] PASSED
 tests/test_options.py::test_bool_flag_pair_default[None-args0-None] PASSED
 tests/test_options.py::test_bool_flag_pair_default[None-args1-True] PASSED
 tests/test_options.py::test_bool_flag_pair_default[None-args2-False] PASSED
 tests/test_options.py::test_bool_flag_pair_default[True-args3-True] PASSED
 tests/test_options.py::test_bool_flag_pair_default[True-args4-True] PASSED
 tests/test_options.py::test_bool_flag_pair_default[True-args5-False] PASSED
-tests/test_options.py::test_bool_flag_group_competition[3403-reproducer-no-args] PASSED
-tests/test_options.py::test_bool_flag_group_competition[3403-reproducer-with-only] PASSED
-tests/test_options.py::test_bool_flag_group_competition[3403-reproducer-without-only] PASSED
-tests/test_options.py::test_bool_flag_group_competition[3403-reproducer-with-then-without] PASSED
-tests/test_options.py::test_bool_flag_group_competition[3403-reproducer-without-then-with] PASSED
+tests/test_options.py::test_bool_flag_group_competition[explicit-default-inner-no-args] PASSED
+tests/test_options.py::test_bool_flag_group_competition[explicit-default-inner-with-only] PASSED
+tests/test_options.py::test_bool_flag_group_competition[explicit-default-inner-without-only] PASSED
+tests/test_options.py::test_bool_flag_group_competition[explicit-default-inner-with-then-without] PASSED
+tests/test_options.py::test_bool_flag_group_competition[explicit-default-inner-without-then-with] PASSED
 tests/test_options.py::test_bool_flag_group_competition[explicit-default-outer-no-args] PASSED
 tests/test_options.py::test_bool_flag_group_competition[explicit-default-outer-cmdline-overrides] PASSED
 tests/test_options.py::test_bool_flag_group_competition[explicit-default-false-on-negative] PASSED
@@ -1719,8 +1786,8 @@ tests/test_termui.py::test_hide_input_error_message[custom-no-value-shows-messag
 tests/test_termui.py::test_hide_input_error_message[custom-raw-value-masked] PASSED
 tests/test_termui.py::test_hide_input_error_message[unquoted-custom-message-should-mask-not-fallback] PASSED
 tests/test_termui.py::test_hide_input_error_message[mixed-quoted-and-raw-both-masked-at-source] PASSED
-tests/test_termui.py::test_hide_input_error_message[intrange-numeric-substring-falls-back-to-generic] PASSED
-tests/test_termui.py::test_hide_input_error_message[partial-word-match-falls-back-to-generic] PASSED
+tests/test_termui.py::test_hide_input_error_message[intrange-numeric-substring-not-masked] PASSED
+tests/test_termui.py::test_hide_input_error_message[partial-word-match-not-masked] PASSED
 tests/test_termui.py::test_hide_input_error_message[raw-value-should-be-masked-not-fallback] PASSED
 tests/test_termui.py::test_hide_input_error_message[multi-occurrence-raw-mask-all] PASSED
 tests/test_termui.py::test_hide_input_error_message[multi-occurrence-repr-mask-all] PASSED
@@ -1776,51 +1843,74 @@ tests/test_testing.py::test_capture_pytest_matrix[capsys-sys] PASSED
 tests/test_testing.py::test_capture_pytest_matrix[capsys-fd] PASSED
 tests/test_testing.py::test_capture_pytest_matrix[capfd-sys] PASSED
 tests/test_testing.py::test_capture_pytest_matrix[capfd-fd] PASSED
-tests/test_types.py::test_range[type0-3-3] PASSED
-tests/test_types.py::test_range[type1-5-5] PASSED
-tests/test_types.py::test_range[type2-100-100] PASSED
-tests/test_types.py::test_range[type3-5-5] PASSED
-tests/test_types.py::test_range[type4--100--100] PASSED
-tests/test_types.py::test_range[type5--1-0] PASSED
-tests/test_types.py::test_range[type6-6-5] PASSED
-tests/test_types.py::test_range[type7-0-1] PASSED
-tests/test_types.py::test_range[type8-5-4] PASSED
-tests/test_types.py::test_range[type9-1.2-1.2] PASSED
-tests/test_types.py::test_range[type10-0.51-0.51] PASSED
-tests/test_types.py::test_range[type11-1.49-1.49] PASSED
-tests/test_types.py::test_range[type12--0.0-0.5] PASSED
-tests/test_types.py::test_range[type13-inf-1.5] PASSED
-tests/test_types.py::test_range_fail[type0-6-6 is not in the range 0<=x<=5.] PASSED
-tests/test_types.py::test_range_fail[type1-4-4 is not in the range x>=5.] PASSED
-tests/test_types.py::test_range_fail[type2-6-6 is not in the range x<=5.] PASSED
-tests/test_types.py::test_range_fail[type3-0-0<x<=5] PASSED
-tests/test_types.py::test_range_fail[type4-5-0<=x<5] PASSED
-tests/test_types.py::test_range_fail[type5-0.5-x>0.5] PASSED
-tests/test_types.py::test_range_fail[type6-1.5-x<1.5] PASSED
-tests/test_types.py::test_func_param_type_uses_value_error_message[bad value: nope-bad value: nope] PASSED
-tests/test_types.py::test_func_param_type_uses_value_error_message[-nope] PASSED
-tests/test_types.py::test_float_range_no_clamp_open PASSED
-tests/test_types.py::test_cast_multi_default[2-False-None-None] PASSED
-tests/test_types.py::test_cast_multi_default[2-False-default1-expect1] PASSED
-tests/test_types.py::test_cast_multi_default[None-True-None-expect2] PASSED
-tests/test_types.py::test_cast_multi_default[None-True-default3-expect3] PASSED
-tests/test_types.py::test_cast_multi_default[2-True-None-expect4] PASSED
-tests/test_types.py::test_cast_multi_default[2-True-default5-expect5] PASSED
-tests/test_types.py::test_cast_multi_default[-1-None-None-expect6] PASSED
-tests/test_types.py::test_path_type[None-a/b/c.txt] PASSED
-tests/test_types.py::test_path_type[str-a/b/c.txt] PASSED
-tests/test_types.py::test_path_type[bytes-a/b/c.txt] PASSED
-tests/test_types.py::test_path_type[Path-expect3] PASSED
-tests/test_types.py::test_path_dash_no_byteswarning PASSED
-tests/test_types.py::test_path_resolve_symlink PASSED
-tests/test_types.py::test_path_surrogates PASSED
-tests/test_types.py::test_file_surrogates[type0] PASSED
-tests/test_types.py::test_file_surrogates[type1] PASSED
-tests/test_types.py::test_file_error_surrogates PASSED
-tests/test_types.py::test_invalid_path_with_esc_sequence PASSED
-tests/test_types.py::test_choice_get_invalid_choice_message PASSED
-tests/test_types.py::test_param_type_input_parameter_defaults_at_runtime PASSED
-tests/test_types.py::test_param_type_subclass_omitting_input_parameter PASSED
+tests/test_types/test_Choice.py::test_choice_get_invalid_choice_message PASSED
+tests/test_types/test_File.py::test_file_surrogates[type0] PASSED
+tests/test_types/test_File.py::test_file_surrogates[type1] PASSED
+tests/test_types/test_FloatRange.py::test_range[type0-1.2-1.2] PASSED
+tests/test_types/test_FloatRange.py::test_range[type1-0.51-0.51] PASSED
+tests/test_types/test_FloatRange.py::test_range[type2-1.49-1.49] PASSED
+tests/test_types/test_FloatRange.py::test_range[type3--0.0-0.5] PASSED
+tests/test_types/test_FloatRange.py::test_range[type4-inf-1.5] PASSED
+tests/test_types/test_FloatRange.py::test_range_fail[type0-0.5-x>0.5] PASSED
+tests/test_types/test_FloatRange.py::test_range_fail[type1-1.5-x<1.5] PASSED
+tests/test_types/test_FloatRange.py::test_float_range_no_clamp_open PASSED
+tests/test_types/test_FuncParamType.py::test_func_param_type_uses_value_error_message[bad value: nope-bad value: nope] PASSED
+tests/test_types/test_FuncParamType.py::test_func_param_type_uses_value_error_message[-nope] PASSED
+tests/test_types/test_IntRange.py::test_range[type0-3-3] PASSED
+tests/test_types/test_IntRange.py::test_range[type1-5-5] PASSED
+tests/test_types/test_IntRange.py::test_range[type2-100-100] PASSED
+tests/test_types/test_IntRange.py::test_range[type3-5-5] PASSED
+tests/test_types/test_IntRange.py::test_range[type4--100--100] PASSED
+tests/test_types/test_IntRange.py::test_range[type5--1-0] PASSED
+tests/test_types/test_IntRange.py::test_range[type6-6-5] PASSED
+tests/test_types/test_IntRange.py::test_range[type7-0-1] PASSED
+tests/test_types/test_IntRange.py::test_range[type8-5-4] PASSED
+tests/test_types/test_IntRange.py::test_range_fail[type0-6-6 is not in the range 0<=x<=5.] PASSED
+tests/test_types/test_IntRange.py::test_range_fail[type1-4-4 is not in the range x>=5.] PASSED
+tests/test_types/test_IntRange.py::test_range_fail[type2-6-6 is not in the range x<=5.] PASSED
+tests/test_types/test_IntRange.py::test_range_fail[type3-0-0<x<=5] PASSED
+tests/test_types/test_IntRange.py::test_range_fail[type4-5-0<=x<5] PASSED
+tests/test_types/test_ParamType.py::test_param_type_input_parameter_defaults_at_runtime PASSED
+tests/test_types/test_ParamType.py::test_param_type_subclass_omitting_input_parameter PASSED
+tests/test_types/test_Path.py::test_path_dash_no_byteswarning PASSED
+tests/test_types/test_Path.py::test_path_resolve_symlink PASSED
+tests/test_types/test_Path.py::test_path_surrogates PASSED
+tests/test_types/test_Path.py::test_invalid_path_with_esc_sequence PASSED
+tests/test_types/test_Path.py::test_path_type[None-a/b/c.txt] PASSED
+tests/test_types/test_Path.py::test_path_type[str-a/b/c.txt] PASSED
+tests/test_types/test_Path.py::test_path_type[bytes-a/b/c.txt] PASSED
+tests/test_types/test_Path.py::test_path_type[Path-expect3] PASSED
+tests/test_types/test_Path.py::test_path_converted_type_parameter_at_runtime PASSED
+tests/test_types/test_convert_type.py::test_convert_type_from_container_default[default0] PASSED
+tests/test_types/test_convert_type.py::test_convert_type_from_container_default[default1] PASSED
+tests/test_types/test_convert_type.py::test_convert_type_from_container_default[default2] PASSED
+tests/test_types/test_convert_type.py::test_convert_type_from_container_default[default3] PASSED
+tests/test_types/test_convert_type.py::test_convert_type_from_container_default[default4] PASSED
+tests/test_types/test_convert_type.py::test_convert_type_from_container_default[default5] PASSED
+tests/test_types/test_convert_type.py::test_convert_type_from_container_default[default6] PASSED
+tests/test_types/test_convert_type.py::test_convert_type_from_container_default[default7] PASSED
+tests/test_types/test_convert_type.py::test_explicit_container_type_splits_string[set-a,b,c-expected0] PASSED
+tests/test_types/test_convert_type.py::test_explicit_container_type_splits_string[frozenset-abc-expected1] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[None-expected0] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[git-expected1] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[5-expected2] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[1.5-expected3] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[True-expected4] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[default5-expected5] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[default6-expected6] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[default7-expected7] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[default8-expected8] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[default9-expected9] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[default10-expected10] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[default11-expected11] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[default12-expected12] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[default13-expected13] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[default14-expected14] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[default15-expected15] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[git-expected16] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_default[default17-expected17] PASSED
+tests/test_types/test_convert_type.py::test_type_inferred_from_nested_sequence_default PASSED
+tests/test_types/test_convert_type.py::test_explicit_dict_type_rejects_string PASSED
 tests/test_utils/test_KeepOpenFile.py::test_iter_keepopenfile PASSED
 tests/test_utils/test_LazyFile.py::test_iter_lazyfile PASSED
 tests/test_utils/test__detect_program_name.py::test_detect_program_name[example.py-None-example.py] PASSED
@@ -1903,17 +1993,39 @@ tests/test_utils/test_format_filename.py::test_filename_formatting PASSED
 tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-empty] PASSED
 tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-equal length, no dot] PASSED
 tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-sentence < max] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-dot ends text] PASSED
 tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-paragraph < max] PASSED
 tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-truncate] PASSED
 tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-length includes suffix] PASSED
 tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-ignore dot in word] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-abbreviation inside sentence] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-abbreviation inside truncated sentence] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-lowercase after dot] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-digit after dot] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-never split a hyphenated word] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-never split a long word] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-width fits the suffix only] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-width below the suffix] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-text shorter than the suffix] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-negative width] PASSED
 tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-empty] PASSED
 tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-equal length, no dot] PASSED
 tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-sentence < max] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-dot ends text] PASSED
 tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-paragraph < max] PASSED
 tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-truncate] PASSED
 tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-length includes suffix] PASSED
 tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-ignore dot in word] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-abbreviation inside sentence] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-abbreviation inside truncated sentence] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-lowercase after dot] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-digit after dot] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-never split a hyphenated word] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-never split a long word] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-width fits the suffix only] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-width below the suffix] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-text shorter than the suffix] PASSED
+tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-negative width] PASSED
 tests/test_utils/test_open_file.py::test_open_file PASSED
 tests/test_utils/test_open_file.py::test_open_file_pathlib_dash PASSED
 tests/test_utils/test_open_file.py::test_open_file_ignore_errors_stdin PASSED
@@ -1935,69 +2047,399 @@ tests/test_utils/test_prompt.py::test_full_prompt_passed_to_readline[prompt-cust
 tests/test_utils/test_prompt.py::test_full_prompt_passed_to_readline[confirm] PASSED
 tests/test_utils/test_prompt.py::test_prompts_eof PASSED
 tests/test_utils/test_sentinel.py::test_unset_sentinel PASSED
-tests/test_utils/test_style.py::test_styling[styles0-x y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles1-\x1b[30mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles2-\x1b[31mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles3-\x1b[32mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles4-\x1b[33mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles5-\x1b[34mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles6-\x1b[35mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles7-\x1b[36mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles8-\x1b[37mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles9-\x1b[90mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles10-\x1b[91mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles11-\x1b[92mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles12-\x1b[93mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles13-\x1b[94mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles14-\x1b[95mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles15-\x1b[96mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles16-\x1b[97mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles17-\x1b[39mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles18-\x1b[40mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles19-\x1b[41mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles20-\x1b[42mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles21-\x1b[43mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles22-\x1b[44mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles23-\x1b[45mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles24-\x1b[46mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles25-\x1b[47mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles26-\x1b[100mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles27-\x1b[101mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles28-\x1b[102mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles29-\x1b[103mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles30-\x1b[104mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles31-\x1b[105mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles32-\x1b[106mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles33-\x1b[107mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles34-\x1b[49mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles35-\x1b[38;5;91mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles36-\x1b[48;5;91mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles37-\x1b[38;5;255mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles38-\x1b[48;5;255mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles39-\x1b[38;2;135;0;175mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles40-\x1b[48;2;135;0;175mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles41-\x1b[48;2;135;0;175mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles42-\x1b[38;2;0;0;0mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles43-\x1b[38;2;255;255;255mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles44-\x1b[38;5;0mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles45-\x1b[48;5;0mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles46-\x1b[1mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles47-\x1b[2mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles48-\x1b[4mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles49-\x1b[53mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles50-\x1b[3mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles51-\x1b[5mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles52-\x1b[7mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles53-\x1b[9mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles54-\x1b[22mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles55-\x1b[22mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles56-\x1b[24mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles57-\x1b[55mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles58-\x1b[23mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles59-\x1b[25mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles60-\x1b[27mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles61-\x1b[29mx y\x1b[0m] PASSED
-tests/test_utils/test_style.py::test_styling[styles62-\x1b[30mx y] PASSED
+tests/test_utils/test_sentinel.py::test_sentinel_duplication_preserves_identity[copy-Sentinel.UNSET] PASSED
+tests/test_utils/test_sentinel.py::test_sentinel_duplication_preserves_identity[copy-Sentinel.FLAG_NEEDS_VALUE] PASSED
+tests/test_utils/test_sentinel.py::test_sentinel_duplication_preserves_identity[deepcopy-Sentinel.UNSET] PASSED
+tests/test_utils/test_sentinel.py::test_sentinel_duplication_preserves_identity[deepcopy-Sentinel.FLAG_NEEDS_VALUE] PASSED
+tests/test_utils/test_sentinel.py::test_sentinel_duplication_preserves_identity[pickle-Sentinel.UNSET] PASSED
+tests/test_utils/test_sentinel.py::test_sentinel_duplication_preserves_identity[pickle-Sentinel.FLAG_NEEDS_VALUE] PASSED
+tests/test_utils/test_sentinel.py::test_parameter_duplication[copy] PASSED
+tests/test_utils/test_sentinel.py::test_parameter_duplication[deepcopy] PASSED
+tests/test_utils/test_sentinel.py::test_parameter_duplication[pickle] PASSED
+tests/test_utils/test_style.py::test_styling[styles0--x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles0--] PASSED
+tests/test_utils/test_style.py::test_styling[styles0--38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles0--[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles0--p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles0--x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles1-\x1b[30m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles1-\x1b[30m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles1-\x1b[30m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles1-\x1b[30m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles1-\x1b[30m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles1-\x1b[30m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles2-\x1b[31m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles2-\x1b[31m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles2-\x1b[31m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles2-\x1b[31m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles2-\x1b[31m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles2-\x1b[31m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles3-\x1b[32m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles3-\x1b[32m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles3-\x1b[32m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles3-\x1b[32m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles3-\x1b[32m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles3-\x1b[32m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles4-\x1b[33m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles4-\x1b[33m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles4-\x1b[33m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles4-\x1b[33m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles4-\x1b[33m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles4-\x1b[33m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles5-\x1b[34m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles5-\x1b[34m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles5-\x1b[34m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles5-\x1b[34m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles5-\x1b[34m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles5-\x1b[34m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles6-\x1b[35m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles6-\x1b[35m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles6-\x1b[35m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles6-\x1b[35m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles6-\x1b[35m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles6-\x1b[35m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles7-\x1b[36m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles7-\x1b[36m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles7-\x1b[36m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles7-\x1b[36m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles7-\x1b[36m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles7-\x1b[36m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles8-\x1b[37m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles8-\x1b[37m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles8-\x1b[37m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles8-\x1b[37m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles8-\x1b[37m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles8-\x1b[37m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles9-\x1b[90m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles9-\x1b[90m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles9-\x1b[90m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles9-\x1b[90m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles9-\x1b[90m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles9-\x1b[90m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles10-\x1b[91m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles10-\x1b[91m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles10-\x1b[91m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles10-\x1b[91m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles10-\x1b[91m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles10-\x1b[91m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles11-\x1b[92m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles11-\x1b[92m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles11-\x1b[92m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles11-\x1b[92m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles11-\x1b[92m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles11-\x1b[92m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles12-\x1b[93m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles12-\x1b[93m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles12-\x1b[93m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles12-\x1b[93m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles12-\x1b[93m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles12-\x1b[93m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles13-\x1b[94m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles13-\x1b[94m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles13-\x1b[94m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles13-\x1b[94m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles13-\x1b[94m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles13-\x1b[94m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles14-\x1b[95m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles14-\x1b[95m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles14-\x1b[95m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles14-\x1b[95m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles14-\x1b[95m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles14-\x1b[95m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles15-\x1b[96m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles15-\x1b[96m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles15-\x1b[96m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles15-\x1b[96m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles15-\x1b[96m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles15-\x1b[96m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles16-\x1b[97m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles16-\x1b[97m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles16-\x1b[97m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles16-\x1b[97m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles16-\x1b[97m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles16-\x1b[97m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles17-\x1b[39m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles17-\x1b[39m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles17-\x1b[39m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles17-\x1b[39m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles17-\x1b[39m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles17-\x1b[39m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles18-\x1b[40m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles18-\x1b[40m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles18-\x1b[40m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles18-\x1b[40m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles18-\x1b[40m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles18-\x1b[40m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles19-\x1b[41m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles19-\x1b[41m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles19-\x1b[41m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles19-\x1b[41m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles19-\x1b[41m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles19-\x1b[41m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles20-\x1b[42m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles20-\x1b[42m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles20-\x1b[42m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles20-\x1b[42m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles20-\x1b[42m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles20-\x1b[42m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles21-\x1b[43m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles21-\x1b[43m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles21-\x1b[43m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles21-\x1b[43m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles21-\x1b[43m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles21-\x1b[43m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles22-\x1b[44m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles22-\x1b[44m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles22-\x1b[44m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles22-\x1b[44m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles22-\x1b[44m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles22-\x1b[44m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles23-\x1b[45m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles23-\x1b[45m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles23-\x1b[45m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles23-\x1b[45m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles23-\x1b[45m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles23-\x1b[45m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles24-\x1b[46m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles24-\x1b[46m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles24-\x1b[46m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles24-\x1b[46m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles24-\x1b[46m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles24-\x1b[46m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles25-\x1b[47m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles25-\x1b[47m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles25-\x1b[47m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles25-\x1b[47m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles25-\x1b[47m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles25-\x1b[47m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles26-\x1b[100m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles26-\x1b[100m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles26-\x1b[100m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles26-\x1b[100m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles26-\x1b[100m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles26-\x1b[100m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles27-\x1b[101m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles27-\x1b[101m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles27-\x1b[101m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles27-\x1b[101m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles27-\x1b[101m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles27-\x1b[101m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles28-\x1b[102m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles28-\x1b[102m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles28-\x1b[102m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles28-\x1b[102m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles28-\x1b[102m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles28-\x1b[102m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles29-\x1b[103m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles29-\x1b[103m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles29-\x1b[103m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles29-\x1b[103m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles29-\x1b[103m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles29-\x1b[103m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles30-\x1b[104m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles30-\x1b[104m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles30-\x1b[104m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles30-\x1b[104m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles30-\x1b[104m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles30-\x1b[104m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles31-\x1b[105m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles31-\x1b[105m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles31-\x1b[105m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles31-\x1b[105m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles31-\x1b[105m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles31-\x1b[105m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles32-\x1b[106m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles32-\x1b[106m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles32-\x1b[106m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles32-\x1b[106m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles32-\x1b[106m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles32-\x1b[106m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles33-\x1b[107m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles33-\x1b[107m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles33-\x1b[107m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles33-\x1b[107m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles33-\x1b[107m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles33-\x1b[107m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles34-\x1b[49m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles34-\x1b[49m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles34-\x1b[49m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles34-\x1b[49m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles34-\x1b[49m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles34-\x1b[49m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles35-\x1b[38;5;91m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles35-\x1b[38;5;91m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles35-\x1b[38;5;91m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles35-\x1b[38;5;91m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles35-\x1b[38;5;91m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles35-\x1b[38;5;91m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles36-\x1b[48;5;91m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles36-\x1b[48;5;91m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles36-\x1b[48;5;91m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles36-\x1b[48;5;91m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles36-\x1b[48;5;91m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles36-\x1b[48;5;91m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles37-\x1b[38;5;255m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles37-\x1b[38;5;255m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles37-\x1b[38;5;255m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles37-\x1b[38;5;255m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles37-\x1b[38;5;255m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles37-\x1b[38;5;255m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles38-\x1b[48;5;255m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles38-\x1b[48;5;255m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles38-\x1b[48;5;255m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles38-\x1b[48;5;255m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles38-\x1b[48;5;255m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles38-\x1b[48;5;255m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles39-\x1b[38;2;135;0;175m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles39-\x1b[38;2;135;0;175m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles39-\x1b[38;2;135;0;175m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles39-\x1b[38;2;135;0;175m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles39-\x1b[38;2;135;0;175m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles39-\x1b[38;2;135;0;175m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles40-\x1b[48;2;135;0;175m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles40-\x1b[48;2;135;0;175m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles40-\x1b[48;2;135;0;175m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles40-\x1b[48;2;135;0;175m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles40-\x1b[48;2;135;0;175m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles40-\x1b[48;2;135;0;175m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles41-\x1b[48;2;135;0;175m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles41-\x1b[48;2;135;0;175m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles41-\x1b[48;2;135;0;175m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles41-\x1b[48;2;135;0;175m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles41-\x1b[48;2;135;0;175m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles41-\x1b[48;2;135;0;175m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles42-\x1b[38;2;0;0;0m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles42-\x1b[38;2;0;0;0m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles42-\x1b[38;2;0;0;0m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles42-\x1b[38;2;0;0;0m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles42-\x1b[38;2;0;0;0m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles42-\x1b[38;2;0;0;0m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles43-\x1b[38;2;255;255;255m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles43-\x1b[38;2;255;255;255m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles43-\x1b[38;2;255;255;255m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles43-\x1b[38;2;255;255;255m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles43-\x1b[38;2;255;255;255m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles43-\x1b[38;2;255;255;255m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles44-\x1b[38;5;0m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles44-\x1b[38;5;0m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles44-\x1b[38;5;0m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles44-\x1b[38;5;0m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles44-\x1b[38;5;0m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles44-\x1b[38;5;0m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles45-\x1b[48;5;0m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles45-\x1b[48;5;0m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles45-\x1b[48;5;0m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles45-\x1b[48;5;0m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles45-\x1b[48;5;0m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles45-\x1b[48;5;0m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles46-\x1b[1m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles46-\x1b[1m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles46-\x1b[1m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles46-\x1b[1m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles46-\x1b[1m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles46-\x1b[1m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles47-\x1b[2m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles47-\x1b[2m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles47-\x1b[2m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles47-\x1b[2m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles47-\x1b[2m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles47-\x1b[2m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles48-\x1b[4m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles48-\x1b[4m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles48-\x1b[4m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles48-\x1b[4m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles48-\x1b[4m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles48-\x1b[4m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles49-\x1b[53m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles49-\x1b[53m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles49-\x1b[53m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles49-\x1b[53m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles49-\x1b[53m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles49-\x1b[53m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles50-\x1b[3m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles50-\x1b[3m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles50-\x1b[3m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles50-\x1b[3m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles50-\x1b[3m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles50-\x1b[3m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles51-\x1b[5m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles51-\x1b[5m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles51-\x1b[5m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles51-\x1b[5m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles51-\x1b[5m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles51-\x1b[5m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles52-\x1b[7m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles52-\x1b[7m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles52-\x1b[7m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles52-\x1b[7m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles52-\x1b[7m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles52-\x1b[7m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles53-\x1b[9m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles53-\x1b[9m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles53-\x1b[9m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles53-\x1b[9m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles53-\x1b[9m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles53-\x1b[9m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles54-\x1b[22m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles54-\x1b[22m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles54-\x1b[22m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles54-\x1b[22m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles54-\x1b[22m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles54-\x1b[22m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles55-\x1b[22m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles55-\x1b[22m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles55-\x1b[22m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles55-\x1b[22m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles55-\x1b[22m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles55-\x1b[22m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles56-\x1b[24m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles56-\x1b[24m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles56-\x1b[24m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles56-\x1b[24m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles56-\x1b[24m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles56-\x1b[24m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles57-\x1b[55m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles57-\x1b[55m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles57-\x1b[55m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles57-\x1b[55m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles57-\x1b[55m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles57-\x1b[55m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles58-\x1b[23m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles58-\x1b[23m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles58-\x1b[23m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles58-\x1b[23m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles58-\x1b[23m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles58-\x1b[23m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles59-\x1b[25m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles59-\x1b[25m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles59-\x1b[25m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles59-\x1b[25m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles59-\x1b[25m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles59-\x1b[25m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles60-\x1b[27m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles60-\x1b[27m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles60-\x1b[27m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles60-\x1b[27m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles60-\x1b[27m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles60-\x1b[27m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles61-\x1b[29m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles61-\x1b[29m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles61-\x1b[29m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles61-\x1b[29m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles61-\x1b[29m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles61-\x1b[29m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles62-\x1b[30m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles62-\x1b[30m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles62-\x1b[30m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles62-\x1b[30m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles62-\x1b[30m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles62-\x1b[30m-x\ny] PASSED
+tests/test_utils/test_style.py::test_styling[styles63-\x1b[38;2;135;0;175m\x1b[48;5;91m\x1b[1m\x1b[2m\x1b[4m\x1b[53m\x1b[3m\x1b[5m\x1b[7m\x1b[9m-x y] PASSED
+tests/test_utils/test_style.py::test_styling[styles63-\x1b[38;2;135;0;175m\x1b[48;5;91m\x1b[1m\x1b[2m\x1b[4m\x1b[53m\x1b[3m\x1b[5m\x1b[7m\x1b[9m-] PASSED
+tests/test_utils/test_style.py::test_styling[styles63-\x1b[38;2;135;0;175m\x1b[48;5;91m\x1b[1m\x1b[2m\x1b[4m\x1b[53m\x1b[3m\x1b[5m\x1b[7m\x1b[9m-38;5;91m] PASSED
+tests/test_utils/test_style.py::test_styling[styles63-\x1b[38;2;135;0;175m\x1b[48;5;91m\x1b[1m\x1b[2m\x1b[4m\x1b[53m\x1b[3m\x1b[5m\x1b[7m\x1b[9m-[1mx y] PASSED
+tests/test_utils/test_style.py::test_styling[styles63-\x1b[38;2;135;0;175m\x1b[48;5;91m\x1b[1m\x1b[2m\x1b[4m\x1b[53m\x1b[3m\x1b[5m\x1b[7m\x1b[9m-p\xeache \U0001f351] PASSED
+tests/test_utils/test_style.py::test_styling[styles63-\x1b[38;2;135;0;175m\x1b[48;5;91m\x1b[1m\x1b[2m\x1b[4m\x1b[53m\x1b[3m\x1b[5m\x1b[7m\x1b[9m-x\ny] PASSED
 tests/test_utils/test_style.py::test_styling_invalid_color[-fg] PASSED
 tests/test_utils/test_style.py::test_styling_invalid_color[-bg] PASSED
 tests/test_utils/test_style.py::test_styling_invalid_color[banana-fg] PASSED
@@ -2034,6 +2476,7 @@ tests/test_utils/test_style.py::test_styling_invalid_color[value16-fg] PASSED
 tests/test_utils/test_style.py::test_styling_invalid_color[value16-bg] PASSED
 tests/test_utils/test_style.py::test_styling_invalid_color[value17-fg] PASSED
 tests/test_utils/test_style.py::test_styling_invalid_color[value17-bg] PASSED
+tests/test_utils/test_style.py::test_unstyle_exception_message PASSED
 tests/test_utils/test_style.py::test_unstyle_other_ansi[\x1b[?25lx y\x1b[?25h-x y] PASSED
 tests/test_utils/test_style.py::test_unstyle_other_ansi[\x1b[38:2:255:0:0mx y\x1b[0m-x y] PASSED
 tests/test_utils/test_style.py::test_unstyle_other_ansi[\x1b[38:5:200mx y\x1b[0m-x y] PASSED
@@ -2041,6 +2484,6 @@ tests/test_utils/test_style.py::test_unstyle_other_ansi[\x1b[<0;1;1Mx y\x1b[<0;1
 tests/test_utils/test_style.py::test_unstyle_other_ansi[\x1b[0 qx y-x y] PASSED
 tests/test_utils/test_style.py::test_unstyle_other_ansi[x\x1b[3~y-xy] PASSED
 
-======== 1991 passed, 24 skipped, 31000 deselected, 1 xfailed ========
+======== 2434 passed, 24 skipped, 31000 deselected, 1 xfailed ========
   py$(PYV): OK
   congratulations :)
