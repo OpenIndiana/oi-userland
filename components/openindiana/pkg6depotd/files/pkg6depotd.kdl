@@ -1,0 +1,123 @@
+// pkg6depotd configuration, read by svc:/application/pkg/pkg6depotd.
+//
+// This file is delivered with preserve=renamenew: once you edit it, package
+// upgrades leave your copy untouched and install the new default next to it
+// as pkg6depotd.kdl.new. Compare the two after an upgrade.
+//
+// The config/file property lives on the service, so set it there and then
+// refresh and restart the instance:
+//   svccfg -s pkg6depotd setprop config/file = astring: /etc/pkg6depotd/other.kdl
+//   svcadm refresh pkg6depotd:default && svcadm restart pkg6depotd:default
+// A second instance can override the repository and listener directly with
+// pkg/inst_root, pkg/port and pkg/address SMF properties. Static TLS files
+// can be selected with pkg/ssl_cert_file and pkg/ssl_key_file. It needs its
+// own config property group for different ACME or telemetry settings. See
+// pkg6depotd(8).
+
+server {
+    // Loopback only by default. In reverse-proxy mode, bind the address the
+    // proxy connects to. Ports below 1024 work: the service holds
+    // net_privaddr.
+    bind "127.0.0.1:8080"
+}
+
+repository {
+    // The package does not create this location, so uninstalling it never
+    // touches repository data. Before enabling the service, as root:
+    //   zfs create -o mountpoint=/var/pkg6depotd rpool/pkg6depotd  (or mkdir)
+    //   chown pkg6srv:pkg6srv /var/pkg6depotd && chmod 0750 /var/pkg6depotd
+    //   su pkg6srv -c '/usr/bin/pkg6repo create /var/pkg6depotd/repo'
+    root "/var/pkg6depotd/repo"
+    mode "readonly"
+}
+
+telemetry {
+    service-name "pkg6depotd"
+    // Local log output on the SMF log: "json" or "text".
+    log-format "json"
+
+    // OpenTelemetry export of traces, metrics and logs over OTLP/HTTP
+    // (protobuf). Off until you set enabled true and point endpoint at a
+    // collector's OTLP/HTTP base URL; /v1/traces, /v1/metrics and /v1/logs
+    // are appended. Credentials, query strings and fragments are rejected in
+    // the URL: run a local collector that adds authentication.
+    //
+    // Export never blocks requests. Each signal buffers up to queue-size
+    // records, plus the batch being sent; when the collector is slow or
+    // down, the oldest are dropped and counted in
+    // pkg6depotd.telemetry.dropped. Proxy environment variables are ignored.
+    otlp {
+        enabled false
+        endpoint "http://127.0.0.1:4318"
+        // traces true
+        // metrics true
+        // logs true
+        // log-level "info"            // error, warn, info, debug, trace
+        // sample-ratio 1.0            // fraction of requests traced
+        // timeout-ms 5000             // per export attempt
+        // max-retries 3
+        // queue-size 2048             // records per signal
+        // batch-size 512
+        // flush-interval-ms 5000
+        // metrics-interval-ms 60000
+        // shutdown-timeout-ms 5000    // flush budget on svcadm disable/restart
+    }
+}
+
+// TLS. Without a tls block the depot serves plain HTTP for a reverse proxy
+// that terminates TLS (the default above). To serve HTTPS directly, bind
+// the public address (server { bind "0.0.0.0:443" }) and uncomment ONE of
+// the two tls blocks below. An invalid tls block stops the service; it
+// never falls back to plain HTTP. See pkg6depotd(8), TLS.
+//
+// Certificate files you renew yourself. The files must be readable by
+// pkg6srv; after replacing them, run: svcadm refresh pkg6depotd:default
+//
+// tls {
+//     certificate "/etc/pkg6depotd/tls/fullchain.pem"
+//     key "/etc/pkg6depotd/tls/key.pem"
+// }
+//
+// Certificates from Let's Encrypt (or another ACME CA), obtained at first
+// start and renewed automatically. Try staging first: staging certificates
+// are not trusted by clients, but the CA's rate limits are generous.
+//
+// tls {
+//     acme {
+//         domains "pkg.example.org"
+//         contact "mailto:hostmaster@example.org"
+//         terms-agreed true           // you accept the CA's subscriber agreement
+//         staging true                // remove once issuance works
+//         // Not created by the package. As root, before the first start:
+//         //   mkdir -m 0700 /var/pkg6depotd/acme
+//         //   chown pkg6srv:pkg6srv /var/pkg6depotd/acme
+//         state-dir "/var/pkg6depotd/acme"
+//
+//         // http-01: the CA fetches http://<domain>/.well-known/acme-challenge/
+//         // from this listener; port 80 of every domain must reach it.
+//         challenge "http-01"
+//         http01-bind "0.0.0.0:80"
+//
+//         // dns-01 instead (required for wildcards): TXT records are created
+//         // through the provider API. The token file holds only the token,
+//         // owner root, group pkg6srv, mode 0640.
+//         // challenge "dns-01"
+//         // dns01 {
+//         //     provider "cloudflare"   // or "gandi"
+//         //     api-token-file "/etc/pkg6depotd/dns-api-token"
+//         //     zone "example.org"
+//         // }
+//     }
+// }
+
+// Browser settings apply to this repository instance only.
+ui {
+    title "Package repository"
+    // description "Packages served by this depot."
+    // base-url "https://packages.example.org"
+    // feed-window-hours 168
+    // feed-max-entries 500
+    // view-cache-mb 32
+    show-root false
+    // link "Project" "https://www.openindiana.org/"
+}

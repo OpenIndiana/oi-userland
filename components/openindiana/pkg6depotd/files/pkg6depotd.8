@@ -1,0 +1,699 @@
+.\"
+.\" This Source Code Form is subject to the terms of the Mozilla Public
+.\" License, v. 2.0. If a copy of the MPL was not distributed with this
+.\" file, You can obtain one at https://mozilla.org/MPL/2.0/.
+.\"
+.Dd September 27, 2026
+.Dt PKG6DEPOTD 8
+.Os
+.Sh NAME
+.Nm pkg6depotd
+.Nd IPS repository depot server
+.Sh SYNOPSIS
+.Nm /usr/lib/pkg6depotd
+.Op Fl c Ar file
+.Op Fl -repository-root Ar directory
+.Op Fl -bind Ar ip:port
+.Op Cm start | Cm config-test
+.Sh DESCRIPTION
+The
+.Nm
+daemon serves an IPS package repository to
+.Xr pkg 1
+clients over the pkg5 depot protocol.
+It is normally run by the
+.Xr smf 7
+service
+.Sy svc:/application/pkg/pkg6depotd
+and not invoked directly.
+.Pp
+By default the depot speaks plain HTTP and is meant to run behind a reverse
+proxy that terminates TLS.
+It can also serve HTTPS itself, with a certificate from files or one
+obtained and renewed through ACME; see
+.Sx TLS .
+.Pp
+The public HTTP interface is read-only.
+Repositories are created and changed with the local
+.Nm pkg6repo
+command.
+.Pp
+The following options are supported:
+.Bl -tag -width Ds
+.It Fl c Ar file , Fl -config Ar file
+Read the KDL configuration from
+.Ar file .
+.It Fl -repository-root Ar directory
+Override the repository root in the KDL file with an absolute path.
+The SMF method supplies this option from
+.Sy pkg/inst_root .
+.It Fl -bind Ar ip:port
+Override the KDL listener with one IP address and port.
+The SMF method supplies this option from
+.Sy pkg/address
+and
+.Sy pkg/port .
+An IPv6 address must be bracketed in this command-line value.
+.It Fl -tls-cert-file Ar file , Fl -tls-key-file Ar file
+Serve TLS from an absolute PEM certificate chain and private key.
+Give both options or neither.
+They replace the KDL
+.Sy tls
+certificate, key and
+.Sy acme
+settings; the KDL
+.Sy handshake-timeout
+still applies.
+The SMF method supplies them from
+.Sy pkg/ssl_cert_file
+and
+.Sy pkg/ssl_key_file .
+.El
+.Pp
+.Nm
+always runs in the foreground; SMF supervises it.
+There is no daemon mode, pid file or control command: stop the depot with
+.Dv SIGTERM ,
+for example through
+.Nm svcadm disable ,
+and reload its TLS certificate with
+.Dv SIGHUP ,
+for example through
+.Nm svcadm refresh .
+The option
+.Fl -no-daemon
+of earlier releases is accepted and ignored.
+.Pp
+The following commands are supported:
+.Bl -tag -width Ds
+.It Cm start
+Serve the repository.
+This is the default.
+.It Cm config-test
+Load and validate the configuration and print a summary: the file, the bind
+address, the repository root and the TLS mode.
+With certificate files, the certificate and key are loaded and checked;
+with ACME, the permissions of the DNS API token file and of the state
+directory are checked.
+Other settings are not printed, because they may hold credentials.
+Exits non-zero if the file is missing or invalid, including invalid
+.Sx TELEMETRY
+or
+.Sx TLS
+settings.
+Error messages give the line and column of a problem, not the offending text.
+The repository is not opened and no ACME request is made.
+.El
+.Pp
+On
+.Dv SIGTERM
+or
+.Dv SIGINT ,
+.Nm
+stops accepting connections, gives running requests up to 10 seconds to
+finish, then flushes telemetry within
+.Sy shutdown-timeout-ms
+and exits.
+.Sh TELEMETRY
+Local log output goes to standard output, which SMF writes to the service
+log.
+The
+.Sy telemetry
+block of the configuration file controls it and the optional export of
+traces, metrics and logs to an OpenTelemetry collector over OTLP/HTTP
+(protobuf):
+.Bd -literal -offset indent
+telemetry {
+    service-name "pkg6depotd"
+    log-format "json"
+    otlp {
+        enabled true
+        endpoint "http://127.0.0.1:4318"
+    }
+}
+.Ed
+.Bl -tag -width Ds
+.It Sy service-name
+The
+.Sy service.name
+resource attribute.
+Default
+.Sy pkg6depotd .
+.It Sy log-format
+.Sy text
+(default) or
+.Sy json
+for the local log output.
+.El
+.Pp
+Earlier configurations may carry a top-level
+.Sy otlp-endpoint
+key inside
+.Sy telemetry .
+It never enabled export and is now rejected at load time: move the URL to
+.Sy endpoint
+in the
+.Sy otlp
+block and set
+.Sy enabled
+as wanted.
+.Pp
+Keys of the
+.Sy otlp
+block:
+.Bl -tag -width Ds
+.It Sy enabled
+.Sy true
+or
+.Sy false .
+Defaults to
+.Sy true
+when the block is present.
+Other keys are validated even when export is disabled.
+.It Sy endpoint
+Base URL of the collector's OTLP/HTTP receiver, such as
+.Pa http://127.0.0.1:4318 .
+The paths
+.Pa /v1/traces ,
+.Pa /v1/metrics
+and
+.Pa /v1/logs
+are appended.
+Required when enabled.
+Only
+.Sy http
+and
+.Sy https
+URLs without user credentials, query or fragment are accepted; the URL is
+never repeated in error messages.
+To authenticate to a remote collector, run a local collector that adds the
+credentials.
+Export connects to this URL directly:
+.Ev HTTP_PROXY ,
+.Ev HTTPS_PROXY
+and
+.Ev ALL_PROXY
+in the service environment are ignored and redirects are not followed.
+.It Sy traces , metrics , logs
+Export the signal:
+.Sy true
+(default) or
+.Sy false .
+At least one must be enabled.
+.It Sy log-level
+Minimum level of exported log records:
+.Sy error , warn , info
+(default),
+.Sy debug
+or
+.Sy trace .
+The local output keeps using
+.Sy config/log_filter .
+.It Sy sample-ratio
+Fraction of requests traced, 0.0 to 1.0.
+Default 1.0.
+.It Sy timeout-ms
+Limit for one export attempt, 50 to 60000.
+Default 5000.
+.It Sy max-retries
+Retries of a failed export, with exponential backoff from 100 ms up to 5 s,
+0 to 10.
+Default 3.
+A batch that still fails is dropped.
+A 4xx answer other than 408 and 429 means the collector rejected the payload;
+it is dropped without retrying.
+.It Sy queue-size
+Trace spans and log records buffered per signal, 1 to 65536.
+Default 2048.
+When the queue is full the oldest record is dropped.
+.It Sy batch-size
+Records per export request, 1 to 8192 and at most
+.Sy queue-size .
+Default 512.
+.It Sy flush-interval-ms
+Longest time a span or log record waits before it is sent, 10 to 60000.
+Default 5000.
+.It Sy metrics-interval-ms
+Metrics export interval, 100 to 3600000.
+Default 60000.
+.It Sy shutdown-timeout-ms
+Time allowed to flush telemetry when the service stops, 100 to 30000.
+Default 5000.
+Records still queued afterwards are dropped.
+.El
+.Pp
+Export runs on its own threads and never delays requests.
+A slow, hung or unreachable collector costs at most
+.Sy queue-size
+queued records plus the one batch of up to
+.Sy batch-size
+records being sent, per signal, of memory; dropped records are counted by
+signal and by
+reason
+.Po
+.Sy overflow ,
+.Sy export_failed ,
+.Sy shutdown
+.Pc
+in the
+.Sy pkg6depotd.telemetry.dropped
+metric.
+.Pp
+Metrics:
+.Sy pkg6depotd.http.server.requests ,
+.Sy http.server.request.duration ,
+.Sy http.server.active_requests ,
+.Sy pkg6depotd.http.server.errors
+(5xx responses),
+.Sy pkg6depotd.operations ,
+.Sy pkg6depotd.operation.duration ,
+.Sy pkg6depotd.telemetry.dropped
+and
+.Sy pkg6depotd.telemetry.exported .
+The two operation metrics are reserved for repository imports, catalog
+rebuilds and retirements; this release does not record them yet.
+Each request produces one server span.
+Attributes are limited to the HTTP method, the route template (for example
+.Pa /{publisher}/file/1/{digest} ,
+or
+.Sy unmatched ) ,
+the status code, the operation and the result; request paths, package names
+and digests are never attributes.
+Exported log records carry the message text, which can name packages.
+.Sh SERVICE
+The service runs as the
+.Sy pkg6srv
+user and group with the privileges
+.Sy basic ,
+.Sy net_privaddr ,
+less
+.Sy file_link_any ,
+.Sy proc_info
+and
+.Sy proc_session .
+It can therefore bind ports below 1024.
+.Pp
+The default instance is delivered disabled.
+The package does not create the repository location, so removing the
+package never touches repository data.
+Before enabling the service, create it, preferably as its own ZFS dataset,
+create the repository as the service user and review the configuration file:
+.Bd -literal -offset indent
+# zfs create -o mountpoint=/var/pkg6depotd rpool/pkg6depotd
+# chown pkg6srv:pkg6srv /var/pkg6depotd
+# chmod 0750 /var/pkg6depotd
+# su pkg6srv -c '/usr/bin/pkg6repo create /var/pkg6depotd/repo'
+# su pkg6srv -c '/usr/bin/pkg6repo add-publisher \e
+      -s /var/pkg6depotd/repo openindiana.org'
+# svcadm enable pkg6depotd
+.Ed
+.Pp
+While it serves a repository managed through generations, the depot
+records package accesses for retirement in
+.Pa retention/access/
+below the repository, which it creates itself.
+Run
+.Xr pkg6repo 1
+and
+.Xr pkg6repo-retire 8
+commands against the repository as
+.Sy pkg6srv
+too, so that every file there stays writable by the depot.
+.Pp
+The service is configured with the following properties:
+.Bl -tag -width Ds
+.It Sy config/file
+Path of the configuration file.
+The default is
+.Pa /etc/pkg6depotd/pkg6depotd.kdl .
+The service will not start if the file is missing, unreadable by
+.Sy pkg6srv ,
+or invalid; there are no built-in defaults.
+The start method runs
+.Cm config-test
+on the file first and, if it fails, puts the instance into maintenance;
+fix the file, then run
+.Nm svcadm clear .
+.It Sy config/log_filter
+A
+.Ev RUST_LOG
+filter such as
+.Sy info
+or
+.Sy pkg6depotd=debug .
+Empty selects the built-in default.
+.It Sy pkg/inst_root
+Absolute path to the repository served by this instance.
+Set it together with
+.Sy pkg/port ;
+an empty value leaves the KDL repository path in effect.
+.It Sy pkg/port
+TCP port served by this instance, from 1 through 65535.
+Set it together with
+.Sy pkg/inst_root ;
+zero leaves the KDL bind address in effect.
+.It Sy pkg/address
+IP address for this instance.
+When
+.Sy pkg/port
+is set and this property is empty, the depot binds to
+.Li 127.0.0.1 .
+Use an unbracketed IPv6 address such as
+.Li ::1 .
+.It Sy pkg/ssl_cert_file , pkg/ssl_key_file
+Absolute paths to a PEM TLS certificate chain and private key.
+Set both or leave both empty; setting only one puts the instance in
+maintenance.
+When set, they replace the KDL
+.Sy tls
+certificate, key and
+.Sy acme
+settings, and work whether or not
+.Sy pkg/inst_root
+and
+.Sy pkg/port
+are set.
+Empty values leave the KDL TLS settings in effect.
+The files must be readable by
+.Sy pkg6srv ;
+the private key must not be readable by other users.
+.El
+.Pp
+These property groups are defined on the service, not on the
+.Sy default
+instance.
+Set them on the service, then refresh and restart the instance:
+.Bd -literal -offset indent
+# svccfg -s pkg6depotd setprop config/log_filter = astring: debug
+# svcadm refresh pkg6depotd:default
+# svcadm restart pkg6depotd:default
+.Ed
+.Pp
+Running
+.Nm svccfg Fl s Sy pkg6depotd:default Cm setprop
+fails with
+.Dq \&No such property group ,
+because the instance has no
+.Sy config
+property group of its own.
+.Pp
+Configuration file changes take effect on
+.Nm svcadm restart .
+.Nm svcadm refresh
+sends
+.Dv SIGHUP ,
+which only re-reads the TLS certificate and key.
+Diagnostic output goes to the SMF log shown by
+.Nm svcs Fl L Sy pkg6depotd .
+.Pp
+Several depots can run side by side as separate instances, as with
+.Sy svc:/application/pkg/server .
+Give each additional instance a
+.Sy pkg
+property group with its own repository path and listener.
+An instance may also override
+.Sy config/file
+with its own
+.Sy config
+property group when it needs KDL settings of its own, such as ACME or
+telemetry:
+.Bd -literal -offset indent
+# svccfg -s pkg6depotd add legacy
+# svccfg -s pkg6depotd:legacy addpg pkg application
+# svccfg -s pkg6depotd:legacy setprop pkg/inst_root = \e
+      astring: /var/pkg6depotd/legacy
+# svccfg -s pkg6depotd:legacy setprop pkg/port = count: 8081
+# svccfg -s pkg6depotd:legacy setprop pkg/address = \e
+      astring: 127.0.0.1
+# svcadm refresh pkg6depotd:legacy
+# svcadm enable pkg6depotd:legacy
+.Ed
+.Pp
+The repository must exist and be readable by
+.Sy pkg6srv
+before enabling the instance.
+The depot validates the resulting KDL and SMF values before it starts;
+an incomplete
+.Sy pkg/inst_root
+and
+.Sy pkg/port
+pair puts the instance into maintenance.
+Changes to these properties require
+.Nm svcadm restart .
+Package upgrades restart all running instances, and package removal
+disables all instances.
+.Sh TLS
+Without a
+.Ic tls
+block the depot serves plain HTTP on
+.Ic server.bind .
+Keep that address private to the reverse proxy.
+.Pp
+With a
+.Ic tls
+block the depot serves HTTPS only.
+TLS 1.2 and 1.3 are offered, with HTTP/1.1.
+The configuration is checked strictly: a
+.Ic tls
+block that names no certificate source, names both sources, or is
+otherwise inconsistent is an error, and so is the obsolete
+.Ic server.tls-cert
+setting.
+The depot never falls back to plain HTTP, and it opens the HTTPS port only
+after it holds a valid certificate.
+.Ss Certificate files
+.Bd -literal -offset indent
+tls {
+    certificate "/etc/pkg6depotd/tls/fullchain.pem"
+    key "/etc/pkg6depotd/tls/key.pem"
+}
+.Ed
+.Pp
+.Ic certificate
+holds the PEM certificate chain, leaf first;
+.Ic key
+holds the matching PEM private key.
+Both are read by
+.Sy pkg6srv ;
+the key file must not be readable by other users, so use owner
+.Sy root ,
+group
+.Sy pkg6srv
+and mode 0640.
+The service does not start if either is unreadable, if the key file is
+accessible to other users, if the key does not match the certificate, or
+if the certificate has expired or is not valid yet.
+.Cm config-test
+applies the same checks.
+After installing a renewed pair, run
+.Nm svcadm refresh Sy pkg6depotd .
+New connections then use the new certificate.
+If the new files fail any of these checks, an error is logged and the old
+certificate stays in service.
+.Ss ACME
+.Bd -literal -offset indent
+tls {
+    acme {
+        domains "pkg.example.org"
+        contact "mailto:hostmaster@example.org"
+        terms-agreed true
+        staging true
+        state-dir "/var/pkg6depotd/acme"
+        challenge "http-01"
+        http01-bind "0.0.0.0:80"
+    }
+}
+.Ed
+.Pp
+The following settings are supported in the
+.Ic acme
+block:
+.Bl -tag -width Ds
+.It Ic domains Ar name ...
+The DNS names of the certificate, at most 100.
+Wildcards such as
+.Sy *.example.org
+require dns-01.
+.It Ic contact Ar mailto:address ...
+Addresses the CA may use for expiry and policy notices.
+Optional.
+.It Ic terms-agreed Sy true
+Required.
+States that the operator accepts the CA's subscriber agreement.
+.It Ic staging Sy true
+Use the Let's Encrypt staging CA.
+Its certificates are not trusted by clients, but its rate limits allow
+testing.
+Remove it once issuance works.
+.It Ic directory-url Ar url
+The ACME directory of another CA.
+It must be an https URL.
+Every URL the CA returns must be https as well, and orders and
+authorizations must be for exactly the configured
+.Ic domains ;
+anything else is refused before a challenge is answered.
+The default is the Let's Encrypt production CA.
+.It Ic state-dir Ar dir
+Required.
+Holds the account key, an order in progress and the certificate.
+The depot creates the directory with mode 0700 if its parent is writable
+by
+.Sy pkg6srv ;
+it refuses to start if the directory is accessible to other users or
+owned by another user.
+.It Ic renew-before-days Ar days
+Renew this many days before expiry, 1 to 60, default 30.
+Certificates are renewed at the latest when a third of their lifetime
+is left.
+.It Ic challenge Sy http-01 | Sy dns-01
+Required.
+With
+.Sy http-01 ,
+the CA fetches a token from
+.Pa http://domain/.well-known/acme-challenge/ ;
+.Ic http01-bind
+names the plain HTTP listener that answers it, usually
+.Sy 0.0.0.0:80 .
+Port 80 of every domain must reach that listener.
+It answers only challenge tokens and redirects other requests for the
+configured domains to HTTPS on the port of
+.Ic server.bind .
+With
+.Sy dns-01 ,
+the depot creates
+.Sy _acme-challenge
+TXT records through the provider's API, as configured in a
+.Ic dns01
+block.
+.El
+.Pp
+The
+.Ic dns01
+block takes:
+.Bl -tag -width Ds
+.It Ic provider Sy cloudflare | Sy gandi
+The DNS provider.
+Cloudflare needs an API token with Zone.DNS edit rights on the zone.
+Challenge records carry the comment
+.Qq pkg6depotd ACME dns-01 challenge
+and are only deleted when name, value and comment all match.
+Gandi needs a personal access token with LiveDNS rights.
+The depot adds and removes only its own values in the
+.Sy _acme-challenge
+TXT record set and never replaces or deletes the whole set, so other TXT
+values at that name are kept.
+.It Ic api-token-file Ar file
+A file holding only the token.
+It must not be readable by other users; use owner
+.Sy root ,
+group
+.Sy pkg6srv
+and mode 0640.
+The token itself never appears in the configuration, in
+.Cm config-test
+output or in log messages.
+.It Ic zone Ar name
+The DNS zone that contains all
+.Ic domains .
+.It Ic zone-id Ar id
+Cloudflare only: the zone identifier, which skips a lookup by name.
+.It Ic propagation-seconds Ar seconds
+How long to wait after creating the records before the CA checks them,
+0 to 3600, default 60.
+.It Ic ttl Ar seconds
+TTL of the TXT records: 60 to 86400 for Cloudflare, default 120;
+300 to 2592000 for Gandi, default 300.
+.El
+.Pp
+At startup the depot uses the stored certificate if it is currently valid.
+Otherwise it makes up to three attempts to obtain one, 10 seconds apart,
+and exits with an error if they all fail.
+Failed attempts are counted in the state directory, so a restarted depot
+does not start over: it waits 5 minutes before its next attempt, then 10,
+20 and so on, up to six hours, without opening the HTTPS port meanwhile.
+The service therefore stays online but does not serve until issuance
+succeeds; check the log.
+Remove
+.Pa backoff.json
+from the state directory to retry at once; changing
+.Ic domains
+or the CA also starts afresh.
+While running, the depot renews the certificate in the background and
+installs the new one without a restart.
+A failed renewal is logged and retried on the same schedule, while the
+current certificate stays in service.
+Every request to the CA and to the DNS provider has a timeout, and polling
+is bounded.
+Challenge tokens and DNS records are removed after every attempt.
+DNS records are listed in
+.Pa challenges.json
+before they are created.
+If the depot is stopped or crashes while records exist, they are removed
+at its next start, or before its next issuance; until then they stay at
+the provider.
+http-01 tokens are only held in memory and end with the process.
+.Sh FILES
+.Bl -tag -width Ds
+.It Pa /etc/pkg6depotd/pkg6depotd.kdl
+Default configuration.
+It is readable by root and the
+.Sy pkg6srv
+group only.
+Package upgrades keep an edited copy and install the new default as
+.Pa pkg6depotd.kdl.new .
+.It Pa /var/pkg6depotd
+Default location of repositories.
+Created by the administrator, not by the package.
+.It Pa /var/pkg6depotd/acme
+Suggested ACME state directory.
+Not delivered by the package; create it owned by
+.Sy pkg6srv
+with mode 0700:
+.Bd -literal -offset indent
+# mkdir -m 0700 /var/pkg6depotd/acme
+# chown pkg6srv:pkg6srv /var/pkg6depotd/acme
+.Ed
+.Pp
+Keep it across upgrades and in backups.
+.Pa certificate.pem
+holds the private key and certificate chain and is replaced atomically;
+.Pa account-*.json
+holds one account key per ACME directory;
+.Pa order.json
+exists only while an order is in progress;
+.Pa challenges.json
+lists dns-01 records that may still exist at the provider;
+if it is damaged the depot refuses to issue and does not overwrite it:
+remove the listed records at the provider, then delete the file;
+.Pa backoff.json
+counts failed issuance attempts.
+All files are mode 0600.
+.It Pa /lib/svc/manifest/application/pkg/pkg6depotd.xml
+SMF service manifest.
+.It Pa /lib/svc/method/svc-pkg6depotd
+SMF start method.
+.El
+.Sh EXIT STATUS
+The following exit values are returned:
+.Bl -tag -width Ds
+.It Sy 0
+.Cm start :
+the depot stopped after a signal.
+.Cm config-test :
+the configuration is valid.
+.It Sy 1
+The configuration is missing or invalid, or the depot could not start or
+failed while serving.
+.It Sy 2
+Invalid command line, including an unknown command.
+.El
+.Sh INTERFACE STABILITY
+.Sy Uncommitted
+.Sh SEE ALSO
+.Xr pkg 1 ,
+.Xr pkg6repo 1 ,
+.Xr pkg6-policy 5 ,
+.Xr smf 7 ,
+.Xr pkg6repo-retire 8 ,
+.Xr svcadm 8 ,
+.Xr svccfg 8

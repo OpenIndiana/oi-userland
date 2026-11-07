@@ -71,6 +71,7 @@ UID   | User name
 90    | postgres
 91    | barman
 92    | bacula
+94    | pkg6srv
 95    | svctag
 96    | unknown
 97    | pkg5srv
@@ -146,6 +147,7 @@ GID   | Group name
 90    | postgres
 91    | barman
 92    | bacula
+94    | pkg6srv
 95    | slocate
 96    | unknown
 97    | pkg5srv

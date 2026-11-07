@@ -1,0 +1,222 @@
+.\"
+.\" This Source Code Form is subject to the terms of the Mozilla Public
+.\" License, v. 2.0. If a copy of the MPL was not distributed with this
+.\" file, You can obtain one at https://mozilla.org/MPL/2.0/.
+.\"
+.Dd October 22, 2026
+.Dt PKG6-POLICY 5
+.Os
+.Sh NAME
+.Nm pkg6-policy
+.Nd repository catalog, retirement, snapshot and import policy
+.Sh SYNOPSIS
+.Pa repo/policy.kdl
+.Sh DESCRIPTION
+The policy of a pkg6 repository controls retirement (see
+.Xr pkg6repo-retire 8 ) ,
+the versions that must stay visible, protected historical snapshots, and
+which packages
+.Nm pkg6repo Cm import-pkg5
+leaves out.
+It is a KDL document, read from
+.Pa policy.kdl
+in the repository unless a command is given another file with
+.Fl -policy .
+Without a policy file, retirement is disabled and nothing is kept, excluded
+or protected; catalog/1 includes all non-hidden versions.
+.Pp
+Every file is validated completely before a command changes anything.
+Unknown nodes, invalid regular expressions, exact FMRIs without publisher or
+timestamp, and zero or unknown durations are errors.
+.Ss FMRI rules
+Several nodes take an FMRI rule, which is either an argument or a
+.Sy regex
+property:
+.Bl -tag -width Ds
+.It Qq Ar fmri
+An exact FMRI with publisher and complete timestamped version, for example
+.Ql pkg://openindiana.org/library/foo@1.0,5.11-2020.0.1.0:20200101T000000Z .
+.It Sy regex= Ns Qq Ar pattern
+A regular expression matched against the full FMRI in that form.
+.El
+.Ss Nodes
+.Bl -tag -width Ds
+.It Sy catalog Brq Sy max-versions Ar N Brq
+Bound catalog/1 independently for each publisher and package stem.
+.Ar N
+must be a whole number at least 1.
+Omitting this node preserves the unbounded catalog.
+The window includes the newest
+.Ar N
+non-hidden versions in pkg5 version order, recursively includes only the newest
+version satisfying each versioned
+.Sy incorporate
+constraint reached from a kept version, and includes all keep-rule matches and
+protected snapshot closures.
+Only versions actually kept extend incorporation closure.
+Obsolete and renamed versions count toward the limit.
+Timestamp-less prefix pins can match hundreds of historical republishes of the
+same release and branch with different timestamps.
+A pkg5 client selects the newest permitted version for install or update, so
+ordinary incorporation closure retains only that match.
+Distinct pins, keep rules and snapshot protection can still exceed
+.Ar N .
+Protected snapshots retain their existing closure: all versions allowed by their
+incorporations and historical resolution of unpinned requirements, as described
+under
+.Sy snapshot
+below.
+Retirement-hidden versions remain excluded.
+.Pp
+Catalog/1 attributes and signatures describe only this window.
+Catalog/2 SQLite shards and the depot browser retain all non-hidden history.
+Versions outside the window remain fetchable by exact FMRI and payload hash;
+the browser versions tab labels them
+.Qq not in pkg5 catalog .
+A policy edit takes effect on the next catalog rebuild or publication; it does
+not delete manifests or payloads.
+.It Sy retirement Brq ...
+Policy-driven retirement.
+.Bl -tag -width Ds
+.It Sy enabled Cm true Ns | Ns Cm false
+Default
+.Cm false .
+Disabling pauses policy-driven retirement.
+It does not restore hidden versions and never deletes anything.
+.It Sy inactivity Qq Ar duration
+Time a superseded version must go without a qualifying access, counted from
+the latest of its supersession, its last access, its last restore and the
+time since which access history is proven complete (see
+.Xr pkg6repo-retire 8 ) ,
+before it is a candidate.
+Default
+.Qq 12 months .
+.It Sy purge-grace Qq Ar duration
+Minimum time a version stays hidden before a future purge may remove it.
+Default
+.Qq 12 months .
+Validated and reported; there is no purge in this release.
+.El
+.Pp
+A
+.Ar duration
+is a positive whole number and a unit:
+.Cm days ,
+.Cm weeks ,
+.Cm months
+(calendar months) or
+.Cm years ;
+the abbreviations
+.Cm d ,
+.Cm w ,
+.Cm mo
+and
+.Cm y
+are accepted.
+.It Sy keep Ar rule
+Versions that are never retired, never excluded from an import, and always
+included in the pkg5 catalog window unless already retirement-hidden.
+Keep rules override
+.Sy exclude
+rules.
+.It Sy keep-file Qq Ar path
+Read more keep rules from
+.Ar path ,
+relative to the policy file.
+.It Sy import Brq Sy exclude Ar rule ...
+New packages of an import that match an
+.Sy exclude
+rule, and no
+.Sy keep
+rule, are not imported.
+They are listed in the command output and the import receipt.
+If a protected snapshot, a package of the same import or a package already
+in the repository needs an excluded package, or whether one does cannot be
+checked (a version or dependency that is not a pkg5 version), the import
+fails and nothing is imported; the error lists the exact
+.Sy keep
+entries that would resolve it.
+.It Sy snapshot Qo Ar name Qc Oo Sy as-of= Ns Qo Ar time Qc Oc Brq ...
+A protected historical snapshot, typically the package set of an
+installation image.
+It contains:
+.Bl -tag -width Ds
+.It Sy fmri Qq Ar fmri
+An exact member version; repeatable, at least one.
+.It Sy source Oo Sy iso= Ns Qo Ar name Qc Oc Oo Sy sha256= Ns Qo Ar hash Qc Oc Oo Sy note= Ns Qo Ar text Qc Oc
+Provenance of the member list.
+.El
+.Pp
+The snapshot protects its closure: the members; every version its
+incorporations (and those of protected packages) allow; and for every
+.Sy require ,
+.Sy require-any ,
+.Sy group
+or
+.Sy conditional
+dependency no incorporation pins, the newest satisfying version published
+at or before
+.Sy as-of
+(default: the newest member's timestamp), recursively.
+Retiring or excluding a version of the closure is refused, and a hidden
+version of the closure is reported until it is restored, so the whole
+snapshot stays visible to
+.Xr pkg 1
+for installation and repair.
+Members the repository does not hold are reported as unavailable.
+.Sy as-of
+is written as
+.Ql 20201031T235959Z
+or in RFC 3339 form.
+.El
+.Ss Keep files
+Keep files hold only keep rules, in one of three forms chosen by the file
+name suffix:
+.Bl -tag -width Ds
+.It Pa .kdl
+.Sy keep
+nodes, as in the policy.
+.It Pa .json
+An array, or an object with a
+.Sy keep
+array, of exact FMRI strings or objects with one
+.Sy exact
+or
+.Sy regex
+member.
+.It other
+One rule per line: an exact FMRI,
+.Ql exact: Ns Ar fmri
+or
+.Ql regex: Ns Ar pattern .
+Empty lines and lines starting with
+.Ql #
+are ignored.
+.El
+.Pp
+Retirement plans record a digest of the policy and every keep file; a plan
+is not applied after any of them changed.
+.Sh EXAMPLES
+.Bd -literal -offset 2n
+retirement {
+    enabled true
+    inactivity "12 months"
+    purge-grace "12 months"
+}
+keep regex="^pkg://openindiana.org/consolidation/"
+keep-file "keep.txt"
+import {
+    exclude regex="^pkg://openindiana.org/developer/opensolaris/"
+}
+snapshot "hipster-2020.10" as-of="20201031T235959Z" {
+    source iso="OI-hipster-gui-20201031.iso" sha256="..."
+    fmri "pkg://openindiana.org/entire@2020.10,5.11-2020.0.1.0:20201031T010203Z"
+}
+.Ed
+.Sh INTERFACE STABILITY
+.Sy Uncommitted
+.Sh SEE ALSO
+.Xr pkg 1 ,
+.Xr pkg6repo 1 ,
+.Xr pkg6depotd 8 ,
+.Xr pkg6repo-retire 8
