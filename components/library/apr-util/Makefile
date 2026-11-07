@@ -26,15 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apr-util
-COMPONENT_VERSION=	1.6.5
+COMPONENT_VERSION=	1.6.6
 COMPONENT_PROJECT_URL=	https://apr.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:f43a1c8c79eef497a022ec6c99dddbdf57e42001da6ccbfae259631ed5aa2805
+COMPONENT_ARCHIVE_HASH=	sha256:acd5f38440eda830e40c4fe35c2a6b8119493cfdba9c9d73d985c317beb4e4f8
 COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=		Apache v2.0
+COMPONENT_LICENSE_FILE=	LICENSE
 
-CONFIGURE_DEFAULT_DIRS=no
+CONFIGURE_DEFAULT_DIRS= no
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -45,19 +46,19 @@ PATCH_LEVEL=0
 
 CONFIGURE_PREFIX=/usr/apr-util
 
-CONFIGURE_OPTIONS +=	--with-mysql=$(MYSQL_HOME)
-CONFIGURE_OPTIONS +=	MYSQL_CONFIG=$(MYSQL_CONFIG)
-CONFIGURE_OPTIONS +=	--with-pgsql=$(PG_HOME)
-CONFIGURE_OPTIONS +=	--with-expat=/usr
-CONFIGURE_OPTIONS +=	--with-sqlite3=/usr
-CONFIGURE_OPTIONS +=	--with-ldap=ldap_r-2.4
-CONFIGURE_OPTIONS +=	--with-ldap-include=/usr/include/openldap
-CONFIGURE_OPTIONS +=	--without-odbc
-CONFIGURE_OPTIONS +=	--enable-layout=OpenSolaris-$(MACH64)
-CONFIGURE_OPTIONS +=	--with-apr=/usr/apr/bin/apr-1-config
-CONFIGURE_OPTIONS +=	--bindir=$(CONFIGURE_PREFIX)/bin
-CONFIGURE_OPTIONS +=	--includedir=$(USRINCDIR)/$(COMPONENT_NAME)
-CONFIGURE_OPTIONS +=	PGSQL_CONFIG=$(PG_CONFIG.64)
+CONFIGURE_OPTIONS += --with-mysql=$(MYSQL_HOME)
+CONFIGURE_OPTIONS += MYSQL_CONFIG=$(MYSQL_CONFIG)
+CONFIGURE_OPTIONS += --with-pgsql=$(PG_HOME)
+CONFIGURE_OPTIONS += --with-expat=/usr
+CONFIGURE_OPTIONS += --with-sqlite3=/usr
+CONFIGURE_OPTIONS += --with-ldap=ldap_r-2.4
+CONFIGURE_OPTIONS += --with-ldap-include=/usr/include/openldap
+CONFIGURE_OPTIONS += --without-odbc
+CONFIGURE_OPTIONS += --enable-layout=OpenSolaris-$(MACH64)
+CONFIGURE_OPTIONS += --with-apr=/usr/apr/bin/apr-1-config
+CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_PREFIX)/bin
+CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/$(COMPONENT_NAME)
+CONFIGURE_OPTIONS += PGSQL_CONFIG=$(PG_CONFIG.64)
 
 COMPONENT_TEST_TARGETS= test
 
