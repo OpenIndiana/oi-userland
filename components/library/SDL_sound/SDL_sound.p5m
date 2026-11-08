@@ -14,6 +14,7 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -22,17 +23,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/demo/sdl_sound/bin/(.+)$ -> set action.hash usr/bin/%<\1> >
-
-file path=usr/demo/sdl_sound/bin/$(MACH64)/playsound mode=0555
-file path=usr/demo/sdl_sound/bin/$(MACH64)/playsound_simple mode=0555
-file path=usr/demo/sdl_sound/bin/playsound mode=0555
-file path=usr/demo/sdl_sound/bin/playsound_simple mode=0555
+file path=usr/bin/playsound
+file path=usr/bin/playsound_simple
 file path=usr/include/SDL/SDL_sound.h
 link path=usr/lib/$(MACH64)/libSDL_sound-1.0.so.1 \
     target=libSDL_sound-1.0.so.1.0.2
 file path=usr/lib/$(MACH64)/libSDL_sound-1.0.so.1.0.2
 link path=usr/lib/$(MACH64)/libSDL_sound.so target=libSDL_sound-1.0.so.1.0.2
-link path=usr/lib/libSDL_sound-1.0.so.1 target=libSDL_sound-1.0.so.1.0.2
-file path=usr/lib/libSDL_sound-1.0.so.1.0.2
-link path=usr/lib/libSDL_sound.so target=libSDL_sound-1.0.so.1.0.2
