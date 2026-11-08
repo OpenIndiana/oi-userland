@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 142 items
+collecting ... collected 151 items
 
 tests/test_backend.py::test_invalid_module PASSED
 tests/test_backend.py::test_invalid_request PASSED
@@ -82,6 +82,10 @@ tests/test_frontend.py::test_prepare_metadata_rejects_ancestor_directory[symlink
 tests/test_frontend.py::test_prepare_metadata_rejects_ancestor_directory[symlink-prepare_metadata_for_build_editable] PASSED
 tests/test_frontend.py::test_prepare_metadata_allows_sibling_directory[prepare_metadata_for_build_wheel] PASSED
 tests/test_frontend.py::test_prepare_metadata_allows_sibling_directory[prepare_metadata_for_build_editable] PASSED
+tests/test_frontend.py::test_prepare_metadata_replaces_symlink[dangling-wheel] PASSED
+tests/test_frontend.py::test_prepare_metadata_replaces_symlink[dangling-editable] PASSED
+tests/test_frontend.py::test_prepare_metadata_replaces_symlink[directory-wheel] PASSED
+tests/test_frontend.py::test_prepare_metadata_replaces_symlink[directory-editable] PASSED
 tests/test_frontend.py::test_no_wheel_prepare_metadata_for_build_wheel PASSED
 tests/test_frontend.py::test_metadata_from_built_wheel[wheel] PASSED
 tests/test_frontend.py::test_metadata_from_built_wheel[editable] PASSED
@@ -146,10 +150,15 @@ tests/test_util.py::test_ensure_empty_dir_on_empty PASSED
 tests/test_util.py::test_ensure_empty_dir_on_path_missing PASSED
 tests/test_util.py::test_ensure_empty_dir_on_path_file PASSED
 tests/test_util.py::test_ensure_empty_dir_on_path_folder PASSED
+tests/test_util.py::test_ensure_empty_dir_replaces_symlink[dangling-file] PASSED
+tests/test_util.py::test_ensure_empty_dir_replaces_symlink[dangling-directory] PASSED
+tests/test_util.py::test_ensure_empty_dir_replaces_symlink[file] PASSED
+tests/test_util.py::test_ensure_empty_dir_replaces_symlink[directory] PASSED
 tests/test_util.py::test_ensure_empty_dir_on_path_symlink_to_folder PASSED
+tests/test_util.py::test_nested_cleanup_error_propagates PASSED
 tests/test_version.py::test_version PASSED
 
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
-======== 142 passed ========
+======== 151 passed ========
   py$(PYV): OK
   congratulations :)
