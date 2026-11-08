@@ -18,10 +18,10 @@ BUILD_STYLE = cargo
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		fd-find
-COMPONENT_VERSION =     10.5.0
+COMPONENT_VERSION =     10.5.2
 COMPONENT_SUMMARY =		fd is a program to find entries in your filesystem. It is a simple, fast and user-friendly alternative to find. While it does not aim to support all of find's powerful functionality, it provides sensible (opinionated) defaults for a majority of use cases.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f35becce49c551724fd26d9824ec01d6578868cecbcc4e3d060658f9f8ad1e4d
+	sha256:f7e6acb754467c87dddb589ea068a0b07249da8b99231fec1c329419c9cfc72e
 COMPONENT_FMRI =		file/fd-find
 COMPONENT_CLASSIFICATION =	Applications/System Utilities
 COMPONENT_LICENSE =		MIT

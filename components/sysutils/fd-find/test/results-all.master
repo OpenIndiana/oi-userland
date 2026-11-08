@@ -1,6 +1,6 @@
      Running unittests src/main.rs (target/release/deps/fd-XXXXXXXXXXXXXXXX)
 
-running 157 tests
+running 165 tests
 test dir_entry::tests::dash_prefixed_paths_detected ... ok
 test dir_entry::tests::safe_paths_not_flagged ... ok
 test exec::tests::command_set_no_args ... ok
@@ -21,6 +21,10 @@ test exit_codes::tests::general_error_if_at_least_one_error ... ok
 test exit_codes::tests::success_if_no_error ... ok
 test exit_codes::tests::success_when_no_results ... ok
 test filesystem::tests::strip_current_dir_basic ... ok
+test filetypes::tests::empty_only_implies_files_and_directories ... ok
+test filetypes::tests::empty_with_explicit_file_keeps_directories_off ... ok
+test filetypes::tests::executable_implies_files ... ok
+test filetypes::tests::union_of_multiple_types ... ok
 test filter::owner::owner_parsing::both_negate ... ok
 test filter::owner::owner_parsing::colon_only ... ok
 test filter::owner::owner_parsing::empty ... ok
@@ -43,8 +47,11 @@ test filter::size::tests::ensure_bib_format_returns_none ... ok
 test filter::size::tests::ensure_invalid_unit_returns_none_1 ... ok
 test filter::size::tests::ensure_invalid_unit_returns_none_2 ... ok
 test filter::size::tests::ensure_invalid_unit_returns_none_3 ... ok
+test filter::size::tests::ensure_max_u64_does_not_overflow ... ok
 test filter::size::tests::ensure_missing_number_returns_none ... ok
 test filter::size::tests::ensure_missing_unit_returns_none ... ok
+test filter::size::tests::ensure_size_multiplication_boundary ... ok
+test filter::size::tests::ensure_size_multiplication_overflow_returns_error ... ok
 test filter::size::tests::gibi_minus ... ok
 test filter::size::tests::gibi_minus_suffix ... ok
 test filter::size::tests::gibi_minus_suffix_upper ... ok
@@ -137,8 +144,10 @@ test fmt::input::path_tests::remove_ext_empty ... ok
 test fmt::input::path_tests::remove_ext_simple ... ok
 test fmt::input::path_tests::remove_ext_utf8 ... ok
 test hyperlink::test::test_unicode_encoding ... ok
+test patterns::empty_matches_all ... ok
 test regex_helper::matches_strings_with_leading_dot_simple ... ok
 test regex_helper::pattern_has_uppercase_char_advanced ... ok
+test regex_helper::pattern_has_uppercase_char_inline_flags ... ok
 test regex_helper::pattern_has_uppercase_char_simple ... ok
 test sanitize::tests::escape_preserves_information ... ok
 test sanitize::tests::keeps_legitimate_unicode_features ... ok
@@ -149,7 +158,6 @@ test sanitize::tests::strips_bidi_overrides_and_zero_width ... ok
 test sanitize::tests::strips_c1_csi_and_osc_initiators ... ok
 test sanitize::tests::strips_cr_output_forgery ... ok
 test sanitize::tests::strips_del ... ok
-test sanitize::tests::strips_newline ... ok
 test sanitize::tests::strips_osc52_clipboard_payload ... ok
 test sanitize::tests::strips_osc8_hyperlink_injection ... ok
 test walk::tests::search_str_for_entry_strips_dot_prefix ... ok
@@ -159,11 +167,11 @@ test walk::tests::search_str_no_base_dir ... ok
 test walk::tests::search_str_no_base_dir_with_file_in_current_dir ... ok
 test walk::tests::search_str_no_base_dir_with_plain_relative_path ... ok
 
-test result: ok. 157 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
+test result: ok. 165 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
 
      Running tests/tests.rs (target/release/deps/tests-XXXXXXXXXXXXXXXX)
 
-running 108 tests
+running 120 tests
 test format ... ok
 test test_absolute_path ... ok
 test test_and_bad_pattern ... ok
@@ -188,6 +196,7 @@ test test_custom_path_separator ... ok
 test test_empty_pattern ... ok
 test test_error_if_hidden_not_set_and_pattern_starts_with_dot ... ok
 test test_exact_depth ... ok
+test test_exact_depth_broken_symlink ... ok
 test test_exact_literal_nonsubstring ... ok
 test test_excludes ... ok
 test test_exec ... ok
@@ -204,6 +213,7 @@ test test_file_system_boundaries ... ok
 test test_fixed_strings ... ok
 test test_follow ... ok
 test test_follow_broken_symlink ... ok
+test test_format_invalid_utf8 ... ok
 test test_full_path ... ok
 test test_full_path_glob_searches ... ok
 test test_git_dir ... ok
@@ -220,16 +230,20 @@ test test_ignore_contain_precedence_over_root_check ... ok
 test test_implicit_absolute_path ... ok
 test test_list_details ... ok
 test test_max_depth ... ok
+test test_max_depth_broken_symlink ... ok
 test test_max_results ... ok
 test test_min_depth ... ok
+test test_min_depth_broken_symlink ... ok
+test test_min_depth_broken_symlink_absolute_path ... ok
+test test_min_depth_broken_symlink_overlapping_roots ... ok
 test test_modified_absolute ... ok
 test test_modified_relative ... ok
 test test_multi_file ... ok
 test test_multi_file_with_missing ... ok
 test test_no_extension ... ok
-test test_no_global_ignore::no_global_ignore_file ... ok
-test test_no_global_ignore::no_ignore ... ok
-test test_no_global_ignore::unrestricted ... ok
+test test_no_global_ignore::test_case_1_unrestricted ... ok
+test test_no_global_ignore::test_case_2_no_ignore ... ok
+test test_no_global_ignore::test_case_3_no_global_ignore_file ... ok
 test test_no_ignore ... ok
 test test_no_ignore_aliases ... ok
 test test_no_ignore_parent ... ok
@@ -238,14 +252,14 @@ test test_no_ignore_vcs ... ok
 test test_no_ignore_vcs_child_dir ... ok
 test test_normalized_absolute_path ... ok
 test test_number_parsing_errors ... ok
-test test_opposing::absolute_path ... ok
-test test_opposing::follow ... ok
-test test_opposing::hidden ... ok
-test test_opposing::no_ignore ... ok
-test test_opposing::no_ignore_vcs ... ok
-test test_opposing::no_require_git ... ok
-test test_opposing::u ... ok
-test test_opposing::uu ... ok
+test test_opposing::test_case_1_hidden ... ok
+test test_opposing::test_case_2_no_ignore ... ok
+test test_opposing::test_case_3_no_ignore_vcs ... ok
+test test_opposing::test_case_4_no_require_git ... ok
+test test_opposing::test_case_5_follow ... ok
+test test_opposing::test_case_6_absolute_path ... ok
+test test_opposing::test_case_7_u ... ok
+test test_opposing::test_case_8_uu ... ok
 test test_owner_current_group ... ok
 test test_owner_current_user ... ok
 test test_owner_ignore_all ... ok
@@ -257,12 +271,15 @@ test test_quiet ... ok
 test test_regex_overrides_glob ... ok
 test test_regex_searches ... ok
 test test_respect_ignore_files ... ok
+test test_sanitize_exec_error_msg ... ok
+test test_sanitize_recursive_link_msg ... ok
 test test_simple ... ok
 test test_single_and_multithreaded_execution ... ok
 test test_single_dash_root_path ... ok
 test test_size ... ok
 test test_smart_case ... ok
 test test_smart_case_glob_searches ... ok
+test test_smart_case_inline_flags_and_patterns ... ok
 test test_strip_cwd_prefix ... ok
 test test_symlink_and_absolute_path ... ok
 test test_symlink_and_full_path ... ok
@@ -272,6 +289,9 @@ test test_symlink_as_root ... ok
 test test_type ... ok
 test test_type_empty ... ok
 test test_type_executable ... ok
+test test_unrestricted_partial_override::test_case_1_u_ignore ... ok
+test test_unrestricted_partial_override::test_case_2_u_no_hidden ... ok
+test test_unrestricted_partial_override::test_case_3_no_hidden_u ... ok
 
-test result: ok. 108 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
+test result: ok. 120 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
 
