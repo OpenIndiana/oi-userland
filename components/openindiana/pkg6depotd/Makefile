@@ -14,38 +14,31 @@
 #
 
 BUILD_BITS=		64
-BUILD_STYLE=		cargo
+BUILD_STYLE=		justmake
+# Vendor the Cargo dependencies at the patch step (make-rules/cargo-vendor.mk).
+CARGO_VENDOR=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkg6depotd
-HUMAN_VERSION=		1.0.1
-COMPONENT_VERSION=	1.0.1
-COMPONENT_REVISION=	0
+HUMAN_VERSION=		1.0.2
+COMPONENT_VERSION=	$(HUMAN_VERSION)
 COMPONENT_SUMMARY=	pkg6 IPS repository depot server and operator tools
 COMPONENT_DESCRIPTION=	pkg6depotd serves IPS package repositories to pkg(1) clients over the pkg5 depot protocol, with a web interface for browsing and searching packages. Includes the SMF service svc:/application/pkg/pkg6depotd and the local repository tools pkg6repo and pkg6recv.
 COMPONENT_PROJECT_URL=	https://code.aopc.cloud/OpenIndiana/ips
 COMPONENT_FMRI=		package/pkg6/depotd
 COMPONENT_CLASSIFICATION=	System/Packaging
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:76a45e837823bd47135eb76e62b8f984fa7c7adde74db558ff06d3e8800d19c3
-COMPONENT_ARCHIVE_URL=	https://static.crates.io/crates/pkg6depotd/$(COMPONENT_SRC).crate
-
-COMPONENT_SRC_1=	pkg6repo-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.gz
-COMPONENT_ARCHIVE_HASH_1= sha256:b75f7841049a11856da2f1040349ee8b28a0e4776c1a26e7df389c1e3592ac69
-COMPONENT_ARCHIVE_URL_1= https://static.crates.io/crates/pkg6repo/$(COMPONENT_SRC_1).crate
-
-COMPONENT_SRC_2=	pkg6recv-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE_2=	$(COMPONENT_SRC_2).tar.gz
-COMPONENT_ARCHIVE_HASH_2= sha256:3b5a161f0090e4280ad10b1e4640340d2840ef525a6211dfafd876a9603ce35f
-COMPONENT_ARCHIVE_URL_2= https://static.crates.io/crates/pkg6recv/$(COMPONENT_SRC_2).crate
-
-# The manifest lists all three crate archives in info.source-url.
-PKG_VARS +=		COMPONENT_ARCHIVE_URL_1 COMPONENT_ARCHIVE_URL_2
-
 COMPONENT_LICENSE=	MPL-2.0
 COMPONENT_LICENSE_FILE=	LICENSE
+
+# The upstream Cargo workspace; its GNU Makefile builds and installs the
+# release binaries, SMF service, configuration and manual pages.
+GIT_REPO=		https://code.aopc.cloud/OpenIndiana/ips.git
+GIT_BRANCH=		v$(HUMAN_VERSION)
+GIT_COMMIT_ID=		9daf7335ca8762bbfa54a9d3c48d9e586b3137c1
+GIT_HASH=		sha256:1a8f64ed65867f2d8e0bfc06ea874550d688ece0f91e559e9c137c0c51b0a1ae
+COMPONENT_SRC=		ips-$(HUMAN_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL=
 
 # The upstream test suite needs cargo-nextest (per-test process isolation)
 # and loopback listeners; it runs in the upstream CI and release gates.
@@ -53,47 +46,21 @@ TEST_TARGET=		$(SKIP_TEST)
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Assemble the three published crates into one build workspace. Packaging files
-# in files/ are unchanged from upstream v1.0.1 (492b4390fd73).
-$(SOURCE_DIR)/.unpacked: $(SOURCE_DIR_1)/.unpacked $(SOURCE_DIR_2)/.unpacked
-COMPONENT_POST_UNPACK_ACTION = \
-	$(CP) -rp $(SOURCE_DIR_1) $(SOURCE_DIR)/pkg6repo && \
-	$(CP) -rp $(SOURCE_DIR_2) $(SOURCE_DIR)/pkg6recv && \
-	printf '\n[workspace]\nmembers = ["pkg6repo", "pkg6recv"]\n' >> $(SOURCE_DIR)/Cargo.toml && \
-	$(CP) $(COMPONENT_DIR)/files/Cargo.lock $(SOURCE_DIR)/Cargo.lock
+# The git source rule writes the archive without creating the archives
+# directory; a fresh workspace (CI) has none.
+$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE): | $(USERLAND_ARCHIVES)
 
-# A Cargo workspace: build only the shipped binaries.
-COMPONENT_BUILD_ARGS +=	--locked
-COMPONENT_BUILD_ARGS +=	-p pkg6depotd -p pkg6repo -p pkg6recv
-# Pin the target directory: a cargo config.toml in a parent directory of the
-# workspace (as on the CI builders) may otherwise move it.
-COMPONENT_BUILD_ARGS +=	--target-dir $(BUILD_DIR_64)/target
+CLONEY_MODE=		copy
 
-# cargo install cannot install from a virtual workspace manifest, so stage
-# the built binaries and the upstream service, configuration and manual
-# page files directly.
-COMPONENT_INSTALL_CMD =	$(TRUE)
-COMPONENT_INSTALL_ARGS =
-CARGO_RELEASE_DIR =	$(BUILD_DIR_64)/target/release
-PKG6_PACKAGING =	$(COMPONENT_DIR)/files
+PKG6_MAKE_ARGS =	CARGO=$(CARGO) CARGO_FLAGS="--locked --offline"
+PKG6_MAKE_ARGS +=	prefix=$(USRDIR) INSTALL=$(INSTALL)
+COMPONENT_BUILD_ARGS +=	$(PKG6_MAKE_ARGS)
+COMPONENT_INSTALL_ARGS += $(PKG6_MAKE_ARGS)
 
-COMPONENT_POST_INSTALL_ACTION += \
-	$(MKDIR) $(PROTOUSRBINDIR) $(PROTOUSRLIBDIR) \
-	    $(PROTOETCDIR)/pkg6depotd \
-	    $(PROTO_DIR)/lib/svc/manifest/application/pkg \
-	    $(PROTO_DIR)/lib/svc/method \
-	    $(PROTOUSRSHAREMANDIR)/man1 $(PROTOUSRSHAREMANDIR)/man5 \
-	    $(PROTOUSRSHAREMANDIR)/man8 ; \
-	$(INSTALL) -m 0555 $(CARGO_RELEASE_DIR)/pkg6depotd $(PROTOUSRLIBDIR)/pkg6depotd ; \
-	$(INSTALL) -m 0555 $(CARGO_RELEASE_DIR)/pkg6repo $(PROTOUSRBINDIR)/pkg6repo ; \
-	$(INSTALL) -m 0555 $(CARGO_RELEASE_DIR)/pkg6recv $(PROTOUSRBINDIR)/pkg6recv ; \
-	$(INSTALL) -m 0644 $(PKG6_PACKAGING)/pkg6depotd.kdl $(PROTOETCDIR)/pkg6depotd/pkg6depotd.kdl ; \
-	$(INSTALL) -m 0444 $(PKG6_PACKAGING)/pkg6depotd.xml $(PROTO_DIR)/lib/svc/manifest/application/pkg/pkg6depotd.xml ; \
-	$(INSTALL) -m 0555 $(PKG6_PACKAGING)/svc-pkg6depotd $(PROTO_DIR)/lib/svc/method/svc-pkg6depotd ; \
-	$(INSTALL) -m 0444 $(SOURCE_DIR)/pkg6repo/pkg6repo.1 $(PROTOUSRSHAREMANDIR)/man1/pkg6repo.1 ; \
-	$(INSTALL) -m 0444 $(PKG6_PACKAGING)/pkg6-policy.5 $(PROTOUSRSHAREMANDIR)/man5/pkg6-policy.5 ; \
-	$(INSTALL) -m 0444 $(PKG6_PACKAGING)/pkg6depotd.8 $(PROTOUSRSHAREMANDIR)/man8/pkg6depotd.8 ; \
-	$(INSTALL) -m 0444 $(PKG6_PACKAGING)/pkg6repo-retire.8 $(PROTOUSRSHAREMANDIR)/man8/pkg6repo-retire.8 ;
+PKG6_CARGO_ENV =	CARGO_TARGET_$(shell echo $(RUST_TRIPLET) | $(TR) '[a-z]-' '[A-Z]_')_LINKER=$(CARGO_TARGET_LINKER)
+PKG6_CARGO_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
+COMPONENT_BUILD_ENV +=	$(PKG6_CARGO_ENV)
+COMPONENT_INSTALL_ENV += $(PKG6_CARGO_ENV)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
