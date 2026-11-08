@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2025 <contributor>
+# Copyright 2025 Marcel Telka
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,11 +23,15 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# 32 bit libraries for flac 1.5 used to live in this package
+#
+# TODO: The dependency should be removed once these components are rebuilt:
+#	library/libsndfile
+#	meta-packages/sunray-essential
+#
+depend type=require fmri=codec/flac-15/32
+
 link path=usr/lib/$(MACH64)/libFLAC++.so.11 target=libFLAC++.so.11.0.0
 file path=usr/lib/$(MACH64)/libFLAC++.so.11.0.0
 link path=usr/lib/$(MACH64)/libFLAC.so.14 target=libFLAC.so.14.0.0
 file path=usr/lib/$(MACH64)/libFLAC.so.14.0.0
-link path=usr/lib/libFLAC++.so.11 target=libFLAC++.so.11.0.0
-file path=usr/lib/libFLAC++.so.11.0.0
-link path=usr/lib/libFLAC.so.14 target=libFLAC.so.14.0.0
-file path=usr/lib/libFLAC.so.14.0.0
