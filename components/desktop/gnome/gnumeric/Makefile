@@ -17,12 +17,12 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     gnumeric
 COMPONENT_MJR_VERSION=  1.12
-COMPONENT_VERSION=  $(COMPONENT_MJR_VERSION).59
+COMPONENT_VERSION=  $(COMPONENT_MJR_VERSION).62
 COMPONENT_SUMMARY=  Gnumeric is an open-source spreadsheet program
 COMPONENT_PROJECT_URL=  https://www.gnumeric.org
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:cb3750b176d641f9423df721b831658c829557552f8887fedf8a53d907eceb51
+COMPONENT_ARCHIVE_HASH= sha256:89331121321b9bad72d37af5a6d13a0a636f0fbb0880f0ea1f2cf8b7ab9ae631
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=     desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=   Applications/Office
@@ -43,8 +43,6 @@ COMPONENT_TEST_ARGS += -k
 REQUIRED_PACKAGES += text/itstool
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -52,8 +50,11 @@ REQUIRED_PACKAGES += library/desktop/goffice
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libgsf
 REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/fribidi
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES.perl += runtime/perl
+REQUIRED_PACKAGES.python += runtime/python
