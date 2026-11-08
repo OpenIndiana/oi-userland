@@ -18,8 +18,8 @@ BUILD_STYLE=		cargo
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkg6depotd
-HUMAN_VERSION=		1.0.0
-COMPONENT_VERSION=	1.0.0
+HUMAN_VERSION=		1.0.1
+COMPONENT_VERSION=	1.0.1
 COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=	pkg6 IPS repository depot server and operator tools
 COMPONENT_DESCRIPTION=	pkg6depotd serves IPS package repositories to pkg(1) clients over the pkg5 depot protocol, with a web interface for browsing and searching packages. Includes the SMF service svc:/application/pkg/pkg6depotd and the local repository tools pkg6repo and pkg6recv.
@@ -28,17 +28,17 @@ COMPONENT_FMRI=		package/pkg6/depotd
 COMPONENT_CLASSIFICATION=	System/Packaging
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ee083a0f00a877f25e588b090e6178c6e71a43e1fe513fd3f4c99de7c093a0ad
+COMPONENT_ARCHIVE_HASH=	sha256:76a45e837823bd47135eb76e62b8f984fa7c7adde74db558ff06d3e8800d19c3
 COMPONENT_ARCHIVE_URL=	https://static.crates.io/crates/pkg6depotd/$(COMPONENT_SRC).crate
 
 COMPONENT_SRC_1=	pkg6repo-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.gz
-COMPONENT_ARCHIVE_HASH_1= sha256:044e7099eaf8fe23f76a4295bcab7bdaf3d1a33b33c379e29509f79ea4c8d674
+COMPONENT_ARCHIVE_HASH_1= sha256:b75f7841049a11856da2f1040349ee8b28a0e4776c1a26e7df389c1e3592ac69
 COMPONENT_ARCHIVE_URL_1= https://static.crates.io/crates/pkg6repo/$(COMPONENT_SRC_1).crate
 
 COMPONENT_SRC_2=	pkg6recv-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE_2=	$(COMPONENT_SRC_2).tar.gz
-COMPONENT_ARCHIVE_HASH_2= sha256:7422b95ff50ec689d8d6a9136aee105340f585bb0b1281c06ea3a19b71ad0aae
+COMPONENT_ARCHIVE_HASH_2= sha256:3b5a161f0090e4280ad10b1e4640340d2840ef525a6211dfafd876a9603ce35f
 COMPONENT_ARCHIVE_URL_2= https://static.crates.io/crates/pkg6recv/$(COMPONENT_SRC_2).crate
 
 # The manifest lists all three crate archives in info.source-url.
@@ -54,7 +54,7 @@ TEST_TARGET=		$(SKIP_TEST)
 include $(WS_MAKE_RULES)/common.mk
 
 # Assemble the three published crates into one build workspace. Packaging files
-# in files/ are unchanged from upstream v1.0.0 (dc8e5e0f91ea).
+# in files/ are unchanged from upstream v1.0.1 (492b4390fd73).
 $(SOURCE_DIR)/.unpacked: $(SOURCE_DIR_1)/.unpacked $(SOURCE_DIR_2)/.unpacked
 COMPONENT_POST_UNPACK_ACTION = \
 	$(CP) -rp $(SOURCE_DIR_1) $(SOURCE_DIR)/pkg6repo && \
