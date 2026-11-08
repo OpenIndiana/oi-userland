@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         automake
 COMPONENT_VERSION=	1.20
+COMPONENT_REVISION=	1
 COMPONENT_VERSION_MAJOR=	$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(HUMAN_VERSION))))
 COMPONENT_SUMMARY=	A Makefile generator
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/automake/ 
@@ -65,7 +66,7 @@ COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
 
 # Convert unversioned info files to versioned and create unversioned symlinks
 COMPONENT_POST_INSTALL_ACTION += \
-	for f in automake-history.info automake.info automake.info-1 automake.info-2 ; do \
+	for f in automake-history.info automake.info automake.info-1 automake.info-2 automake.info-3 ; do \
 		$(MV) $(PROTOUSRSHAREDIR)/info/$$f \
 			$(PROTOUSRSHAREDIR)/info/$${f%.*}-$(COMPONENT_VERSION_MAJOR).$${f\#\#*.} ; \
 		$(SYMLINK) $${f%.*}-$(COMPONENT_VERSION_MAJOR).$${f\#\#*.} $(PROTOUSRSHAREDIR)/info/$$f ; \
