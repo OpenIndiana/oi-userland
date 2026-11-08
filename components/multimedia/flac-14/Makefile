@@ -12,12 +12,11 @@
 # Copyright 2014 (c) Aurelien Larcher. All rights reserved.
 #
 
-BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		flac
 COMPONENT_VERSION=	1.4.3
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	An Open Source Lossless Audio Codec
 COMPONENT_PROJECT_URL=	https://xiph.org/flac
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,22 +32,40 @@ COMPONENT_SUMMARY.library=	$(COMPONENT_SUMMARY) (runtime libraries)
 
 include $(WS_MAKE_RULES)/common.mk
 
+# helper target
+update-license-file: patch
+	( \
+		printf -- '--- COPYING.FDL -----------------------------------------------------------\n\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.FDL ; \
+		printf '\n\n--- COPYING.GPL -----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.GPL ; \
+		printf '\n\n--- COPYING.LGPL ----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LGPL ; \
+		printf -- '--- COPYING.Xiph ----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.Xiph \
+	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
+
 CXXFLAGS += -fstack-protector-all
 
-#CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-ogg
+CONFIGURE_OPTIONS += --disable-doxygen-docs
 
 ifeq   ($(MACH), i386)
 CONFIGURE_OPTIONS += --enable-sse
-ifeq   ($(BITS), 32)
-CONFIGURE_OPTIONS += --enable-asm-optimizations
-else
 CONFIGURE_OPTIONS += --disable-asm-optimizations
-endif
 else
 CONFIGURE_OPTIONS += --disable-sse
 CONFIGURE_OPTIONS += --disable-asm-optimizations
 endif
+
+# We do not need to distribute binaries.  We cannot use '--disable-programs'
+# configure option because flac and metaflac are needed to run tests.
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR) ;
+# We do not need developer files
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRINCDIR) ;
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRSHAREDIR) ;
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOPKGCONFIGDIR.$(BITS)) ;
+COMPONENT_POST_INSTALL_ACTION += $(FIND) $(PROTO_DIR) -name '*.so' -exec $(RM) {} \; ;
 
 # Note that the test needed to be run with standard user privileges.
 COMPONENT_TEST_TRANSFORMS = \
