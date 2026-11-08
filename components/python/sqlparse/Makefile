@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sqlparse
-HUMAN_VERSION =			0.6.0
+HUMAN_VERSION =			0.6.1
 COMPONENT_SUMMARY =		A non-validating SQL parser.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:113c35c75365ab9cc9c7231d68c6428fb11c085fc8e9eb1ad659b7ddbf6cd2b9
+	sha256:ca722573f848ff2d30e40ea30f53a104b7dea7635ea9285891263eb2c58fb6e7
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
