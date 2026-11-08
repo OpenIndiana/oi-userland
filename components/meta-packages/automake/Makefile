@@ -17,11 +17,7 @@ BUILD_STYLE = pkg
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		automake
-HUMAN_VERSION =			1.16
-# When we upgrade to new major version (e.g. 1.17) the COMPONENT_VERSION should
-# be removed.
-COMPONENT_VERSION =		1.16.5
-COMPONENT_REVISION=		2
+COMPONENT_VERSION =		1.20
 COMPONENT_SUMMARY =		A Makefile generator
 COMPONENT_PROJECT_URL =		https://www.gnu.org/software/automake/
 COMPONENT_FMRI =		developer/build/automake
