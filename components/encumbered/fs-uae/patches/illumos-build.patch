@@ -1,0 +1,163 @@
+Build on illumos and Solaris: recognise solaris* hosts and find libsocket and
+libnsl in configure, uae_s8 as int8_t, <sys/filio.h> for FIONREAD,
+<sys/regset.h> for the JIT, and msgfmt options that the system msgfmt
+understands.
+
+https://github.com/FrodeSolheim/fs-uae/pull/397
+
+--- fs-uae-3.2.35/Makefile.am.orig
++++ fs-uae-3.2.35/Makefile.am
+@@ -1358,71 +1358,71 @@
+ 
+ share/locale/cs/LC_MESSAGES/fs-uae.mo: po/cs.po
+ 	mkdir -p share/locale/cs/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/cs.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/cs.po
+ 
+ share/locale/da/LC_MESSAGES/fs-uae.mo: po/da.po
+ 	mkdir -p share/locale/da/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/da.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/da.po
+ 
+ share/locale/de/LC_MESSAGES/fs-uae.mo: po/de.po
+ 	mkdir -p share/locale/de/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/de.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/de.po
+ 
+ share/locale/eo/LC_MESSAGES/fs-uae.mo: po/eo.po
+ 	mkdir -p share/locale/eo/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/eo.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/eo.po
+ 
+ share/locale/es/LC_MESSAGES/fs-uae.mo: po/es.po
+ 	mkdir -p share/locale/es/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/es.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/es.po
+ 
+ share/locale/fi/LC_MESSAGES/fs-uae.mo: po/fi.po
+ 	mkdir -p share/locale/fi/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/fi.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/fi.po
+ 
+ share/locale/fr/LC_MESSAGES/fs-uae.mo: po/fr.po
+ 	mkdir -p share/locale/fr/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/fr.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/fr.po
+ 
+ share/locale/hu/LC_MESSAGES/fs-uae.mo: po/hu.po
+ 	mkdir -p share/locale/hu/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/hu.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/hu.po
+ 
+ share/locale/it/LC_MESSAGES/fs-uae.mo: po/it.po
+ 	mkdir -p share/locale/it/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/it.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/it.po
+ 
+ share/locale/nb/LC_MESSAGES/fs-uae.mo: po/nb.po
+ 	mkdir -p share/locale/nb/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/nb.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/nb.po
+ 
+ share/locale/nl/LC_MESSAGES/fs-uae.mo: po/nl.po
+ 	mkdir -p share/locale/nl/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/nl.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/nl.po
+ 
+ share/locale/pl/LC_MESSAGES/fs-uae.mo: po/pl.po
+ 	mkdir -p share/locale/pl/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/pl.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/pl.po
+ 
+ share/locale/pt/LC_MESSAGES/fs-uae.mo: po/pt.po
+ 	mkdir -p share/locale/pt/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/pt.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/pt.po
+ 
+ share/locale/pt_BR/LC_MESSAGES/fs-uae.mo: po/pt_BR.po
+ 	mkdir -p share/locale/pt_BR/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/pt_BR.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/pt_BR.po
+ 
+ share/locale/sr/LC_MESSAGES/fs-uae.mo: po/sr.po
+ 	mkdir -p share/locale/sr/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/sr.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/sr.po
+ 
+ share/locale/sv/LC_MESSAGES/fs-uae.mo: po/sv.po
+ 	mkdir -p share/locale/sv/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/sv.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/sv.po
+ 
+ share/locale/tr/LC_MESSAGES/fs-uae.mo: po/tr.po
+ 	mkdir -p share/locale/tr/LC_MESSAGES
+-	$(MSGFMT) --verbose $(s)/po/tr.po -o $@
++	$(MSGFMT) -v -o $@ $(s)/po/tr.po
+ 
+ mo: $(catalogs)
+ 
+--- fs-uae-3.2.35/configure.ac.orig
++++ fs-uae-3.2.35/configure.ac
+@@ -330,6 +330,10 @@
+ 
+ AC_CHECK_LIB([Ws2_32], [main])
+ 
++# illumos and Solaris have the socket functions in libsocket and libnsl
++AC_SEARCH_LIBS([socket], [socket])
++AC_SEARCH_LIBS([gethostbyname], [nsl])
++
+ 
+ # Operating system
+ 
+@@ -398,6 +402,13 @@
+     OS_CPPFLAGS="-DDRAGONFLYBSD"
+     LOADABLE_MODULE_EXT=".so"
+ ],
++[solaris*], [
++    OS_NAME="solaris"
++    OS_NAME_2="Solaris"
++    OS_NAME_3="Solaris"
++    OS_CPPFLAGS="-DSOLARIS"
++    LOADABLE_MODULE_EXT=".so"
++],
+ [
+     OS_NAME="unknown"
+     OS_NAME_2="Unknown OS"
+--- fs-uae-3.2.35/src/include/sysdeps.h.orig
++++ fs-uae-3.2.35/src/include/sysdeps.h
+@@ -172,7 +172,7 @@
+ 
+ /* If char has more then 8 bits, good night. */
+ typedef unsigned char uae_u8;
+-typedef signed char uae_s8;
++typedef int8_t uae_s8;
+ typedef char uae_char;
+ 
+ typedef struct { uae_u8 RGB[3]; } RGB;
+--- fs-uae-3.2.35/src/jit/exception_handler.cpp.orig
++++ fs-uae-3.2.35/src/jit/exception_handler.cpp
+@@ -10,6 +10,10 @@
+ #define __USE_GNU
+ #endif
+ #include <sys/ucontext.h>
++#ifdef __sun
++/* illumos: <sys/ucontext.h> does not bring in the REG_* gregs indices */
++#include <sys/regset.h>
++#endif
+ #endif
+ #include <signal.h>
+ 
+--- fs-uae-3.2.35/src/od-fs/bsdsocket_posix.cpp.orig
++++ fs-uae-3.2.35/src/od-fs/bsdsocket_posix.cpp
+@@ -35,6 +35,11 @@
+ #include "native2amiga.h"
+ #include "bsdsocket.h"
+ 
++#ifdef __sun
++/* FIONREAD */
++#include <sys/filio.h>
++#endif
++
+ #ifndef BSDSOCKET
+ 
+ volatile int bsd_int_requested;

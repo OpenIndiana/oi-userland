@@ -14,18 +14,19 @@
 #
 
 BUILD_BITS=64 # for binaries or 32_and_64 for libraries
+USE_PARALLEL_BUILD=	yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fs-uae
-COMPONENT_VERSION=	3.1.66
+COMPONENT_VERSION=	3.2.35
 COMPONENT_SUMMARY=	Accurate Amiga Emulation
 COMPONENT_PROJECT_URL=	https://fs-uae.net/
 COMPONENT_FMRI=		emulators/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_URL=	https://fs-uae.net/files/FS-UAE/Stable/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:606e1868b500413d69bd33bb469f8fd08d6c08988801f17b7dd022f3fbe23832
+COMPONENT_ARCHIVE_URL=	https://github.com/FrodeSolheim/fs-uae/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:f3d3cb8d3df34b0b0125c45a5a3e187ff71050be5dc8455cc4505c0380269117
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	fs-uae.txt
 
@@ -33,13 +34,12 @@ TEST_TARGET=$(NO_TESTS) # if no testsuite enabled
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = mkdir $(SOURCE_DIR)/dist/solaris; cp -r files/* $(SOURCE_DIR)/dist/solaris; cd $(SOURCE_DIR); autoreconf -fi
+# The patches change configure.ac and Makefile.am
+COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" $(AUTORECONF) -fi )
 
-LDFLAGS += -lsocket -lnsl
-
-CONFIGURE_ENV += "LDFLAGS=$(LDFLAGS)"
-
-CONFIGURE_OPTIONS += --disable-jit
+# The 68k JIT compiler (x86-64); patches/illumos-build.patch makes it build
+# on illumos.
+CONFIGURE_OPTIONS += --enable-jit
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
