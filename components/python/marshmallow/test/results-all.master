@@ -7,7 +7,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1188 items
+collecting ... collected 1192 items
 
 tests/test_context.py::TestContext::test_context_load_dump PASSED
 tests/test_context.py::TestContext::test_context_method PASSED
@@ -234,6 +234,9 @@ tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timedelta_
 tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timedelta_field_deserialization[badvalue] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timedelta_field_deserialization[in_value2] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timedelta_field_deserialization[9999999999] PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timedelta_field_deserialization[nan] PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timedelta_field_deserialization[inf] PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timedelta_field_deserialization[-inf] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_date_field_deserialization[None] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_date_field_deserialization[%Y-%m-%d] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_invalid_date_field_deserialization[] PASSED
@@ -570,6 +573,8 @@ tests/test_fields.py::TestNestedField::test_nested_unknown_override[raise-includ
 tests/test_fields.py::TestNestedField::test_nested_unknown_override[raise-raise] PASSED
 tests/test_fields.py::TestNestedField::test_nested_schema_only_and_exclude[only-fields_list0] PASSED
 tests/test_fields.py::TestNestedField::test_nested_schema_only_and_exclude[exclude-fields_list1] PASSED
+tests/test_fields.py::TestPluckFiekd::test_pluck_empty_data_key[False] PASSED
+tests/test_fields.py::TestPluckFiekd::test_pluck_empty_data_key[True] PASSED
 tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[only] PASSED
 tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[exclude] PASSED
 tests/test_fields.py::TestListNested::test_list_nested_only_exclude_dump_only_load_only_propagated_to_nested[dump_only] PASSED
@@ -964,7 +969,6 @@ tests/test_utils.py::test_get_value_from_object[obj3] PASSED
 tests/test_utils.py::test_get_value_from_namedtuple_with_default PASSED
 tests/test_utils.py::test_get_value_for_nested_object PASSED
 tests/test_utils.py::test_get_value_from_dict PASSED
-tests/test_utils.py::test_get_value PASSED
 tests/test_utils.py::test_set_value PASSED
 tests/test_utils.py::test_is_collection PASSED
 tests/test_utils.py::test_from_timestamp[1676386740-expected0] PASSED
@@ -1198,7 +1202,7 @@ tests/test_validate.py::test_containsnoneof_custom_message PASSED
 tests/test_validate.py::test_containsnoneof_mixing_types PASSED
 tests/test_validate.py::test_and PASSED
 
-======== 1188 passed ========
+======== 1192 passed ========
   py$(PYV): OK
   docs-serve: NOT AVAILABLE (0.01 seconds)
   readme-serve: NOT AVAILABLE (0.01 seconds)
