@@ -21,12 +21,12 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ccache
-COMPONENT_VERSION=	4.14.2
+COMPONENT_VERSION=	4.14.3
 COMPONENT_SUMMARY=      ccache - cacher of GCC-compiled files to avoid doing the same job twice
 COMPONENT_PROJECT_URL=  https://ccache.dev
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:0feb2707d9cb48885abb950e5d629e85f57fa79a2439cbbdfa681d6c3dc5f0dc
+COMPONENT_ARCHIVE_HASH=	sha256:e1999132cf7dbce48de7d946b767f3e26ea09adcb5daa4a7103a8fa09ee0637d
 COMPONENT_ARCHIVE_URL=  https://github.com/ccache/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/ccache
 COMPONENT_CLASSIFICATION= Development/C
