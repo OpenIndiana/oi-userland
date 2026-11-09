@@ -19,20 +19,32 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=	    libXft
 COMPONENT_VERSION=  2.3.9
+COMPONENT_REVISION= 1
 COMPONENT_FMRI=	    x11/library/libxft
 COMPONENT_SUMMARY=  libXft - X FreeType library
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:60a25b78945ed6932635b3bb1899a517d31df7456e69867ffba27f89ff3976f5
 COMPONENT_LICENSE_FILE=	COPYING
 
+COMPONENT_FMRI.libXft-32 =	$(COMPONENT_FMRI)/32
+COMPONENT_SUMMARY.libXft-32 =	$(COMPONENT_SUMMARY) (32-bit runtime)
+
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS +=  --localstatedir=/var
 CONFIGURE_OPTIONS +=  --enable-shared=yes
 CONFIGURE_OPTIONS +=  --enable-static=no
 CONFIGURE_OPTIONS +=  --with-pic
 
 LD_OPTIONS += -M$(COMPONENT_DIR)/mapfile.scope
+
+# We do not need developer support for 32-bit
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) $(PROTOUSRLIBDIR.$(BITS))/libXft.so ;
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOPKGCONFIGDIR.$(BITS)) ;
+# Create symlinks in /usr/X11 (only for 64-bit library)
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	$(call create-symlinks,$(USRLIBDIR.$(BITS))/libXft.so,$(USRDIR)/X11/lib/$(MACH64)) ;
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	$(call create-symlinks,$(USRLIBDIR.$(BITS))/libXft.so.2,$(USRDIR)/X11/lib/$(MACH64)) ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
