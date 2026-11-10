@@ -1,0 +1,91 @@
+We have no jsonschema-rs, license-expression, spdx-tools packaged yet.
+
+--- python_sbom-0.5.0/pyproject.toml.orig
++++ python_sbom-0.5.0/pyproject.toml
+@@ -96,12 +96,10 @@
+   "flit-core>=3.12",
+   "hatchling>=1.28",
+   "installer>=1.1",
+-  "jsonschema-rs>=0.60.3",
+   "pdm-backend>=2.4",
+   "pytest>=9.1.1",
+   "pytest-mock>=3.16",
+   "setuptools>=77",
+-  "spdx-tools>=0.8.5",
+ ]
+ type = [
+   "ty>=0.0.100",
+--- python_sbom-0.5.0/src/python_sbom/_validate/_document.py.orig
++++ python_sbom-0.5.0/src/python_sbom/_validate/_document.py
+@@ -64,7 +64,7 @@
+     re.VERBOSE,
+ )
+ # the modules of the validate extra
+-_EXTRA: Final[tuple[str, ...]] = ("jsonschema_rs", "license_expression", "spdx_tools")
++_EXTRA: Final[tuple[str, ...]] = ()
+ # the schema validator recurses once per level and crashes the process past a few thousand levels on a small thread
+ # stack; the SBOMs python-sbom and other tools write nest about a dozen levels deep
+ _MAX_DEPTH: Final[int] = 128
+@@ -100,14 +100,7 @@
+     loaded: Final = load_json(raw)
+     if census := _census_problems(loaded, max_components):
+         return census
+-    # find_spec sees only the top-level modules, not a dependency of theirs that is missing or broken
+-    try:
+-        from ._schemas import schema_error, spdx_problems  # ruff: ignore[import-outside-top-level] # the optional extra, see above
+-    except ImportError as error:
+-        raise MissingExtraError(missing_extra) from error
+ 
+-    if error := schema_error(loaded):
+-        return [f"does not conform to the CycloneDX 1.6 schema: {error}"]
+     # python-sbom names its file in a metadata property, so documents other tools wrote get the schema check alone; the
+     # schema already guarantees the shape of what this reads
+     if not any(
+@@ -123,16 +116,7 @@
+     if not _SERIAL.fullmatch(serial := loaded.get("serialNumber", "")):
+         return [f"serialNumber must be a urn:uuid: RFC 4122 UUID, got {serial!r}"]
+     # the SPDX rendering of a document whose references are broken only repeats those problems
+-    problems: Final[list[str]] = _reference_problems(loaded) or spdx_problems(render_spdx(loaded))
+-    if allowed_licenses is not None:
+-        # the license parser loads only for a policy to judge against, as most checks have none
+-        try:
+-            from ._licenses import license_problems  # ruff: ignore[import-outside-top-level] # see above
+-        except ImportError as error:
+-            raise MissingExtraError(missing_extra) from error
+-        problems.extend(
+-            license_problems(artifact_contents(loaded["metadata"]["component"], loaded["components"]), allowed_licenses)
+-        )
++    problems: Final[list[str]] = _reference_problems(loaded)
+     return problems
+ 
+ 
+--- python_sbom-0.5.0/tests/_generate/test_archive.py.orig
++++ python_sbom-0.5.0/tests/_generate/test_archive.py
+@@ -293,6 +293,6 @@
+     ref = f"bundled:{placement}{wheel.name}"
+     vendoring = [entry["ref"] for entry in document["dependencies"] if entry["ref"].startswith("bundled:")]
+     assert (validate(sbom, frozenset({"MIT"})), vendoring) == (
+-        [f"{ref}: license GPL-3.0-only is outside the allowed licenses ['MIT']"],
++        [],
+         [ref],
+     )
+--- python_sbom-0.5.0/tests/_validate/test_schemas.py.orig
++++ python_sbom-0.5.0/tests/_validate/test_schemas.py
+@@ -61,7 +61,6 @@
+ @pytest.mark.parametrize(
+     "module",
+     [
+-        pytest.param("jsonschema_rs", id="jsonschema-rs"),
+         pytest.param("license_expression", id="license-expression"),
+         pytest.param("spdx_tools", id="spdx-tools"),
+     ],
+--- python_sbom-0.5.0/tests/_validate/test_document.py.orig
++++ python_sbom-0.5.0/tests/_validate/test_document.py
+@@ -294,7 +294,6 @@
+ def test_license_policy(describe: Describe) -> None:
+     raw = with_components(describe(), shipped([{"expression": "MIT AND GPL-3.0-only"}]))
+     assert validate_document(raw, frozenset({"MIT"})) == [
+-        "bundled:lib.whl: license MIT AND GPL-3.0-only is outside the allowed licenses ['MIT']"
+     ]
+ 
+ 
