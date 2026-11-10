@@ -1,0 +1,24 @@
+SunOS on amd64: q_platform.h's __sun block knows only i386 and sparc, so a
+64-bit illumos or Solaris build has no ARCH_STRING, no idx64 and no
+HAVE_VM_COMPILED (vm_x86.c then fails on Q_VMftol). Add x86_64 as the BSD
+block has it.
+
+Upstream: not submitted yet; no issue or pull request about it at
+https://github.com/ioquake/ioq3 (checked 2026-11-10).
+
+--- ioq3-87a99d18206e878a20289f05ac3c16005dcae5c3/code/qcommon/q_platform.h.orig
++++ ioq3-87a99d18206e878a20289f05ac3c16005dcae5c3/code/qcommon/q_platform.h
+@@ -276,7 +276,12 @@
+ #define ID_INLINE inline
+ #define PATH_SEP '/'
+ 
+-#ifdef __i386__
++#if defined(__x86_64__) || defined(__amd64__)
++#undef idx64
++#define idx64 1
++#define ARCH_STRING "x86_64"
++#define HAVE_VM_COMPILED
++#elif defined(__i386__)
+ #define ARCH_STRING "x86"
+ #define HAVE_VM_COMPILED
+ #elif defined __sparc
