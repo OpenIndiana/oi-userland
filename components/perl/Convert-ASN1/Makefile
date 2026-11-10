@@ -19,19 +19,19 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Convert-ASN1
-HUMAN_VERSION =			0.34
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			0.36
 COMPONENT_SUMMARY =		Convert between perl data structures and ASN.1 encoded packets
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a628d7c9d390568fb76359975fa03f626ce57f10dc17980e8e3587d7713e4ee7
+	sha256:50439aedff4b403f24c9373eefd3c25770e33a9190d93a331e7a744f8b4e7cd3
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/time-local
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/math-bigint
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
