@@ -1,0 +1,31 @@
+SunOS client libraries (SP and MP): the SunOS block links the client with
+-lX11 -lXext -liconv, left from the SDL 1.2 days. iconv is in libc on
+illumos and Solaris 11 (there is no libiconv, so the link fails), and the
+client calls no X11 function itself (SDL2 does). Link $(SDL_LIBS) -lm, as the
+other Unix platforms do.
+
+Upstream: not submitted yet; no issue or pull request about it at
+https://github.com/iortcw/iortcw (checked 2026-11-10).
+
+--- iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/SP/Makefile.orig
++++ iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/SP/Makefile
+@@ -1031,7 +1031,7 @@
+ 
+   BOTCFLAGS=-O0
+ 
+-  CLIENT_LIBS +=$(SDL_LIBS) -lX11 -lXext -liconv -lm
++  CLIENT_LIBS +=$(SDL_LIBS) -lm
+   RENDERER_LIBS = $(SDL_LIBS)
+ 
+ else # ifeq sunos
+--- iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/MP/Makefile.orig
++++ iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/MP/Makefile
+@@ -1042,7 +1042,7 @@
+ 
+   BOTCFLAGS=-O0
+ 
+-  CLIENT_LIBS +=$(SDL_LIBS) -lX11 -lXext -liconv -lm
++  CLIENT_LIBS +=$(SDL_LIBS) -lm
+   RENDERER_LIBS = $(SDL_LIBS)
+ 
+ else # ifeq sunos

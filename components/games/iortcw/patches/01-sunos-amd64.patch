@@ -1,0 +1,119 @@
+SunOS on amd64 (SP and MP): the Makefile takes the architecture from
+uname -p, which says i386 on a 64-bit illumos or Solaris kernel too, then
+builds -m32; the SunOS block knows only x86 and sparc, and q_platform.h's
+__sun block has no x86_64 ARCH_STRING (the modules' names) nor idx64. Ask
+isainfo -n for the native instruction set (amd64, which the Makefile already
+maps to x86_64), build -m64 -O3 there, and add x86_64 to q_platform.h as the
+BSD block has it.
+
+Upstream: not submitted yet; no issue or pull request about it at
+https://github.com/iortcw/iortcw (checked 2026-11-10).
+
+--- iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/SP/Makefile.orig
++++ iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/SP/Makefile
+@@ -8,7 +8,8 @@
+ 
+ ifeq ($(COMPILE_PLATFORM),sunos)
+   # Solaris uname and GNU uname differ
+-  COMPILE_ARCH=$(shell uname -p | sed -e 's/i.86/x86/')
++  # uname -p says i386 on amd64 too: ask for the native instruction set
++  COMPILE_ARCH=$(shell isainfo -n | sed -e 's/i.86/x86/')
+ endif
+ 
+ ifndef BUILD_STANDALONE
+@@ -986,12 +987,14 @@
+   COPYDIR="/usr/local/share/games/wolf"
+ 
+   ifneq ($(ARCH),x86)
++  ifneq ($(ARCH),x86_64)
+     ifneq ($(ARCH),sparc)
+       ifneq ($(ARCH),sparc64)
+         $(error arch $(ARCH) is currently not supported)
+       endif
+     endif
+   endif
++  endif
+ 
+   BASE_CFLAGS = -Wall -fno-strict-aliasing \
+     -pipe -DUSE_ICON
+@@ -1005,6 +1008,11 @@
+     OPTIMIZEVM += -mcpu=v9 -mtune=v9 -mv8plus
+     OPTIMIZE = $(OPTIMIZEVM) -ffast-math
+   endif
++  ifeq ($(ARCH),x86_64)
++    OPTIMIZEVM = -O3
++    OPTIMIZE = $(OPTIMIZEVM) -ffast-math
++    BASE_CFLAGS += -m64
++  endif
+   ifeq ($(ARCH),x86)
+     OPTIMIZEVM += -march=i586 -fomit-frame-pointer \
+       -falign-functions=2 -fstrength-reduce
+--- iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/SP/code/qcommon/q_platform.h.orig
++++ iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/SP/code/qcommon/q_platform.h
+@@ -261,7 +261,11 @@
+ #define ID_INLINE inline
+ #define PATH_SEP '/'
+ 
+-#ifdef __i386__
++#if defined(__x86_64__) || defined(__amd64__)
++#undef idx64
++#define idx64 1
++#define ARCH_STRING "x86_64"
++#elif defined(__i386__)
+ #define ARCH_STRING "i386"
+ #elif defined __sparc
+ #define ARCH_STRING "sparc"
+--- iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/MP/Makefile.orig
++++ iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/MP/Makefile
+@@ -8,7 +8,8 @@
+ 
+ ifeq ($(COMPILE_PLATFORM),sunos)
+   # Solaris uname and GNU uname differ
+-  COMPILE_ARCH=$(shell uname -p | sed -e 's/i.86/x86/')
++  # uname -p says i386 on amd64 too: ask for the native instruction set
++  COMPILE_ARCH=$(shell isainfo -n | sed -e 's/i.86/x86/')
+ endif
+ 
+ ifndef BUILD_STANDALONE
+@@ -997,12 +998,14 @@
+   COPYDIR="/usr/local/share/games/wolf"
+ 
+   ifneq ($(ARCH),x86)
++  ifneq ($(ARCH),x86_64)
+     ifneq ($(ARCH),sparc)
+       ifneq ($(ARCH),sparc64)
+         $(error arch $(ARCH) is currently not supported)
+       endif
+     endif
+   endif
++  endif
+ 
+   BASE_CFLAGS = -Wall -fno-strict-aliasing \
+     -pipe -DUSE_ICON
+@@ -1016,6 +1019,11 @@
+     OPTIMIZEVM += -mcpu=v9 -mtune=v9 -mv8plus
+     OPTIMIZE = $(OPTIMIZEVM) -ffast-math
+   endif
++  ifeq ($(ARCH),x86_64)
++    OPTIMIZEVM = -O3
++    OPTIMIZE = $(OPTIMIZEVM) -ffast-math
++    BASE_CFLAGS += -m64
++  endif
+   ifeq ($(ARCH),x86)
+     OPTIMIZEVM += -march=i586 -fomit-frame-pointer \
+       -falign-functions=2 -fstrength-reduce
+--- iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/MP/code/qcommon/q_platform.h.orig
++++ iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/MP/code/qcommon/q_platform.h
+@@ -261,7 +261,11 @@
+ #define ID_INLINE inline
+ #define PATH_SEP '/'
+ 
+-#ifdef __i386__
++#if defined(__x86_64__) || defined(__amd64__)
++#undef idx64
++#define idx64 1
++#define ARCH_STRING "x86_64"
++#elif defined(__i386__)
+ #define ARCH_STRING "i386"
+ #elif defined __sparc
+ #define ARCH_STRING "sparc"

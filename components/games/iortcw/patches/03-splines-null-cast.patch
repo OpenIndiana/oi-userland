@@ -1,0 +1,66 @@
+splines/util_str.cpp's test code casts NULL with reinterpret_cast. illumos'
+<sys/null.h> defines NULL as nullptr for C++11 and later (g++ 14 builds
+C++17), and reinterpret_cast from std::nullptr_t is ill-formed, so the file
+does not compile. static_cast is valid for nullptr, 0 and (void *)0 alike.
+
+Upstream: not submitted yet; no issue or pull request about it at
+https://github.com/iortcw/iortcw (checked 2026-11-10).
+
+--- iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/SP/code/splines/util_str.cpp.orig
++++ iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/SP/code/splines/util_str.cpp
+@@ -474,7 +474,7 @@
+ 	idStr b;                                // b.len == 0, b.data == "\0"
+ 	idStr c( "test" );              // c.len == 4, c.data == "test\0"
+ 	idStr d( c );                       // d.len == 4, d.data == "test\0"
+-	idStr e( reinterpret_cast<const char *>( NULL ) );
++	idStr e( static_cast<const char *>( NULL ) );
+ 
+ 	t = new idStr();                        // t->len == 0, t->data == "\0"
+ 	delete t;                           // t == ?
+@@ -488,14 +488,14 @@
+ 	a = NULL;                           // a.len == 0, a.data == "\0"					ASSERT!
+ 	a = c + d;                          // a.len == 8, a.data == "testtest\0"
+ 	a = c + "wow";                       // a.len == 7, a.data == "testwow\0"
+-	a = c + reinterpret_cast<const char *>( NULL );
++	a = c + static_cast<const char *>( NULL );
+ 	// a.len == 4, a.data == "test\0"			ASSERT!
+ 	a = "this" + d;                  // a.len == 8, a.data == "thistest\0"
+-	a = reinterpret_cast<const char *>( NULL ) + d;
++	a = static_cast<const char *>( NULL ) + d;
+ 	// a.len == 4, a.data == "test\0"			ASSERT!
+ 	a += c;                             // a.len == 8, a.data == "testtest\0"
+ 	a += "wow";                          // a.len == 11, a.data == "testtestwow\0"
+-	a += reinterpret_cast<const char *>( NULL );
++	a += static_cast<const char *>( NULL );
+ 	// a.len == 11, a.data == "testtestwow\0"	ASSERT!
+ 
+ 	a = "test";                          // a.len == 4, a.data == "test\0"
+--- iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/MP/code/splines/util_str.cpp.orig
++++ iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/MP/code/splines/util_str.cpp
+@@ -474,7 +474,7 @@
+ 	idStr b;                                // b.len == 0, b.data == "\0"
+ 	idStr c( "test" );              // c.len == 4, c.data == "test\0"
+ 	idStr d( c );                       // d.len == 4, d.data == "test\0"
+-	idStr e( reinterpret_cast<const char *>( NULL ) );
++	idStr e( static_cast<const char *>( NULL ) );
+ 
+ 	t = new idStr();                        // t->len == 0, t->data == "\0"
+ 	delete t;                           // t == ?
+@@ -488,14 +488,14 @@
+ 	a = NULL;                           // a.len == 0, a.data == "\0"					ASSERT!
+ 	a = c + d;                          // a.len == 8, a.data == "testtest\0"
+ 	a = c + "wow";                       // a.len == 7, a.data == "testwow\0"
+-	a = c + reinterpret_cast<const char *>( NULL );
++	a = c + static_cast<const char *>( NULL );
+ 	// a.len == 4, a.data == "test\0"			ASSERT!
+ 	a = "this" + d;                  // a.len == 8, a.data == "thistest\0"
+-	a = reinterpret_cast<const char *>( NULL ) + d;
++	a = static_cast<const char *>( NULL ) + d;
+ 	// a.len == 4, a.data == "test\0"			ASSERT!
+ 	a += c;                             // a.len == 8, a.data == "testtest\0"
+ 	a += "wow";                          // a.len == 11, a.data == "testtestwow\0"
+-	a += reinterpret_cast<const char *>( NULL );
++	a += static_cast<const char *>( NULL );
+ 	// a.len == 11, a.data == "testtestwow\0"	ASSERT!
+ 
+ 	a = "test";                          // a.len == 4, a.data == "test\0"

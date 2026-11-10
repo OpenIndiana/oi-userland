@@ -1,0 +1,81 @@
+VoIP without the Opus codec (SP and MP): VoIP needs only libopus, but
+client.h includes opusfile.h for USE_VOIP and the Makefile asks pkg-config
+for opusfile and opus together (falling back to -lopusfile -lopus), so
+USE_VOIP=1 USE_CODEC_OPUS=0 fails without opusfile, which OpenIndiana and
+Solaris do not ship. Include and link opusfile only for the codec.
+
+Upstream: not submitted yet; no issue or pull request about it at
+https://github.com/iortcw/iortcw (checked 2026-11-10).
+
+--- iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/SP/Makefile.orig
++++ iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/SP/Makefile
+@@ -1186,8 +1186,14 @@
+       -I$(OPUSDIR)/include -I$(OPUSDIR)/celt -I$(OPUSDIR)/silk \
+       -I$(OPUSDIR)/silk/float -I$(OPUSFILEDIR)/include
+   else
+-    OPUS_CFLAGS ?= $(shell $(PKG_CONFIG) --silence-errors --cflags opusfile opus || true)
+-    OPUS_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs opusfile opus || echo -lopusfile -lopus)
++    ifeq ($(USE_CODEC_OPUS),1)
++      OPUS_CFLAGS ?= $(shell $(PKG_CONFIG) --silence-errors --cflags opusfile opus || true)
++      OPUS_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs opusfile opus || echo -lopusfile -lopus)
++    else
++      # VoIP alone needs only libopus
++      OPUS_CFLAGS ?= $(shell $(PKG_CONFIG) --silence-errors --cflags opus || true)
++      OPUS_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs opus || echo -lopus)
++    endif
+   endif
+   CLIENT_CFLAGS += $(OPUS_CFLAGS)
+   CLIENT_LIBS += $(OPUS_LIBS)
+--- iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/SP/code/client/client.h.orig
++++ iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/SP/code/client/client.h
+@@ -44,10 +44,14 @@
+ #ifdef USE_VOIP
+ #ifdef USE_LOCAL_HEADERS
+   #include "../opus-1.2.1/include/opus.h"
++  #ifdef USE_CODEC_OPUS
+   #include "../opusfile-0.9/include/opusfile.h"
++  #endif
+ #else
+   #include <opus/opus.h>
++  #ifdef USE_CODEC_OPUS
+   #include <opus/opusfile.h>
++  #endif
+ #endif
+ #endif
+ 
+--- iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/MP/Makefile.orig
++++ iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/MP/Makefile
+@@ -1201,8 +1201,14 @@
+       -I$(OPUSDIR)/include -I$(OPUSDIR)/celt -I$(OPUSDIR)/silk \
+       -I$(OPUSDIR)/silk/float -I$(OPUSFILEDIR)/include
+   else
+-    OPUS_CFLAGS ?= $(shell $(PKG_CONFIG) --silence-errors --cflags opusfile opus || true)
+-    OPUS_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs opusfile opus || echo -lopusfile -lopus)
++    ifeq ($(USE_CODEC_OPUS),1)
++      OPUS_CFLAGS ?= $(shell $(PKG_CONFIG) --silence-errors --cflags opusfile opus || true)
++      OPUS_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs opusfile opus || echo -lopusfile -lopus)
++    else
++      # VoIP alone needs only libopus
++      OPUS_CFLAGS ?= $(shell $(PKG_CONFIG) --silence-errors --cflags opus || true)
++      OPUS_LIBS ?= $(shell $(PKG_CONFIG) --silence-errors --libs opus || echo -lopus)
++    endif
+   endif
+   CLIENT_CFLAGS += $(OPUS_CFLAGS)
+   CLIENT_LIBS += $(OPUS_LIBS)
+--- iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/MP/code/client/client.h.orig
++++ iortcw-438e7d413b5f7277187c35b032eb0ef9093ae778/MP/code/client/client.h
+@@ -44,10 +44,14 @@
+ #ifdef USE_VOIP
+ #ifdef USE_LOCAL_HEADERS
+   #include "../opus-1.2.1/include/opus.h"
++  #ifdef USE_CODEC_OPUS
+   #include "../opusfile-0.9/include/opusfile.h"
++  #endif
+ #else
+   #include <opus/opus.h>
++  #ifdef USE_CODEC_OPUS
+   #include <opus/opusfile.h>
++  #endif
+ #endif
+ #endif
+ 
