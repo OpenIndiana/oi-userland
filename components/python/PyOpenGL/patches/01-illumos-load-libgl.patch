@@ -1,0 +1,19 @@
+Load libGL.so, libGLU.so... by their file names on illumos as on Linux.
+
+On anything but Linux, PyOpenGL falls back to ctypes.util.find_library(),
+which returns None for "GL" on illumos, so "import OpenGL.GL" fails with
+"Unable to load OpenGL library".  The Linux code path (libGL.so, then libGL.so.N) works.
+
+https://github.com/mcfletch/pyopengl/pull/179
+
+--- pyopengl-3.1.10/OpenGL/platform/ctypesloader.py.orig
++++ pyopengl-3.1.10/OpenGL/platform/ctypesloader.py
+@@ -30,7 +30,7 @@
+     """
+     if isinstance( dllType, ctypes.LibraryLoader ):
+         dllType = dllType._dlltype
+-    if sys.platform.startswith('linux'):
++    if sys.platform.startswith(('linux', 'sunos')):
+         return _loadLibraryPosix(dllType, name, mode)
+     else:
+         return _loadLibraryWindows(dllType, name, mode)
