@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dnspython
-HUMAN_VERSION =			2.9.0
+HUMAN_VERSION =			2.9.2
 COMPONENT_SUMMARY =		DNS toolkit
 COMPONENT_PROJECT_URL =		https://www.dnspython.org
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/rthalley/dnspython/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e4e013282359619999b7b79e96734d07e6684c56db8f9f7828efd18b0bbc7dcc
+	sha256:8d4d39a513e649d634004ce4d39ade2352efcea472a0247535a5c2d18a9d7ba9
 COMPONENT_LICENSE =		ISC
 COMPONENT_LICENSE_FILE =	LICENSE
 

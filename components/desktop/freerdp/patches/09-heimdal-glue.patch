@@ -1,6 +1,13 @@
---- FreeRDP-3.31.0/winpr/libwinpr/sspi/Kerberos/krb5glue_heimdal.c.old	2026-08-26 16:21:52.063177449 -0400
-+++ FreeRDP-3.31.0/winpr/libwinpr/sspi/Kerberos/krb5glue_heimdal.c	2026-08-26 16:22:34.049646939 -0400
-@@ -147,7 +147,7 @@
+--- FreeRDP-3.33.0/winpr/libwinpr/sspi/Kerberos/krb5glue_heimdal.c.~1~
++++ FreeRDP-3.33.0/winpr/libwinpr/sspi/Kerberos/krb5glue_heimdal.c
+@@ -141,13 +141,13 @@
+ 		return FALSE;
+ 
+ 	const BYTE* data = authenticator->cksum->checksum.data;
+-	Data_Read_UINT32((data + 20), (*flags));
++	*flags = winpr_Data_Get_UINT32((data + 20));
+ 	return TRUE;
+ }
  
  krb5_error_code krb5glue_get_init_creds(krb5_context ctx, krb5_principal princ, krb5_ccache ccache,
                                          krb5_prompter_fct prompter, char* password,

@@ -9,9 +9,9 @@
 +    TOOLCHAIN_CFLAGS_JVM="$TOOLCHAIN_CFLAGS_JVM"
 +    TOOLCHAIN_CFLAGS_JDK="-fvisibility=hidden -pipe"
      # reduce lib size on linux in link step, this needs also special compile flags
-     # do this on s390x also for libjvm (where serviceability agent is not supported)
      if test "x$ENABLE_LINKTIME_GC" = xtrue; then
-@@ -608,7 +608,12 @@
+       TOOLCHAIN_CFLAGS_JDK="$TOOLCHAIN_CFLAGS_JDK -ffunction-sections -fdata-sections"
+@@ -605,7 +605,12 @@
  
    # CFLAGS C language level for JDK sources (hotspot only uses C++)
    if test "x$TOOLCHAIN_TYPE" = xgcc || test "x$TOOLCHAIN_TYPE" = xclang; then

@@ -1,0 +1,13 @@
+The /proc/self/exe path is Linux specific.  We do have /proc/self/path/a.out.
+
+--- libotr-4.1.1/tests/unit/test_instag.c.orig
++++ libotr-4.1.1/tests/unit/test_instag.c
+@@ -173,7 +173,7 @@
+ {
+ 	char *path_end;
+ 
+-	if (readlink("/proc/self/exe", buf, len) < 0) {
++	if (readlink("/proc/self/path/a.out", buf, len) < 0) {
+ 		return -ENOMEM;
+ 	}
+ 

@@ -15,19 +15,20 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mypy_extensions
-HUMAN_VERSION =			1.1.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.2.0
 COMPONENT_SUMMARY =		Type system extensions for programs checked with the mypy type checker.
 COMPONENT_PROJECT_URL =		https://github.com/python/mypy_extensions
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:52e68efc3284861e772bbcd66823fde5ae21fd2fdb51c62a211403730b916558
+	sha256:c6e275a07f1c2fc096b62940452d0eaa3f3af7de45d704787866240a7c6d5a51
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# Python 3.9 is not supported by mypy-extensions >= 1.2.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 

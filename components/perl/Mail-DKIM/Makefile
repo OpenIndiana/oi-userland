@@ -19,27 +19,26 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Mail-DKIM
-HUMAN_VERSION =			1.20240923
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.20261105
 COMPONENT_SUMMARY =		Signs/verifies Internet mail with DKIM/DomainKey signatures
 COMPONENT_CPAN_AUTHOR =		MBRADSHAW
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:45de46f5dc4d23bcb6ad6401759881dd43968eab20e73f6f79d9557467de20ee
+	sha256:beae07db0f73bf7449474203bdb82d82929f86e3e056a425678d2d7531088e81
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openssl-rsa
-PERL_REQUIRED_PACKAGES += library/perl-5/cryptx
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/mail-authenticationresults
-PERL_REQUIRED_PACKAGES += library/perl-5/mailtools
-PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
-PERL_REQUIRED_PACKAGES += library/perl-5/net-dns
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-openssl-rsa
+REQUIRED_PACKAGES.perl += library/perl-5/cryptx
+REQUIRED_PACKAGES.perl += library/perl-5/digest-sha
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/mail-authenticationresults
+REQUIRED_PACKAGES.perl += library/perl-5/mailtools
+REQUIRED_PACKAGES.perl += library/perl-5/mime-base64
+REQUIRED_PACKAGES.perl += library/perl-5/net-dns
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/net-dns
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/net-dns-resolver-mock
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requiresinternet

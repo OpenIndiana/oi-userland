@@ -19,13 +19,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
-COMPONENT_VERSION=	3.2.6
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.2.8
 COMPONENT_SUMMARY=	Gimp - The Free & Open Source Image Editor
 COMPONENT_PROJECT_URL=	https://www.gimp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:40b15e90ad0c0c631b76da3c467ea9847fa5c24f37413ac5b492804860a28cd8
+COMPONENT_ARCHIVE_HASH= sha256:16a2696cadc9e03a2ef97ccb895e062f654cb2b8211fb57074db85f26646c847
 COMPONENT_ARCHIVE_URL=	https://download.gimp.org/gimp/v3.2/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		image/editor/gimp
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
@@ -51,6 +50,11 @@ COMPONENT_POST_INSTALL_ACTION+= \
 COMPONENT_POST_INSTALL_ACTION+= \
 	/usr/bin/find $(PROTO_DIR) -name *.scm \
 		-exec $(GSED) -i -e '1s|env gimp-script-fu-interpreter|gimp-script-fu-interpreter|' "{}" \; ;
+
+# change symlink to relative to fix gmake REQUIRED_PACKAGES
+COMPONENT_POST_INSTALL_ACTION+= \
+	unlink $(PROTO_DIR)/usr/share/doc/gimp-3.0/images/gimp-devel-logo.png ; \
+	ln -s ../../../gimp/3.0/images/gimp-devel-logo.png $(PROTO_DIR)/usr/share/doc/gimp-3.0/images/gimp-devel-logo.png ;
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/vala
@@ -79,6 +83,7 @@ REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/fribidi
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/libmng
 REQUIRED_PACKAGES += library/lcms2

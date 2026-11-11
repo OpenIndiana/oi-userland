@@ -30,3 +30,31 @@ layout and avoid adding private libc implementation symbols to libxul's ABI.
        FFMPEGV_LOG("Renderer device from GPU: {} (major={}, minor={})",
                    aRendererNode.get(), rendererDrmMajor, rendererDrmMinor);
      } else {
+--- firefox-3c71a541b0e7ac6e086907b38670dabca9174c45/media/ffvpx/libavutil/hwcontext_vulkan.c.~1~
++++ firefox-3c71a541b0e7ac6e086907b38670dabca9174c45/media/ffvpx/libavutil/hwcontext_vulkan.c
+@@ -55,6 +55,8 @@
+ #endif
+ #ifdef __linux__
+ #include <sys/sysmacros.h>
++#elif defined(XP_SOLARIS) || defined(__sun)
++#include <sys/mkdev.h>  // major(), minor() for st_rdev
+ #endif
+ #include <sys/stat.h>
+ #include <xf86drm.h>
+@@ -2217,8 +2219,16 @@
+             return AVERROR_EXTERNAL;
+         }
+ 
++#       if defined(XP_SOLARIS) || defined(__sun)
++        // Avoid the Solaris major()/minor() libc helpers.  libxul's version
++        // script gives unlisted symbols local binding, so references to their
++        // __major/__minor implementations cannot be satisfied at link time.
++        dev_select.drm_major = ((uint64_t)(drm_node_info.st_dev) >> NBITSMINOR) & MAXMAJ;
++        dev_select.drm_minor = (uint64_t)(drm_node_info.st_dev) & MAXMIN;
++#       else
+         dev_select.drm_major = major(drm_node_info.st_dev);
+         dev_select.drm_minor = minor(drm_node_info.st_dev);
++#       endif
+         dev_select.has_drm   = 1;
+ 
+         err = drmGetDevice(src_hwctx->fd, &drm_dev_info);

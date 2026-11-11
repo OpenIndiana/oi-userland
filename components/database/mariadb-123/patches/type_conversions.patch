@@ -1,0 +1,246 @@
+--- mariadb-11.4.8/extra/readline/display.c	2025-07-28 20:18:13.000000000 +0200
++++ mariadb-11.4.8/extra/readline/display.c.new	2025-08-13 18:34:18.540432433 +0200
+@@ -1006,7 +1006,7 @@
+ 	      putc ('\r', rl_outstream);
+ #else
+ 	      if (_rl_term_cr)
+-		tputs (_rl_term_cr, 1, _rl_output_character_function);
++		tputs ((char *) _rl_term_cr, 1, (int (*)(char)) _rl_output_character_function);
+ #endif
+ 	      _rl_output_some_chars (local_prompt, nleft);
+ 	      if (MB_CUR_MAX > 1 && rl_byte_oriented == 0)
+@@ -1440,7 +1440,7 @@
+ #if defined (__MSDOS__)
+       putc ('\r', rl_outstream);
+ #else
+-      tputs (_rl_term_cr, 1, _rl_output_character_function);
++      tputs ((char *) _rl_term_cr, 1, (int (*)(char)) _rl_output_character_function);
+ #endif
+       _rl_output_some_chars (local_prompt, lendiff);
+       if (MB_CUR_MAX > 1 && rl_byte_oriented == 0)
+@@ -1765,7 +1765,7 @@
+ #if defined (__MSDOS__)
+       putc ('\r', rl_outstream);
+ #else
+-      tputs (_rl_term_cr, 1, _rl_output_character_function);
++      tputs ((char *) _rl_term_cr, 1, (int (*)(char)) _rl_output_character_function);
+ #endif /* !__MSDOS__ */
+       cpos = _rl_last_c_pos = 0;
+     }
+@@ -1794,11 +1794,11 @@
+ 	  if (_rl_term_forward_char)
+ 	    {
+ 	      for (i = cpos; i < dpos; i++)
+-	        tputs (_rl_term_forward_char, 1, _rl_output_character_function);
++	        tputs ((char *) _rl_term_forward_char, 1, (int (*)(char)) _rl_output_character_function);
+ 	    }
+ 	  else
+ 	    {
+-	      tputs (_rl_term_cr, 1, _rl_output_character_function);
++	      tputs ((char *) _rl_term_cr, 1, (int (*)(char)) _rl_output_character_function);
+ 	      for (i = 0; i < new; i++)
+ 		putc (data[i], rl_outstream);
+ 	    }
+@@ -1837,7 +1837,7 @@
+ #if defined (__MSDOS__)
+       putc ('\r', rl_outstream);
+ #else
+-      tputs (_rl_term_cr, 1, _rl_output_character_function);
++      tputs ((char *) _rl_term_cr, 1, (int (*)(char)) _rl_output_character_function);
+ #endif
+       _rl_last_c_pos = 0;
+     }
+@@ -1845,7 +1845,7 @@
+     {			/* delta < 0 */
+       if (_rl_term_up && *_rl_term_up)
+ 	for (i = 0; i < -delta; i++)
+-	  tputs (_rl_term_up, 1, _rl_output_character_function);
++	  tputs ((char *) _rl_term_up, 1, (int (*)(char)) _rl_output_character_function);
+     }
+ 
+   _rl_last_v_pos = to;		/* Now TO is here */
+@@ -2106,7 +2106,7 @@
+      int count;
+ {
+   if (_rl_term_clreol)
+-    tputs (_rl_term_clreol, 1, _rl_output_character_function);
++    tputs ((char *) _rl_term_clreol, 1, (int (*)(char)) _rl_output_character_function);
+   else if (count)
+     space_to_eol (count);
+ }
+@@ -2129,7 +2129,7 @@
+ _rl_clear_screen ()
+ {
+   if (_rl_term_clrpag)
+-    tputs (_rl_term_clrpag, 1, _rl_output_character_function);
++    tputs ((char *) _rl_term_clrpag, 1, (int (*)(char)) _rl_output_character_function);
+   else
+     rl_crlf ();
+ }
+@@ -2154,7 +2154,7 @@
+       char *buffer;
+ 
+       buffer = tgoto (_rl_term_IC, 0, col);
+-      tputs (buffer, 1, _rl_output_character_function);
++      tputs ((char *) buffer, 1, (int (*)(char)) _rl_output_character_function);
+       _rl_output_some_chars (string, count);
+     }
+   else
+@@ -2163,14 +2163,14 @@
+ 
+       /* If we have to turn on insert-mode, then do so. */
+       if (_rl_term_im && *_rl_term_im)
+-	tputs (_rl_term_im, 1, _rl_output_character_function);
++	tputs ((char *) _rl_term_im, 1, (int (*)(char)) _rl_output_character_function);
+ 
+       /* If there is a special command for inserting characters, then
+ 	 use that first to open up the space. */
+       if (_rl_term_ic && *_rl_term_ic)
+ 	{
+ 	  for (i = col; i--; )
+-	    tputs (_rl_term_ic, 1, _rl_output_character_function);
++	    tputs ((char *) _rl_term_ic, 1, (int (*)(char)) _rl_output_character_function);
+ 	}
+ 
+       /* Print the text. */
+@@ -2179,7 +2179,7 @@
+       /* If there is a string to turn off insert mode, we had best use
+ 	 it now. */
+       if (_rl_term_ei && *_rl_term_ei)
+-	tputs (_rl_term_ei, 1, _rl_output_character_function);
++	tputs ((char *) _rl_term_ei, 1, (int (*)(char)) _rl_output_character_function);
+     }
+ #endif /* __MSDOS__ || __MINGW32__ */
+ }
+@@ -2197,13 +2197,13 @@
+     {
+       char *buffer;
+       buffer = tgoto (_rl_term_DC, count, count);
+-      tputs (buffer, count, _rl_output_character_function);
++      tputs ((char *) buffer, count, (int (*)(char)) _rl_output_character_function);
+     }
+   else
+     {
+       if (_rl_term_dc && *_rl_term_dc)
+ 	while (count--)
+-	  tputs (_rl_term_dc, 1, _rl_output_character_function);
++	  tputs ((char *) _rl_term_dc, 1, (int (*)(char)) _rl_output_character_function);
+     }
+ #endif /* !__MSDOS__ && !__MINGW32__ */
+ }
+@@ -2249,7 +2249,7 @@
+ #if defined (__MSDOS__)
+       putc ('\r', rl_outstream);
+ #else
+-      tputs (_rl_term_cr, 1, _rl_output_character_function);
++      tputs ((char *) _rl_term_cr, 1, (int (*)(char)) _rl_output_character_function);
+ #endif
+       _rl_last_c_pos = 0;
+     }
+@@ -2294,7 +2294,7 @@
+ #if defined (__MSDOS__)
+       putc ('\r', rl_outstream);
+ #else
+-      tputs (_rl_term_cr, 1, _rl_output_character_function);
++      tputs ((char *) _rl_term_cr, 1, (int (*)(char)) _rl_output_character_function);
+ #endif
+       _rl_last_c_pos = 0;
+ #if defined (__MSDOS__)
+@@ -2302,11 +2302,11 @@
+       putc ('\r', rl_outstream);
+ #else
+       if (_rl_term_clreol)
+-	tputs (_rl_term_clreol, 1, _rl_output_character_function);
++	tputs ((char *) _rl_term_clreol, 1, (int (*)(char)) _rl_output_character_function);
+       else
+ 	{
+ 	  space_to_eol (_rl_screenwidth);
+-	  tputs (_rl_term_cr, 1, _rl_output_character_function);
++	  tputs ((char *) _rl_term_cr, 1, (int (*)(char)) _rl_output_character_function);
+ 	}
+ #endif
+       if (_rl_last_v_pos > 0)
+--- mariadb-11.4.8/extra/readline/terminal.c	2025-07-28 20:18:13.000000000 +0200
++++ mariadb-11.4.8/extra/readline/terminal.c.new	2025-08-13 18:52:15.657817067 +0200
+@@ -634,7 +634,7 @@
+ 
+   if (_rl_term_backspace)
+     for (i = 0; i < count; i++)
+-      tputs (_rl_term_backspace, 1, _rl_output_character_function);
++      tputs ((char *) _rl_term_backspace, 1, (int (*)(char)) _rl_output_character_function);
+   else
+     for (i = 0; i < count; i++)
+       putc ('\b', _rl_out_stream);
+@@ -647,7 +647,7 @@
+ {
+ #if defined (NEW_TTY_DRIVER)
+   if (_rl_term_cr)
+-    tputs (_rl_term_cr, 1, _rl_output_character_function);
++    tputs ((char *) _rl_term_cr, 1, (int (*)(char)) _rl_output_character_function);
+ #endif /* NEW_TTY_DRIVER */
+   putc ('\n', _rl_out_stream);
+   return 0;
+@@ -667,7 +667,7 @@
+ 	case VISIBLE_BELL:
+ 	  if (_rl_visible_bell)
+ 	    {
+-	      tputs (_rl_visible_bell, 1, _rl_output_character_function);
++	      tputs ((char *) _rl_visible_bell, 1, (int (*)(char)) _rl_output_character_function);
+ 	      break;
+ 	    }
+ 	  /* FALLTHROUGH */
+@@ -692,7 +692,7 @@
+ {
+ #if !defined (__DJGPP__)
+   if (term_has_meta && _rl_term_mm)
+-    tputs (_rl_term_mm, 1, _rl_output_character_function);
++    tputs ((char *) _rl_term_mm, 1, (int (*)(char)) _rl_output_character_function);
+ #endif
+ }
+ 
+@@ -702,9 +702,9 @@
+ {
+ #if !defined (__DJGPP__)
+   if (on && _rl_term_ks)
+-    tputs (_rl_term_ks, 1, _rl_output_character_function);
++    tputs ((char *) _rl_term_ks, 1, (int (*)(char)) _rl_output_character_function);
+   else if (!on && _rl_term_ke)
+-    tputs (_rl_term_ke, 1, _rl_output_character_function);
++    tputs ((char *) _rl_term_ke, 1, (int (*)(char)) _rl_output_character_function);
+ #endif
+ }
+ 
+@@ -727,9 +727,9 @@
+       if (force || im != rl_insert_mode)
+ 	{
+ 	  if (im == RL_IM_OVERWRITE)
+-	    tputs (_rl_term_vs, 1, _rl_output_character_function);
++	    tputs ((char *) _rl_term_vs, 1, (int (*)(char)) _rl_output_character_function);
+ 	  else
+-	    tputs (_rl_term_ve, 1, _rl_output_character_function);
++	    tputs ((char *) _rl_term_ve, 1, (int (*)(char)) _rl_output_character_function);
+ 	}
+     }
+ }
+--- mariadb-11.4.8/plugin/auth_pam/auth_pam_base.c	2025-08-13 18:58:18.306118266 +0200
++++ mariadb-11.4.8/plugin/auth_pam/auth_pam_base.c.new	2025-08-13 19:07:41.594617799 +0200
+@@ -162,7 +162,7 @@
+   DO( pam_acct_mgmt(pamh, 0) );
+ 
+   PAM_DEBUG((stderr, "PAM: pam_get_item(PAM_USER)\n"));
+-  DO( pam_get_item(pamh, PAM_USER, (pam_get_item_3_arg) &new_username) );
++  DO( pam_get_item(pamh, PAM_USER, (const void **) (pam_get_item_3_arg) &new_username) );
+ 
+   if (new_username &&
+       (winbind_hack ? strcasecmp : strcmp)(new_username, info->user_name))
+--- mariadb-11.4.8/sql/sp_instr.cc	2025-07-28 20:18:15.000000000 +0200
++++ mariadb-11.4.8/sql/sp_instr.cc.new	2025-08-13 19:36:03.277933074 +0200
+@@ -1150,7 +1150,7 @@
+ {
+   MYSQL_QUERY_EXEC_START(thd->query(),
+                          thd->thread_id,
+-                         thd->get_db(),
++                         (char *)thd->get_db(),
+                          &thd->security_ctx->priv_user[0],
+                          (char *)thd->security_ctx->host_or_ip,
+                          3);

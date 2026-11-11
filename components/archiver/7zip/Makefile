@@ -29,13 +29,13 @@ ENV=/usr/bin/env
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         7zip
-COMPONENT_VERSION=	26.4
-HUMAN_VERSION=		26.04
+COMPONENT_VERSION=	26.6
+HUMAN_VERSION=		26.06
 COMPONENT_SUMMARY=      File archiver for extremely high compression
 COMPONENT_PROJECT_URL=  https://www.7-zip.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:48fdc6dfe879ee2db867bb07f19c4a9406bfea01d51f48785b6c7a137881e25c
+COMPONENT_ARCHIVE_HASH= sha256:63bbf0ede83e4286ec8a2905ed732a12acc36dd4771984d870b054240ce761fa
 COMPONENT_ARCHIVE_URL=	https://github.com/ip7z/7zip/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         compress/7zip
 COMPONENT_CLASSIFICATION= Applications/System Utilities

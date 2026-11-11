@@ -1,0 +1,32 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2026 Marcel Telka
+#
+
+#
+# This is fake manifest used for pkgdepend resolve (see make-rules/ips.mk) to
+# allow dependency resolution for library symlinks managed by ogl-select.
+#
+# The real pkg:/service/opengl/ogl-select package contains set of dangling
+# symlinks pointing to non-existent files (symlinks) in /var/run/opengl.
+# The /var/run/opengl files (symlinks) are managed dynamically by the
+# svc:/application/opengl/ogl-select:default service.  Such a setup prevents
+# pkgdepend resolve to work as expected.
+#
+
+set name=pkg.fmri value=pkg:/service/opengl/ogl-select
+
+file path=usr/lib/64/libEGL.so.1 owner=root group=bin mode=0555
+file path=usr/lib/64/libGL.so.1 owner=root group=bin mode=0555
+file path=usr/lib/64/libGLESv1_CM.so.1 owner=root group=bin mode=0555
+file path=usr/lib/64/libGLESv2.so.2 owner=root group=bin mode=0555

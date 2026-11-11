@@ -582,8 +582,6 @@ COMPONENT_TEST_TRANSFORMS += $(if $(strip $(USE_COINCIDENCE)),"-e '/^Test sessio
 COMPONENT_TEST_TRANSFORMS += "-e '/SetuptoolsDeprecationWarning:/,+1d'"		# depends on Python version and is useless
 COMPONENT_TEST_TRANSFORMS += "-e 's/^\(Ran [0-9]\{1,\} tests\{0,1\}\) in .*$$/\1/'"	# delete timing from test results
 
-COMPONENT_TEST_DIR = $(@D)$(COMPONENT_SUBDIR:%=/%)
-
 ifeq ($(strip $(SINGLE_PYTHON_VERSION)),no)
 # Temporarily create symlinks for renamed binaries
 COMPONENT_PRE_TEST_ACTION += \

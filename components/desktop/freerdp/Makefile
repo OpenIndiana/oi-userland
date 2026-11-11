@@ -18,12 +18,12 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freerdp
-COMPONENT_VERSION=	3.32.2
+COMPONENT_VERSION=	3.33.0
 COMPONENT_SUMMARY=	Remote Desktop Viewer Client
 COMPONENT_PROJECT_URL=	https://www.freerdp.com
 COMPONENT_SRC=          FreeRDP-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9ccb8357bf0188044a460de775c7ea289ca7d2a2a917eca0f0a7c4dc9c8b08ea
+COMPONENT_ARCHIVE_HASH= sha256:3b5e7733e667ad66f54e0db51d952268c9d08b2e71a4fade44c716ab29dd5657
 COMPONENT_ARCHIVE_URL=  https://github.com/FreeRDP/FreeRDP/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/remote-desktop/freerdp
 COMPONENT_CLASSIFICATION=	Applications/Internet

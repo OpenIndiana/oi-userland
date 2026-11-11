@@ -3,10 +3,14 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 41 items
+collecting ... collected 49 items
 
 tests/test_cli.py::test_cli_find_pythons PASSED
 tests/test_cli.py::test_cli_find_python_by_version PASSED
+tests/test_cli.py::test_cli_deduplicate_interpreters_skips_broken[False] PASSED
+tests/test_cli.py::test_cli_deduplicate_interpreters_skips_broken[True] PASSED
+tests/test_cli.py::test_cli_deduplicate_same_interpreter[False] PASSED
+tests/test_cli.py::test_cli_deduplicate_same_interpreter[True] PASSED
 tests/test_cli.py::test_cli_find_python_freethreaded PASSED
 tests/test_finder.py::test_find_pythons PASSED
 tests/test_finder.py::test_find_python_by_version PASSED
@@ -21,6 +25,10 @@ tests/test_finder.py::test_find_python_deduplicate_same_file[True] PASSED
 tests/test_finder.py::test_find_python_deduplicate_symlinks PASSED
 tests/test_finder.py::test_find_python_deduplicate_same_interpreter[False] PASSED
 tests/test_finder.py::test_find_python_deduplicate_same_interpreter[True] PASSED
+tests/test_finder.py::test_find_python_deduplicate_interpreters_skips_broken[False-False] PASSED
+tests/test_finder.py::test_find_python_deduplicate_interpreters_skips_broken[False-True] PASSED
+tests/test_finder.py::test_find_python_deduplicate_interpreters_skips_broken[True-False] PASSED
+tests/test_finder.py::test_find_python_deduplicate_interpreters_skips_broken[True-True] PASSED
 tests/test_finder.py::test_find_python_from_pyenv PASSED
 tests/test_finder.py::test_find_python_skips_empty_pyenv PASSED
 tests/test_posix.py::test_find_python_resolve_symlinks[False] PASSED
@@ -47,4 +55,4 @@ tests/test_utils.py::test_looks_like_python[python38.exe-False] PASSED
 tests/test_utils.py::test_looks_like_python[python38.sh-True] PASSED
 tests/test_utils.py::test_looks_like_python[python38.csh-True] PASSED
 
-======== 41 passed ========
+======== 49 passed ========

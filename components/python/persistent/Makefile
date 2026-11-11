@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		persistent
-HUMAN_VERSION =			6.8
+HUMAN_VERSION =			6.9
 COMPONENT_SUMMARY =		Translucent persistent objects
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2e7ccaa1b1ab5346be903980bf74ac301e5a7be4e6949c93cf9f2a716add8b18
+	sha256:85727c3d638ff8830878abf816acfaa8c288a3b372ab77ba482367eba970e2b2
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 

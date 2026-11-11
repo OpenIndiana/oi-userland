@@ -1,0 +1,14 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/CMakeLists.txt a/CMakeLists.txt
+--- a~/CMakeLists.txt	1970-01-01 00:00:00
++++ a/CMakeLists.txt	1970-01-01 00:00:00
+@@ -288,8 +288,8 @@ MY_CHECK_AND_SET_COMPILER_FLAG("-fno-omi
+ OPTION(SECURITY_HARDENED "Use security-enhancing compiler features (stack protector, relro, etc)" ON)
+ IF(SECURITY_HARDENED AND NOT WITH_ASAN AND NOT WITH_UBSAN AND NOT WITH_TSAN AND NOT WITH_GPROF AND NOT WITH_MSAN)
+   # security-enhancing flags
+-  MY_CHECK_AND_SET_COMPILER_FLAG("-pie -fPIC")
+-  MY_CHECK_AND_SET_LINKER_FLAG("-Wl,-z,relro,-z,now")
++  MY_CHECK_AND_SET_COMPILER_FLAG("-fPIC")
++  MY_CHECK_AND_SET_LINKER_FLAG("-Wl,-B,direct")
+   MY_CHECK_AND_SET_COMPILER_FLAG("-fstack-protector --param=ssp-buffer-size=4")
+   MY_CHECK_AND_SET_COMPILER_FLAG("-D_FORTIFY_SOURCE=2" RELEASE RELWITHDEBINFO)
+ ENDIF()

@@ -14,13 +14,14 @@
 # Copyright 2020 Andreas Wacknitz
 #
 
-BUILD_BITS= 32_and_64
+# Parallel builds hang on some systems:
+USE_PARALLEL_BUILD = no
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libotr
-
 COMPONENT_VERSION= 4.1.1
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Off-the-Record Messaging library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -29,23 +30,42 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
 	http://www.cypherpunks.ca/otr/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://otr.cypherpunks.ca/
+COMPONENT_FMRI =		library/libotr
+COMPONENT_CLASSIFICATION =	System/Libraries
+COMPONENT_LICENSE =		LGPL-2.1-only AND GPL-2.0-only
 
-TEST_TARGET: $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        aclocal -I. && \
-                                        autoheader && \
-                                        libtoolize --automake --copy --force && \
-                                        automake -a -f -c &&\
-                                        autoconf )
+# helper target
+update-license-file: patch
+	( \
+		$(CAT) $(SOURCE_DIR)/README \
+			| $(GSED) -n -e '/^LICENSE/,$${/^CONTACT/,$$!p}' \
+			| $(GSED) -e '/^The library/,/^The Off/{/^The Off/!d}'; \
+		printf '\n--- COPYING ---------------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING ; \
+		printf '\n\n--- COPYING.LIB -----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LIB \
+	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
 
-COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
+# We are patching configure.ac and Makefile.am files
+COMPONENT_PREP_ACTION += cd $(@D) && $(ENV) PATH="$(PATH)" autoreconf -fi ;
 
-# Parallel builds hang on some systems:
-COMPONENT_BUILD_ARGS= -j1
+# This project does not support out of source build
+CLONEY_MODE =
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --disable-static
+
+# needed to build tests
+CFLAGS += -D__EXTENSIONS__
+
+# TODO: the reported number of tests changes with every run
+COMPONENT_TEST_TRANSFORMS += "-e '0,/run\.sh test_list$$/d'"	# delete everything up to the test runner invocation
+COMPONENT_TEST_TRANSFORMS += "-e 's/,  *[0-9]* wallclock.*//'"	# delete timings
+COMPONENT_TEST_TRANSFORMS += "-e '/^make\[/d'"			# delete make logs
+
+# Manually added test dependencies
+TEST_REQUIRED_PACKAGES += library/perl-5/test-harness
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

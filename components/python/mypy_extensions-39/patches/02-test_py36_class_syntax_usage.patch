@@ -1,0 +1,18 @@
+--- mypy_extensions-1.1.0/tests/testextensions.py.orig
++++ mypy_extensions-1.1.0/tests/testextensions.py
+@@ -6,6 +6,7 @@
+ from contextlib import contextmanager
+ from unittest import TestCase, main
+ from mypy_extensions import TypedDict, i64, i32, i16, u8
++import unittest
+ 
+ 
+ class BaseTestCase(TestCase):
+@@ -99,6 +100,7 @@
+         with self.assertRaises(TypeError):
+             TypedDict('Hi', [('x', int)], y=int)
+ 
++    @unittest.skip("https://github.com/python/mypy_extensions/issues/65")
+     def test_py36_class_syntax_usage(self):
+         self.assertEqual(LabelPoint2D.__name__, 'LabelPoint2D')  # noqa
+         self.assertEqual(LabelPoint2D.__module__, __name__)  # noqa

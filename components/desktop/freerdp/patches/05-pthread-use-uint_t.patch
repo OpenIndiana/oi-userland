@@ -1,6 +1,6 @@
---- freerdp-3.22.0/winpr/libwinpr/thread/thread.c.old
-+++ freerdp-3.22.0/winpr/libwinpr/thread/thread.c
-@@ -926,7 +926,11 @@
+--- FreeRDP-3.33.0/winpr/libwinpr/thread/thread.c.old
++++ FreeRDP-3.33.0/winpr/libwinpr/thread/thread.c
+@@ -918,7 +918,12 @@
  	pthread_t tid = pthread_self();
  	/* Since pthread_t can be 64-bits on some systems, take just the    */
  	/* lower 32-bits of it for the thread ID returned by this function. */
@@ -8,7 +8,8 @@
 +	uintptr_t ptid = WINPR_REINTERPRET_CAST(tid, pthread_t, uint_t);
 +#else
  	uintptr_t ptid = WINPR_REINTERPRET_CAST(tid, pthread_t, uintptr_t);
-+#endif
++#endif // __sun
++
+ #if UINTPTR_MAX > UINT32_MAX
  	return (ptid & UINT32_MAX) ^ (ptid >> 32);
- #endif
- }
+ #else

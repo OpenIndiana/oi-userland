@@ -1,0 +1,51 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2026 Ignacio Soriano
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# The engine loads its renderers and game modules from its own directory.
+<transform file path=usr/lib/ioquake3/.*\.so$ -> default pkg.linted.userland.action001.2 true>
+
+link path=usr/bin/ioq3ded target=../lib/ioquake3/ioq3ded
+link path=usr/bin/ioquake3 target=../lib/ioquake3/ioquake3
+
+# dlopen()ed
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/$(MACH64)/libcurl.so.4
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/$(MACH64)/libopenal.so.1
+
+file path=usr/lib/ioquake3/baseq3/cgame.so
+file path=usr/lib/ioquake3/baseq3/qagame.so
+file path=usr/lib/ioquake3/baseq3/ui.so
+file path=usr/lib/ioquake3/baseq3/vm/cgame.qvm
+file path=usr/lib/ioquake3/baseq3/vm/qagame.qvm
+file path=usr/lib/ioquake3/baseq3/vm/ui.qvm
+file path=usr/lib/ioquake3/ioq3ded
+file path=usr/lib/ioquake3/ioquake3
+file path=usr/lib/ioquake3/missionpack/cgame.so
+file path=usr/lib/ioquake3/missionpack/qagame.so
+file path=usr/lib/ioquake3/missionpack/ui.so
+file path=usr/lib/ioquake3/missionpack/vm/cgame.qvm
+file path=usr/lib/ioquake3/missionpack/vm/qagame.qvm
+file path=usr/lib/ioquake3/missionpack/vm/ui.qvm
+file path=usr/lib/ioquake3/renderer_opengl1.so
+file path=usr/lib/ioquake3/renderer_opengl2.so

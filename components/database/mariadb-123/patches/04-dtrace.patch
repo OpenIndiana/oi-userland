@@ -1,0 +1,78 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/cmake/plugin.cmake a/cmake/plugin.cmake
+--- a~/cmake/plugin.cmake	1970-01-01 00:00:00
++++ a/cmake/plugin.cmake	1970-01-01 00:00:00
+@@ -145,7 +145,7 @@ MACRO(MYSQL_ADD_PLUGIN)
+     ENDIF()
+ 
+     ADD_LIBRARY(${target} STATIC ${SOURCES})
+-    DTRACE_INSTRUMENT(${target})
++    #DTRACE_INSTRUMENT(${target})
+     ADD_DEPENDENCIES(${target} GenError ${ARG_DEPENDS})
+     RESTRICT_SYMBOL_EXPORTS(${target})
+     IF(WITH_EMBEDDED_SERVER AND (NOT ARG_NOT_EMBEDDED))
+@@ -155,7 +155,7 @@ MACRO(MYSQL_ADD_PLUGIN)
+         # Recompile some plugins for embedded
+         ADD_CONVENIENCE_LIBRARY(${target}_embedded ${SOURCES})
+         RESTRICT_SYMBOL_EXPORTS(${target}_embedded)
+-        DTRACE_INSTRUMENT(${target}_embedded)   
++        #DTRACE_INSTRUMENT(${target}_embedded)   
+         IF(ARG_RECOMPILE_FOR_EMBEDDED)
+           SET_TARGET_PROPERTIES(${target}_embedded 
+             PROPERTIES COMPILE_DEFINITIONS "EMBEDDED_LIBRARY${version_string}")
+@@ -204,7 +204,7 @@ MACRO(MYSQL_ADD_PLUGIN)
+ 
+     ADD_VERSION_INFO(${target} MODULE SOURCES)
+     ADD_LIBRARY(${target} MODULE ${SOURCES}) 
+-    DTRACE_INSTRUMENT(${target})
++    #DTRACE_INSTRUMENT(${target})
+ 
+     SET_TARGET_PROPERTIES (${target} PROPERTIES PREFIX "")
+     IF (NOT ARG_CLIENT)
+diff -wpruN --no-dereference '--exclude=*.orig' a~/extra/mariabackup/CMakeLists.txt a/extra/mariabackup/CMakeLists.txt
+--- a~/extra/mariabackup/CMakeLists.txt	1970-01-01 00:00:00
++++ a/extra/mariabackup/CMakeLists.txt	1970-01-01 00:00:00
+@@ -88,6 +88,8 @@ IF(NOT HAVE_SYSTEM_REGEX)
+   TARGET_LINK_LIBRARIES(mariadb-backup pcre2-posix)
+ ENDIF()
+ 
++DTRACE_INSTRUMENT(mariadb-backup)
++
+ 
+ ########################################################################
+ # mbstream binary
+diff -wpruN --no-dereference '--exclude=*.orig' a~/mysys_ssl/CMakeLists.txt a/mysys_ssl/CMakeLists.txt
+--- a~/mysys_ssl/CMakeLists.txt	1970-01-01 00:00:00
++++ a/mysys_ssl/CMakeLists.txt	1970-01-01 00:00:00
+@@ -46,4 +46,4 @@ ENDIF()
+ 
+ ADD_CONVENIENCE_LIBRARY(mysys_ssl ${MYSYS_SSL_SOURCES})
+ TARGET_LINK_LIBRARIES(mysys_ssl dbug strings ${SSL_LIBRARIES})
+-DTRACE_INSTRUMENT(mysys_ssl)
++#DTRACE_INSTRUMENT(mysys_ssl)
+diff -wpruN --no-dereference '--exclude=*.orig' a~/storage/csv/CMakeLists.txt a/storage/csv/CMakeLists.txt
+--- a~/storage/csv/CMakeLists.txt	1970-01-01 00:00:00
++++ a/storage/csv/CMakeLists.txt	1970-01-01 00:00:00
+@@ -15,3 +15,10 @@
+ 
+ SET(CSV_SOURCES  ha_tina.cc ha_tina.h transparent_file.cc transparent_file.h)
+ MYSQL_ADD_PLUGIN(csv ${CSV_SOURCES} STORAGE_ENGINE MANDATORY)
++DTRACE_INSTRUMENT(csv)
++IF(WITH_EMBEDDED_SERVER)
++  IF(ARG_RECOMPILE_FOR_EMBEDDED OR NOT _SKIP_PIC)
++    DTRACE_INSTRUMENT(csv_embedded)
++  ENDIF()
++ENDIF()
++
+--- mariadb-11.4.8/sql/CMakeLists.txt	2025-07-28 20:18:15.000000000 +0200
++++ mariadb-11.4.8/sql/CMakeLists.txt.new	2025-08-13 17:48:53.847847222 +0200
+@@ -346,8 +346,8 @@
+ 
+ # On Solaris, some extra effort is required in order to get dtrace probes
+ # from static libraries
+-DTRACE_INSTRUMENT_STATIC_LIBS(mariadbd
+- "sql;mysys;mysys_ssl;${MYSQLD_STATIC_PLUGIN_LIBS}")
++#DTRACE_INSTRUMENT_STATIC_LIBS(mariadbd
++# "sql;mysys;mysys_ssl;${MYSQLD_STATIC_PLUGIN_LIBS}")
+ 
+ 
+ SET(WITH_MYSQLD_LDFLAGS "" CACHE STRING "Additional linker flags for mysqld")

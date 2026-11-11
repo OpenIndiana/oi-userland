@@ -1,0 +1,29 @@
+https://github.com/python/cpython/issues/127344
+
+--- Python-3.15.2/Modules/socketmodule.c.orig
++++ Python-3.15.2/Modules/socketmodule.c
+@@ -3361,6 +3361,7 @@
+     int optname;
+     int res;
+     Py_buffer buffer;
++    int buflen;
+     int flag;
+     unsigned int optlen;
+     PyObject *optval;
+@@ -3419,8 +3420,15 @@
+             goto done;
+         }
+ #endif
++
++        buflen = sizeof flag;
++        /* Multi cast options take shorter arguments */
++        if (optname == IP_MULTICAST_TTL
++            || optname == IP_MULTICAST_LOOP)
++                buflen = sizeof(u_char);
++
+         res = setsockopt(get_sock_fd(s), level, optname,
+-                         (char*)&flag, sizeof flag);
++                         (char*)&flag, buflen);
+         goto done;
+     }
+ 

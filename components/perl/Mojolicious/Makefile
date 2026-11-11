@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Mojolicious
-HUMAN_VERSION =			9.51
+HUMAN_VERSION =			9.54
 COMPONENT_SUMMARY =		Real-time web framework
 COMPONENT_CPAN_AUTHOR =		SRI
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:56ddea0c74f65ed17d3d5eff2b79ff2f151a0ccb2b6aa63e3fe94bdd52e1de09
+	sha256:8568cdd99a2a7efd568920c504f00a2e5a86f063b7fd1c89552533b5309773bd
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 

@@ -1,0 +1,29 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2026 Marcel Telka
+#
+
+<transform file link -> default tmp.fmri %{pkg.fmri} >
+
+# Create unversioned symlinks in /usr/bin and /usr/share/man
+<transform file path=(usr/bin/|usr/share/man/man[^/]+/)([^/]*[^-/])(-?$(PYVER_RE))(.*)$ \
+    tmp.fmri=(.*runtime/python.*|.*library/python/.*)$ -> \
+    emit link path=%<1>%<2>%<4> target=%<2>%<3>%<4> tmp.fmri=%<5> >
+
+# All symlinks with unversioned path should be mediated
+<transform link path=(?!.*$(PYVER_RE)) tmp.fmri=.*runtime/python|.*library/python/ -> \
+    default mediator python >
+<transform link path=(?!.*$(PYVER_RE)) tmp.fmri=.*runtime/python|.*library/python/ -> \
+    default mediator-version $(PYVER) >
+
+<transform file link tmp.fmri=.* -> delete tmp.fmri .* >

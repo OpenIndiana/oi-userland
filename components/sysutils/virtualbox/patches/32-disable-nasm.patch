@@ -1,0 +1,30 @@
+--- VirtualBox-7.2.18/configure.orig	2026-09-17 18:12:20.667387209 -0700
++++ VirtualBox-7.2.18/configure	2026-09-17 18:13:10.456583567 -0700
+@@ -651,27 +651,6 @@
+ #
+ check_nasm_or_yasm()
+ {
+-  test_header nasm
+-  if check_avail "$NASM" NASM nofatal; then
+-    nasm_ver=`$NASM --version|grep '^NASM'|sed 's+^NASM version \([^ ]*\).*$+\1+'`
+-    if [ $? -ne 0 ]; then
+-      log_success "nasm not found, trying yasm"
+-    else
+-      nasm_maj=`echo $nasm_ver|cut -d. -f1`
+-      nasm_min=`echo $nasm_ver|cut -d. -f2`
+-      nasm_rev=`echo $nasm_ver|cut -d. -f3`
+-      nasm_ver_mul=`expr $nasm_maj \* 10000 + $nasm_min \* 100 + $nasm_rev`
+-      if [ $nasm_ver_mul -lt 21600 ]; then
+-        log_failure "found version $nasm_ver, expected at least 2.16.0"
+-        fail
+-      else
+-        [ "$NASM" != "nasm" ] && cnf_append "PATH_TOOL_NASM" "`dirname $NASM`"
+-        cnf_append "DONT_USE_YASM" "1"
+-        log_success "found version $nasm_ver"
+-        return
+-      fi
+-    fi
+-  fi
+   test_header yasm
+   if check_avail "$YASM" YASM; then
+     yasm_ver=`$YASM --version|grep '^yasm'|sed 's+^yasm \(.*\)+\1+'`

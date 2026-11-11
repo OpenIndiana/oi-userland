@@ -1,0 +1,68 @@
+--- mariadb-12.3.3/sql/item_numconvfunc.cc	2026-10-18 18:48:49.682647602 +0200
++++ mariadb-12.3.3/sql/item_numconvfunc.cc.orig	2026-10-18 18:49:10.092046737 +0200
+@@ -50,9 +50,15 @@
+   class Single_char_token
+   {
+   public:
++#if defined(OS_SOLARIS)
++    static constexpr uchar C= 'C'; // Positional currency (C, L, U)
++    static constexpr uchar B= 'B'; // Prefix/inline flag B
++    static constexpr uchar S= 'S'; // Sign S
++#else
+     static constexpr uchar _C= 'C'; // Positional currency (C, L, U)
+     static constexpr uchar _B= 'B'; // Prefix/inline flag B
+     static constexpr uchar _S= 'S'; // Sign S
++#endif
+     static constexpr uchar _G= 'G'; // Group decimiter G
+     // Single char tokens: $ B . D , G 09 C L U
+     static uchar elem(uchar ch)
+@@ -63,10 +69,17 @@
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* ................ */
+          0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, /*  !"#$%&'()*+,-./ */
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* 0123456789:;<=>? */
++#if defined(OS_SOLARIS)
++         0, 0, B, C, 1, 0, 0,_G, 0, 0, 0, 0, C, 0, 0, 0, /* @ABCDEFGHIJKLMNO */
++         0, 0, 0, S, 0, C, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* PQRSTUVWXYZ[\]^_ */
++         0, 0, B, C, 1, 0, 0,_G, 0, 0, 0, 0, C, 0, 0, 0, /* `abcdefghijklmno */
++         0, 0, 0, S, 0, C, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* pqrstuvwxyz{|}~. */
++#else
+          0, 0,_B,_C, 1, 0, 0,_G, 0, 0, 0, 0,_C, 0, 0, 0, /* @ABCDEFGHIJKLMNO */
+          0, 0, 0,_S, 0,_C, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* PQRSTUVWXYZ[\]^_ */
+          0, 0,_B,_C, 1, 0, 0,_G, 0, 0, 0, 0,_C, 0, 0, 0, /* `abcdefghijklmno */
+          0, 0, 0,_S, 0,_C, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* pqrstuvwxyz{|}~. */
++#endif
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* ................ */
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* ................ */
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* ................ */
+@@ -83,11 +96,19 @@
+   // Wrappers for the above class
+   static bool is_positional_currency(char ch)
+   {
++#if defined(OS_SOLARIS)
++    return Single_char_token::elem((uchar) ch) == Single_char_token::C;
++#else
+     return Single_char_token::elem((uchar) ch) == Single_char_token::_C;
++#endif
+   }
+   static bool is_currency_flag_B(char ch)
+   {
++#if defined(OS_SOLARIS)
++    return Single_char_token::elem((uchar) ch) == Single_char_token::B;
++#else
+     return Single_char_token::elem((uchar) ch) == Single_char_token::_B;
++#endif
+   }
+   static bool is_group_delimiter_G(char ch)
+   {
+@@ -95,7 +116,11 @@
+   }
+   static bool is_sign_S(char ch)
+   {
++#if defined(OS_SOLARIS)
++    return Single_char_token::elem((uchar) ch) == Single_char_token::S;
++#else
+     return Single_char_token::elem((uchar) ch) == Single_char_token::_S;
++#endif
+   }
+   // Combining wrappers
+   static bool is_currency_flag(char ch)

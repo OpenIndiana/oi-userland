@@ -21,12 +21,11 @@
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
 
-BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libzmf
 COMPONENT_VERSION=	0.0.2
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_SUMMARY=      libzmf - library for reading Zoner Callisto/Draw documents
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libzmf
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,7 +34,7 @@ COMPONENT_ARCHIVE_HASH=	sha256:27051a30cb057fdb5d5de65a1f165c7153dc76e27fe62251c
 COMPONENT_ARCHIVE_URL=  https://dev-www.libreoffice.org/src/libzmf/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=     library/c++/libzmf
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_LICENSE=      MPLv2
+COMPONENT_LICENSE=	MPL-2.0
 COMPONENT_LICENSE_FILE= COPYING
 
 TEST_TARGET= $(NO_TESTS)
@@ -44,6 +43,7 @@ include $(WS_MAKE_RULES)/common.mk
 # Fix threading detection issue introduced with boost 1.64
 CXXFLAGS += -std=c++17 -pthread
 
+CONFIGURE_OPTIONS += --without-docs
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-werror
@@ -52,7 +52,6 @@ CONFIGURE_OPTIONS += --disable-werror
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
-REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)/32
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/librevenge

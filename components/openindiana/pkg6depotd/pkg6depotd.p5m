@@ -1,0 +1,59 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2026 Till Wegmueller
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=info.classification value="org.opensolaris.category.2008:$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(GIT_REPO)
+set name=info.repository-url value=$(GIT_REPO)
+set name=info.repository-changeset value=$(GIT_COMMIT_ID)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# Service account, reserved in doc/reserved_uids_and_gids.md.
+group groupname=pkg6srv gid=94
+user username=pkg6srv ftpuser=false gcos-field="pkg6 depot server Reserved UID" \
+    group=pkg6srv password=NP uid=94
+
+# The configuration may name TLS keys and DNS API token files, so only the
+# service user may read it. Operator edits survive upgrades.
+dir  path=etc/pkg6depotd owner=root group=pkg6srv mode=0750
+file path=etc/pkg6depotd/pkg6depotd.kdl owner=root group=pkg6srv mode=0640 \
+    preserve=renamenew
+
+# The default instance is delivered disabled. Actuators address every
+# instance so named repositories restart on upgrade and stop on removal.
+file path=lib/svc/manifest/application/pkg/pkg6depotd.xml \
+    disable_fmri=svc:/application/pkg/pkg6depotd:* \
+    restart_fmri=svc:/system/manifest-import:default
+file path=lib/svc/method/svc-pkg6depotd \
+    restart_fmri=svc:/application/pkg/pkg6depotd:*
+file path=usr/lib/pkg6depotd mode=0555 \
+    restart_fmri=svc:/application/pkg/pkg6depotd:*
+
+file path=usr/bin/pkg6recv
+file path=usr/bin/pkg6repo
+file path=usr/share/man/man1/pkg6repo.1
+file path=usr/share/man/man5/pkg6-policy.5
+file path=usr/share/man/man8/pkg6depotd.8
+file path=usr/share/man/man8/pkg6repo-retire.8
+
+# Repositories are operator data and are deliberately not delivered: see
+# pkg6depotd(8). pkg(1) would move unpackaged content of a removed directory
+# into /var/pkg/lost+found.

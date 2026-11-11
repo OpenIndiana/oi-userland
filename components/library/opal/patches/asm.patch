@@ -1,0 +1,11 @@
+--- opal-3.16.2/src/rtp/libsrtp/crypto/include/datatypes.h	2026-10-24 21:22:06.032898318 +0200
++++ opal-3.16.2/src/rtp/libsrtp/crypto/include/datatypes.h.orig	2026-10-24 21:22:45.429557466 +0200
+@@ -397,7 +397,7 @@
+ /* Fall back. */
+ static inline uint32_t be32_to_cpu(uint32_t v) {
+    /* optimized for x86. */
+-   asm("bswap %0" : "=r" (v) : "0" (v));
++   __asm__ ("bswap %0" : "=r" (v) : "0" (v));
+    return v;
+ }
+ # else /* HAVE_X86 */

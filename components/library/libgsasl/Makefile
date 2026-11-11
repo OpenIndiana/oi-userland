@@ -14,18 +14,18 @@
 # Copyright (c) 2023 Klaus Ziegler
 #
 
-BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgsasl
 COMPONENT_VERSION=	1.10.0
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gsasl/
+COMPONENT_REVISION=	1
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gsasl/
 COMPONENT_SUMMARY=	Implementation of the Simple Authentication and Security Layer framework 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	ftp://ftp.gnu.org/gnu/gsasl/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/gsasl/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:f1b553384dedbd87478449775546a358d6f5140c15cccc8fb574136fdc77329f
 COMPONENT_FMRI=		library/libgsasl
@@ -35,13 +35,10 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
-
 CFLAGS += -I/usr/include/idn
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=incompatible-pointer-types
 
-CONFIGURE_OPTIONS.32 += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-gssapi-impl=mit
 

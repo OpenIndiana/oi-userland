@@ -1,0 +1,61 @@
+Restore canonical high-half TypeDef pointers on illumos amd64.
+
+Native malloc may return upper-half canonical user addresses. WebAssembly's
+48-bit field loses their high 16 bits and its upstream decoder zero-extends,
+causing a fault during builtin-module initialization. Retain unsigned decoding
+on other platforms (including Android; see Mozilla bugs 1861973 and 1868820).
+
+This is a platform port fix; no private core data is included here.
+
+--- firefox-158.0.1/js/src/wasm/WasmValType.h.orig
++++ firefox-158.0.1/js/src/wasm/WasmValType.h
+@@ -43,6 +43,17 @@
+                         UnusedBits ==
+                     (sizeof(PackedRepr) * 8),
+                 "enough bits");
++
++  // illumos amd64 also allocates in the upper canonical address range.
++  // Use unsigned arithmetic to sign-extend bit 47 without signed shifts.
++  static constexpr uintptr_t unpackTypeDef(PackedRepr bits) {
++#if defined(__sun) && defined(__x86_64__)
++    constexpr PackedRepr signBit = PackedRepr(1) << (TypeDefBits - 1);
++    return uintptr_t((bits ^ signBit) - signBit);
++#else
++    return uintptr_t(bits);
++#endif
++  }
+
+   PackedRepr bits_;
+   struct {
+@@ -91,12 +102,13 @@
+     MOZ_ASSERT_IF(tc == AbstractTypeRefCode, typeDef != nullptr);
+     auto tydef = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(typeDef));
+ #if defined(JS_64BIT) && defined(DEBUG)
+-    // Double check that `typeDef` only has 48 significant bits, with the top
+-    // 16 being zero.  This is necessary since we will only store the lowest
+-    // 48 bits of it, as noted above.  There's no equivalent check on 32 bit
++    // Double check that `typeDef` round-trips through the 48-bit field.
++    // illumos amd64 restores the upper canonical address bits; other targets
++    // require the top 16 bits to be zero. There's no equivalent check on 32 bit
+     // targets since we can store the whole pointer.
+     static_assert(sizeof(int64_t) == sizeof(uintptr_t));
+-    MOZ_ASSERT((tydef >> TypeDefBits) == 0);
++    MOZ_ASSERT(unpackTypeDef(tydef & ((PackedRepr(1) << TypeDefBits) - 1)) ==
++               tydef);
+ #endif
+     return PackedTypeCode{isNullable, PackedRepr(tc), tydef};
+   }
+@@ -146,10 +158,9 @@
+
+   const TypeDef* typeDef() const {
+     MOZ_ASSERT(isValid());
+-    // On a 64-bit target, this reconstitutes the pointer by zero-extending
+-    // the lowest TypeDefBits bits of `typeDef_`.  On a 32-bit target, the
+-    // pointer is stored exactly in the lowest 32 bits of `typeDef_`.
+-    return (const TypeDef*)(uintptr_t)typeDef_;
++    // Restore canonical high bits on illumos amd64, otherwise zero-extend.
++    // On a 32-bit target the complete pointer fits in the field.
++    return (const TypeDef*)unpackTypeDef(typeDef_);
+   }
+
+   bool isNullable() const {

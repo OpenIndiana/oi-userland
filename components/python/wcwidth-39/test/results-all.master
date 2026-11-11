@@ -29,7 +29,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: tox.ini
-collecting ... collected 1762 items
+collecting ... collected 1811 items
 
 tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\xa1-INVERTED_EXCLAMATION] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\xa7-SECTION_SIGN] PASSED
@@ -71,6 +71,10 @@ tests/test_benchmarks.py::test_wcswidth_short_mixed PASSED
 tests/test_benchmarks.py::test_wcswidth_long_ascii PASSED
 tests/test_benchmarks.py::test_wcswidth_long_japanese PASSED
 tests/test_benchmarks.py::test_wcswidth_emoji_sequence PASSED
+tests/test_benchmarks.py::test_wcswidth_latin1 PASSED
+tests/test_benchmarks.py::test_wcswidth_vs15 PASSED
+tests/test_benchmarks.py::test_wcswidth_indic PASSED
+tests/test_benchmarks.py::test_wcswidth_ambiguous_latin1 PASSED
 tests/test_benchmarks.py::test_wcswidth_ri_flags_paired PASSED
 tests/test_benchmarks.py::test_wcswidth_ri_flags_unpaired PASSED
 tests/test_benchmarks.py::test_width_ri_flags_paired PASSED
@@ -86,11 +90,23 @@ tests/test_benchmarks.py::test_width_complex_ansi PASSED
 tests/test_benchmarks.py::test_iter_graphemes_ascii PASSED
 tests/test_benchmarks.py::test_iter_graphemes_emoji PASSED
 tests/test_benchmarks.py::test_iter_graphemes_combining PASSED
+tests/test_benchmarks.py::test_iter_graphemes_latin1 PASSED
+tests/test_benchmarks.py::test_iter_graphemes_cjk PASSED
+tests/test_benchmarks.py::test_iter_graphemes_flags PASSED
+tests/test_benchmarks.py::test_iter_graphemes_zwj_family PASSED
+tests/test_benchmarks.py::test_iter_graphemes_indic PASSED
+tests/test_benchmarks.py::test_iter_graphemes_start_long PASSED
 tests/test_benchmarks.py::test_grapheme_boundary_before_short PASSED
 tests/test_benchmarks.py::test_grapheme_boundary_before_long_end PASSED
 tests/test_benchmarks.py::test_grapheme_boundary_before_long_mid PASSED
 tests/test_benchmarks.py::test_iter_graphemes_reverse_short PASSED
 tests/test_benchmarks.py::test_iter_graphemes_reverse_long PASSED
+tests/test_benchmarks.py::test_grapheme_boundary_before_ascii PASSED
+tests/test_benchmarks.py::test_grapheme_boundary_before_latin1 PASSED
+tests/test_benchmarks.py::test_grapheme_boundary_before_cjk PASSED
+tests/test_benchmarks.py::test_iter_graphemes_reverse_ascii PASSED
+tests/test_benchmarks.py::test_iter_graphemes_reverse_latin1 PASSED
+tests/test_benchmarks.py::test_iter_graphemes_reverse_cjk PASSED
 tests/test_benchmarks.py::test_ljust_ascii PASSED
 tests/test_benchmarks.py::test_ljust_ascii_default_corrections PASSED
 tests/test_benchmarks.py::test_ljust_japanese PASSED
@@ -762,19 +778,24 @@ tests/test_grapheme.py::test_core_grapheme[-expected0] PASSED
 tests/test_grapheme.py::test_core_grapheme[a-expected1] PASSED
 tests/test_grapheme.py::test_core_grapheme[abc-expected2] PASSED
 tests/test_grapheme.py::test_core_grapheme[cafe\u0301-expected3] PASSED
-tests/test_grapheme.py::test_core_grapheme[\r\n-expected4] PASSED
-tests/test_grapheme.py::test_core_grapheme[ok\r\nok-expected5] PASSED
-tests/test_grapheme.py::test_core_grapheme[\r-expected6] PASSED
-tests/test_grapheme.py::test_core_grapheme[ok\rok-expected7] PASSED
-tests/test_grapheme.py::test_core_grapheme[\n-expected8] PASSED
-tests/test_grapheme.py::test_core_grapheme[ok\nok-expected9] PASSED
-tests/test_grapheme.py::test_core_grapheme[\r\r-expected10] PASSED
-tests/test_grapheme.py::test_core_grapheme[ok\r\rok-expected11] PASSED
+tests/test_grapheme.py::test_core_grapheme[\xad\u0301-expected4] PASSED
+tests/test_grapheme.py::test_core_grapheme[\xad\u200d-expected5] PASSED
+tests/test_grapheme.py::test_core_grapheme[\r\n-expected6] PASSED
+tests/test_grapheme.py::test_core_grapheme[ok\r\nok-expected7] PASSED
+tests/test_grapheme.py::test_core_grapheme[\r-expected8] PASSED
+tests/test_grapheme.py::test_core_grapheme[ok\rok-expected9] PASSED
+tests/test_grapheme.py::test_core_grapheme[\n-expected10] PASSED
+tests/test_grapheme.py::test_core_grapheme[ok\nok-expected11] PASSED
+tests/test_grapheme.py::test_core_grapheme[\r\r-expected12] PASSED
+tests/test_grapheme.py::test_core_grapheme[ok\r\rok-expected13] PASSED
 tests/test_grapheme.py::test_iter_graphemes_slice[abcdef-2-None-expected0] PASSED
 tests/test_grapheme.py::test_iter_graphemes_slice[abcdef-0-4-expected1] PASSED
 tests/test_grapheme.py::test_iter_graphemes_slice[abcdef-1-4-expected2] PASSED
 tests/test_grapheme.py::test_iter_graphemes_slice[abc-10-None-expected3] PASSED
 tests/test_grapheme.py::test_iter_graphemes_slice[abc-0-10-expected4] PASSED
+tests/test_grapheme.py::test_iter_graphemes_slice[abcdef--3-None-expected5] PASSED
+tests/test_grapheme.py::test_iter_graphemes_slice[-\u094d\u0300\u0915\xa4-2-5-expected6] PASSED
+tests/test_grapheme.py::test_iter_graphemes_slice[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-100-200-expected7] PASSED
 tests/test_grapheme.py::test_wide_unicode_graphemes[\u1100\u1161-expected0] PASSED
 tests/test_grapheme.py::test_wide_unicode_graphemes[ok\u1100\u1161ok-expected1] PASSED
 tests/test_grapheme.py::test_wide_unicode_graphemes[\uac00\u11a8-expected2] PASSED
@@ -785,12 +806,20 @@ tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f1fa\U0001f1f8\U0001f1
 tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f1fa\U0001f1f8\U0001f1e6ok-expected7] PASSED
 tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f1fa\U0001f1f8\U0001f1e6\U0001f1fa-expected8] PASSED
 tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f1fa\U0001f1f8\U0001f1e6\U0001f1faok-expected9] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f468\u200d\U0001f469\u200d\U0001f467-expected10] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f468\u200d\U0001f469\u200d\U0001f467ok-expected11] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f44b\U0001f3fb-expected12] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f44b\U0001f3fbok-expected13] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[\u2764\ufe0f-expected14] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[ok\u2764\ufe0fok-expected15] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\n\U0001f1fa\U0001f1f8-expected10] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\t\U0001f1fa\U0001f1f8-expected11] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\r\U0001f1fa\U0001f1f8-expected12] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\x00\U0001f1fa\U0001f1f8-expected13] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\x1b\U0001f1fa\U0001f1f8-expected14] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\n\U0001f1fa\U0001f1f8\U0001f1e6\U0001f1fa-expected15] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\u0600\U0001f1fa\U0001f1f8-expected16] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\u0600\U0001f1fa\U0001f1f8\U0001f1e6\U0001f1fa-expected17] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f468\u200d\U0001f469\u200d\U0001f467-expected18] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f468\u200d\U0001f469\u200d\U0001f467ok-expected19] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f44b\U0001f3fb-expected20] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f44b\U0001f3fbok-expected21] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\u2764\ufe0f-expected22] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[ok\u2764\ufe0fok-expected23] PASSED
 tests/test_grapheme.py::test_precomposed_hangul_graphemes[\uac01-expected0] PASSED
 tests/test_grapheme.py::test_precomposed_hangul_graphemes[ok\uac01ok-expected1] PASSED
 tests/test_grapheme.py::test_precomposed_hangul_graphemes[\uac01\u11a8-expected2] PASSED
@@ -825,6 +854,9 @@ tests/test_grapheme.py::test_grapheme_boundary_before_basic[ae\u0301\u0300b-4-1]
 tests/test_grapheme.py::test_grapheme_boundary_before_basic[\u0600a-2-0] PASSED
 tests/test_grapheme.py::test_grapheme_boundary_before_basic[\u0600\n-2-1] PASSED
 tests/test_grapheme.py::test_grapheme_boundary_before_basic[X\x85\u0301-3-2] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_basic[a\n\u0301-3-2] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_basic[a\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301-51-0] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_basic[aba\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301-53-2] PASSED
 tests/test_grapheme.py::test_grapheme_boundary_before_unicode[Hi \U0001f44b\U0001f3fb!-6-5] PASSED
 tests/test_grapheme.py::test_grapheme_boundary_before_unicode[Hi \U0001f44b\U0001f3fb!-5-3] PASSED
 tests/test_grapheme.py::test_grapheme_boundary_before_unicode[Hi \U0001f44b\U0001f3fb!-3-2] PASSED
@@ -837,12 +869,28 @@ tests/test_grapheme.py::test_grapheme_boundary_before_unicode[a\U0001f468\u200d\
 tests/test_grapheme.py::test_iter_graphemes_reverse_basic[-expected0] PASSED
 tests/test_grapheme.py::test_iter_graphemes_reverse_basic[abc-expected1] PASSED
 tests/test_grapheme.py::test_iter_graphemes_reverse_basic[cafe\u0301\r\nok-expected2] PASSED
+tests/test_grapheme.py::test_iter_graphemes_reverse_basic[a\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301-expected3] PASSED
 tests/test_grapheme.py::test_iter_graphemes_reverse_unicode[cafe\u0301 \U0001f44b\U0001f3fb \U0001f1fa\U0001f1f8!-expected0] PASSED
 tests/test_grapheme.py::test_iter_graphemes_reverse_unicode[\U0001f468\u200d\U0001f469\u200d\U0001f467\U0001f468\u200d\U0001f469\u200d\U0001f467-expected1] PASSED
 tests/test_grapheme.py::test_iter_graphemes_reverse_unicode[Hi\U0001f1fa\U0001f1f8\U0001f1e6!-expected2] PASSED
 tests/test_grapheme.py::test_grapheme_roundtrip_consistency[NOTSET] SKIPPED
-tests/test_grapheme.py::test_grapheme_boundary_before_edge_cases PASSED
-tests/test_grapheme.py::test_iter_graphemes_reverse_edge_cases PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_edge_cases[abc-0-0] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_edge_cases[abc-100-2] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_edge_cases[-0-0] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_edge_cases[-1-0] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_edge_cases[\xad\u0301-2-1] PASSED
+tests/test_grapheme.py::test_iter_graphemes_reverse_edge_cases[abcdef-2-5-expected0] PASSED
+tests/test_grapheme.py::test_iter_graphemes_reverse_edge_cases[abc-0-100-expected1] PASSED
+tests/test_grapheme.py::test_iter_graphemes_reverse_edge_cases[abc-5-None-expected2] PASSED
+tests/test_grapheme.py::test_iter_graphemes_reverse_edge_cases[abc-2-2-expected3] PASSED
+tests/test_grapheme.py::test_iter_graphemes_reverse_edge_cases[\u0600a-1-None-expected4] PASSED
+tests/test_grapheme.py::test_iter_graphemes_reverse_edge_cases[\u0600a-0-None-expected5] PASSED
+tests/test_grapheme.py::test_iter_graphemes_reverse_edge_cases[abc--5-None-expected6] PASSED
+tests/test_grapheme.py::test_iter_graphemes_reverse_edge_cases[\xad\u0301-0-None-expected7] PASSED
+tests/test_grapheme.py::test_iter_graphemes_reverse_edge_cases[a\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301-0-None-expected8] PASSED
+tests/test_grapheme.py::test_iter_graphemes_reverse_non_str PASSED
+tests/test_grapheme.py::test_iter_graphemes_window_extension[a\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301-0-expected0] PASSED
+tests/test_grapheme.py::test_iter_graphemes_window_extension[aba\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301-2-expected1] PASSED
 tests/test_hyperlink.py::test_hyperlinkparams_parse_valid[\x1b]8;;http://example.com\x07-http://example.com--\x07] PASSED
 tests/test_hyperlink.py::test_hyperlinkparams_parse_valid[\x1b]8;id=a;http://example.com\x1b\\-http://example.com-id=a-\x1b\\] PASSED
 tests/test_hyperlink.py::test_hyperlinkparams_parse_invalid[not an escape] PASSED
@@ -1544,6 +1592,7 @@ tests/test_textwrap.py::test_wrap_virama_conjunct_known_limitation[\u0d9a\u0dca\
 tests/test_textwrap.py::test_wrap_drops_leading_whitespace_only_lines[ hello] PASSED
 tests/test_textwrap.py::test_wrap_drops_leading_whitespace_only_lines[  hello] PASSED
 tests/test_textwrap.py::test_wrap_drops_leading_whitespace_only_lines[    hello] PASSED
+tests/test_textwrap.py::test_iter_graphemes_import_error_fallback PASSED
 tests/test_ucslevel.py::test_list_versions_single PASSED
 tests/test_ucslevel.py::test_latest PASSED
 tests/test_ucslevel.py::test_auto PASSED
@@ -1798,6 +1847,6 @@ wcwidth/textwrap.py::wcwidth.textwrap.wrap PASSED
 
 - generated xml file: $(@D)/.tox/results.py$(PYV).xml -
 ============================= slowest 10 durations =============================
-======== 1751 passed, 11 skipped ========
+======== 1800 passed, 11 skipped ========
   py$(PYV): OK
   congratulations :)

@@ -21,11 +21,11 @@ BUILD_STYLE=		cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		webkitgtk-60
-COMPONENT_VERSION=	2.54.1
+COMPONENT_VERSION=	2.54.2
 COMPONENT_SUMMARY=	Web content engine library for GTK+
 COMPONENT_SRC=		webkitgtk-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:ea0bbb02dbdbc596874a4e7ad35b66645b3e0a232bd0e4081de5ed92eb0a397d
+COMPONENT_ARCHIVE_HASH= sha256:a76345b391bef6211fb5ab6cfab2e86b285d18cda17cbb9ade595f1252b86065
 COMPONENT_ARCHIVE_URL=	https://webkitgtk.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://webkitgtk.org
 COMPONENT_FMRI=		library/desktop/webkitgtk2-60

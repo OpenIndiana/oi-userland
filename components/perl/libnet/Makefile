@@ -19,21 +19,20 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		libnet
-HUMAN_VERSION =			3.15
-COMPONENT_REVISION =		5
+HUMAN_VERSION =			3.16
 COMPONENT_SUMMARY =		Collection of network protocol modules
 COMPONENT_CPAN_AUTHOR =		SHAY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a71f4db580e1a767d6936faa5baf38f1fa617824342da078b561283e86f8f4a2
+	sha256:41472b0047cba02c203d3d02b9d4cf72b41346997b26c79b459be6159b0c0875
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Prevent questions during configure
-COMPONENT_CONFIGURE_ENV += PERL5_CPAN_IS_RUNNING=1
+CONFIGURE_ENV += PERL5_CPAN_IS_RUNNING=1
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/socket
-PERL_REQUIRED_PACKAGES += library/perl-5/time-local
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/socket
+REQUIRED_PACKAGES.perl += library/perl-5/time-local
+REQUIRED_PACKAGES.perl += runtime/perl

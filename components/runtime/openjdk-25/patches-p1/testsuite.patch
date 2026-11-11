@@ -121,7 +121,7 @@ suite. It would be nice to be complete, but that isn't true yet.
   * @run main/othervm/native -XX:-CheckJNICalls TestTerminatedThread
 --- a/test/hotspot/jtreg/runtime/NMT/CheckForProperDetailStackTrace.java	Tue Jan  9 21:18:15 2024
 +++ b/test/hotspot/jtreg/runtime/NMT/CheckForProperDetailStackTrace.java	Tue Apr  2 13:33:53 2024
-@@ -119,7 +119,7 @@
+@@ -118,7 +118,7 @@
          // We check for that here, but allow it for Aix and Windows slowdebug builds
          // because the compiler ends up not inlining AllocateHeap.
          Boolean okToHaveAllocateHeap = Platform.isSlowDebugBuild() &&
@@ -140,21 +140,6 @@ suite. It would be nice to be complete, but that isn't true yet.
              Platform.isOSX();
      }
  
---- a/test/jdk/sun/security/pkcs11/Provider/MultipleLogins.sh	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/sun/security/pkcs11/Provider/MultipleLogins.sh	Thu Apr  4 11:29:40 2024
-@@ -58,6 +58,12 @@
- 
- OS=`uname -s`
- case "$OS" in
-+  SunOS )
-+    FS="/"
-+    PS=":"
-+    CP="${FS}bin${FS}cp"
-+    CHMOD="${FS}bin${FS}chmod"
-+    ;;
-   Linux )
-     FS="/"
-     PS=":"
 --- a/test/jdk/jdk/internal/util/OSTest.java	Mon Apr  8 07:22:11 2024
 +++ b/test/jdk/jdk/internal/util/OSTest.java	Wed Jun  5 20:11:03 2024
 @@ -30,6 +30,7 @@

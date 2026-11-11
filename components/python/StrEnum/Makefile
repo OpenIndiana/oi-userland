@@ -11,22 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project StrEnum
+#   $WS_TOOLS/python-integrate-project -d python/StrEnum strenum
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		StrEnum
-HUMAN_VERSION =			0.4.15
-COMPONENT_REVISION =		1
+COMPONENT_NAME =		strenum
+HUMAN_VERSION =			0.5.0
 COMPONENT_SUMMARY =		An Enum that inherits from str.
 COMPONENT_PROJECT_URL =		https://github.com/irgeek/StrEnum
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/irgeek/StrEnum/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ab442e918760a39a3b07e7923c128ff13a0bbebc6a173cda67237acb738d7e49
+	sha256:9c50a5ce647c0a625ac25c1b719039e745466b6a04bd001aee6376381d8cdce7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,9 +33,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 # This project does not support tox so we need to provide test requirements
 # manually.
-TEST_REQUIREMENTS_EXTRAS += test
+TEST_REQUIREMENTS_PEP735 += test
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest

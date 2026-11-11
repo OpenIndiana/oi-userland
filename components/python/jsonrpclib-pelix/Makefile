@@ -20,15 +20,19 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jsonrpclib_pelix
-HUMAN_VERSION =			1.1.0
+HUMAN_VERSION =			1.2.0
 COMPONENT_SUMMARY =		JSON-RPC v2.0 client and server for Python 2.7 and Python 3.6+ usable with Pelix/iPOPO remote services.
 COMPONENT_PROJECT_URL =		https://github.com/tcalmant/jsonrpclib/
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/tcalmant/jsonrpclib/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:379a3c9b3dd478727419587aa7cf14bb6ff0e64301decc0ffa98f710f6bfec1e
+	sha256:2707598d9e5fd844421006a94012827ae39ad3a54a926414cf7dfe436d3ddf10
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
+
+COMPONENT_SRC =			jsonrpclib-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -37,5 +41,5 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += "-e 's/(pid=[0-9]\{1,\})/(pid=\$$(PID))/'"
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python

@@ -15,19 +15,19 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zc_lockfile
-HUMAN_VERSION =			4.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			4.1
 COMPONENT_SUMMARY =		Basic inter-process locks
-COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zc.lockfile
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d3ab0f53974296a806db3219b9191ba0e6d5cbbd1daa2e0d17208cb9b29d2102
+	sha256:498f37d33a36d1b1534ea31a0fbe3b5d371c862baeb8805f467a6d39948011ef
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
+
+# Python 3.9 is not supported by zc.lockfile >= 4.1
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 

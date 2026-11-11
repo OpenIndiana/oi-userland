@@ -15,17 +15,15 @@ mozbuild.preprocessor.Preprocessor.Error: ('../../source-repo.h', None, 'no prep
 
 Something changed after May 22, 2026.  So just blindly make sure source-repo.h has the data that the Mozilla scipts are looking for.
 
---- firefox-0e1add40350764cc84e5d7e2e2ee94906c7d2734/build/variables.py.old
-+++ firefox-0e1add40350764cc84e5d7e2e2ee94906c7d2734/build/variables.py
-@@ -111,6 +111,11 @@
-         source = f"{repo}{rev_path}{changeset}"
-         output.write("#define MOZ_SOURCE_REPO %s\n" % repo)
-         output.write("#define MOZ_SOURCE_URL %s\n" % source)
-+
+--- firefox-18d9efd53b34d51f3be66cb66de39ad3cbaa6fb9/build/variables.py.~1~
++++ firefox-18d9efd53b34d51f3be66cb66de39ad3cbaa6fb9/build/variables.py
+@@ -118,6 +118,9 @@
+             output.write(
+                 "#define MOZ_SOURCE_GIT_URL %s/commit/%s\n" % (git_repo, git_changeset)
+             )
 +    output.write("#define MOZ_SOURCE_STAMP 57cea197cdb443d17c9fa345edddefb192e37226")
 +    output.write("#define MOZ_SOURCE_REPO https://hg.mozilla.org/releases/mozilla-release")
 +    output.write("#define MOZ_SOURCE_URL https://hg.mozilla.org/releases/mozilla-release/rev/57cea197cdb443d17c9fa345edddefb192e37226")
-+
  
  
  def main(args):

@@ -21,16 +21,15 @@ include ../../../make-rules/shared-macros.mk
 
 OPENJDK_VERSION=	11
 OPENJDK_UPDATE=	0
-OPENJDK_BUILD=	32.1
+OPENJDK_BUILD=	33
 COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
-COMPONENT_REVISION=	2
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(COMPONENT_VERSION)-ga
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:918a42d31544c5e7f70182c6ee76c95b1f042f914c375b814b64144cc8611adb
+	sha256:9753c1af02b07c7ffd59ea306ee9fcda93f075af94afc8bf928636021f557dba
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/$(COMPONENT_NAME)/jdk$(OPENJDK_VERSION)u/archive/refs/tags/jdk-$(COMPONENT_VERSION)-ga.tar.gz
 COMPONENT_PROJECT_URL=	https://openjdk.java.net/
@@ -144,6 +143,7 @@ build:		$(BUILD_64)
 install: $(BUILD_DIR_64)/.built	$(CACERTS_STORE)
 	$(RM) -r $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)
 	$(MKDIR) $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)
+	ln -s instances/$(OPENJDK_INSTANCE) $(PROTO_DIR)/usr/jdk/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 	$(CP) -a $(BUILD_DIR_64)/images/jdk/* $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)
 	$(CHMOD) +x $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/jspawnhelper
 	$(CP) $(CACERTS_STORE) $(PROTO_DIR)/usr/jdk/instances/$(OPENJDK_INSTANCE)/lib/security/cacerts

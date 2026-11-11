@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 143 items
+collecting ... collected 161 items
 
 test/test_buffer.py::test_unpack_buffer PASSED
 test/test_buffer.py::test_unpack_bytearray PASSED
@@ -58,6 +58,21 @@ test/test_limits.py::test_max_str_len PASSED
 test/test_limits.py::test_max_bin_len PASSED
 test/test_limits.py::test_max_array_len PASSED
 test/test_limits.py::test_max_map_len PASSED
+test/test_limits.py::test_array_preallocation_boundary[False-9999] PASSED
+test/test_limits.py::test_array_preallocation_boundary[False-10000] PASSED
+test/test_limits.py::test_array_preallocation_boundary[False-10001] PASSED
+test/test_limits.py::test_array_preallocation_boundary[False-20001] PASSED
+test/test_limits.py::test_array_preallocation_boundary[True-9999] PASSED
+test/test_limits.py::test_array_preallocation_boundary[True-10000] PASSED
+test/test_limits.py::test_array_preallocation_boundary[True-10001] PASSED
+test/test_limits.py::test_array_preallocation_boundary[True-20001] PASSED
+test/test_limits.py::test_pairs_preallocation_boundary[9999] PASSED
+test/test_limits.py::test_pairs_preallocation_boundary[10000] PASSED
+test/test_limits.py::test_pairs_preallocation_boundary[10001] PASSED
+test/test_limits.py::test_pairs_preallocation_boundary[20001] PASSED
+test/test_limits.py::test_nested_headers_preallocation[list] PASSED
+test/test_limits.py::test_nested_headers_preallocation[tuple] PASSED
+test/test_limits.py::test_nested_headers_preallocation[pairs] PASSED
 test/test_limits.py::test_max_ext_len PASSED
 test/test_limits.py::test_auto_max_array_len PASSED
 test/test_limits.py::test_nest_limit_1024 PASSED
@@ -85,6 +100,7 @@ test/test_newspec.py::test_ext PASSED
 test/test_obj.py::test_encode_hook PASSED
 test/test_obj.py::test_decode_hook PASSED
 test/test_obj.py::test_decode_pairs_hook PASSED
+test/test_obj.py::test_decode_pairs_hook_receives_list PASSED
 test/test_obj.py::test_only_one_obj_hook PASSED
 test/test_obj.py::test_bad_hook PASSED
 test/test_obj.py::test_array_hook PASSED
@@ -113,6 +129,7 @@ test/test_read_size.py::test_incorrect_type_array PASSED
 test/test_read_size.py::test_incorrect_type_map PASSED
 test/test_read_size.py::test_correct_type_nested_array PASSED
 test/test_read_size.py::test_incorrect_type_nested_map PASSED
+test/test_read_size.py::test_incorrect_type_does_not_consume_object PASSED
 test/test_seq.py::test_exceeding_unpacker_read_size PASSED
 test/test_sequnpack.py::test_partialdata PASSED
 test/test_sequnpack.py::test_foobar PASSED
@@ -120,6 +137,7 @@ test/test_sequnpack.py::test_foobar_skip PASSED
 test/test_sequnpack.py::test_maxbuffersize PASSED
 test/test_sequnpack.py::test_maxbuffersize_file PASSED
 test/test_sequnpack.py::test_readbytes PASSED
+test/test_sequnpack.py::test_read_bytes_returns_bytes PASSED
 test/test_sequnpack.py::test_issue124 PASSED
 test/test_sequnpack.py::test_unpack_tell PASSED
 test/test_stricttype.py::test_namedtuple PASSED
@@ -150,9 +168,17 @@ test/test_unpack.py::test_unpackb_raises_extra_data_with_trailing_bytes PASSED
 test/test_unpack.py::test_unpack_raises_extra_data_on_stream_with_trailing_bytes PASSED
 
 =============================== warnings summary ===============================
-test/test_limits.py:184
-  $(@D)/test/test_limits.py:184: PytestUnknownMarkWarning: Unknown pytest.mark.thread_unsafe - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+test/test_except.py:106
+  $(@D)/test/test_except.py:106: PytestUnknownMarkWarning: Unknown pytest.mark.thread_unsafe - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @mark.thread_unsafe(reason="tracemalloc changes process-wide state and measures all threads")
+
+test/test_limits.py:156
+  $(@D)/test/test_limits.py:156: PytestUnknownMarkWarning: Unknown pytest.mark.thread_unsafe - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.thread_unsafe(reason="tracemalloc changes process-wide state and measures all threads")
+
+test/test_limits.py:243
+  $(@D)/test/test_limits.py:243: PytestUnknownMarkWarning: Unknown pytest.mark.thread_unsafe - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
     @pytest.mark.thread_unsafe
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 142 passed, 1 skipped, 1 warning ========
+======== 160 passed, 1 skipped, 3 warnings ========

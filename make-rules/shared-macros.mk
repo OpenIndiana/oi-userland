@@ -147,7 +147,7 @@ ROOT =			/
 # to determine the distribution version
 # (it should look like OpenIndiana Hipster YYYY.MM).
 DISTRIBUTION_NAME = OpenIndiana Hipster
-DISTRIBUTION_VERSION = 2026.04
+DISTRIBUTION_VERSION = 2026.10
 # Native OS version
 OS_VERSION :=		$(shell $(UNAME) -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
@@ -214,6 +214,7 @@ endif
 # +----------------+----------------+
 # |      3.9       |   2025-10      |
 # |      3.14      |   2030-10      |
+# |      3.15      |   2031-10      |
 # +----------------+----------------+
 #
 # See https://devguide.python.org/versions/
@@ -222,8 +223,8 @@ endif
 # This is the default version of Python
 PYTHON_VERSION = 3.9
 
-# The PYTHON_VERSIONS list should always be in ascending order (newest version
-# last)
+# List of all Python versions we fully support (i.e. build Python modules for).
+# The list should always be in ascending order (newest version last).
 PYTHON_VERSIONS = 3.9
 PYTHON_VERSIONS += 3.14
 # Python up to 2.7 was built both 32-bit and 64-bit.  Starting with Python 3.x
@@ -618,7 +619,7 @@ COMPONENT_TEST_CMD =	$(GMAKE)
 COMPONENT_TEST_TARGETS =	check
 
 # set the default directory for test of the component
-COMPONENT_TEST_DIR =	$(@D)
+COMPONENT_TEST_DIR =	$(@D)$(COMPONENT_SUBDIR:%=/%)
 
 # prepare the testing environment before we run tests
 COMPONENT_TEST_DEP += component-test-environment-prep
@@ -1109,7 +1110,7 @@ TCLSH.8.6.sparc.64 =	/usr/bin/sparcv9/tclsh8.6
 TCLSH =		$(TCLSH.$(TCL_VERSION).$(MACH).$(BITS))
 
 # ICU library
-ICU_VERSION =			78
+ICU_VERSION =			79
 ICU_LIBRARY_PKG =		library/icu-$(ICU_VERSION)
 REQUIRED_PACKAGES_SUBST +=	ICU_LIBRARY_PKG
 

@@ -12,13 +12,11 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-BUILD_STYLE= configure
-BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         SDL_sound
 COMPONENT_VERSION=      1.0.3
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_SUMMARY=      Sound decoding library for SDL
 COMPONENT_PROJECT_URL=  https://icculus.org/SDL_sound/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,10 +31,6 @@ COMPONENT_LICENSE_FILE= COPYING
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH= $(PATH.gnu)
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 # mpeg libraries are disabled for future 
 # in case we ever have hipster-encumbered
 CONFIGURE_OPTIONS += --disable-smpeg 
@@ -44,9 +38,11 @@ CONFIGURE_OPTIONS += --disable-mpglib
 CONFIGURE_OPTIONS += --disable-mikmod
 CONFIGURE_OPTIONS += --disable-modplug
 CONFIGURE_OPTIONS += --disable-physfs
+CONFIGURE_OPTIONS += --disable-static
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += codec/flac
+REQUIRED_PACKAGES += codec/flac-15
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += library/libvorbis

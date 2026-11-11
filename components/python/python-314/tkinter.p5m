@@ -32,12 +32,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# Fix 64-bit object in 32-bit path lint error
-<transform file path=.*/lib-dynload/.*\.so$ -> default pkg.linted.userland.action001.2 true>
-
-# tkinter is unusable without the Python runtime
-depend type=require fmri=runtime/python-$(PYV)
-
 file path=usr/lib/python$(PYVER)/lib-dynload/_tkinter.cpython-$(PYV).so
 file path=usr/lib/python$(PYVER)/test/test_tkinter/README
 file path=usr/lib/python$(PYVER)/test/test_tkinter/__init__.py

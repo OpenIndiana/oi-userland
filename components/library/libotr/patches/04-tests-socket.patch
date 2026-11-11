@@ -1,0 +1,25 @@
+See also:
+https://gitlab.com/vylen/ports/extra/-/blob/main/libotr/libotr-4.1.1-fix-build-with-libgcrypt-1.10.patch
+https://github.com/rxrbln/t2sde/blob/eaa768f6543913277a43b93799f668935e2f4368/package/network/libotr/hotfix-socket.patch
+https://github.com/NixOS/nixpkgs/blob/ea9e3ef341e11c193537f674f821a99f9f436729/pkgs/by-name/li/libotr/fix-regtest-client.patch
+
+--- libotr-4.1.1/tests/regression/client/client.c.orig
++++ libotr-4.1.1/tests/regression/client/client.c
+@@ -26,6 +26,7 @@
+ #include <stdlib.h>
+ #include <sys/epoll.h>
+ #include <sys/types.h>
++#include <sys/socket.h>
+ #include <sys/un.h>
+ #include <unistd.h>
+ 
+--- libotr-4.1.1/tests/regression/client/Makefile.am.orig
++++ libotr-4.1.1/tests/regression/client/Makefile.am
+@@ -11,6 +11,6 @@
+ noinst_PROGRAMS = client
+ 
+ client_SOURCES = client.c
+-client_LDADD = $(LIBTAP) $(LIBOTR) -lpthread @LIBGCRYPT_LIBS@
++client_LDADD = $(LIBTAP) $(LIBOTR) -lpthread -lsocket @LIBGCRYPT_LIBS@
+ 
+ EXTRA_DIST = otr.key

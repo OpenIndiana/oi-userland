@@ -24,12 +24,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms2
-COMPONENT_VERSION=      2.19.1
+COMPONENT_VERSION=      2.20
 COMPONENT_SUMMARY=      The Little Color Management System
 COMPONENT_SRC=          lcms$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.littlecms.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:267705e278e2f7c2fb886c259dadcbaeb2be52748bcbc71c79f08aacacb7a709
+COMPONENT_ARCHIVE_HASH=	sha256:49908a4492fe7fc886517d636474bd953ebe698d38ecd3ee5862dfa308dd43ae
 COMPONENT_ARCHIVE_URL=	https://github.com/mm2/Little-CMS/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/lcms2
 COMPONENT_CLASSIFICATION= System/Libraries

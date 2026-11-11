@@ -20,10 +20,10 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flit_core
-HUMAN_VERSION =			4.1.0
+HUMAN_VERSION =			4.2.0
 COMPONENT_SUMMARY =		Distribution-building parts of Flit. See flit package for more information
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:62e12b63ead8335b37f59fabb977c7167fe476dafb5e41785dfa8c9aff843bc6
+	sha256:84e4e4d8fdd45ba2613800a3ebc6834de26d47ec9746efc3719f94181137b460
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 

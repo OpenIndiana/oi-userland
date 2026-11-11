@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 73 items / 1 skipped
+collecting ... collected 132 items / 1 skipped
 
 tests/test_cgi.py::CGIHandlerTests::test_server PASSED
 tests/test_compatibility.py::TestCompatibility::test_batch PASSED
@@ -20,7 +20,27 @@ tests/test_compatibility.py::TestCompatibility::test_positional PASSED
 tests/test_compatibility.py::TestCompatibility::test_special_method PASSED
 tests/test_compatibility.py::TestCompatibility::test_url_query_string PASSED
 tests/test_config.py::ConfigTests::test_copy PASSED
+tests/test_dispatch.py::DispatchMethodTests::test_dispatch_method_error PASSED
+tests/test_dispatch.py::DispatchMethodTests::test_dispatch_method_replaces_registered_methods PASSED
+tests/test_dispatch.py::DispatchMethodTests::test_dispatch_method_resolves_unknown_names PASSED
+tests/test_dispatch.py::NotificationPoolTests::test_call_is_not_given_to_the_pool PASSED
+tests/test_dispatch.py::NotificationPoolTests::test_notification_pool_is_used PASSED
+tests/test_dispatch.py::NotificationPoolTests::test_notification_pool_with_dispatch_method PASSED
+tests/test_dispatch.py::NotificationPoolTests::test_notification_without_pool PASSED
+tests/test_error_details.py::ErrorDetailsTests::test_caller_errors_stay_explicit PASSED
+tests/test_error_details.py::ErrorDetailsTests::test_error_reference_is_logged PASSED
+tests/test_error_details.py::ErrorDetailsTests::test_exception_details_not_sent PASSED
+tests/test_error_details.py::ErrorDetailsTests::test_exception_details_opt_in PASSED
+tests/test_error_details.py::ErrorDetailsTests::test_invalid_request_quotes_a_bounded_part PASSED
+tests/test_error_details.py::ErrorDetailsTests::test_parse_error_quotes_a_bounded_part PASSED
+tests/test_error_details.py::ErrorDetailsTests::test_request_handler_error PASSED
+tests/test_error_details.py::ErrorDetailsTests::test_short_request_is_quoted_as_is PASSED
+tests/test_error_details.py::InterruptionTests::test_dispatch_lets_interruptions_through PASSED
+tests/test_error_details.py::InterruptionTests::test_dispatch_reports_errors PASSED
+tests/test_error_details.py::InterruptionTests::test_marshaled_dispatch_lets_interruptions_through PASSED
 tests/test_headers.py::HeadersTests::test_content_length_too_large PASSED
+tests/test_headers.py::HeadersTests::test_invalid_content_length PASSED
+tests/test_headers.py::HeadersTests::test_missing_content_length PASSED
 tests/test_headers.py::HeadersTests::test_should_add_additional_headers PASSED
 tests/test_headers.py::HeadersTests::test_should_add_additional_headers_to_notifications PASSED
 tests/test_headers.py::HeadersTests::test_should_add_custom_headers_to_methods PASSED
@@ -31,6 +51,7 @@ tests/test_headers.py::HeadersTests::test_should_not_override_content_length PAS
 tests/test_headers.py::HeadersTests::test_should_override_global_headers PASSED
 tests/test_headers.py::HeadersTests::test_should_override_headers PASSED
 tests/test_headers.py::HeadersTests::test_should_restore_global_headers PASSED
+tests/test_headers.py::HeadersTests::test_should_restore_headers_on_error PASSED
 tests/test_history.py::HistoryTests::test_basic PASSED
 tests/test_history.py::HistoryTests::test_clear PASSED
 tests/test_internal.py::InternalTests::test_connect PASSED
@@ -51,15 +72,53 @@ tests/test_jsonclass.py::SerializationTests::test_decimal PASSED
 tests/test_jsonclass.py::SerializationTests::test_dictionary PASSED
 tests/test_jsonclass.py::SerializationTests::test_enum PASSED
 tests/test_jsonclass.py::SerializationTests::test_iterable PASSED
+tests/test_jsonclass.py::SerializationTests::test_load_allow_dynamic_classes PASSED
+tests/test_jsonclass.py::SerializationTests::test_load_beans_refused_by_default PASSED
+tests/test_jsonclass.py::SerializationTests::test_load_constructor_arguments_type PASSED
+tests/test_jsonclass.py::SerializationTests::test_load_empty_module_name PASSED
+tests/test_jsonclass.py::SerializationTests::test_load_invalid_constructor_arguments PASSED
+tests/test_jsonclass.py::SerializationTests::test_load_invalid_module_name PASSED
+tests/test_jsonclass.py::SerializationTests::test_load_keyword_constructor_arguments PASSED
+tests/test_jsonclass.py::SerializationTests::test_load_refuses_unregistered_class PASSED
+tests/test_jsonclass.py::SerializationTests::test_load_registered_class PASSED
+tests/test_jsonclass.py::SerializationTests::test_load_unknown_class_in_known_module PASSED
 tests/test_jsonclass.py::SerializationTests::test_load_unknown_module PASSED
 tests/test_jsonclass.py::SerializationTests::test_object PASSED
 tests/test_jsonclass.py::SerializationTests::test_primitive PASSED
+tests/test_jsonclass.py::SerializationTests::test_serialize_method PASSED
 tests/test_jsonlib.py::TestJsonLibLoading::test_best SKIPPED (No exp...)
 tests/test_jsonlib.py::TestJsonLibLoading::test_cjson SKIPPED (cJson...)
 tests/test_jsonlib.py::TestJsonLibLoading::test_orjson SKIPPED (orjs...)
 tests/test_jsonlib.py::TestJsonLibLoading::test_simplejson SKIPPED (...)
 tests/test_jsonlib.py::TestJsonLibLoading::test_stdlib SKIPPED (No e...)
 tests/test_jsonlib.py::TestJsonLibLoading::test_ujson SKIPPED (uJson...)
+tests/test_protocol.py::CheckForErrorsTests::test_application_error PASSED
+tests/test_protocol.py::CheckForErrorsTests::test_application_error_without_data PASSED
+tests/test_protocol.py::CheckForErrorsTests::test_error_without_message_nor_trace PASSED
+tests/test_protocol.py::CheckForErrorsTests::test_jabsorb_trace PASSED
+tests/test_protocol.py::CheckForErrorsTests::test_no_response PASSED
+tests/test_protocol.py::CheckForErrorsTests::test_no_result_nor_error PASSED
+tests/test_protocol.py::CheckForErrorsTests::test_not_a_dict PASSED
+tests/test_protocol.py::CheckForErrorsTests::test_null_error PASSED
+tests/test_protocol.py::CheckForErrorsTests::test_predefined_error PASSED
+tests/test_protocol.py::CheckForErrorsTests::test_raw_error PASSED
+tests/test_protocol.py::CheckForErrorsTests::test_single_entry_error PASSED
+tests/test_protocol.py::CheckForErrorsTests::test_unsupported_version PASSED
+tests/test_protocol.py::CheckForErrorsTests::test_valid_response PASSED
+tests/test_protocol.py::RequestPredicatesTests::test_isbatch PASSED
+tests/test_protocol.py::RequestPredicatesTests::test_isbatch_invalid_version PASSED
+tests/test_protocol.py::RequestPredicatesTests::test_isbatch_refuses PASSED
+tests/test_protocol.py::RequestPredicatesTests::test_isnotification PASSED
+tests/test_protocol.py::RequestPredicatesTests::test_isnotification_with_an_id PASSED
+tests/test_register_instance.py::RegisterInstanceTests::test_dotted_names_opt_in PASSED
+tests/test_register_instance.py::RegisterInstanceTests::test_dotted_names_refused_by_default PASSED
+tests/test_register_instance.py::RegisterInstanceTests::test_private_attributes_always_refused PASSED
+tests/test_register_instance.py::RegisterInstanceTests::test_unknown_method PASSED
+tests/test_request_body.py::RequestBodyTests::test_gzip_request PASSED
+tests/test_request_body.py::RequestBodyTests::test_identity_request PASSED
+tests/test_request_body.py::RequestBodyTests::test_multi_chunk_body PASSED
+tests/test_request_body.py::RequestBodyTests::test_multi_chunk_gzip_body PASSED
+tests/test_request_body.py::RequestBodyTests::test_unsupported_encoding PASSED
 tests/test_server.py::PooledServerTests::test_custom_pool PASSED
 tests/test_server.py::PooledServerTests::test_default_pool PASSED
 tests/test_server.py::PooledServerTests::test_sequencial PASSED
@@ -87,8 +146,8 @@ tests/test_cgi.py::CGIHandlerTests::test_server
 
 tests/test_cgi.py::CGIHandlerTests::test_server
 tests/test_cgi.py::CGIHandlerTests::test_server
-  $(PYTHON_DIR)/http/server.py:1242: DeprecationWarning: This process (pid=$(PID)) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  $(PYTHON_DIR)/http/server.py:1246: DeprecationWarning: This process (pid=$(PID)) is multi-threaded, use of fork() may lead to deadlocks in the child.
     pid = os.fork()
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 67 passed, 7 skipped, 4 warnings ========
+======== 126 passed, 7 skipped, 4 warnings ========

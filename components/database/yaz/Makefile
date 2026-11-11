@@ -18,12 +18,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yaz
-COMPONENT_VERSION=	5.35.1
+COMPONENT_VERSION=	5.38.1
 COMPONENT_SUMMARY=	toolkit supporting the development of Z39.50/SRW/SRU clients and servers
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:db030d6d66880398a44215e26132630ee94f5e462d838809e43f97e6399c1353
-COMPONENT_ARCHIVE_URL=	http://ftp.indexdata.dk/pub/yaz/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:755835efe8385d88725cc46a3b34dae2f5e784950832cbbe7f09ca0398de344c
+COMPONENT_ARCHIVE_URL=	https://download.indexdata.com/pub/yaz/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.indexdata.com/resources/software/yaz/
 COMPONENT_FMRI=		database/yaz
 COMPONENT_CLASSIFICATION= Development/Databases
@@ -40,7 +40,6 @@ CONFIGURE_OPTIONS += --without-icu
 CONFIGURE_OPTIONS += --disable-static
 
 # Without this tests fail
-ENV=/usr/bin/env -i
 COMPONENT_TEST_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 
 # Auto-generated dependencies

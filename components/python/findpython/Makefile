@@ -19,15 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		findpython
-HUMAN_VERSION =			0.8.0
+HUMAN_VERSION =			0.9.0
 COMPONENT_SUMMARY =		A utility to find python versions on your system
 COMPONENT_PROJECT_URL =		https://github.com/frostming/findpython
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:53b32264874dfa5990bd09d717819386d8db3149d89fe20f88fe1078de286bae
+	sha256:497c6b5eb13734be2542dfb6a93267946339601cbc2f1138c8cd4d40311fefe5
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
+
+# Python 3.9 is not supported by findpython >= 0.9.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 

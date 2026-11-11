@@ -14,40 +14,22 @@
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.upstream-url value="$(COMPONENT_PROJECT_URL)"
-set name=info.source-url value="$(COMPONENT_ARCHIVE_URL)"
-set name=info.classification value="org.opensolaris.category.2008:$(COMPONENT_CLASSIFICATION)"
-set name=org.opensolaris.consolidation value="$(CONSOLIDATION)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license $(COMPONENT_LICENSE_FILE) license="$(COMPONENT_LICENSE)"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-depend fmri=service/opengl/ogl-select type=require
-file path=usr/bin/$(MACH64)/glewinfo pkg.depend.bypass-generate=libGL\.so\.1
-file path=usr/bin/$(MACH64)/visualinfo pkg.depend.bypass-generate=libGL\.so\.1
-file path=usr/bin/$(MACH32)/glewinfo pkg.depend.bypass-generate=libGL\.so\.1
-file path=usr/bin/$(MACH32)/visualinfo pkg.depend.bypass-generate=libGL\.so\.1
-hardlink path=usr/bin/glewinfo target=../lib/isaexec pkg.linted=true
-hardlink path=usr/bin/visualinfo target=../lib/isaexec pkg.linted=true
-file path=usr/include/glew.h
-link path=usr/include/GL/glew.h target=../glew.h
-file path=usr/include/glxew.h
-link path=usr/include/GL/glxew.h target=../glxew.h
-file path=usr/include/wglew.h
-link path=usr/include/GL/wglew.h target=../wglew.h
-file path=usr/lib/$(MACH64)/libGLEW.so.1.13.0 pkg.depend.bypass-generate=libGL\.so\.1
-link path=usr/lib/$(MACH64)/libGLEW.so.1.13 target=libGLEW.so.1.13.0
-link path=usr/lib/$(MACH64)/libGLEW.so target=libGLEW.so.1.13
-file path=usr/lib/$(MACH64)/libGLEWmx.so.1.13.0 pkg.depend.bypass-generate=libGL\.so\.1
-link path=usr/lib/$(MACH64)/libGLEWmx.so.1.13 target=libGLEWmx.so.1.13.0
-link path=usr/lib/$(MACH64)/libGLEWmx.so target=libGLEWmx.so.1.13
+file path=usr/bin/glewinfo
+file path=usr/bin/visualinfo
+file path=usr/include/GL/eglew.h
+file path=usr/include/GL/glew.h
+file path=usr/include/GL/glxew.h
+file path=usr/include/GL/wglew.h
+link path=usr/lib/$(MACH64)/libGLEW.so target=libGLEW.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libGLEW.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libGLEW.so.2.3 target=libGLEW.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/glew.pc
-file path=usr/lib/$(MACH64)/pkgconfig/glewmx.pc
-file path=usr/lib/libGLEW.so.1.13.0 pkg.depend.bypass-generate=libGL\.so\.1
-link path=usr/lib/libGLEW.so.1.13 target=libGLEW.so.1.13.0
-link path=usr/lib/libGLEW.so target=libGLEW.so.1.13
-file path=usr/lib/libGLEWmx.so.1.13.0 pkg.depend.bypass-generate=libGL\.so\.1
-link path=usr/lib/libGLEWmx.so.1.13 target=libGLEWmx.so.1.13.0
-link path=usr/lib/libGLEWmx.so target=libGLEWmx.so.1.13
-file path=usr/lib/pkgconfig/glew.pc
-file path=usr/lib/pkgconfig/glewmx.pc

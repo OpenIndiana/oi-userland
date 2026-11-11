@@ -72,8 +72,9 @@ LICENSE_TRANSFORMS =		$(WS_TOP)/transforms/license-changes
 # order is important
 PUBLISH_TRANSFORMS +=	$(LICENSE_TRANSFORMS)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/variant-cleanup
-PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/autopyc
+PUBLISH_TRANSFORMS +=	$(if $(filter-out $(_PYTHON_VERSIONS),$(PYTHON_VERSION)),,$(WS_TOP)/transforms/python-mediator)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python
+PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/autopyc
 PUBLISH_TRANSFORMS +=	$(if $(filter-out $(_PERL_VERSIONS),$(PERL_VERSION)),,$(WS_TOP)/transforms/perl)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/defaults
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/actuators
@@ -82,6 +83,7 @@ PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/docs
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/locale
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-3-soabi
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-3-no-32bit
+PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/symlinks
 PUBLISH_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
 
@@ -361,19 +363,27 @@ mkgenericdep = \
 # python module specific to a particular version of the python runtime.
 define python-manifest-rule
 $(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYTHON_$(1)_ONLY= PYTHON_$(1)_EXCL=\#
+$(MANIFEST_BASE)-%-$(2).mogrified: PYTHON_VERSION=$(1)
+$(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYVER=$(1)
+$(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYVER_RE=$(subst .,\.,$(1))
+$(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYV=$(2)
 
 ifneq ($(filter $(1),$(PYTHON_64_ONLY_VERSIONS)),)
 $(MANIFEST_BASE)-%-$(2).mogrified: PKG_MACROS += PYTHON_32_ONLY=\#
 endif
 
 $(MANIFEST_BASE)-%-$(2).p5m: %-PYVER.p5m
-	$(PKGMOGRIFY) -D PYVER=$(1) $(MANIFEST_LIMITING_VARS) -D PYV=$(2)  $$< > $$@
+	$(PKGMOGRIFY) $(MANIFEST_LIMITING_VARS) $$< > $$@
 endef
 $(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver),$(subst .,,$(ver)))))
 
 ifeq ($(strip $(SINGLE_PYTHON_VERSION)),yes)
 PKG_MACROS += PYVER=$(PYTHON_VERSION)
 PKG_MACROS += PYV=$(subst .,,$(PYTHON_VERSION))
+
+# PYVER suitable for use in regular expressions.
+PYVER_RE = $(subst .,\.,$(PYTHON_VERSION))
+PKG_VARS += PYVER_RE
 endif
 
 # A rule to create a helper transform package for python, that will insert the
@@ -518,15 +528,16 @@ $(RESOLVE_DEPS):	Makefile $(BUILD_DIR) $(DEPENDED)
 	$(PKGMOGRIFY) $(WS_TRANSFORMS)/PRINT_COMPONENT_FMRIS $(DEPENDED) | \
 		$(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' ;) | $(SORT) -u >$@
 
-$(BUILD_DIR)/runtime-perl.p5m: $(WS_TOOLS)/runtime-perl.p5m
-	$(CP) $< $@
+FAKE_MANIFESTS += ogl-select.p5m
+FAKE_MANIFESTS += runtime-perl.p5m
+FAKE_MANIFESTS += runtime-ruby.p5m
 
-$(BUILD_DIR)/runtime-ruby.p5m: $(WS_TOOLS)/runtime-ruby.p5m
+$(BUILD_DIR)/%.p5m: $(WS_TOOLS)/%.p5m
 	$(CP) $< $@
 
 # resolve the dependencies all at once
-$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS) $(BUILD_DIR)/runtime-perl.p5m $(BUILD_DIR)/runtime-ruby.p5m
-	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED) $(BUILD_DIR)/runtime-perl.p5m $(BUILD_DIR)/runtime-ruby.p5m
+$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS) $(FAKE_MANIFESTS:%=$(BUILD_DIR)/%)
+	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED) $(FAKE_MANIFESTS:%=$(BUILD_DIR)/%)
 	$(TOUCH) $@
 
 # generate list of sed rules to filter out component's own packages from
@@ -685,3 +696,12 @@ REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/c++\/protobuf-/{p;s/-[^-]*$$//}'
 # If a component needs the runtime ICU library then it also needs the ICU
 # development files for building.  Add such dependency automatically here.
 REQUIRED_PACKAGES_TRANSFORM += -e '/ \$$(ICU_LIBRARY_PKG)$$/{p;s/\$$(ICU_LIBRARY_PKG)$$/developer\/icu/}'
+REQUIRED_PACKAGES_TRANSFORM += -e '/ \$$(ICU_LIBRARY_PKG)\/32$$/{p;s/\$$(ICU_LIBRARY_PKG)$$/developer\/icu\/32/}'
+
+# If a component needs a runtime boost library then it also needs the boost
+# development files for building.  Add such dependency automatically here.
+REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/boost-/{p;s/library\/boost-[0-9]*$$/developer\/boost/}'
+
+# If a component needs a runtime spdlog library then it also needs the spdlog
+# development files for building.  Add such dependency automatically here.
+REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/c++\/spdlog-/{p;s/-[^-]*$$//}'

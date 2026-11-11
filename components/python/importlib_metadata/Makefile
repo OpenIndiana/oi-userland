@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		importlib_metadata
-HUMAN_VERSION =			9.0.1
+HUMAN_VERSION =			10.1.0
 COMPONENT_SUMMARY =		Read metadata from Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ab830580bc0ef3db61ce8fae716389e5462b67e033018bab6d8f80ef17172f99
+	sha256:82b04047fa09792c1a8cfeddfe08bec79e4b13c29c8469b0d3949860f61017e8
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 

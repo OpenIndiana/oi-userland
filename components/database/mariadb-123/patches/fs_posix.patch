@@ -1,0 +1,36 @@
+--- mariadb-12.3.3/storage/rocksdb/rocksdb/env/fs_posix.cc	2026-10-17 19:33:10.489219349 +0200
++++ mariadb-12.3.3/storage/rocksdb/rocksdb/env/fs_posix.cc.orig	2026-10-17 19:41:57.122457095 +0200
+@@ -632,12 +632,33 @@
+     // reset errno before calling readdir()
+     errno = 0;
+     struct dirent* entry;
++#if defined(OS_SOLARIS)
++    int len;
++    struct stat t_statbuf;
++    char *path = NULL;
++#endif
+     while ((entry = readdir(d)) != nullptr) {
+       // filter out '.' and '..' directory entries
+       // which appear only on some platforms
+       const bool ignore =
++#if defined(OS_SOLARIS)
++          len = strlen(entry->d_name) + 1;
++          if ((path = (char *) malloc(sizeof (char) * len)) == NULL) {
++            fprintf(stderr, "ERROR: No memory available for Name string\n");
++            exit(ENOMEM);
++          }
++          snprintf(path, len, "%s", entry->d_name); 
++          if (stat(path, &t_statbuf) == 0) {
++            if (S_ISDIR(t_statbuf.st_mode) && (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)) {
++              true;
++            } else {
++              false;
++            }
++          }
++#else
+           entry->d_type == DT_DIR &&
+           (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0);
++#endif
+       if (!ignore) {
+         result->push_back(entry->d_name);
+       }

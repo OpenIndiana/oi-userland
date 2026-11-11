@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-SysRandom
-HUMAN_VERSION =			0.007
+HUMAN_VERSION =			0.008
 COMPONENT_SUMMARY =		Perl interface to system randomness
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a5d49e98fca3c5266c79ae989a85eca22934b058803ee4b3e6eb08efca4eef46
+	sha256:ab6ac0b737e83a45a13c4ba502c9286c73622609e09f1a21d63eddb1d6597726
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,5 +32,6 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 REQUIRED_PACKAGES.perl += library/perl-5/crypt-sysrandom-xs
 REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/mime-base64
 REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

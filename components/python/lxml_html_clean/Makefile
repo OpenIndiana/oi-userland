@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lxml_html_clean
-HUMAN_VERSION =			0.4.5
+HUMAN_VERSION =			0.4.6
 COMPONENT_SUMMARY =		HTML cleaner from lxml project
 COMPONENT_PROJECT_URL =		https://github.com/fedora-python/lxml_html_clean/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e2a4c7d5beedd17cd7b484d848a0571e54baa239a4f9df5546e3acba7f990560
+	sha256:ea9db067c3053854fd87f8d5a1cf01221dc893b54dbf6019c689052e05c64f22
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 

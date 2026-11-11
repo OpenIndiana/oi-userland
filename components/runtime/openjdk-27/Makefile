@@ -20,15 +20,15 @@ include ../../../make-rules/shared-macros.mk
 
 OPENJDK_VERSION=	27
 OPENJDK_UPDATE=		0
-OPENJDK_BUILD=		0
+OPENJDK_BUILD=		1
 COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
-COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION)-ga
-COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION)-ga.tar.gz
+COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(COMPONENT_VERSION)-ga
+COMPONENT_ARCHIVE=	jdk-$(COMPONENT_VERSION)-ga.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:7b0d39b840e008bd0a8e3d2c93d874d48536ec3e4c13045a7a83179042e2011e
+	sha256:e97f539ba547ab533b511ce1f937211c1e9795e7c1092321f8ba23c658a11dd9
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/openjdk/jdk$(OPENJDK_VERSION)u/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://openjdk.java.net/
@@ -47,10 +47,6 @@ CLEAN_PATHS += $(BUILD_DIR)
 CLEAN_PATHS += $(CACERTS_STORE)
 CLEAN_PATHS += $(COMPONENT_SRC_1)
 
-# read the number of jobs from the arguments for make
-JOBS=$(patsubst -j%,%,$(filter -j%,$(MAKEFLAGS)))
-
-CONFIGURE_OPTIONS+=        --with-jobs=$(JOBS)
 CONFIGURE_OPTIONS+=        --x-includes=$(USRDIR)
 CONFIGURE_OPTIONS+=        --x-libraries=$(USRLIBDIR64)
 CONFIGURE_OPTIONS+=        --with-version-pre=

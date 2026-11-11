@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 509 items
+collecting ... collected 540 items
 
 tests/test_cli.py::test_cli_main_empty PASSED
 tests/test_cli.py::test_parser_empty PASSED
@@ -28,6 +28,8 @@ tests/test_cli.py::test_cli_inplace_with_stdin_fails PASSED
 tests/test_cli.py::test_cli_outfile_with_multiple_files_fails PASSED
 tests/test_cli.py::test_cli_single_file_inplace PASSED
 tests/test_cli.py::test_cli_error_handling_continues PASSED
+tests/test_cli.py::test_cli_inplace_keeps_file_on_format_error PASSED
+tests/test_cli.py::test_cli_outfile_keeps_file_on_format_error PASSED
 tests/test_dos_prevention.py::TestDoSPrevention::test_large_tuple_list_performance PASSED
 tests/test_dos_prevention.py::TestDoSPrevention::test_deeply_nested_groups_limited PASSED
 tests/test_dos_prevention.py::TestDoSPrevention::test_very_large_token_list_limited PASSED
@@ -35,6 +37,7 @@ tests/test_dos_prevention.py::TestDoSPrevention::test_nested_paren_within_cap_un
 tests/test_dos_prevention.py::TestDoSPrevention::test_nested_case_within_cap_under_1s PASSED
 tests/test_dos_prevention.py::TestDoSPrevention::test_normal_sql_still_works PASSED
 tests/test_dos_prevention.py::TestDoSPrevention::test_reasonable_tuple_list_works PASSED
+tests/test_dos_prevention.py::test_unterminated_quotes_format_under_1s PASSED
 tests/test_format.py::TestFormat::test_keywordcase PASSED
 tests/test_format.py::TestFormat::test_keywordcase_invalid_option PASSED
 tests/test_format.py::TestFormat::test_identifiercase PASSED
@@ -86,6 +89,17 @@ tests/test_format.py::TestOutputFormat::test_python_multiple_statements_with_for
 tests/test_format.py::TestOutputFormat::test_php PASSED
 tests/test_format.py::TestOutputFormat::test_python_escapes_backslashes PASSED
 tests/test_format.py::TestOutputFormat::test_php_escapes_backslashes PASSED
+tests/test_format.py::TestOutputFormat::test_php_escapes_dollar_signs[SELECT '$name'-$sql = "SELECT '\\$name'";] PASSED
+tests/test_format.py::TestOutputFormat::test_php_escapes_dollar_signs[SELECT '${expr}'-$sql = "SELECT '\\${expr}'";] PASSED
+tests/test_format.py::TestOutputFormat::test_php_escapes_dollar_signs[SELECT '{${expr}}'-$sql = "SELECT '{\\${expr}}'";] PASSED
+tests/test_format.py::TestOutputFormat::test_php_escapes_dollar_signs[SELECT '{$obj->prop}'-$sql = "SELECT '{\\$obj->prop}'";] PASSED
+tests/test_format.py::TestOutputFormat::test_php_escapes_dollar_signs[SELECT $body$text$body$-$sql = "SELECT \\$body\\$text\\$body\\$";] PASSED
+tests/test_format.py::TestOutputFormat::test_php_escapes_dollar_signs[SELECT "$table"-$sql = "SELECT \\"\\$table\\"";] PASSED
+tests/test_format.py::TestOutputFormat::test_php_escapes_dollar_signs[SELECT 1 /* $name */-$sql = "SELECT 1 /* \\$name */";] PASSED
+tests/test_format.py::TestOutputFormat::test_php_escapes_dollar_signs[SELECT '\\$name'-$sql = "SELECT '\\\\\\$name'";] PASSED
+tests/test_format.py::TestOutputFormat::test_php_dollar_escape_multiline PASSED
+tests/test_format.py::TestOutputFormat::test_php_variable_name_keeps_dollar PASSED
+tests/test_format.py::TestOutputFormat::test_python_dollar_signs_unchanged PASSED
 tests/test_format.py::TestOutputFormat::test_sql PASSED
 tests/test_format.py::TestOutputFormat::test_invalid_option PASSED
 tests/test_format.py::test_format_column_ordering PASSED
@@ -390,6 +404,11 @@ tests/test_regressions.py::test_between_leading_dot_float_issue601[a BETWEEN .03
 tests/test_regressions.py::test_between_leading_dot_float_issue601[a between .03 and .06] PASSED
 tests/test_regressions.py::test_keyword_before_qualified_name_still_grouped PASSED
 tests/test_regressions.py::test_max_recursion PASSED
+tests/test_regressions.py::test_format_malformed_input_does_not_crash[( as )-options0] PASSED
+tests/test_regressions.py::test_format_malformed_input_does_not_crash[( as )-options1] PASSED
+tests/test_regressions.py::test_format_malformed_input_does_not_crash[( :: )-options2] PASSED
+tests/test_regressions.py::test_format_malformed_input_does_not_crash[case , end-options3] PASSED
+tests/test_regressions.py::test_format_malformed_input_does_not_crash[case when a then begin b end else c end-options4] PASSED
 tests/test_split.py::test_split_semicolon PASSED
 tests/test_split.py::test_split_backslash PASSED
 tests/test_split.py::test_split_create_function[function.sql] PASSED
@@ -514,5 +533,17 @@ tests/test_utils.py::test_remove_quotes[None-None] PASSED
 tests/test_utils.py::test_remove_quotes['foo'-foo] PASSED
 tests/test_utils.py::test_remove_quotes["foo"-foo] PASSED
 tests/test_utils.py::test_remove_quotes[`foo`-foo] PASSED
+tests/test_utils.py::test_split_unquoted_newlines[-expected0] PASSED
+tests/test_utils.py::test_split_unquoted_newlines[select 1-expected1] PASSED
+tests/test_utils.py::test_split_unquoted_newlines[a\nb\r\nc\rd-expected2] PASSED
+tests/test_utils.py::test_split_unquoted_newlines[a\n-expected3] PASSED
+tests/test_utils.py::test_split_unquoted_newlines[select 'a\nb'\nfrom t-expected4] PASSED
+tests/test_utils.py::test_split_unquoted_newlines[select "a\r\nb"\nfrom t-expected5] PASSED
+tests/test_utils.py::test_split_unquoted_newlines['a\\'\nb'\nc-expected6] PASSED
+tests/test_utils.py::test_split_unquoted_newlines["a\\"\nb"\nc-expected7] PASSED
+tests/test_utils.py::test_split_unquoted_newlines['a"\nb'\nc-expected8] PASSED
+tests/test_utils.py::test_split_unquoted_newlines[a'b\nc-expected9] PASSED
+tests/test_utils.py::test_split_unquoted_newlines[a"b\nc-expected10] PASSED
+tests/test_utils.py::test_split_unquoted_newlines['a\\\nb'\nc-expected11] PASSED
 
-======== 506 passed, 2 xfailed, 1 xpassed ========
+======== 537 passed, 2 xfailed, 1 xpassed ========
