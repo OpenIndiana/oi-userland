@@ -1,0 +1,30 @@
+LTO on SunOS: CMakeLists.txt turns on CMAKE_INTERPROCEDURAL_OPTIMIZATION
+whenever check_ipo_supported() passes, which it does with gcc 14 on illumos
+and Solaris. But the link-editor there has no LTO plugin, and every shared
+object -- renderer_opengl1/2.so and the game modules -- is linked empty
+(8 KB, only libc NEEDED, no GetRefAPI/vmMain); executables happen to work.
+Leave LTO off on SunOS, and respect -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=
+given on the command line (it was overridden by a normal variable).
+
+Upstream: not submitted yet; no issue or pull request about it at
+https://github.com/ioquake/ioq3 (checked 2026-11-10).
+
+--- ioq3-87a99d18206e878a20289f05ac3c16005dcae5c3/CMakeLists.txt.orig
++++ ioq3-87a99d18206e878a20289f05ac3c16005dcae5c3/CMakeLists.txt
+@@ -42,10 +42,14 @@
+   set(CMAKE_BUILD_TYPE Release)
+ endif()
+ 
+-# Try to enable LTO by default
++# Try to enable LTO by default, unless it was set on the command line.
++# Not on SunOS: gcc's LTO needs the linker plugin, which the illumos and
++# Solaris link-editor lacks; check_ipo_supported() still passes there, but
++# every shared object (renderers, game modules) comes out empty.
+ include(CheckIPOSupported)
+ check_ipo_supported(RESULT IPO_SUPPORTED)
+-if(IPO_SUPPORTED)
++if(IPO_SUPPORTED AND NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION
++   AND NOT CMAKE_SYSTEM_NAME STREQUAL "SunOS")
+     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_DEBUG FALSE)
+ endif()

@@ -1,0 +1,22 @@
+Q_EXPORT with gcc on SunOS: q_shared.h leaves Q_EXPORT empty for gcc when
+"sun" is defined (it is, by gcc on illumos and Solaris), but the CMake build
+compiles everything with -fvisibility=hidden. So GetRefAPI and the modules'
+vmMain/dllEntry are linked as hidden local symbols: "Can't load symbol
+GetRefAPI ... can't find symbol", no renderer, and no native game modules.
+gcc's visibility attribute works on SunOS: drop the !sun exception (Sun
+Studio keeps its __global).
+
+Upstream: not submitted yet; no issue or pull request about it at
+https://github.com/ioquake/ioq3 (checked 2026-11-10).
+
+--- ioq3-87a99d18206e878a20289f05ac3c16005dcae5c3/code/qcommon/q_shared.h.orig
++++ ioq3-87a99d18206e878a20289f05ac3c16005dcae5c3/code/qcommon/q_shared.h
+@@ -132,7 +132,7 @@
+ #define Q_EXPORT __declspec(dllexport)
+ #elif (defined __SUNPRO_C)
+ #define Q_EXPORT __global
+-#elif ((__GNUC__ >= 3) && (!__EMX__) && (!sun))
++#elif ((__GNUC__ >= 3) && (!__EMX__))
+ #define Q_EXPORT __attribute__((visibility("default")))
+ #else
+ #define Q_EXPORT

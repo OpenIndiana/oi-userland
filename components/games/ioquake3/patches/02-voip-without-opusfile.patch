@@ -1,0 +1,49 @@
+VoIP needs libopus, but cmake/libraries/opus.cmake returns at once unless
+USE_CODEC_OPUS is on, so USE_VOIP=ON with USE_CODEC_OPUS=OFF fails on
+"opus.h: No such file". The codec also needs opusfile (which OpenIndiana and
+Solaris do not ship), VoIP does not. Find libopus for either, opusfile only
+for the codec, and define USE_CODEC_OPUS only when the codec is built.
+
+Upstream: not submitted yet; no issue or pull request about it at
+https://github.com/ioquake/ioq3 (checked 2026-11-10).
+
+--- ioq3-87a99d18206e878a20289f05ac3c16005dcae5c3/cmake/libraries/opus.cmake.orig
++++ ioq3-87a99d18206e878a20289f05ac3c16005dcae5c3/cmake/libraries/opus.cmake
+@@ -1,4 +1,5 @@
+-if(NOT USE_CODEC_OPUS)
++# libopus is needed by the Opus codec and by VoIP; opusfile only by the codec
++if(NOT USE_CODEC_OPUS AND NOT USE_VOIP)
+     return()
+ endif()
+ 
+@@ -14,18 +15,25 @@
+ 
+ if(USE_INTERNAL_OPUS)
+     file(GLOB_RECURSE OPUS_SOURCES ${INTERNAL_OPUS_DIR}/*.c)
+-    file(GLOB_RECURSE OPUSFILE_SOURCES ${INTERNAL_OPUSFILE_DIR}/*.c)
+-    disable_warnings(${OPUS_SOURCES} ${OPUSFILE_SOURCES})
+     find_include_dirs(OPUS_INCLUDE_DIRS ${INTERNAL_OPUS_DIR})
+-    find_include_dirs(OPUSFILE_INCLUDE_DIRS ${INTERNAL_OPUSFILE_DIR})
+     set(OPUS_DEFINITIONS OPUS_BUILD HAVE_LRINTF FLOATING_POINT FLOAT_APPROX USE_ALLOCA)
++    if(USE_CODEC_OPUS)
++        file(GLOB_RECURSE OPUSFILE_SOURCES ${INTERNAL_OPUSFILE_DIR}/*.c)
++        find_include_dirs(OPUSFILE_INCLUDE_DIRS ${INTERNAL_OPUSFILE_DIR})
++    endif()
++    disable_warnings(${OPUS_SOURCES} ${OPUSFILE_SOURCES})
+     list(APPEND CLIENT_LIBRARY_SOURCES ${OPUS_SOURCES} ${OPUSFILE_SOURCES})
+ else()
+     find_package(PkgConfig REQUIRED)
+     pkg_check_modules(OPUS REQUIRED opus)
+-    pkg_check_modules(OPUSFILE REQUIRED opusfile)
++    if(USE_CODEC_OPUS)
++        pkg_check_modules(OPUSFILE REQUIRED opusfile)
++    endif()
+ endif()
+ 
+ list(APPEND CLIENT_LIBRARIES ${OPUS_LIBRARIES} ${OPUSFILE_LIBRARIES})
+ list(APPEND CLIENT_INCLUDE_DIRS ${OPUS_INCLUDE_DIRS} ${OPUSFILE_INCLUDE_DIRS})
+-list(APPEND CLIENT_DEFINITIONS USE_CODEC_OPUS ${OPUS_DEFINITIONS} ${OPUSFILE_DEFINITIONS})
++list(APPEND CLIENT_DEFINITIONS ${OPUS_DEFINITIONS} ${OPUSFILE_DEFINITIONS})
++if(USE_CODEC_OPUS)
++    list(APPEND CLIENT_DEFINITIONS USE_CODEC_OPUS)
++endif()
