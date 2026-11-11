@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 654 items
+collecting ... collected 696 items
 
 tests/test_api.py::TestSoupSieve::test_cache PASSED
 tests/test_api.py::TestSoupSieve::test_closest_match_complex_parent PASSED
@@ -73,6 +73,7 @@ tests/test_extra/test_attribute.py::TestAttribute::test_attribute_not_equal_no_q
 tests/test_extra/test_attribute.py::TestAttribute::test_attribute_not_equal_quotes SKIPPED
 tests/test_extra/test_attribute.py::TestAttribute::test_bad_attribute PASSED
 tests/test_extra/test_attribute.py::TestAttribute::test_bad_attribute_unclused PASSED
+tests/test_extra/test_attribute.py::TestAttributeEquivalence::test_attribute_not_equal_trailing_newline PASSED
 tests/test_extra/test_attribute.py::TestAttributeEquivalence::test_attribute_not_equal_values PASSED
 tests/test_extra/test_attribute.py::TestAttributeEquivalence::test_missing_attribute SKIPPED
 tests/test_extra/test_custom.py::TestCustomSelectors::test_bad_custom PASSED
@@ -168,7 +169,22 @@ tests/test_level1/test_class.py::TestClass::test_type_and_class PASSED
 tests/test_level1/test_class.py::TestClass::test_type_and_class_escaped_eof PASSED
 tests/test_level1/test_class.py::TestClass::test_type_and_class_escaped_null PASSED
 tests/test_level1/test_comments.py::TestComments::test_comments PASSED
+tests/test_level1/test_comments.py::TestComments::test_comments_around_combinator_no_space PASSED
+tests/test_level1/test_comments.py::TestComments::test_comments_between_tags PASSED
+tests/test_level1/test_comments.py::TestComments::test_comments_complex_trailing PASSED
+tests/test_level1/test_comments.py::TestComments::test_comments_in_compound PASSED
 tests/test_level1/test_comments.py::TestComments::test_comments_in_pseudo_classes PASSED
+tests/test_level1/test_comments.py::TestComments::test_comments_itrailing PASSED
+tests/test_level1/test_comments.py::TestComments::test_comments_leading PASSED
+tests/test_level1/test_comments.py::TestComments::test_comments_leading_combinator PASSED
+tests/test_level1/test_comments.py::TestComments::test_comments_leading_multiple PASSED
+tests/test_level1/test_comments.py::TestComments::test_comments_leading_multiple_whitespace PASSED
+tests/test_level1/test_comments.py::TestComments::test_comments_leading_whitespace PASSED
+tests/test_level1/test_comments.py::TestComments::test_comments_leading_whitespace_combinator PASSED
+tests/test_level1/test_comments.py::TestComments::test_comments_leading_whitespace_only PASSED
+tests/test_level1/test_comments.py::TestComments::test_comments_trailing_complex_no_space PASSED
+tests/test_level1/test_comments.py::TestComments::test_comments_trailing_no_space PASSED
+tests/test_level1/test_comments.py::TestComments::test_comments_unterminated PASSED
 tests/test_level1/test_descendant.py::TestDescendants::test_descendants PASSED
 tests/test_level1/test_descendant.py::TestDescendants::test_long_duplicate_tag_case PASSED
 tests/test_level1/test_descendant.py::TestDescendants::test_many_descendant_combinators PASSED
@@ -207,6 +223,7 @@ tests/test_level2/test_attribute.py::TestAttribute::test_attribute_equal_escaped
 tests/test_level2/test_attribute.py::TestAttribute::test_attribute_equal_literal_null PASSED
 tests/test_level2/test_attribute.py::TestAttribute::test_attribute_equal_no_quotes PASSED
 tests/test_level2/test_attribute.py::TestAttribute::test_attribute_equal_quotes_and_spaces PASSED
+tests/test_level2/test_attribute.py::TestAttribute::test_attribute_equal_trailing_newline PASSED
 tests/test_level2/test_attribute.py::TestAttribute::test_attribute_equal_with_double_quotes PASSED
 tests/test_level2/test_attribute.py::TestAttribute::test_attribute_equal_with_quotes PASSED
 tests/test_level2/test_attribute.py::TestAttribute::test_attribute_escaped_newline PASSED
@@ -214,6 +231,7 @@ tests/test_level2/test_attribute.py::TestAttribute::test_attribute_html_case_ins
 tests/test_level2/test_attribute.py::TestAttribute::test_attribute_html_case_insensitive_values_are_ascii_only SKIPPED
 tests/test_level2/test_attribute.py::TestAttribute::test_attribute_html_case_insensitive_values_foreign SKIPPED
 tests/test_level2/test_attribute.py::TestAttribute::test_attribute_start_dash PASSED
+tests/test_level2/test_attribute.py::TestAttribute::test_attribute_start_dash_trailing_newline PASSED
 tests/test_level2/test_attribute.py::TestAttribute::test_attribute_type_html PASSED
 tests/test_level2/test_attribute.py::TestAttribute::test_attribute_type_xhtml PASSED
 tests/test_level2/test_attribute.py::TestAttribute::test_attribute_type_xml PASSED
@@ -245,6 +263,8 @@ tests/test_level2/test_next_sibling.py::TestNextSibling::test_direct_sibling_no_
 tests/test_level2/test_universal_type.py::TestUniversal::test_universal_type PASSED
 tests/test_level3/test_attribute.py::TestAttribute::test_attribute_begins PASSED
 tests/test_level3/test_attribute.py::TestAttribute::test_attribute_begins_cannot_have_empty PASSED
+tests/test_level3/test_attribute.py::TestAttribute::test_attribute_case_insensitive_ascii_only PASSED
+tests/test_level3/test_attribute.py::TestAttribute::test_attribute_case_insensitive_long_near_match PASSED
 tests/test_level3/test_attribute.py::TestAttribute::test_attribute_contains PASSED
 tests/test_level3/test_attribute.py::TestAttribute::test_attribute_contains_cannot_have_empty PASSED
 tests/test_level3/test_attribute.py::TestAttribute::test_attribute_contains_with_newlines PASSED
@@ -252,9 +272,12 @@ tests/test_level3/test_attribute.py::TestAttribute::test_attribute_dash_list_wit
 tests/test_level3/test_attribute.py::TestAttribute::test_attribute_end PASSED
 tests/test_level3/test_attribute.py::TestAttribute::test_attribute_end_cannot_have_empty PASSED
 tests/test_level3/test_attribute.py::TestAttribute::test_attribute_ends_with_newlines PASSED
+tests/test_level3/test_attribute.py::TestAttribute::test_attribute_ends_with_trailing_newline PASSED
+tests/test_level3/test_attribute.py::TestAttribute::test_attribute_patterns_scan_for_value PASSED
 tests/test_level3/test_attribute.py::TestAttribute::test_attribute_space_list_with_newlines PASSED
 tests/test_level3/test_attribute.py::TestAttribute::test_attribute_starts_with_newlines PASSED
 tests/test_level3/test_checked.py::TestChecked::test_checked PASSED
+tests/test_level3/test_checked.py::TestChecked::test_option_deeply_nested PASSED
 tests/test_level3/test_checked.py::TestChecked::test_option_disabled_selected PASSED
 tests/test_level3/test_checked.py::TestChecked::test_option_first_enabled PASSED
 tests/test_level3/test_checked.py::TestChecked::test_option_foreign_select SKIPPED
@@ -269,6 +292,7 @@ tests/test_level3/test_checked.py::TestChecked::test_option_size_many_selected P
 tests/test_level3/test_checked.py::TestChecked::test_option_template PASSED
 tests/test_level3/test_checked.py::TestChecked::test_option_unclosed PASSED
 tests/test_level3/test_checked.py::TestChecked::test_option_xhtml PASSED
+tests/test_level3/test_checked.py::TestChecked::test_radio_deeply_nested PASSED
 tests/test_level3/test_checked.py::TestChecked::test_radio_group_after_nested_form PASSED
 tests/test_level3/test_checked.py::TestChecked::test_radio_group_foreign_form SKIPPED
 tests/test_level3/test_checked.py::TestChecked::test_radio_group_foreign_object SKIPPED
@@ -576,18 +600,27 @@ tests/test_level4/test_is.py::TestIs::test_is_with_other_pseudo PASSED
 tests/test_level4/test_is.py::TestIs::test_multiple_is PASSED
 tests/test_level4/test_is.py::TestIs::test_nested_is PASSED
 tests/test_level4/test_lang.py::TestLang::test_avoid_implicit_language PASSED
+tests/test_level4/test_lang.py::TestLang::test_deeply_nested_language PASSED
 tests/test_level4/test_lang.py::TestLang::test_explicit_wildcard PASSED
 tests/test_level4/test_lang.py::TestLang::test_lang PASSED
 tests/test_level4/test_lang.py::TestLang::test_lang_missing_range PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_empty_string PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_empty_string_in_tagged_ancestor PASSED
+tests/test_level4/test_lang.py::TestLang::test_language_ill_formed_meta PASSED
+tests/test_level4/test_lang.py::TestLang::test_language_ill_formed_range PASSED
+tests/test_level4/test_lang.py::TestLang::test_language_ill_formed_subtag_length PASSED
+tests/test_level4/test_lang.py::TestLang::test_language_ill_formed_tag PASSED
+tests/test_level4/test_lang.py::TestLang::test_language_ill_formed_xml PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_in_header PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_in_xhtml PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_in_xhtml_without_html_style_lang PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_list PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_quoted PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_quoted_with_escaped_newline PASSED
+tests/test_level4/test_lang.py::TestLang::test_language_shared_ancestors PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_und PASSED
+tests/test_level4/test_lang.py::TestLang::test_language_well_formed_unregistered_tag PASSED
+tests/test_level4/test_lang.py::TestLang::test_no_language_in_header PASSED
 tests/test_level4/test_lang.py::TestLang::test_only_wildcard PASSED
 tests/test_level4/test_lang.py::TestLang::test_svg_language_in_html5 SKIPPED
 tests/test_level4/test_lang.py::TestLang::test_undetermined_language PASSED
@@ -595,6 +628,7 @@ tests/test_level4/test_lang.py::TestLang::test_wildcard_at_start_escaped PASSED
 tests/test_level4/test_lang.py::TestLang::test_wildcard_at_start_quoted PASSED
 tests/test_level4/test_lang.py::TestLang::test_wildcard_start_collapse PASSED
 tests/test_level4/test_lang.py::TestLang::test_wildcard_start_no_match PASSED
+tests/test_level4/test_lang.py::TestLang::test_wildcard_trailing PASSED
 tests/test_level4/test_lang.py::TestLang::test_xml_style_language PASSED
 tests/test_level4/test_lang.py::TestLang::test_xml_style_language_empty_string PASSED
 tests/test_level4/test_lang.py::TestLang::test_xml_style_language_in_html5 SKIPPED
@@ -641,9 +675,11 @@ tests/test_level4/test_read_only.py::TestReadOnly::test_read_only_iframe PASSED
 tests/test_level4/test_read_only.py::TestReadOnly::test_read_only_non_html SKIPPED
 tests/test_level4/test_read_write.py::TestReadWrite::test_read_write PASSED
 tests/test_level4/test_read_write.py::TestReadWrite::test_read_write_contenteditable_no_namespaces PASSED
+tests/test_level4/test_read_write.py::TestReadWrite::test_read_write_deeply_nested PASSED
 tests/test_level4/test_read_write.py::TestReadWrite::test_read_write_editable PASSED
 tests/test_level4/test_read_write.py::TestReadWrite::test_read_write_foreign_contenteditable SKIPPED
 tests/test_level4/test_read_write.py::TestReadWrite::test_read_write_iframe PASSED
+tests/test_level4/test_read_write.py::TestReadWrite::test_read_write_shared_ancestors PASSED
 tests/test_level4/test_read_write.py::TestReadWrite::test_read_write_unknown_type PASSED
 tests/test_level4/test_required.py::TestRequired::test_required PASSED
 tests/test_level4/test_required.py::TestRequired::test_required_does_not_apply PASSED
@@ -659,9 +695,15 @@ tests/test_level4/test_where.py::TestWhere::test_where PASSED
 tests/test_nesting_1/test_amp.py::TestAmp::test_amp_cannot_select_target PASSED
 tests/test_nesting_1/test_amp.py::TestAmp::test_amp_is_root PASSED
 tests/test_nesting_1/test_amp.py::TestAmp::test_amp_is_select_target PASSED
+tests/test_threads.py::TestThreads::test_compile_and_purge PASSED
+tests/test_threads.py::TestThreads::test_lazy_pattern PASSED
+tests/test_threads.py::TestThreads::test_lazy_pseudo_selectors PASSED
+tests/test_threads.py::TestThreads::test_parse PASSED
+tests/test_threads.py::TestThreads::test_select PASSED
+tests/test_threads.py::TestThreads::test_tokens_have_no_match_state PASSED
 tests/test_versions.py::TestVersion::test_asserts PASSED
 tests/test_versions.py::TestVersion::test_version_comparison PASSED
 tests/test_versions.py::TestVersion::test_version_output PASSED
 tests/test_versions.py::TestVersion::test_version_parsing PASSED
 
-======== 592 passed, 62 skipped, 12 subtests passed ========
+======== 634 passed, 62 skipped, 12 subtests passed ========
