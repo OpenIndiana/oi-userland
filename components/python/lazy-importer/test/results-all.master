@@ -1,0 +1,80 @@
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: pyproject.toml
+testpaths: tests
+collecting ... collected 66 items
+
+tests/test_fallback.py::test_nested_context_keeps_outer_hook_active PASSED
+tests/test_fallback.py::test_global_aliases_are_replaced PASSED
+tests/test_fallback.py::test_replaced_hook_is_not_clobbered PASSED
+tests/test_fallback.py::test_overlapping_threads_restore_hook_at_last_exit PASSED
+tests/test_fallback.py::test_circular_resolution_raises_and_can_retry PASSED
+tests/test_fallback.py::test_relative_import_uses_spec_when_package_is_absent PASSED
+tests/test_fallback.py::test_relative_import_uses_module_name_as_last_resort[False] PASSED
+tests/test_fallback.py::test_relative_import_uses_module_name_as_last_resort[True] PASSED
+tests/test_fallback.py::test_import_without_namespace_remains_eager PASSED
+tests/test_fallback.py::test_call_while_context_active_keeps_dependencies_eager PASSED
+tests/test_fallback.py::test_membership_error_restores_hook_and_allows_retry PASSED
+tests/test_imports.py::test_import_defers_execution[import example_pkg-example_pkg.answer-42] PASSED
+tests/test_imports.py::test_import_defers_execution[import example_pkg as alias-alias.answer-42] PASSED
+tests/test_imports.py::test_import_defers_execution[from example_pkg import double-double(6)-12] PASSED
+tests/test_imports.py::test_import_defers_execution[from example_pkg import answer as alias-alias + 1-43] PASSED
+tests/test_imports.py::test_import_defers_execution[import example_pkg.child-example_pkg.child.value-17] PASSED
+tests/test_imports.py::test_import_defers_execution[import example_pkg.child as alias-alias.value-17] PASSED
+tests/test_imports.py::test_import_defers_execution[from example_pkg import child-child.value-17] PASSED
+tests/test_imports.py::test_import_defers_execution[from example_pkg.child import value-value + 1-18] PASSED
+tests/test_imports.py::test_each_from_name_resolves_independently PASSED
+tests/test_imports.py::test_failed_import_can_retry PASSED
+tests/test_imports.py::test_module_exception_propagates_at_use PASSED
+tests/test_imports.py::test_missing_from_attribute_is_import_error PASSED
+tests/test_imports.py::test_relative_import PASSED
+tests/test_imports.py::test_star_import_is_eager PASSED
+tests/test_imports.py::test_selection_is_exact_and_dependencies_are_eager PASSED
+tests/test_imports.py::test_dotted_siblings_are_available PASSED
+tests/test_imports.py::test_proxy_operations[bool(items)-True] PASSED
+tests/test_imports.py::test_proxy_operations[list(items)-[1, 2]] PASSED
+tests/test_imports.py::test_proxy_operations[len(items)-2] PASSED
+tests/test_imports.py::test_proxy_operations[items[0]-1] PASSED
+tests/test_imports.py::test_proxy_operations[2 in items-True] PASSED
+tests/test_imports.py::test_proxy_operations[str(answer)-'42'] PASSED
+tests/test_imports.py::test_proxy_operations[repr(answer)-'42'] PASSED
+tests/test_imports.py::test_proxy_operations[int(answer)-42] PASSED
+tests/test_imports.py::test_proxy_operations[hash(answer)-hash(42)] PASSED
+tests/test_imports.py::test_proxy_operations[answer * 2-84] PASSED
+tests/test_imports.py::test_proxy_operations[2 + answer-44] PASSED
+tests/test_imports.py::test_proxy_operations[answer + other-85] PASSED
+tests/test_imports.py::test_proxy_operations[answer < other-True] PASSED
+tests/test_imports.py::test_proxy_operations[round(answer)-42] PASSED
+tests/test_imports.py::test_class_base PASSED
+tests/test_imports.py::test_hook_restored_after_exception PASSED
+tests/test_imports.py::test_resolution_uses_current_import_hook PASSED
+tests/test_imports.py::test_thread_context_does_not_leak PASSED
+tests/test_imports.py::test_concurrent_resolution_returns_one_module PASSED
+tests/test_imports.py::test_imported_attributes_do_not_collide_with_proxy_state PASSED
+tests/test_imports.py::test_proxy_mutation_and_inplace_operations PASSED
+tests/test_imports.py::test_rebinding_does_not_overwrite_new_value PASSED
+tests/test_imports.py::test_relative_package_from_import PASSED
+tests/test_imports.py::test_parent_resolves_without_loading_pending_sibling PASSED
+tests/test_imports.py::test_eager_import_does_not_resolve_from_binding PASSED
+tests/test_imports.py::test_selected_prefix_does_not_select_submodule PASSED
+tests/test_imports.py::test_relative_import_retains_original_package PASSED
+tests/test_imports.py::test_callable_resolves_lazy_arguments PASSED
+tests/test_imports.py::test_dynamic_attribute_imports_remain_eager PASSED
+tests/test_native.py::test_native_import_does_not_load_fallback_dependencies SKIPPED
+tests/test_native.py::test_native_filter_can_force_eager_imports SKIPPED
+tests/test_native.py::test_native_path_requires_module_declaration SKIPPED
+tests/test_runtime.py::test_import_does_not_require_typing_or_dataclasses PASSED
+tests/test_runtime.py::test_free_threaded_runtime_has_gil_disabled SKIPPED
+tests/test_selection.py::test_missing_declaration_keeps_imports_eager PASSED
+tests/test_selection.py::test_declaration_is_read_at_each_import PASSED
+tests/test_selection.py::test_custom_membership_does_not_require_iteration PASSED
+tests/test_selection.py::test_selection_uses_the_importing_namespace PASSED
+tests/test_selection.py::test_star_import_does_not_consult_declaration PASSED
+
+=========================== short test summary info ============================
+======== 62 passed, 4 skipped ========
+  py$(PYV): OK
+  congratulations :)
