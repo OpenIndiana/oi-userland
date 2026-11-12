@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jsonpointer
-HUMAN_VERSION =			3.11
+HUMAN_VERSION =			3.12
 COMPONENT_SUMMARY =		Identify specific nodes in a JSON document (RFC 6901) 
 COMPONENT_PROJECT_URL =		https://github.com/stefankoegl/python-json-pointer
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dac052acf401e2079cd3f4495b334cdaf073d74706992a7b2b6987c9ae2cf73f
+	sha256:7a3dcc11b64053eaa9c549e85e413f8d40a075215f793a331bed9182a14251ae
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
