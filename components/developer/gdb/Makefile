@@ -31,14 +31,14 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gdb
-COMPONENT_VERSION=      17.2
+COMPONENT_VERSION=      18.1
 COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=      GDB: The GNU Project Debugger
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:cb891b9a9f554cac972eea5368176b240640ae90b681aae84bf873a9501f0063
+	sha256:fb83623deb238cab91ad17f8a906e2da26d0b4620fb1da43c20a274252e51082
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/gdb/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/gdb/
 COMPONENT_FMRI= developer/debug/gdb
@@ -86,7 +86,8 @@ CFLAGS_sparc =	-g -O2 -mcpu=ultrasparc -mtune=ultrasparc
 CFLAGS_sparc +=	-mno-unaligned-doubles
 CFLAGS_sparc += -mapp-regs -mhard-float
 CFLAGS_i386 =	-g -O2 -march=opteron -mtune=opteron
-CFLAGS_EXTRA = -Wall -Wno-long-long -Wcast-align -fno-omit-frame-pointer
+CFLAGS_EXTRA = -Wall -Wno-long-long -Wcast-align
+CFLAGS_EXTRA += -fno-omit-frame-pointer -fpermissive
 
 CFLAGS = $(CC_BITS) $(CFLAGS_EXTRA) $(CFLAGS_$(MACH))
 CXXFLAGS = $(CC_BITS) $(CFLAGS_EXTRA) $(CFLAGS_$(MACH))
@@ -362,8 +363,6 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(PROTOUSRSHAREDIR)/info/ ; \
       $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/annotate.info  \
 	$(PROTOUSRSHAREDIR)/info/ ; \
-      $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/stabs.info  \
-	$(PROTOUSRSHAREDIR)/info/ ; \
 	 )
 
 # Disable ASLR: it's a debugger and we do not want to risk
@@ -380,7 +379,6 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += developer/babeltrace
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libxxhash
