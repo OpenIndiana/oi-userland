@@ -36,6 +36,13 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 depend type=require fmri=__TBD \
     pkg.debug.depend.file=usr/tomcat11/bin/bootstrap.jar
 
+# (work around PR 28182 breakage):
+# oi-userland/components/runtime/openjdk-11-11.0.33/build/manifest-i386-openjdk.
+# depend has unresolved dependency '
+#     depend type=require fmri=__TBD \
+#         pkg.debug.depend.file=var/tomcat11/webapps/../../../usr/tomcat11/docs'.
+<transform link -> default pkg.tmp.allow-dangling true>
+
 file path=var/tomcat11/webapps/ROOT.example/RELEASE-NOTES.txt
 file path=var/tomcat11/webapps/ROOT.example/WEB-INF/web.xml
 file path=var/tomcat11/webapps/ROOT.example/asf-logo-wide.svg

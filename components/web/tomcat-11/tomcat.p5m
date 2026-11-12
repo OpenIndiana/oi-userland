@@ -36,6 +36,12 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 depend type=require fmri=__TBD \
     pkg.debug.depend.file=usr/jdk/openjdk$(JAVAVER)/bin/java
 
+# (work around PR 28182 breakage):
+# oi-userland/components/web/tomcat-11-11.0.29/build/manifest-i386-tomcat.depend has unresolved dependency '
+#    depend type=require fmri=__TBD \
+#        pkg.debug.depend.file=etc/../var/tomcat11/conf'.
+<transform link -> default pkg.tmp.allow-dangling true>
+
 # doc
 <transform file link hardlink path=usr/tomcat11/docs/.* -> \
     default facet.doc.html true>
