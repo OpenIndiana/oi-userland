@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		annotated_doc
-HUMAN_VERSION =			0.0.5
+HUMAN_VERSION =			0.0.6
 COMPONENT_SUMMARY =		Document parameters, class attributes, return types, and variables inline, with Annotated.
 COMPONENT_PROJECT_URL =		https://github.com/fastapi/annotated-doc
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c7e58ce09192557605d8bbd92836d7e1d520ac9580096042c0bfd197efacf1bb
+	sha256:7969bb69912085b2285849c0dcac0b4b374fd180c13cf10a87f284ffcf347bbf
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -39,6 +39,9 @@ TEST_STYLE = pytest
 # a case the required projects are not available yet (bootstrap).
 #
 PYTHON_TEST_BOOTSTRAP = yes
+
+# Python 3.9 is not supported by annotated-doc >= 0.0.6
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
