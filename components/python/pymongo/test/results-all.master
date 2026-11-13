@@ -5,7 +5,7 @@ rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: test
 asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=session, asyncio_default_test_loop_scope=function
-collecting ... collected 9307 items / 955 deselected / 1 skipped / 8352 selected
+collecting ... collected 9419 items / 953 deselected / 1 skipped / 8466 selected
 
 test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_cancellation_aborts_transaction SKIPPED
 test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_cancellation_closes_change_stream SKIPPED
@@ -278,6 +278,9 @@ test/asynchronous/test_client.py::AsyncClientUnitTest::test_metadata_deduplicate
 test/asynchronous/test_client.py::AsyncClientUnitTest::test_metadata_recreates_platform_after_truncation PASSED
 test/asynchronous/test_client.py::AsyncClientUnitTest::test_metadata_truncates_driver_info PASSED
 test/asynchronous/test_client.py::AsyncClientUnitTest::test_metadata_truncation_drops_blank_pairs_first PASSED
+test/asynchronous/test_client.py::AsyncClientUnitTest::test_metadata_truncation_keeps_name_and_agent PASSED
+test/asynchronous/test_client.py::AsyncClientUnitTest::test_metadata_truncation_omits_agent_before_name PASSED
+test/asynchronous/test_client.py::AsyncClientUnitTest::test_metadata_truncation_omits_agent_only_env PASSED
 test/asynchronous/test_client.py::AsyncClientUnitTest::test_primary_read_pref_with_tags PASSED
 test/asynchronous/test_client.py::AsyncClientUnitTest::test_read_preference PASSED
 test/asynchronous/test_client.py::AsyncClientUnitTest::test_repr_redacts_aws_session_token PASSED
@@ -324,6 +327,23 @@ test/asynchronous/test_client.py::TestClient::test_handshake_06_region_too_long 
 test/asynchronous/test_client.py::TestClient::test_handshake_07_memory_invalid_int SKIPPED
 test/asynchronous/test_client.py::TestClient::test_handshake_08_invalid_aws_ec2 SKIPPED
 test/asynchronous/test_client.py::TestClient::test_handshake_09_container_with_provider SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_10_agent_known SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_11_agent_known_fixed_name SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_12_agent_known_opencode SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_13_agent_known_opencode_client SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_14_agent_known_precedence SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_15_agent_known_beats_generic SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_16_agent_generic_descriptive SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_17_agent_generic_boolean SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_18_agent_generic_boolean_whitespace SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_19_agent_generic_normalized SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_20_agent_generic_truncated SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_21_agent_generic_truncated_on_boundary SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_22_agent_generic_malformed SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_23_agent_unset_empty SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_24_agent_unset_whitespace SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_25_agent_unset_known_whitespace SKIPPED
+test/asynchronous/test_client.py::TestClient::test_handshake_26_agent_with_provider SKIPPED
 test/asynchronous/test_client.py::TestClient::test_hashable SKIPPED
 test/asynchronous/test_client.py::TestClient::test_heartbeat_frequency_ms SKIPPED
 test/asynchronous/test_client.py::TestClient::test_host_w_port SKIPPED
@@ -715,8 +735,6 @@ test/asynchronous/test_connection_logging.py::TestConnectionLoggingConnectionLog
 test/asynchronous/test_connection_logging.py::TestConnectionLoggingConnectionLogging::test_Create_a_client,_run_a_command,_and_close_the_client SKIPPED
 test/asynchronous/test_connection_logging.py::TestConnectionLoggingConnectionPoolOptions::test_Options_should_be_included_in_connection_pool_created_message_when_specified SKIPPED
 test/asynchronous/test_connection_logging.py::TestConnectionLoggingConnectionPoolOptions::test_maxConnecting_should_be_included_in_connection_pool_created_message_when_specified SKIPPED
-test/asynchronous/test_connection_logging.py::TestConnectionLoggingConnectionPoolOptions::test_waitQueueMultiple_should_be_included_in_connection_pool_created_message_when_specified SKIPPED
-test/asynchronous/test_connection_logging.py::TestConnectionLoggingConnectionPoolOptions::test_waitQueueSize_should_be_included_in_connection_pool_created_message_when_specified SKIPPED
 test/asynchronous/test_connection_logging.py::TestConnectionLoggingConnectionPoolOptions::test_waitQueueTimeoutMS_should_be_included_in_connection_pool_created_message_when_specified SKIPPED
 test/asynchronous/test_connection_monitoring.py::AsyncTestCMAP::test_1_client_connection_pool_options SKIPPED
 test/asynchronous/test_connection_monitoring.py::AsyncTestCMAP::test_2_all_client_pools_have_same_options SKIPPED
@@ -1975,12 +1993,15 @@ test/asynchronous/test_discovery_and_monitoring.py::TestAllScenarios::test_singl
 test/asynchronous/test_discovery_and_monitoring.py::TestClusterTimeComparison::test_cluster_time_comparison PASSED
 test/asynchronous/test_discovery_and_monitoring.py::TestHeartbeatStartOrdering::test_heartbeat_start_ordering PASSED
 test/asynchronous/test_discovery_and_monitoring.py::TestIgnoreStaleErrors::test_ignore_stale_connection_errors SKIPPED
+test/asynchronous/test_discovery_and_monitoring.py::TestMonitorRecoversAfterSelfRemoval::test_monitor_recovers_after_self_removal PASSED
 test/asynchronous/test_discovery_and_monitoring.py::TestPoolBackpressure::test_connection_pool_is_not_cleared SKIPPED
 test/asynchronous/test_discovery_and_monitoring.py::TestPoolManagement::test_connection_close_does_not_block_other_operations SKIPPED
 test/asynchronous/test_discovery_and_monitoring.py::TestPoolManagement::test_pool_unpause SKIPPED
 test/asynchronous/test_discovery_and_monitoring.py::TestServerMonitoringMode::test_rtt_connection_is_disabled_auto SKIPPED
 test/asynchronous/test_discovery_and_monitoring.py::TestServerMonitoringMode::test_rtt_connection_is_disabled_poll SKIPPED
 test/asynchronous/test_discovery_and_monitoring.py::TestServerMonitoringMode::test_rtt_connection_is_enabled_stream SKIPPED
+test/asynchronous/test_discovery_and_monitoring.py::TestServerRemovalHardening::test_pool_closes_when_monitor_close_is_cancelled PASSED
+test/asynchronous/test_discovery_and_monitoring.py::TestServerRemovalHardening::test_removal_bookkeeping_survives_close_cancellation PASSED
 test/asynchronous/test_discovery_and_monitoring.py::TestUnifiedAuthError::test_Reset_server_and_pool_after_AuthenticationFailure_error SKIPPED
 test/asynchronous/test_discovery_and_monitoring.py::TestUnifiedAuthMiscCommandError::test_Reset_server_and_pool_after_misc_command_error SKIPPED
 test/asynchronous/test_discovery_and_monitoring.py::TestUnifiedAuthNetworkError::test_Reset_server_and_pool_after_network_error_during_authentication SKIPPED
@@ -2041,6 +2062,8 @@ test/asynchronous/test_dns.py::TestDNSRepl::test_dbname-with-commas-escaped SKIP
 test/asynchronous/test_dns.py::TestDNSRepl::test_direct-connection-false SKIPPED
 test/asynchronous/test_dns.py::TestDNSRepl::test_direct-connection-true SKIPPED
 test/asynchronous/test_dns.py::TestDNSRepl::test_encoded-userinfo-and-db SKIPPED
+test/asynchronous/test_dns.py::TestDNSRepl::test_identical-hostnames-valid-four-parts SKIPPED
+test/asynchronous/test_dns.py::TestDNSRepl::test_identical-hostnames-valid-three-parts SKIPPED
 test/asynchronous/test_dns.py::TestDNSRepl::test_loadBalanced-false-txt SKIPPED
 test/asynchronous/test_dns.py::TestDNSRepl::test_longer-parent-in-return SKIPPED
 test/asynchronous/test_dns.py::TestDNSRepl::test_misformatted-option SKIPPED
@@ -2106,7 +2129,6 @@ test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_6_reject_a_
 test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_7_the_validator_receives_the_normalized_host_name PASSED
 test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_8_wrap_an_error_raised_by_the_validator PASSED
 test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_9_throw_when_both_srv_allowed_hosts_suffix_and_srv_host_validator_are_configured PASSED
-test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_srv_hostname_with_three_or_more_parts_may_equal_the_returned_hostname PASSED
 test/asynchronous/test_dns.py::TestParsingErrors::test_invalid_host PASSED
 test/asynchronous/test_dns.py::TestPublicSuffixListParsing::test_1_multi_label_ordinary_rule PASSED
 test/asynchronous/test_dns.py::TestPublicSuffixListParsing::test_2_long_wildcard_rule PASSED
@@ -2363,6 +2385,8 @@ test/asynchronous/test_operation_id_retry.py::TestOperationIdRetry::test_reauth_
 test/asynchronous/test_operation_id_retry.py::TestOperationIdRetry::test_retry_without_telemetry_creates_no_operation_id SKIPPED
 test/asynchronous/test_operation_id_retry.py::TestOperationIdRetry::test_retryable_reads_reuse_operation_id SKIPPED
 test/asynchronous/test_operation_id_retry.py::TestOperationIdRetry::test_retryable_writes_reuse_operation_id SKIPPED
+test/asynchronous/test_periodic_executor.py::TestAsyncPeriodicExecutor::test_close_from_own_task_does_not_cancel PASSED
+test/asynchronous/test_periodic_executor.py::TestAsyncPeriodicExecutor::test_close_from_thread_without_event_loop PASSED
 test/asynchronous/test_periodic_executor.py::TestAsyncPeriodicExecutor::test_join_without_open_is_safe PASSED
 test/asynchronous/test_periodic_executor.py::TestAsyncPeriodicExecutor::test_open_after_target_returns_false PASSED
 test/asynchronous/test_periodic_executor.py::TestAsyncPeriodicExecutor::test_open_non_daemon_thread PASSED
@@ -2392,6 +2416,7 @@ test/asynchronous/test_pooling.py::TestPooling::test_csot_timeout_message SKIPPE
 test/asynchronous/test_pooling.py::TestPooling::test_get_conn_reused_connection_rolls_back_on_cancel SKIPPED
 test/asynchronous/test_pooling.py::TestPooling::test_get_socket_and_exception SKIPPED
 test/asynchronous/test_pooling.py::TestPooling::test_maxConnecting SKIPPED
+test/asynchronous/test_pooling.py::TestPooling::test_max_pool_size_no_limit_with_min_pool_size SKIPPED
 test/asynchronous/test_pooling.py::TestPooling::test_max_pool_size_validation SKIPPED
 test/asynchronous/test_pooling.py::TestPooling::test_no_disconnect SKIPPED
 test/asynchronous/test_pooling.py::TestPooling::test_no_wait_queue_timeout SKIPPED
@@ -2502,6 +2527,34 @@ test/asynchronous/test_read_write_concern_spec.py::TestReadWriteConcernSpec::tes
 test/asynchronous/test_read_write_concern_spec.py::TestReadWriteConcernSpec::test_raise_write_concern_error SKIPPED
 test/asynchronous/test_read_write_concern_spec.py::TestReadWriteConcernSpec::test_raise_wtimeout SKIPPED
 test/asynchronous/test_read_write_concern_spec.py::TestReadWriteConcernSpec::test_write_error_details_exposes_errinfo SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsAggregate::test_aggregate_with_$merge_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsAggregate::test_aggregate_with_$out_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsBulkWrite::test_bulkWrite_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsClientBulkWrite::test_clientBulkWrite_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsCrud::test_deleteMany_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsCrud::test_deleteOne_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsCrud::test_insertMany_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsCrud::test_insertOne_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsCrud::test_replaceOne_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsCrud::test_updateMany_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsCrud::test_updateOne_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsDbCollManagement::test_createCollection_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsDbCollManagement::test_dropCollection_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsDbCollManagement::test_dropDatabase_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsDbCollManagement::test_rename_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsFindAndModify::test_findOneAndDelete_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsFindAndModify::test_findOneAndReplace_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsFindAndModify::test_findOneAndUpdate_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsGridfs::test_deleteByName_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsGridfs::test_delete_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsGridfs::test_file_rename_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsGridfs::test_renameByName_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsGridfs::test_upload_reports_a_writeConcernError_from_a_chunk_insert SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsGridfs::test_upload_reports_a_writeConcernError_from_the_files_document_insert SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsIndexManagement::test_createIndex_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsIndexManagement::test_dropIndex_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsIndexManagement::test_dropIndexes_reports_a_writeConcernError SKIPPED
+test/asynchronous/test_read_write_concern_spec.py::TestWriteConcernErrorsMapReduce::test_mapReduce_with_an_output_collection_reports_a_writeConcernError SKIPPED
 test/asynchronous/test_retryable_reads.py::TestClientOptions::test_default PASSED
 test/asynchronous/test_retryable_reads.py::TestClientOptions::test_kwargs PASSED
 test/asynchronous/test_retryable_reads.py::TestClientOptions::test_uri PASSED
@@ -3322,6 +3375,7 @@ test/asynchronous/test_ssl.py::TestSSL::test_cert_ssl_validation_hostname_matchi
 test/asynchronous/test_ssl.py::TestSSL::test_certifi_support SKIPPED
 test/asynchronous/test_ssl.py::TestSSL::test_connect_with_ca_bundle SKIPPED
 test/asynchronous/test_ssl.py::TestSSL::test_mongodb_x509_auth SKIPPED
+test/asynchronous/test_ssl.py::TestSSL::test_pool_has_no_ssl_session_cache_on_python_311 SKIPPED
 test/asynchronous/test_ssl.py::TestSSL::test_pool_has_ssl_session_cache SKIPPED
 test/asynchronous/test_ssl.py::TestSSL::test_pyopenssl_ignored_in_async SKIPPED
 test/asynchronous/test_ssl.py::TestSSL::test_simple_ssl SKIPPED (Can...)
@@ -3823,6 +3877,8 @@ test/test_bson.py::TestBSON::test_basic_decode PASSED
 test/test_bson.py::TestBSON::test_basic_encode PASSED
 test/test_bson.py::TestBSON::test_basic_validation PASSED
 test/test_bson.py::TestBSON::test_binary_length_accounts_for_header PASSED
+test/test_bson.py::TestBSON::test_binary_subtype_255_round_trip 
+test/test_bson.py::TestBSON::test_binary_subtype_255_round_trip PASSED
 test/test_bson.py::TestBSON::test_binaryvector_equality PASSED
 test/test_bson.py::TestBSON::test_binaryvector_repr PASSED
 test/test_bson.py::TestBSON::test_bson_encode_thread_safe PASSED
@@ -3874,6 +3930,8 @@ test/test_bson.py::TestBSON::test_regex_comparison PASSED
 test/test_bson.py::TestBSON::test_regex_empty_flags PASSED
 test/test_bson.py::TestBSON::test_regex_from_native PASSED
 test/test_bson.py::TestBSON::test_regex_hash PASSED
+test/test_bson.py::TestBSON::test_regex_invalid_utf8_flags PASSED
+test/test_bson.py::TestBSON::test_short_uuid_subtype_binary PASSED
 test/test_bson.py::TestBSON::test_small_long_encode_decode PASSED
 test/test_bson.py::TestBSON::test_subclasses PASSED
 test/test_bson.py::TestBSON::test_timestamp_comparison PASSED
@@ -4194,6 +4252,9 @@ test/test_client.py::ClientUnitTest::test_metadata_deduplicates_none_and_empty P
 test/test_client.py::ClientUnitTest::test_metadata_recreates_platform_after_truncation PASSED
 test/test_client.py::ClientUnitTest::test_metadata_truncates_driver_info PASSED
 test/test_client.py::ClientUnitTest::test_metadata_truncation_drops_blank_pairs_first PASSED
+test/test_client.py::ClientUnitTest::test_metadata_truncation_keeps_name_and_agent PASSED
+test/test_client.py::ClientUnitTest::test_metadata_truncation_omits_agent_before_name PASSED
+test/test_client.py::ClientUnitTest::test_metadata_truncation_omits_agent_only_env PASSED
 test/test_client.py::ClientUnitTest::test_primary_read_pref_with_tags PASSED
 test/test_client.py::ClientUnitTest::test_read_preference PASSED
 test/test_client.py::ClientUnitTest::test_repr_redacts_aws_session_token PASSED
@@ -4240,6 +4301,23 @@ test/test_client.py::TestClient::test_handshake_06_region_too_long SKIPPED
 test/test_client.py::TestClient::test_handshake_07_memory_invalid_int SKIPPED
 test/test_client.py::TestClient::test_handshake_08_invalid_aws_ec2 SKIPPED
 test/test_client.py::TestClient::test_handshake_09_container_with_provider SKIPPED
+test/test_client.py::TestClient::test_handshake_10_agent_known SKIPPED
+test/test_client.py::TestClient::test_handshake_11_agent_known_fixed_name SKIPPED
+test/test_client.py::TestClient::test_handshake_12_agent_known_opencode SKIPPED
+test/test_client.py::TestClient::test_handshake_13_agent_known_opencode_client SKIPPED
+test/test_client.py::TestClient::test_handshake_14_agent_known_precedence SKIPPED
+test/test_client.py::TestClient::test_handshake_15_agent_known_beats_generic SKIPPED
+test/test_client.py::TestClient::test_handshake_16_agent_generic_descriptive SKIPPED
+test/test_client.py::TestClient::test_handshake_17_agent_generic_boolean SKIPPED
+test/test_client.py::TestClient::test_handshake_18_agent_generic_boolean_whitespace SKIPPED
+test/test_client.py::TestClient::test_handshake_19_agent_generic_normalized SKIPPED
+test/test_client.py::TestClient::test_handshake_20_agent_generic_truncated SKIPPED
+test/test_client.py::TestClient::test_handshake_21_agent_generic_truncated_on_boundary SKIPPED
+test/test_client.py::TestClient::test_handshake_22_agent_generic_malformed SKIPPED
+test/test_client.py::TestClient::test_handshake_23_agent_unset_empty SKIPPED
+test/test_client.py::TestClient::test_handshake_24_agent_unset_whitespace SKIPPED
+test/test_client.py::TestClient::test_handshake_25_agent_unset_known_whitespace SKIPPED
+test/test_client.py::TestClient::test_handshake_26_agent_with_provider SKIPPED
 test/test_client.py::TestClient::test_hashable SKIPPED (Cannot conne...)
 test/test_client.py::TestClient::test_heartbeat_frequency_ms SKIPPED
 test/test_client.py::TestClient::test_host_w_port SKIPPED (Cannot co...)
@@ -4680,8 +4758,6 @@ test/test_connection_logging.py::TestConnectionLoggingConnectionLogging::test_Co
 test/test_connection_logging.py::TestConnectionLoggingConnectionLogging::test_Create_a_client,_run_a_command,_and_close_the_client SKIPPED
 test/test_connection_logging.py::TestConnectionLoggingConnectionPoolOptions::test_Options_should_be_included_in_connection_pool_created_message_when_specified SKIPPED
 test/test_connection_logging.py::TestConnectionLoggingConnectionPoolOptions::test_maxConnecting_should_be_included_in_connection_pool_created_message_when_specified SKIPPED
-test/test_connection_logging.py::TestConnectionLoggingConnectionPoolOptions::test_waitQueueMultiple_should_be_included_in_connection_pool_created_message_when_specified SKIPPED
-test/test_connection_logging.py::TestConnectionLoggingConnectionPoolOptions::test_waitQueueSize_should_be_included_in_connection_pool_created_message_when_specified SKIPPED
 test/test_connection_logging.py::TestConnectionLoggingConnectionPoolOptions::test_waitQueueTimeoutMS_should_be_included_in_connection_pool_created_message_when_specified SKIPPED
 test/test_connection_monitoring.py::TestCMAP::test_1_client_connection_pool_options SKIPPED
 test/test_connection_monitoring.py::TestCMAP::test_2_all_client_pools_have_same_options SKIPPED
@@ -5810,6 +5886,7 @@ test/test_dbref.py::TestDBRefSpec::test_encoding_3 PASSED
 test/test_decimal128.py::TestDecimal128::test_decimal128_context PASSED
 test/test_decimal128.py::TestDecimal128::test_pickle PASSED
 test/test_decimal128.py::TestDecimal128::test_round_trip SKIPPED (Ca...)
+test/test_decimal128.py::TestDecimal128::test_significand_too_large PASSED
 test/test_decimal128.py::TestDecimal128::test_special PASSED
 test/test_default_exports.py::TestDefaultExports::test_bson PASSED
 test/test_default_exports.py::TestDefaultExports::test_gridfs PASSED
@@ -5998,12 +6075,15 @@ test/test_discovery_and_monitoring.py::TestAllScenarios::test_single_too_old_the
 test/test_discovery_and_monitoring.py::TestClusterTimeComparison::test_cluster_time_comparison PASSED
 test/test_discovery_and_monitoring.py::TestHeartbeatStartOrdering::test_heartbeat_start_ordering PASSED
 test/test_discovery_and_monitoring.py::TestIgnoreStaleErrors::test_ignore_stale_connection_errors SKIPPED
+test/test_discovery_and_monitoring.py::TestMonitorRecoversAfterSelfRemoval::test_monitor_recovers_after_self_removal SKIPPED
 test/test_discovery_and_monitoring.py::TestPoolBackpressure::test_connection_pool_is_not_cleared SKIPPED
 test/test_discovery_and_monitoring.py::TestPoolManagement::test_connection_close_does_not_block_other_operations SKIPPED
 test/test_discovery_and_monitoring.py::TestPoolManagement::test_pool_unpause SKIPPED
 test/test_discovery_and_monitoring.py::TestServerMonitoringMode::test_rtt_connection_is_disabled_auto SKIPPED
 test/test_discovery_and_monitoring.py::TestServerMonitoringMode::test_rtt_connection_is_disabled_poll SKIPPED
 test/test_discovery_and_monitoring.py::TestServerMonitoringMode::test_rtt_connection_is_enabled_stream SKIPPED
+test/test_discovery_and_monitoring.py::TestServerRemovalHardening::test_pool_closes_when_monitor_close_is_cancelled SKIPPED
+test/test_discovery_and_monitoring.py::TestServerRemovalHardening::test_removal_bookkeeping_survives_close_cancellation SKIPPED
 test/test_discovery_and_monitoring.py::TestUnifiedAuthError::test_Reset_server_and_pool_after_AuthenticationFailure_error SKIPPED
 test/test_discovery_and_monitoring.py::TestUnifiedAuthMiscCommandError::test_Reset_server_and_pool_after_misc_command_error SKIPPED
 test/test_discovery_and_monitoring.py::TestUnifiedAuthNetworkError::test_Reset_server_and_pool_after_network_error_during_authentication SKIPPED
@@ -6064,6 +6144,8 @@ test/test_dns.py::TestDNSRepl::test_dbname-with-commas-escaped SKIPPED
 test/test_dns.py::TestDNSRepl::test_direct-connection-false SKIPPED
 test/test_dns.py::TestDNSRepl::test_direct-connection-true SKIPPED (...)
 test/test_dns.py::TestDNSRepl::test_encoded-userinfo-and-db SKIPPED
+test/test_dns.py::TestDNSRepl::test_identical-hostnames-valid-four-parts SKIPPED
+test/test_dns.py::TestDNSRepl::test_identical-hostnames-valid-three-parts SKIPPED
 test/test_dns.py::TestDNSRepl::test_loadBalanced-false-txt SKIPPED (...)
 test/test_dns.py::TestDNSRepl::test_longer-parent-in-return SKIPPED
 test/test_dns.py::TestDNSRepl::test_misformatted-option SKIPPED (Can...)
@@ -6129,7 +6211,6 @@ test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_6_reject_a_host_the_defa
 test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_7_the_validator_receives_the_normalized_host_name PASSED
 test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_8_wrap_an_error_raised_by_the_validator PASSED
 test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_9_throw_when_both_srv_allowed_hosts_suffix_and_srv_host_validator_are_configured PASSED
-test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_srv_hostname_with_three_or_more_parts_may_equal_the_returned_hostname PASSED
 test/test_dns.py::TestParsingErrors::test_invalid_host PASSED
 test/test_dns.py::TestPublicSuffixListParsing::test_1_multi_label_ordinary_rule PASSED
 test/test_dns.py::TestPublicSuffixListParsing::test_2_long_wildcard_rule PASSED
@@ -6512,6 +6593,7 @@ test/test_objectid.py::TestObjectId::test_creation PASSED
 test/test_objectid.py::TestObjectId::test_equality PASSED
 test/test_objectid.py::TestObjectId::test_from_datetime PASSED
 test/test_objectid.py::TestObjectId::test_from_hex PASSED
+test/test_objectid.py::TestObjectId::test_from_hex_whitespace PASSED
 test/test_objectid.py::TestObjectId::test_generation_time PASSED
 test/test_objectid.py::TestObjectId::test_is_valid PASSED
 test/test_objectid.py::TestObjectId::test_pickle_backwards_compatability PASSED
@@ -6533,6 +6615,8 @@ test/test_operation_id_retry.py::TestOperationIdRetry::test_retryable_reads_reus
 test/test_operation_id_retry.py::TestOperationIdRetry::test_retryable_writes_reuse_operation_id SKIPPED
 test/test_operations.py::TestIndexModel::test_repr PASSED
 test/test_operations.py::TestSearchIndexModel::test_repr PASSED
+test/test_periodic_executor.py::TestPeriodicExecutor::test_close_from_own_task_does_not_cancel PASSED
+test/test_periodic_executor.py::TestPeriodicExecutor::test_close_from_thread_without_event_loop PASSED
 test/test_periodic_executor.py::TestPeriodicExecutor::test_join_without_open_is_safe PASSED
 test/test_periodic_executor.py::TestPeriodicExecutor::test_open_after_target_returns_false PASSED
 test/test_periodic_executor.py::TestPeriodicExecutor::test_open_non_daemon_thread PASSED
@@ -6562,6 +6646,7 @@ test/test_pooling.py::TestPooling::test_csot_timeout_message SKIPPED
 test/test_pooling.py::TestPooling::test_get_conn_reused_connection_rolls_back_on_cancel SKIPPED
 test/test_pooling.py::TestPooling::test_get_socket_and_exception SKIPPED
 test/test_pooling.py::TestPooling::test_maxConnecting SKIPPED (Canno...)
+test/test_pooling.py::TestPooling::test_max_pool_size_no_limit_with_min_pool_size SKIPPED
 test/test_pooling.py::TestPooling::test_max_pool_size_validation SKIPPED
 test/test_pooling.py::TestPooling::test_no_disconnect SKIPPED (Canno...)
 test/test_pooling.py::TestPooling::test_no_wait_queue_timeout SKIPPED
@@ -6732,6 +6817,34 @@ test/test_read_write_concern_spec.py::TestReadWriteConcernSpec::test_omit_defaul
 test/test_read_write_concern_spec.py::TestReadWriteConcernSpec::test_raise_write_concern_error SKIPPED
 test/test_read_write_concern_spec.py::TestReadWriteConcernSpec::test_raise_wtimeout SKIPPED
 test/test_read_write_concern_spec.py::TestReadWriteConcernSpec::test_write_error_details_exposes_errinfo SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsAggregate::test_aggregate_with_$merge_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsAggregate::test_aggregate_with_$out_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsBulkWrite::test_bulkWrite_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsClientBulkWrite::test_clientBulkWrite_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsCrud::test_deleteMany_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsCrud::test_deleteOne_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsCrud::test_insertMany_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsCrud::test_insertOne_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsCrud::test_replaceOne_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsCrud::test_updateMany_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsCrud::test_updateOne_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsDbCollManagement::test_createCollection_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsDbCollManagement::test_dropCollection_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsDbCollManagement::test_dropDatabase_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsDbCollManagement::test_rename_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsFindAndModify::test_findOneAndDelete_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsFindAndModify::test_findOneAndReplace_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsFindAndModify::test_findOneAndUpdate_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsGridfs::test_deleteByName_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsGridfs::test_delete_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsGridfs::test_file_rename_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsGridfs::test_renameByName_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsGridfs::test_upload_reports_a_writeConcernError_from_a_chunk_insert SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsGridfs::test_upload_reports_a_writeConcernError_from_the_files_document_insert SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsIndexManagement::test_createIndex_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsIndexManagement::test_dropIndex_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsIndexManagement::test_dropIndexes_reports_a_writeConcernError SKIPPED
+test/test_read_write_concern_spec.py::TestWriteConcernErrorsMapReduce::test_mapReduce_with_an_output_collection_reports_a_writeConcernError SKIPPED
 test/test_replica_set_reconfig.py::TestSecondaryAdded::test_client SKIPPED
 test/test_replica_set_reconfig.py::TestSecondaryAdded::test_replica_set_client SKIPPED
 test/test_replica_set_reconfig.py::TestSecondaryBecomesStandalone::test_client SKIPPED
@@ -7591,6 +7704,7 @@ test/test_ssl.py::TestSSL::test_cert_ssl_validation_hostname_matching SKIPPED
 test/test_ssl.py::TestSSL::test_certifi_support SKIPPED (Cannot conn...)
 test/test_ssl.py::TestSSL::test_connect_with_ca_bundle SKIPPED (Cann...)
 test/test_ssl.py::TestSSL::test_mongodb_x509_auth SKIPPED (Cannot co...)
+test/test_ssl.py::TestSSL::test_pool_has_no_ssl_session_cache_on_python_311 SKIPPED
 test/test_ssl.py::TestSSL::test_pool_has_ssl_session_cache SKIPPED (...)
 test/test_ssl.py::TestSSL::test_pyopenssl_ignored_in_async SKIPPED (...)
 test/test_ssl.py::TestSSL::test_simple_ssl SKIPPED (Cannot connect t...)
@@ -7970,6 +8084,7 @@ test/test_typing.py::TestPymongo::test_bulk_write SKIPPED (Cannot co...)
 test/test_typing.py::TestPymongo::test_bulk_write_heterogeneous SKIPPED
 test/test_typing.py::TestPymongo::test_command SKIPPED (Cannot conne...)
 test/test_typing.py::TestPymongo::test_cursor_iterable SKIPPED (Cann...)
+test/test_typing.py::TestPymongo::test_cursor_let SKIPPED (Cannot co...)
 test/test_typing.py::TestPymongo::test_default_document_type SKIPPED
 test/test_typing.py::TestPymongo::test_distinct SKIPPED (Cannot conn...)
 test/test_typing.py::TestPymongo::test_insert_find SKIPPED (Cannot c...)
@@ -8384,14 +8499,14 @@ test/test_write_concern.py::TestWriteConcern::test_repr PASSED
 
 =============================== warnings summary ===============================
 test/asynchronous/test_grid_file.py::AsyncTestGridFileNoConnect::test_grid_in_custom_opts
-  $(@D)/test/asynchronous/test_grid_file.py:84: DeprecationWarning: GridIn property 'contentType' is deprecated and will be removed in PyMongo 5.0
+  $(@D)/test/asynchronous/test_grid_file.py:88: DeprecationWarning: GridIn property 'contentType' is deprecated and will be removed in PyMongo 5.0
     self.assertEqual("text/html", a.content_type)
 
 test/test_grid_file.py::TestGridFileNoConnect::test_grid_in_custom_opts
-  $(@D)/test/test_grid_file.py:84: DeprecationWarning: GridIn property 'contentType' is deprecated and will be removed in PyMongo 5.0
+  $(@D)/test/test_grid_file.py:88: DeprecationWarning: GridIn property 'contentType' is deprecated and will be removed in PyMongo 5.0
     self.assertEqual("text/html", a.content_type)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/xunit-results/TEST-results.xml -
 =========================== short test summary info ============================
-======== 1704 passed, 6651 skipped, 955 deselected, 2 warnings, 79 subtests passed ========
+======== 1720 passed, 6749 skipped, 953 deselected, 2 warnings, 82 subtests passed ========
