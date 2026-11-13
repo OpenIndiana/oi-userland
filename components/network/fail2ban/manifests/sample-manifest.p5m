@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2025 <contributor>
+# Copyright 2026 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -32,6 +32,7 @@ file path=etc/fail2ban/action.d/bsd-ipfw.conf
 file path=etc/fail2ban/action.d/cloudflare-token.conf
 file path=etc/fail2ban/action.d/cloudflare.conf
 file path=etc/fail2ban/action.d/complain.conf
+file path=etc/fail2ban/action.d/csf.conf
 file path=etc/fail2ban/action.d/dshield.conf
 file path=etc/fail2ban/action.d/dummy.conf
 file path=etc/fail2ban/action.d/firewallcmd-allports.conf
@@ -150,6 +151,7 @@ file path=etc/fail2ban/filter.d/nginx-http-auth.conf
 file path=etc/fail2ban/filter.d/nginx-limit-req.conf
 file path=etc/fail2ban/filter.d/nsd.conf
 file path=etc/fail2ban/filter.d/openhab.conf
+file path=etc/fail2ban/filter.d/openvpn.conf
 file path=etc/fail2ban/filter.d/openwebmail.conf
 file path=etc/fail2ban/filter.d/oracleims.conf
 file path=etc/fail2ban/filter.d/pam-generic.conf
@@ -159,6 +161,7 @@ file path=etc/fail2ban/filter.d/phpmyadmin-syslog.conf
 file path=etc/fail2ban/filter.d/portsentry.conf
 file path=etc/fail2ban/filter.d/postfix.conf
 file path=etc/fail2ban/filter.d/proftpd.conf
+file path=etc/fail2ban/filter.d/proxmox.conf
 file path=etc/fail2ban/filter.d/pure-ftpd.conf
 file path=etc/fail2ban/filter.d/qmail.conf
 file path=etc/fail2ban/filter.d/recidive.conf
@@ -183,10 +186,12 @@ file path=etc/fail2ban/filter.d/suhosin.conf
 file path=etc/fail2ban/filter.d/tine20.conf
 file path=etc/fail2ban/filter.d/traefik-auth.conf
 file path=etc/fail2ban/filter.d/uwimap-auth.conf
+file path=etc/fail2ban/filter.d/vaultwarden.conf
 file path=etc/fail2ban/filter.d/vsftpd.conf
 file path=etc/fail2ban/filter.d/webmin-auth.conf
 file path=etc/fail2ban/filter.d/wuftpd.conf
 file path=etc/fail2ban/filter.d/xinetd-fail.conf
+file path=etc/fail2ban/filter.d/xrdp.conf
 file path=etc/fail2ban/filter.d/znc-adminlog.conf
 file path=etc/fail2ban/filter.d/zoneminder.conf
 file path=etc/fail2ban/jail.conf
@@ -195,7 +200,7 @@ file path=etc/fail2ban/paths-openindiana.conf
 file path=lib/svc/manifest/network/solaris-fail2ban.xml
 file path=lib/svc/method/svc-fail2ban
 file path=usr/bin/fail2ban-client
-link path=usr/bin/fail2ban-python target=/usr/bin/python3.9
+link path=usr/bin/fail2ban-python target=python3.9
 file path=usr/bin/fail2ban-regex
 file path=usr/bin/fail2ban-server
 file path=usr/bin/fail2ban-testcases
@@ -362,6 +367,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/nginx
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/nginx-limit-req
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/nsd
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/openhab
+file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/openvpn
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/openwebmail
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/oracleims
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/pam-generic
@@ -371,6 +377,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/phpmy
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/portsentry
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/postfix
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/proftpd
+file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/proxmox
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/pure-ftpd
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/qmail
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/recidive
@@ -395,14 +402,17 @@ file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/suhos
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/tine20
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/traefik-auth
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/uwimap-auth
+file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/vaultwarden
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/vsftpd
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/webmin-auth
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/wuftpd
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/xinetd-fail
+file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/xrdp
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/znc-adminlog
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/zoneminder
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/zzz-generic-example
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/logs/zzz-sshd-obsolete-multiline
+file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/test-ign-ips-file
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/testcase-journal.log
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/testcase-multiline.log
 file path=usr/lib/python$(PYVER)/vendor-packages/fail2ban/tests/files/testcase-usedns.log
