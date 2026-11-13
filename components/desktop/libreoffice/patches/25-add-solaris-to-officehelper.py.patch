@@ -1,0 +1,32 @@
+Fix python error in officehelper.py
+======================================================================
+ERROR: test_kwargs (testofficehelper.OfficeHelperTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "$(@D)/instdir/program/officehelper.py", line 176, in bootstrap
+    raise OSError
+OSError
+
+--- libreoffice-26.8.2.2/pyuno/source/officehelper.py
++++ libreoffice-26.8.2.2/pyuno/source/officehelper.py
+@@ -170,7 +170,7 @@
+         command = [sOffice, '--nologo', '--nodefault', "--accept=" + connect_string]
+         if platform.startswith("win") or platform == "darwin":
+             process = subprocess.Popen(command)
+-        elif platform == "linux":  # Use a process group to enable proper termination
++        elif platform == "linux" or platform == "sunos5":  # Use a process group to enable proper termination
+             process = subprocess.Popen(command, preexec_fn=os.setsid)
+         else:
+             raise OSError
+@@ -191,8 +191,8 @@
+         if process:  # clean memory from soffice running process
+             if platform.startswith("win") or platform == "darwin":
+                 process.terminate()  # Send termination signal
+-            elif platform == "linux":
++            elif platform == "linux" or platform == "sunos5":
+                 os.killpg(os.getpgid(process.pid), signal.SIGTERM)  # Send termination signal to process group
+         raise BootstrapException
+ 
+-# vim: set shiftwidth=4 softtabstop=4 expandtab
+\ No newline at end of file
++# vim: set shiftwidth=4 softtabstop=4 expandtab
