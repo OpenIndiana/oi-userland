@@ -705,3 +705,8 @@ REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/boost-/{p;s/library\/boost-[0-9]*$
 # If a component needs a runtime spdlog library then it also needs the spdlog
 # development files for building.  Add such dependency automatically here.
 REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/c++\/spdlog-/{p;s/-[^-]*$$//}'
+
+# If a component needs a runtime wxWidgets library then it also needs the
+# wxWidgets development files for building.  Add such dependency automatically
+# here.
+REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/wxwidgets-3/{p;s/.*/library\/graphics\/wxwidgets-3/}'
