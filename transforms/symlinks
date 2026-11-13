@@ -16,6 +16,13 @@
 # Avoid dead (dangling) symlinks.  Individual actions can override this by
 # setting pkg.tmp.allow-dangling to true.
 <transform link -> default pkg.tmp.allow-dangling false >
-<transform link pkg.tmp.allow-dangling=false path=(.*/)?[^/]*$ target=(.*)$ -> \
-    emit depend fmri=__TBD pkg.debug.depend.file=%<1>%<2> type=require >
+<transform link pkg.tmp.allow-dangling=false path=(.*/)?([^/]*)$ target=([^/].*)$ -> \
+    emit depend fmri=__TBD pkg.debug.depend.file=%<1>%<3> \
+    pkg.debug.depend.reason=%<1>%<2> pkg.debug.depend.type=link type=require >
+# Absolute symlinks usually trigger a userland.action002.0 pkglint error, so
+# they should be avoided.  However, when we encounter them, we need to handle
+# them properly.
+<transform link pkg.tmp.allow-dangling=false path=(.*/)?([^/]*)$ target=/+([^/].*)$ -> \
+    emit depend fmri=__TBD pkg.debug.depend.file=%<3> \
+    pkg.debug.depend.reason=%<1>%<2> pkg.debug.depend.type=link type=require >
 <transform pkg.tmp.allow-dangling=.* -> delete pkg.tmp.allow-dangling .* >
