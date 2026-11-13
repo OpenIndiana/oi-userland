@@ -23,6 +23,13 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# (work around PR 28182 breakage):
+# oi-userland/components/desktop/libreoffice-26.8/build/manifest-i386-libreoffice.depend has unresolved dependency '
+#     depend type=require fmri=__TBD \
+#         pkg.debug.depend.file=usr/bin//usr/lib/amd64/libreoffice/program/soffice'.
+# symlink dangle check is unable to handle non-relative path symlinks
+<transform link -> default pkg.tmp.allow-dangling true>
+
 # make sure links are lint clean
 <transform link path=.* -> default pkg.linted.userland.action002.0 true>
 
@@ -12585,10 +12592,16 @@ file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-af/dictionaries.xc
 file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-af/hyph_af_ZA.dic
 file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-an/LICENSES-en.txt
 file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-an/META-INF/manifest.xml
+file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-an/PROCEDENCIA.md
+file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-an/README_an_ES.txt
 file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-an/an_ES.aff
 file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-an/an_ES.dic
 file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-an/description.xml
 file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-an/dictionaries.xcu
+file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-an/licenses/AUTHORS-apertium.txt
+file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-an/licenses/GPL-3.0.txt
+file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-an/licenses/LGPL-3.0.txt
+file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-an/licenses/MPL-1.1.txt
 file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-ar/AUTHORS.txt
 file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-ar/COPYING.txt
 file path=usr/lib/$(MACH64)/libreoffice/share/extensions/dict-ar/META-INF/manifest.xml

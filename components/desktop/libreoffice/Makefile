@@ -32,8 +32,8 @@ ENV = /usr/bin/env
 # BUILD_GITHUB=1
 
 COMPONENT_NAME=		libreoffice
-COMPONENT_VERSION=	26.8.2
-COMPONENT_RC_VERSION=	2
+COMPONENT_VERSION=	26.8.3
+COMPONENT_RC_VERSION=	1
 ifdef BUILD_ALPHA
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION).alpha$(BUILD_ALPHA)
 else ifdef BUILD_BETA
@@ -58,7 +58,7 @@ else
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_FULL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL= https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:f0012302d9cc70955bd55890d3aaccf6c55677c4a6a46e1003f996b1b0dae8e7
+COMPONENT_ARCHIVE_HASH= sha256:83006a81376988d04a73eaa4dcf44f6f12774a81fd763726406a831905a9de28
 # COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
 endif
 COMPONENT_FMRI=         desktop/office/libreoffice
@@ -147,7 +147,7 @@ COMPONENT_ARCHIVE_URL_19 = https://github.com/LibreOffice/translations/archive/$
 else
 COMPONENT_ARCHIVE_19 = libreoffice-translations-$(COMPONENT_FULL_VERSION).tar.xz
 COMPONENT_ARCHIVE_URL_19 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_19)
-COMPONENT_ARCHIVE_HASH_19 = sha256:1a3b6077ebfac899f2c31666d283e29e94c2d30704dd162fda7ba06d77212dd2
+COMPONENT_ARCHIVE_HASH_19 = sha256:22c191a11907d1c449f27aa2ca976e02abdd98eaf59f823ecf8b35609bf838f0
 # COMPONENT_SIG_URL_19= $(COMPONENT_ARCHIVE_URL_19).asc
 endif
 
@@ -160,7 +160,7 @@ COMPONENT_ARCHIVE_URL_20 = https://github.com/LibreOffice/dictionaries/archive/$
 else
 COMPONENT_ARCHIVE_20 = libreoffice-dictionaries-$(COMPONENT_FULL_VERSION).tar.xz
 COMPONENT_ARCHIVE_URL_20 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_20)
-COMPONENT_ARCHIVE_HASH_20 = sha256:d1b206157ea69249d754cabd8e9213b9dc69fc072fca91f51a681e95228239e0
+COMPONENT_ARCHIVE_HASH_20 = sha256:62652a9ff21dc04f76042c72034d6920db9b054d56b4fa72151d031daaa92164
 # COMPONENT_SIG_URL_20= $(COMPONENT_ARCHIVE_URL_20).asc
 endif
 
@@ -302,7 +302,7 @@ COMPONENT_ARCHIVE_URL_53 = https://github.com/LibreOffice/help/archive/$(COMPONE
 else
 COMPONENT_ARCHIVE_53 = libreoffice-help-$(COMPONENT_FULL_VERSION).tar.xz
 COMPONENT_ARCHIVE_URL_53 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_53)
-COMPONENT_ARCHIVE_HASH_53 = sha256:e7e0270c30b13c4c52acae57e6c7529dc2146d9946123b5da17ae236e3bb4f68
+COMPONENT_ARCHIVE_HASH_53 = sha256:efb82de9a87daa6bfdc4b3a9bb1c255476f21c6fe5cb8fb7bd6217e6082c72b8
 # COMPONENT_SIG_URL_53= $(COMPONENT_ARCHIVE_URL_53).asc
 endif
 
@@ -599,6 +599,15 @@ COMPONENT_TEST_TRANSFORMS +=    '-e "/^Time.*/d"'
 # Filter out lines starting with took
 COMPONENT_TEST_TRANSFORMS +=    '-e "/took.*/d"'
 
+# Filter out lines with filenames that change every run
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^Connecting the Office with uno:pipe.*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^java.lang.AssertionError:.*/d"'
+
+# Filter out lines with line numbers that could change
+COMPONENT_TEST_TRANSFORMS +=    '-e "/org.junit.Assert.fail.*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/org.junit.Assert.assertTrue.*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/org.openoffice.test.UnoApiTest.test.*/d"'
+
 # debug specific test
 testtrace:
 	@[ -n "$(SPECTEST)" ] || (echo "No SPECTEST specified."; exit 1;)
@@ -624,6 +633,7 @@ REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += developer/boost
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += gnome/config/dconf
@@ -631,6 +641,7 @@ REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
+REQUIRED_PACKAGES += library/boost-1920
 REQUIRED_PACKAGES += library/c++/graphite2
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/c++/libabw
@@ -674,7 +685,6 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/java/openjdk21
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/boost
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/libdbus
