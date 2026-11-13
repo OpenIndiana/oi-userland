@@ -1,0 +1,127 @@
+util: emulate futex_wait/futex_wake on illumos, which has no futex system call.
+
+anv's state pools call futex_wait/futex_wake directly.  The emulation uses
+hashed mutex + condition variable buckets and is fork-safe; the buckets are
+private to each shared library that links libmesa_util, which is enough for
+every Mesa user (anv, simple_mtx, util_queue fences: each futex word is
+waited on and woken within one library).  Possibly upstreamable.
+
+--- src/util/futex.h.orig
++++ src/util/futex.h
+@@ -33,6 +33,8 @@
+ #define UTIL_FUTEX_SUPPORTED 1
+ #elif defined(__OpenBSD__)
+ #define UTIL_FUTEX_SUPPORTED 1
++#elif defined(__sun)
++#define UTIL_FUTEX_SUPPORTED 1
+ #elif defined(_WIN32) && !defined(WINDOWS_NO_FUTEX)
+ #define UTIL_FUTEX_SUPPORTED 1
+ #else
+--- src/util/futex.c.orig
++++ src/util/futex.c
+@@ -114,6 +114,105 @@
+    return futex(addr, FUTEX_WAIT, value, &tsrel, NULL);
+ }
+ 
++#elif defined(__sun)
++
++#include <errno.h>
++#include <pthread.h>
++#include <stdint.h>
++#include <time.h>
++
++/* illumos has no futex system call.  Emulate the process-private wait and
++ * wake that Mesa uses with a hashed table of condition variables: a waiter
++ * compares the value under its bucket's lock and a waker takes the same lock
++ * before broadcasting, so no wake-up is lost.  Several addresses share a
++ * bucket, so every wake is a broadcast; waiters re-check (as with futexes,
++ * spurious wake-ups are allowed).
++ */
++#define FUTEX_BUCKETS 64
++
++static struct {
++   pthread_mutex_t mtx;
++   pthread_cond_t cond;
++} futex_buckets[FUTEX_BUCKETS] = {
++   [0 ... FUTEX_BUCKETS - 1] = { PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZER },
++};
++
++static unsigned
++futex_bucket(uint32_t *addr)
++{
++   return ((uintptr_t)addr >> 2) % FUTEX_BUCKETS;
++}
++
++/* A bucket lock is held only inside futex_wait/futex_wake, but a fork in
++ * another thread at that moment must not leave it locked in the child.
++ */
++static void
++futex_atfork_prepare(void)
++{
++   for (unsigned i = 0; i < FUTEX_BUCKETS; i++)
++      pthread_mutex_lock(&futex_buckets[i].mtx);
++}
++
++static void
++futex_atfork_release(void)
++{
++   for (unsigned i = FUTEX_BUCKETS; i-- > 0;)
++      pthread_mutex_unlock(&futex_buckets[i].mtx);
++}
++
++static void __attribute__((constructor))
++futex_atfork_init(void)
++{
++   pthread_atfork(futex_atfork_prepare, futex_atfork_release,
++                  futex_atfork_release);
++}
++
++int futex_wake(uint32_t *addr, int32_t count)
++{
++   unsigned b = futex_bucket(addr);
++
++   (void)count;
++   pthread_mutex_lock(&futex_buckets[b].mtx);
++   pthread_cond_broadcast(&futex_buckets[b].cond);
++   pthread_mutex_unlock(&futex_buckets[b].mtx);
++   return 0;
++}
++
++int futex_wait(uint32_t *addr, int32_t value, const struct timespec *timeout)
++{
++   unsigned b = futex_bucket(addr);
++   int ret = 0;
++
++   pthread_mutex_lock(&futex_buckets[b].mtx);
++   if (__atomic_load_n(addr, __ATOMIC_ACQUIRE) != (uint32_t)value) {
++      ret = EAGAIN;
++   } else if (timeout == NULL) {
++      ret = pthread_cond_wait(&futex_buckets[b].cond, &futex_buckets[b].mtx);
++   } else {
++      /* The timeout is absolute on CLOCK_MONOTONIC. */
++      struct timespec now, rel;
++      clock_gettime(CLOCK_MONOTONIC, &now);
++      rel.tv_sec = timeout->tv_sec - now.tv_sec;
++      rel.tv_nsec = timeout->tv_nsec - now.tv_nsec;
++      if (rel.tv_nsec < 0) {
++         rel.tv_nsec += 1000000000;
++         rel.tv_sec--;
++      }
++      if (rel.tv_sec < 0)
++         ret = ETIMEDOUT;
++      else
++         ret = pthread_cond_reltimedwait_np(&futex_buckets[b].cond,
++                                            &futex_buckets[b].mtx, &rel);
++   }
++   pthread_mutex_unlock(&futex_buckets[b].mtx);
++
++   if (ret != 0) {
++      errno = ret;
++      return -1;
++   }
++   return 0;
++}
++
+ #elif defined(_WIN32) && !defined(WINDOWS_NO_FUTEX)
+ 
+ #include <windows.h>

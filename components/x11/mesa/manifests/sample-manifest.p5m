@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2024 <contributor>
+# Copyright 2026 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -25,7 +25,7 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/include/EGL/egl.h
 file path=usr/include/EGL/eglext.h
-file path=usr/include/EGL/eglextchromium.h
+file path=usr/include/EGL/eglext_angle.h
 file path=usr/include/EGL/eglmesaext.h
 file path=usr/include/EGL/eglplatform.h
 file path=usr/include/GLES/egl.h
@@ -42,19 +42,14 @@ file path=usr/include/GLES3/gl3ext.h
 file path=usr/include/GLES3/gl3platform.h
 file path=usr/include/KHR/khrplatform.h
 file path=usr/include/gbm.h
+file path=usr/include/gbm_backend_abi.h
 file path=usr/include/mesa/gl.h
 file path=usr/include/mesa/glcorearb.h
-link path=usr/include/GL/glcorearb.h target=../mesa/glcorearb.h
 file path=usr/include/mesa/glext.h
 file path=usr/include/mesa/glx.h
 file path=usr/include/mesa/glxext.h
 file path=usr/include/mesa/internal/dri_interface.h
-link path=usr/include/GL/internal/dri_interface.h target=../../mesa/internal/dri_interface.h
-file path=usr/include/mesa/osmesa.h
-link path=usr/include/GL/osmesa.h target=../mesa/osmesa.h
-file path=usr/include/xa_composite.h
-file path=usr/include/xa_context.h
-file path=usr/include/xa_tracker.h
+file path=usr/lib/mesa/$(MACH64)/gbm/dri_gbm.so
 link path=usr/lib/mesa/$(MACH64)/libEGL.so target=libEGL.so.1
 link path=usr/lib/mesa/$(MACH64)/libEGL.so.1 target=libEGL.so.1.0.0
 file path=usr/lib/mesa/$(MACH64)/libEGL.so.1.0.0
@@ -67,39 +62,29 @@ file path=usr/lib/mesa/$(MACH64)/libGLESv1_CM.so.1.1.0
 link path=usr/lib/mesa/$(MACH64)/libGLESv2.so target=libGLESv2.so.2
 link path=usr/lib/mesa/$(MACH64)/libGLESv2.so.2 target=libGLESv2.so.2.0.0
 file path=usr/lib/mesa/$(MACH64)/libGLESv2.so.2.0.0
-link path=usr/lib/mesa/$(MACH64)/libOSMesa.so target=libOSMesa.so.8
-link path=usr/lib/mesa/$(MACH64)/libOSMesa.so.8 target=libOSMesa.so.8.0.0
-file path=usr/lib/mesa/$(MACH64)/libOSMesa.so.8.0.0
-link path=usr/lib/mesa/$(MACH64)/libXvMCr600.so target=libXvMCr600.so.1.0.0
-link path=usr/lib/mesa/$(MACH64)/libXvMCr600.so.1 target=libXvMCr600.so.1.0.0
-link path=usr/lib/mesa/$(MACH64)/libXvMCr600.so.1.0 target=libXvMCr600.so.1.0.0
-file path=usr/lib/mesa/$(MACH64)/libXvMCr600.so.1.0.0
+file path=usr/lib/mesa/$(MACH64)/libgallium-$(HUMAN_VERSION).so
 link path=usr/lib/mesa/$(MACH64)/libgbm.so target=libgbm.so.1
 link path=usr/lib/mesa/$(MACH64)/libgbm.so.1 target=libgbm.so.1.0.0
 file path=usr/lib/mesa/$(MACH64)/libgbm.so.1.0.0
-link path=usr/lib/mesa/$(MACH64)/libglapi.so target=libglapi.so.0
-link path=usr/lib/mesa/$(MACH64)/libglapi.so.0 target=libglapi.so.0.0.0
-file path=usr/lib/mesa/$(MACH64)/libglapi.so.0.0.0
-link path=usr/lib/mesa/$(MACH64)/libxatracker.so target=libxatracker.so.2
-link path=usr/lib/mesa/$(MACH64)/libxatracker.so.2 target=libxatracker.so.2.5.0
-file path=usr/lib/mesa/$(MACH64)/libxatracker.so.2.5.0
+file path=usr/lib/mesa/$(MACH64)/libvulkan_intel.so
+file path=usr/lib/mesa/$(MACH64)/libvulkan_lvp.so
+file path=usr/lib/mesa/$(MACH64)/libvulkan_virtio.so
 file path=usr/lib/mesa/$(MACH64)/pkgconfig/dri.pc
 file path=usr/lib/mesa/$(MACH64)/pkgconfig/egl.pc
 file path=usr/lib/mesa/$(MACH64)/pkgconfig/gbm.pc
 file path=usr/lib/mesa/$(MACH64)/pkgconfig/gl.pc
 file path=usr/lib/mesa/$(MACH64)/pkgconfig/glesv1_cm.pc
 file path=usr/lib/mesa/$(MACH64)/pkgconfig/glesv2.pc
-file path=usr/lib/mesa/$(MACH64)/pkgconfig/osmesa.pc
-file path=usr/lib/mesa/$(MACH64)/pkgconfig/xatracker.pc
-link path=usr/lib/mesa/$(MACH64)/vdpau/libvdpau_r600.so \
-    target=libvdpau_r600.so.1.0.0
-link path=usr/lib/mesa/$(MACH64)/vdpau/libvdpau_r600.so.1 \
-    target=libvdpau_r600.so.1.0.0
-link path=usr/lib/mesa/$(MACH64)/vdpau/libvdpau_r600.so.1.0 \
-    target=libvdpau_r600.so.1.0.0
-file path=usr/lib/mesa/$(MACH64)/vdpau/libvdpau_r600.so.1.0.0
-hardlink path=usr/lib/xorg/modules/dri/$(MACH64/i915_dri.so target=kms_swrast_dri.so
-file path=usr/lib/xorg/modules/dri/$(MACH64)/kms_swrast_dri.so
-hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/r600_dri.so target=kms_swrast_dri.so
-hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/swrast_dri.so target=kms_swrast_dri.so
+file path=usr/lib/mesa/$(MACH64)/pkgconfig/glx.pc
+link path=usr/lib/xorg/modules/dri/$(MACH64)/crocus_dri.so target=libdril_dri.so
+link path=usr/lib/xorg/modules/dri/$(MACH64)/iris_dri.so target=libdril_dri.so
+link path=usr/lib/xorg/modules/dri/$(MACH64)/kms_swrast_dri.so \
+    target=libdril_dri.so
+file path=usr/lib/xorg/modules/dri/$(MACH64)/libdril_dri.so
+link path=usr/lib/xorg/modules/dri/$(MACH64)/swrast_dri.so target=libdril_dri.so
+link path=usr/lib/xorg/modules/dri/$(MACH64)/virtio_gpu_dri.so \
+    target=libdril_dri.so
 file path=usr/share/drirc.d/00-mesa-defaults.conf
+file path=usr/share/vulkan/icd.d/intel_icd.x86_64.json
+file path=usr/share/vulkan/icd.d/lvp_icd.x86_64.json
+file path=usr/share/vulkan/icd.d/virtio_icd.x86_64.json

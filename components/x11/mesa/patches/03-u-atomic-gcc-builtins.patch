@@ -1,8 +1,10 @@
-$NetBSD: patch-src_util_u__atomic.h,v 1.2 2019/08/21 13:35:28 nia Exp $
+Use the GCC atomic builtins on illumos when building with GCC.
 
-Fix SunOS atomic macros.
+The Solaris <atomic.h> path lacks p_atomic_read_relaxed(), which
+u_debug.h and u_call_once.h use since 24.x.  (pkgsrc carries the same
+change.)  Upstreamable.
 
---- src/util/u_atomic.h.orig	2018-09-07 21:18:07.000000000 +0000
+--- src/util/u_atomic.h.orig
 +++ src/util/u_atomic.h
 @@ -20,7 +20,7 @@
   * locally coded assembly, compiler intrinsic or ultimately a

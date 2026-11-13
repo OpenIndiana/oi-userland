@@ -1,0 +1,28 @@
+crocus: refuse kernels without I915_EXEC_FENCE_ARRAY, as iris refuses old ones.
+
+gfx-drm's legacy i915 (Linux 3.12 level) silently ignores unknown execbuffer
+flags, so crocus would run the wrong buffer as its batch there; fall back to
+software rendering instead.  Upstreamable.
+
+--- src/gallium/drivers/crocus/crocus_screen.c.orig
++++ src/gallium/drivers/crocus/crocus_screen.c
+@@ -563,6 +563,19 @@
+          return NULL;
+    }
+ 
++   /* crocus puts the batch first in the execbuffer object list and passes
++    * syncobjs in a fence array (I915_EXEC_BATCH_FIRST 4.13,
++    * I915_EXEC_FENCE_ARRAY 4.14).  A kernel that ignores unknown execbuffer
++    * flags would execute the wrong buffer, so check for the newer one.
++    */
++   int has_fence_array = 0;
++   if (!intel_gem_get_param(fd, I915_PARAM_HAS_EXEC_FENCE_ARRAY,
++                            &has_fence_array) || !has_fence_array) {
++      debug_error("Kernel is too old (4.14+ required) or unusable for crocus.\n");
++      ralloc_free(screen);
++      return NULL;
++   }
++
+    p_atomic_set(&screen->refcount, 1);
+ 
+    screen->aperture_bytes = get_aperture_size(fd);
