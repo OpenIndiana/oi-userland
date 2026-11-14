@@ -1171,6 +1171,10 @@ TAC =		/usr/bin/tac
 QUILT =		/usr/bin/quilt
 CTFCONVERT =	/opt/onbld/bin/$(MACH)/ctfconvert
 ELFEDIT =	/usr/bin/elfedit
+BASENAME =	/usr/bin/basename
+DIRNAME =	/usr/bin/dirname
+READLINK =	/usr/bin/readlink
+REALPATH =	/usr/bin/realpath
 
 INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)
@@ -1618,20 +1622,15 @@ TEST_CONFLICTING_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(TEST_CONFLICTING
 
 # This is useful for symlinks creation in the post-install step
 define create-symlinks
-	for f in $(1:%=$(PROTO_DIR)/%) ; do \
-		[ -e "$$f" ] || continue ; \
-		t=$(PROTO_DIR)/$(2) ; \
-		while true ; do \
-			while [ "$${f#/}" != "$$f" ] ; do f=$${f#/} ; done ; \
-			while [ "$${t#/}" != "$$t" ] ; do t=$${t#/} ; done ; \
-			[ "$${f%%/*}" == "$${t%%/*}" ] || break ; \
-			f=$${f#$${f%%/*}} ; \
-			t=$${t#$${t%%/*}} ; \
-		done ; \
-		[ "$$t" ] && t=$$t/ ; \
-		f=$$(echo $$t | $(GSED) -e 's|[^/]\{1,\}|..|g')$$f ; \
-		$(MKDIR) $(PROTO_DIR)/$(2) ; \
-		$(SYMLINK) $$f $(PROTO_DIR)/$(2)/$$(basename $$f)$(3) ; \
+	$(MKDIR) "$(PROTO_DIR)/$(2)" ; \
+	for t in $(1) ; do \
+		[ -e "$(PROTO_DIR)/$$t" ] || continue ; \
+		l="$(2)/$$($(BASENAME) "$$t")$(3)" ; \
+		t="/$$($(REALPATH) -mLs --relative-to="$(PROTO_DIR)" "$(PROTO_DIR)/$$t")" ; \
+		l="$$($(REALPATH) -mLs --relative-to="$(PROTO_DIR)" "$(PROTO_DIR)/$$l")" ; \
+		printf 'Create symlink: %s -> %s\n' "$$l" "$$t" ; \
+		$(RM) "$(PROTO_DIR)/$$l" ; \
+		$(SYMLINK) "$$t" "$(PROTO_DIR)/$$l" ; \
 	done
 endef
 
