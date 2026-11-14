@@ -22,6 +22,7 @@ COMPONENT_GIT_HASH=	438e7d413b5f7277187c35b032eb0ef9093ae778
 
 COMPONENT_NAME=		iortcw
 COMPONENT_VERSION=	1.51.20240526
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Return to Castle Wolfenstein engines, SP and MP (game data not included)
 COMPONENT_PROJECT_URL=	https://github.com/iortcw/iortcw
 COMPONENT_FMRI=		games/iortcw
@@ -63,6 +64,23 @@ COMPONENT_INSTALL_ACTION= \
 		    $(RTCW_ARGS) COPYDIR=$(PROTO_DIR)$(RTCW_LIBDIR) \
 		    copyfiles || exit 1; \
 	done
+
+# Upstream has icons (SP black, MP red) but no desktop entries
+# (files/iortcw-sp.desktop, files/iortcw-mp.desktop).
+COMPONENT_POST_INSTALL_ACTION += \
+	$(INSTALL) -d $(PROTO_DIR)$(USRSHAREDIR)/applications \
+		$(PROTO_DIR)$(USRSHAREDIR)/icons/hicolor/512x512/apps \
+		$(PROTO_DIR)$(USRSHAREDIR)/icons/hicolor/128x128/apps; \
+	$(INSTALL) -m 0444 $(COMPONENT_DIR)/files/iortcw-sp.desktop \
+		$(COMPONENT_DIR)/files/iortcw-mp.desktop \
+		$(PROTO_DIR)$(USRSHAREDIR)/applications; \
+	$(INSTALL) -m 0444 $(SOURCE_DIR)/SP/misc/wolf512.png \
+		$(PROTO_DIR)$(USRSHAREDIR)/icons/hicolor/512x512/apps/iortcw-sp.png; \
+	$(INSTALL) -m 0444 $(SOURCE_DIR)/MP/misc/wolf512.png \
+		$(PROTO_DIR)$(USRSHAREDIR)/icons/hicolor/512x512/apps/iortcw-mp.png; \
+	$(INSTALL) -m 0444 $(SOURCE_DIR)/MP/misc/wolf128.png \
+		$(PROTO_DIR)$(USRSHAREDIR)/icons/hicolor/128x128/apps/iortcw-mp.png
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
