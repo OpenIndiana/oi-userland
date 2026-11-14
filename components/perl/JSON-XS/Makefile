@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		JSON-XS
-HUMAN_VERSION =			4.04
+HUMAN_VERSION =			4.05
 COMPONENT_SUMMARY =		JSON serialising/deserialising, done correctly and fast
 COMPONENT_CPAN_AUTHOR =		MLEHMANN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8eff1e9f304c5625b59ab7b42258415f6d3e3681c1ddab6b725518a018a7f5e0
+	sha256:87f08065667a175e8c484d89c51366c08c686609017a68d186fbcbe833f1f958
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
