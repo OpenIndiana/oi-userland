@@ -11169,9 +11169,20 @@ ok 3 - out of bounds GIT_INDEX_VERSION issues warning
 ok 4 - no warning with bogus GIT_INDEX_VERSION and existing index
 ok 5 - out of bounds index.version issues warning
 ok 6 - index.skipHash config option
-ok 7 - index version config precedence
-# passed all 7 test(s)
-1..7
+ok 7 - cache entry with a representable name length is accepted
+ok 8 - over-long cache entry name length is rejected rather than truncated
+ok 9 - path length enforced from filesystem to index
+ok 10 - path length enforced from tree to index
+ok 11 - index.maxPathLen rejects out-of-range values
+ok 12 # skip set up a tree path whose length wraps to a small int (missing EXPENSIVE of EXPENSIVE,SIZE_T_IS_64BIT,LONG_IS_64BIT)
+ok 13 # skip checkout rejects a path before its length is truncated (missing EXPENSIVE of EXPENSIVE,SIZE_T_IS_64BIT,LONG_IS_64BIT)
+ok 14 # skip restore rejects a path before its length is truncated (missing EXPENSIVE of EXPENSIVE,SIZE_T_IS_64BIT,LONG_IS_64BIT)
+ok 15 # skip ls-files rejects a path before its length is truncated (missing EXPENSIVE of EXPENSIVE,SIZE_T_IS_64BIT,LONG_IS_64BIT)
+ok 16 # skip clean up the large tree (missing EXPENSIVE of EXPENSIVE,SIZE_T_IS_64BIT,LONG_IS_64BIT)
+ok 17 # skip ls-files includes the terminator without signed overflow (missing EXPENSIVE of EXPENSIVE,SIZE_T_IS_64BIT)
+ok 18 - index version config precedence
+# passed all 18 test(s)
+1..18
 *** t1601-index-bogus.sh ***
 ok 1 - create tree with null sha1
 ok 2 - read-tree refuses to read null sha1
@@ -21270,8 +21281,11 @@ ok 7 - apply complex patch with -N
 1..7
 *** t4141-apply-too-large.sh ***
 ok 1 # skip git apply rejects patches that are too large (missing EXPENSIVE)
-# passed all 1 test(s)
-1..1
+ok 2 # skip git apply rejects binary patches that are too large (missing EXPENSIVE)
+ok 3 # skip git apply rejects large binary patches with incorrect size (missing EXPENSIVE)
+ok 4 - git apply rejects binary patches with incorrect size
+# passed all 4 test(s)
+1..4
 *** t4150-am.sh ***
 ok 1 - setup: messages
 ok 2 - setup
@@ -22493,8 +22507,13 @@ ok 19 - tree unchanged A, removed B
 ok 20 - turn file to tree
 ok 21 - turn tree to file
 ok 22 - merge-tree respects core.useReplaceRefs=false
-# passed all 22 test(s)
-1..22
+ok 23 # skip setup: base commit with attributes (missing EXPENSIVE)
+ok 24 # skip no buffer overflow in merge-tree --write-tree (missing EXPENSIVE of EXPENSIVE,SIZE_T_IS_64BIT,LONG_IS_64BIT)
+ok 25 # skip conflicted paths are listed without buffer overflow (missing EXPENSIVE of EXPENSIVE,SIZE_T_IS_64BIT,LONG_IS_64BIT)
+ok 26 # skip merge-tree dies when merge buffer size does not fit long (missing !LONG_IS_64BIT,EXPENSIVE of EXPENSIVE,SIZE_T_IS_64BIT,!LONG_IS_64BIT)
+ok 27 # skip merge-tree dies when merge buffer size overflows size_t (missing !SIZE_T_IS_64BIT,EXPENSIVE of EXPENSIVE,!SIZE_T_IS_64BIT)
+# passed all 27 test(s)
+1..27
 *** t4301-merge-tree-write-tree.sh ***
 ok 1 - setup
 ok 2 - --quiet on clean merge
@@ -33896,18 +33915,19 @@ ok 71 - merge annotated/signed tag w/o tracking
 ok 72 - merge annotated/signed tag w/ tracking
 ok 73 # skip merge --ff-only tag (missing GPG)
 ok 74 # skip merge --no-edit tag should skip editor (missing GPG)
-ok 75 - set up mod-256 conflict scenario
-ok 76 - merge detects mod-256 conflicts (recursive)
-ok 77 - merge detects mod-256 conflicts (resolve)
-ok 78 - merge nothing into void
-ok 79 - merge can be completed with --continue
-ok 80 - killed merge can be completed with --continue
-ok 81 - merge --quit
-ok 82 - merge suggests matching remote refname
-ok 83 - suggested names are not ambiguous
-ok 84 - merge with no argument defaults to upstream
-# passed all 84 test(s)
-1..84
+ok 75 # skip merge tag with multiple signatures (missing GPG)
+ok 76 - set up mod-256 conflict scenario
+ok 77 - merge detects mod-256 conflicts (recursive)
+ok 78 - merge detects mod-256 conflicts (resolve)
+ok 79 - merge nothing into void
+ok 80 - merge can be completed with --continue
+ok 81 - killed merge can be completed with --continue
+ok 82 - merge --quit
+ok 83 - merge suggests matching remote refname
+ok 84 - suggested names are not ambiguous
+ok 85 - merge with no argument defaults to upstream
+# passed all 85 test(s)
+1..85
 *** t7601-merge-pull-config.sh ***
 ok 1 - setup
 ok 2 - pull.rebase not set, ff possible
@@ -36082,206 +36102,210 @@ ok 56 - H: deletall, add 1
 ok 57 - H: verify pack
 ok 58 - H: validate old files removed, new files added
 ok 59 - H: verify file
-ok 60 - I: export-pack-edges
-ok 61 - I: verify edge list
-ok 62 - J: reset existing branch creates empty commit
-ok 63 - J: branch has 1 commit, empty tree
-ok 64 - J: tag must fail on empty branch
-ok 65 - K: reinit branch with from
-ok 66 - K: verify K^1 = branch^1
-ok 67 - L: verify internal tree sorting
-ok 68 - L: nested tree copy does not corrupt deltas
-ok 69 - M: rename file in same subdirectory
-ok 70 - M: rename file to new subdirectory
-ok 71 - M: rename subdirectory to new subdirectory
-ok 72 - M: rename root ("") to subdirectory
-ok 73 - M: rename root () to subdirectory
-ok 74 - N: copy file in same subdirectory
-ok 75 - N: copy then modify subdirectory
-ok 76 - N: copy dirty subdirectory
-ok 77 - N: copy directory by id
-ok 78 - N: read and copy directory
-ok 79 - N: empty directory reads as missing
-ok 80 - N: copy root ("") by tree hash
-ok 81 - N: copy root ("") by path
-ok 82 - N: copy root () by tree hash
-ok 83 - N: copy root () by path
-ok 84 - N: delete directory by copying
-ok 85 - N: modify copied tree
-ok 86 - N: reject foo/ syntax
-ok 87 - N: reject foo/ syntax in copy source
-ok 88 - N: reject foo/ syntax in rename source
-ok 89 - N: reject foo/ syntax in ls argument
-ok 90 - N: copy to root ("") by id and modify
-ok 91 - N: extract subtree to the root ("")
-ok 92 - N: modify subtree, extract it to the root (""), and modify again
-ok 93 - N: copy to root () by id and modify
-ok 94 - N: extract subtree to the root ()
-ok 95 - N: modify subtree, extract it to the root (), and modify again
-ok 96 - O: comments are all skipped
-ok 97 - O: blank lines not necessary after data commands
-ok 98 - O: repack before next test
-ok 99 - O: blank lines not necessary after other commands
-ok 100 - O: progress outputs as requested by input
-ok 101 - P: superproject & submodule mix
-ok 102 - P: verbatim SHA gitlinks
-ok 103 - P: fail on inline gitlink
-ok 104 - P: fail on blob mark in gitlink
-ok 105 - Q: commit notes
-ok 106 - Q: verify pack
-ok 107 - Q: verify first commit
-ok 108 - Q: verify second commit
-ok 109 - Q: verify third commit
-ok 110 - Q: verify first notes commit
-ok 111 - Q: verify first notes tree
-ok 112 - Q: verify first note for first commit
-ok 113 - Q: verify first note for second commit
-ok 114 - Q: verify first note for third commit
-ok 115 - Q: verify second notes commit
-ok 116 - Q: verify second notes tree
-ok 117 - Q: verify second note for first commit
-ok 118 - Q: verify first note for second commit
-ok 119 - Q: verify first note for third commit
-ok 120 - Q: verify third notes commit
-ok 121 - Q: verify third notes tree
-ok 122 - Q: verify third note for first commit
-ok 123 - Q: verify fourth notes commit
-ok 124 - Q: verify fourth notes tree
-ok 125 - Q: verify second note for second commit
-ok 126 - Q: deny note on empty branch
-ok 127 - R: abort on unsupported feature
-ok 128 - R: supported feature is accepted
-ok 129 - R: abort on receiving feature after data command
-ok 130 - R: import-marks features forbidden by default
-ok 131 - R: only one import-marks feature allowed per stream
-ok 132 - R: export-marks feature forbidden by default
-ok 133 - R: export-marks feature results in a marks file being created
-ok 134 - R: export-marks options can be overridden by commandline options
-ok 135 - R: catch typo in marks file name
-ok 136 - R: import and output marks can be the same file
-ok 137 - R: --import-marks=foo --output-marks=foo to create foo fails
-ok 138 - R: --import-marks-if-exists
-ok 139 - R: feature import-marks-if-exists
-ok 140 - R: import to output marks works without any content
-ok 141 - R: import marks prefers commandline marks file over the stream
-ok 142 - R: multiple --import-marks= should be honoured
-ok 143 - R: feature relative-marks should be honoured
-ok 144 - R: feature no-relative-marks should be honoured
-ok 145 - R: feature ls supported
-ok 146 - R: feature cat-blob supported
-ok 147 - R: cat-blob-fd must be a nonnegative integer
-ok 148 - R: print old blob
-ok 149 - R: in-stream cat-blob-fd not respected
-ok 150 - R: print mark for new blob
-ok 151 - R: print new blob
-ok 152 - R: print new blob by sha1
-ok 153 - setup: big file
-ok 154 - R: print two blobs to stdout
-ok 155 - R: copy using cat-file
-ok 156 - R: print blob mid-commit
-ok 157 - R: print staged blob within commit
-ok 158 - R: quiet option results in no stats being output
-ok 159 - R: feature done means terminating "done" is mandatory
-ok 160 - R: terminating "done" with trailing gibberish is ok
-ok 161 - R: terminating "done" within commit
-ok 162 - R: die on unknown option
-ok 163 - R: unknown commandline options are rejected
-ok 164 - R: feature-only names are rejected on the command line
-ok 165 - R: die on invalid option argument
-ok 166 - R: ignore non-git options
-ok 167 - R: corrupt lines do not mess marks file
-ok 168 - R: blob bigger than threshold
-ok 169 - R: verify created pack
-ok 170 - R: verify written objects
-ok 171 - R: blob appears only once
-ok 172 - S: initialize for S tests
-ok 173 - S: filemodify with garbage after mark must fail
-ok 174 - S: filemodify with garbage after inline must fail
-ok 175 - S: filemodify with garbage after sha1 must fail
-ok 176 - S: notemodify with garbage after mark dataref must fail
-ok 177 - S: notemodify with garbage after inline dataref must fail
-ok 178 - S: notemodify with garbage after sha1 dataref must fail
-ok 179 - S: notemodify with garbage after mark commit-ish must fail
-ok 180 - S: from with garbage after mark must fail
-ok 181 - S: merge with garbage after mark must fail
-ok 182 - S: tag with garbage after mark must fail
-ok 183 - S: cat-blob with garbage after mark must fail
-ok 184 - S: ls with garbage after mark must fail
-ok 185 - S: ls with garbage after sha1 must fail
-ok 186 - S: paths at EOL with quoted spaces must work
-ok 187 - S: paths at EOL with unquoted spaces must work
-ok 188 - S: paths at EOL with octal escapes must work
-ok 189 - S: paths before space with quoted spaces must work
-ok 190 - S: paths before space with no unquoted spaces must work
-ok 191 - S: paths before space with octal escapes must work
-ok 192 - S: filemodify with unclosed " in path must fail
-ok 193 - S: filemodify with invalid escape in quoted path must fail
-ok 194 - S: filemodify with escaped NUL in quoted path must fail
-ok 195 - S: filemodify with garbage after quoted path must fail
-ok 196 - S: filemodify with space after quoted path must fail
-ok 197 - S: filedelete with unclosed " in path must fail
-ok 198 - S: filedelete with invalid escape in quoted path must fail
-ok 199 - S: filedelete with escaped NUL in quoted path must fail
-ok 200 - S: filedelete with garbage after quoted path must fail
-ok 201 - S: filedelete with space after quoted path must fail
-ok 202 - S: filecopy with unclosed " in source must fail
-ok 203 - S: filecopy with invalid escape in quoted source must fail
-ok 204 - S: filecopy with escaped NUL in quoted source must fail
-ok 205 - S: filecopy with missing space after quoted source must fail
-ok 206 - S: filecopy with missing space after unquoted source must fail
-ok 207 - S: filecopy with unclosed " in dest must fail
-ok 208 - S: filecopy with invalid escape in quoted dest must fail
-ok 209 - S: filecopy with escaped NUL in quoted dest must fail
-ok 210 - S: filecopy with garbage after quoted dest must fail
-ok 211 - S: filecopy with space after quoted dest must fail
-ok 212 - S: filerename with unclosed " in source must fail
-ok 213 - S: filerename with invalid escape in quoted source must fail
-ok 214 - S: filerename with escaped NUL in quoted source must fail
-ok 215 - S: filerename with missing space after quoted source must fail
-ok 216 - S: filerename with missing space after unquoted source must fail
-ok 217 - S: filerename with unclosed " in dest must fail
-ok 218 - S: filerename with invalid escape in quoted dest must fail
-ok 219 - S: filerename with escaped NUL in quoted dest must fail
-ok 220 - S: filerename with garbage after quoted dest must fail
-ok 221 - S: filerename with space after quoted dest must fail
-ok 222 - S: ls (in commit) with unclosed " in path must fail
-ok 223 - S: ls (in commit) with invalid escape in quoted path must fail
-ok 224 - S: ls (in commit) with escaped NUL in quoted path must fail
-ok 225 - S: ls (in commit) with garbage after quoted path must fail
-ok 226 - S: ls (in commit) with space after quoted path must fail
-ok 227 - S: ls (without dataref in commit) with unclosed " in path must fail
-ok 228 - S: ls (without dataref in commit) with invalid escape in quoted path must fail
-ok 229 - S: ls (without dataref in commit) with escaped NUL in quoted path must fail
-ok 230 - S: ls (without dataref in commit) with garbage after quoted path must fail
-ok 231 - S: ls (without dataref in commit) with space after quoted path must fail
-ok 232 - T: ls root ("") tree
-ok 233 - T: ls root () tree
-ok 234 - T: delete branch
-ok 235 - T: empty reset doesnt delete branch
-ok 236 - U: initialize for U tests
-ok 237 - U: filedelete file succeeds
-ok 238 - U: validate file delete result
-ok 239 - U: filedelete directory succeeds
-ok 240 - U: validate directory delete result
-ok 241 - U: filedelete root ("") succeeds
-ok 242 - U: validate root ("") delete result
-ok 243 - U: filedelete root () succeeds
-ok 244 - U: validate root () delete result
-ok 245 - V: checkpoint helper does not get stuck with extra output
-ok 246 - V: checkpoint updates refs after reset
-ok 247 - V: checkpoint updates refs and marks after commit
-ok 248 - V: checkpoint updates refs and marks after commit (no new objects)
-ok 249 - V: checkpoint updates tags after tag
-ok 250 - W: get-mark & empty orphan commit with no newlines
-ok 251 - W: get-mark & empty orphan commit with one newline
-ok 252 - W: get-mark & empty orphan commit with ugly second newline
-ok 253 - W: get-mark & empty orphan commit with erroneous third newline
-ok 254 - X: handling encoding
-ok 255 - X: replace ref that becomes useless is removed
-ok 256 - Y: setup
-ok 257 - Y: rewrite submodules
-# passed all 257 test(s)
-1..257
+ok 60 - I: export-pack-edges option forbidden by default
+ok 61 - I: export-pack-edges
+ok 62 - I: export-pack-edges via stdin
+ok 63 - J: reset existing branch creates empty commit
+ok 64 - J: branch has 1 commit, empty tree
+ok 65 - J: tag must fail on empty branch
+ok 66 - K: reinit branch with from
+ok 67 - K: verify K^1 = branch^1
+ok 68 - L: verify internal tree sorting
+ok 69 - L: nested tree copy does not corrupt deltas
+ok 70 - M: rename file in same subdirectory
+ok 71 - M: rename file to new subdirectory
+ok 72 - M: rename subdirectory to new subdirectory
+ok 73 - M: rename root ("") to subdirectory
+ok 74 - M: rename root () to subdirectory
+ok 75 - N: copy file in same subdirectory
+ok 76 - N: copy then modify subdirectory
+ok 77 - N: copy dirty subdirectory
+ok 78 - N: copy directory by id
+ok 79 - N: read and copy directory
+ok 80 - N: empty directory reads as missing
+ok 81 - N: copy root ("") by tree hash
+ok 82 - N: copy root ("") by path
+ok 83 - N: copy root () by tree hash
+ok 84 - N: copy root () by path
+ok 85 - N: delete directory by copying
+ok 86 - N: modify copied tree
+ok 87 - N: reject foo/ syntax
+ok 88 - N: reject foo/ syntax in copy source
+ok 89 - N: reject foo/ syntax in rename source
+ok 90 - N: reject foo/ syntax in ls argument
+ok 91 - N: copy to root ("") by id and modify
+ok 92 - N: extract subtree to the root ("")
+ok 93 - N: modify subtree, extract it to the root (""), and modify again
+ok 94 - N: copy to root () by id and modify
+ok 95 - N: extract subtree to the root ()
+ok 96 - N: modify subtree, extract it to the root (), and modify again
+ok 97 - O: comments are all skipped
+ok 98 - O: blank lines not necessary after data commands
+ok 99 - O: repack before next test
+ok 100 - O: blank lines not necessary after other commands
+ok 101 - O: progress outputs as requested by input
+ok 102 - P: superproject & submodule mix
+ok 103 - P: verbatim SHA gitlinks
+ok 104 - P: fail on inline gitlink
+ok 105 - P: fail on blob mark in gitlink
+ok 106 - Q: commit notes
+ok 107 - Q: verify pack
+ok 108 - Q: verify first commit
+ok 109 - Q: verify second commit
+ok 110 - Q: verify third commit
+ok 111 - Q: verify first notes commit
+ok 112 - Q: verify first notes tree
+ok 113 - Q: verify first note for first commit
+ok 114 - Q: verify first note for second commit
+ok 115 - Q: verify first note for third commit
+ok 116 - Q: verify second notes commit
+ok 117 - Q: verify second notes tree
+ok 118 - Q: verify second note for first commit
+ok 119 - Q: verify first note for second commit
+ok 120 - Q: verify first note for third commit
+ok 121 - Q: verify third notes commit
+ok 122 - Q: verify third notes tree
+ok 123 - Q: verify third note for first commit
+ok 124 - Q: verify fourth notes commit
+ok 125 - Q: verify fourth notes tree
+ok 126 - Q: verify second note for second commit
+ok 127 - Q: deny note on empty branch
+ok 128 - R: abort on unsupported feature
+ok 129 - R: supported feature is accepted
+ok 130 - R: abort on receiving feature after data command
+ok 131 - R: import-marks features forbidden by default
+ok 132 - R: only one import-marks feature allowed per stream
+ok 133 - R: export-marks feature forbidden by default
+ok 134 - R: export-marks feature results in a marks file being created
+ok 135 - R: export-marks options can be overridden by commandline options
+ok 136 - R: catch typo in marks file name
+ok 137 - R: import and output marks can be the same file
+ok 138 - R: --import-marks=foo --output-marks=foo to create foo fails
+ok 139 - R: --import-marks-if-exists
+ok 140 - R: feature import-marks-if-exists
+ok 141 - R: import to output marks works without any content
+ok 142 - R: import marks prefers commandline marks file over the stream
+ok 143 - R: multiple --import-marks= should be honoured
+ok 144 - R: feature relative-marks should be honoured
+ok 145 - R: feature no-relative-marks should be honoured
+ok 146 - R: feature ls supported
+ok 147 - R: feature cat-blob supported
+ok 148 - R: cat-blob-fd must be a nonnegative integer
+ok 149 - R: print old blob
+ok 150 - R: in-stream cat-blob-fd not respected
+ok 151 - R: print mark for new blob
+ok 152 - R: print new blob
+ok 153 - R: print new blob by sha1
+ok 154 - setup: big file
+ok 155 - R: print two blobs to stdout
+ok 156 - R: copy using cat-file
+ok 157 - R: print blob mid-commit
+ok 158 - R: print staged blob within commit
+ok 159 - R: quiet option results in no stats being output
+ok 160 - R: feature done means terminating "done" is mandatory
+ok 161 - R: terminating "done" with trailing gibberish is ok
+ok 162 - R: terminating "done" within commit
+ok 163 - R: die on unknown option
+ok 164 - R: unknown commandline options are rejected
+ok 165 - R: feature-only names are rejected on the command line
+ok 166 - R: die on invalid option argument
+ok 167 - R: ignore non-git options
+ok 168 - R: corrupt lines do not mess marks file
+ok 169 - R: blob bigger than threshold
+ok 170 - R: verify created pack
+ok 171 - R: verify written objects
+ok 172 - R: blob appears only once
+ok 173 - S: initialize for S tests
+ok 174 - S: filemodify with garbage after mark must fail
+ok 175 - S: filemodify with garbage after inline must fail
+ok 176 - S: filemodify with garbage after sha1 must fail
+ok 177 - S: notemodify with garbage after mark dataref must fail
+ok 178 - S: notemodify with garbage after inline dataref must fail
+ok 179 - S: notemodify with garbage after sha1 dataref must fail
+ok 180 - S: notemodify with garbage after mark commit-ish must fail
+ok 181 - S: from with garbage after mark must fail
+ok 182 - S: merge with garbage after mark must fail
+ok 183 - S: tag with garbage after mark must fail
+ok 184 - S: cat-blob with garbage after mark must fail
+ok 185 - S: ls with garbage after mark must fail
+ok 186 - S: ls with garbage after sha1 must fail
+ok 187 - S: paths at EOL with quoted spaces must work
+ok 188 - S: paths at EOL with unquoted spaces must work
+ok 189 - S: paths at EOL with octal escapes must work
+ok 190 - S: paths before space with quoted spaces must work
+ok 191 - S: paths before space with no unquoted spaces must work
+ok 192 - S: paths before space with octal escapes must work
+ok 193 - S: filemodify with unclosed " in path must fail
+ok 194 - S: filemodify with invalid escape in quoted path must fail
+ok 195 - S: filemodify with escaped NUL in quoted path must fail
+ok 196 - S: filemodify with garbage after quoted path must fail
+ok 197 - S: filemodify with space after quoted path must fail
+ok 198 - S: filedelete with unclosed " in path must fail
+ok 199 - S: filedelete with invalid escape in quoted path must fail
+ok 200 - S: filedelete with escaped NUL in quoted path must fail
+ok 201 - S: filedelete with garbage after quoted path must fail
+ok 202 - S: filedelete with space after quoted path must fail
+ok 203 - S: filecopy with unclosed " in source must fail
+ok 204 - S: filecopy with invalid escape in quoted source must fail
+ok 205 - S: filecopy with escaped NUL in quoted source must fail
+ok 206 - S: filecopy with missing space after quoted source must fail
+ok 207 - S: filecopy with missing space after unquoted source must fail
+ok 208 - S: filecopy with unclosed " in dest must fail
+ok 209 - S: filecopy with invalid escape in quoted dest must fail
+ok 210 - S: filecopy with escaped NUL in quoted dest must fail
+ok 211 - S: filecopy with garbage after quoted dest must fail
+ok 212 - S: filecopy with space after quoted dest must fail
+ok 213 - S: filerename with unclosed " in source must fail
+ok 214 - S: filerename with invalid escape in quoted source must fail
+ok 215 - S: filerename with escaped NUL in quoted source must fail
+ok 216 - S: filerename with missing space after quoted source must fail
+ok 217 - S: filerename with missing space after unquoted source must fail
+ok 218 - S: filerename with unclosed " in dest must fail
+ok 219 - S: filerename with invalid escape in quoted dest must fail
+ok 220 - S: filerename with escaped NUL in quoted dest must fail
+ok 221 - S: filerename with garbage after quoted dest must fail
+ok 222 - S: filerename with space after quoted dest must fail
+ok 223 - S: ls (in commit) with unclosed " in path must fail
+ok 224 - S: ls (in commit) with invalid escape in quoted path must fail
+ok 225 - S: ls (in commit) with escaped NUL in quoted path must fail
+ok 226 - S: ls (in commit) with garbage after quoted path must fail
+ok 227 - S: ls (in commit) with space after quoted path must fail
+ok 228 - S: ls (without dataref in commit) with unclosed " in path must fail
+ok 229 - S: ls (without dataref in commit) with invalid escape in quoted path must fail
+ok 230 - S: ls (without dataref in commit) with escaped NUL in quoted path must fail
+ok 231 - S: ls (without dataref in commit) with garbage after quoted path must fail
+ok 232 - S: ls (without dataref in commit) with space after quoted path must fail
+ok 233 - T: ls root ("") tree
+ok 234 - T: ls root () tree
+ok 235 - T: delete branch
+ok 236 - T: empty reset doesnt delete branch
+ok 237 - U: initialize for U tests
+ok 238 - U: filedelete file succeeds
+ok 239 - U: validate file delete result
+ok 240 - U: filedelete directory succeeds
+ok 241 - U: validate directory delete result
+ok 242 - U: filedelete root ("") succeeds
+ok 243 - U: validate root ("") delete result
+ok 244 - U: filedelete root () succeeds
+ok 245 - U: validate root () delete result
+ok 246 - V: checkpoint helper does not get stuck with extra output
+ok 247 - V: checkpoint updates refs after reset
+ok 248 - V: checkpoint updates refs and marks after commit
+ok 249 - V: checkpoint updates refs and marks after commit (no new objects)
+ok 250 - V: checkpoint updates tags after tag
+ok 251 - W: get-mark & empty orphan commit with no newlines
+ok 252 - W: get-mark & empty orphan commit with one newline
+ok 253 - W: get-mark & empty orphan commit with ugly second newline
+ok 254 - W: get-mark & empty orphan commit with erroneous third newline
+ok 255 - X: handling encoding
+ok 256 - X: replace ref that becomes useless is removed
+ok 257 - Y: setup
+ok 258 - Y: rewrite-submodules-to feature forbidden by default
+ok 259 - Y: rewrite-submodules-from feature forbidden by default
+ok 260 - Y: rewrite submodules
+ok 261 - Y: rewrite submodules via stdin
+# passed all 261 test(s)
+1..261
 *** t9301-fast-import-notes.sh ***
 ok 1 - set up main branch
 ok 2 - add notes with simple M command
@@ -37178,13 +37202,13 @@ ok 53 - git url-parse with no URL prints usage
 # passed all 53 test(s)
 1..53
 
-missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !SYMLINKS AUTOIDENT BUILTIN_ADOC_CHECKOUT__WORKER BUILTIN_ADOC_MERGE_OURS BUILTIN_ADOC_MERGE_RECURSIVE BUILTIN_ADOC_MERGE_RECURSIVE_OURS BUILTIN_ADOC_MERGE_RECURSIVE_THEIRS BUILTIN_ADOC_MERGE_SUBTREE BUILTIN_ADOC_PICKAXE BUILTIN_ADOC_SUBMODULE__HELPER BUILTIN_ADOC_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS EXPENSIVE FSMONITOR_DAEMON GETCWD_IGNORES_PERMS GPG GPG2 GPGSM HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF PERLJSON RFC1991 RUNTIME_PREFIX SANITIZE_LEAK SETFACL SVN SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK TRACE2_ANCESTRY UTF8_NFD_TO_NFC WINDOWS WITH_BREAKING_CHANGES
+missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !SIZE_T_IS_64BIT !SYMLINKS AUTOIDENT BUILTIN_ADOC_CHECKOUT__WORKER BUILTIN_ADOC_MERGE_OURS BUILTIN_ADOC_MERGE_RECURSIVE BUILTIN_ADOC_MERGE_RECURSIVE_OURS BUILTIN_ADOC_MERGE_RECURSIVE_THEIRS BUILTIN_ADOC_MERGE_SUBTREE BUILTIN_ADOC_PICKAXE BUILTIN_ADOC_SUBMODULE__HELPER BUILTIN_ADOC_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS EXPENSIVE FSMONITOR_DAEMON GETCWD_IGNORES_PERMS GPG GPG2 GPGSM HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF PERLJSON RFC1991 RUNTIME_PREFIX SANITIZE_LEAK SETFACL SVN SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK TRACE2_ANCESTRY UTF8_NFD_TO_NFC WINDOWS WITH_BREAKING_CHANGES
 
 
 failed test(s): t0200 t0204 t1017 t1300 t1450 t4211 t5303 t5701 t6011
 
 fixed   1
-success 32616
+success 32626
 failed  38
 broken  374
-total   33621
+total   33645
