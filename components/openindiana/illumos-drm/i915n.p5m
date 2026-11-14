@@ -1,0 +1,60 @@
+#
+# SPDX-License-Identifier: MIT
+# Copyright 2026 The illumos-drm authors
+#
+# IPS manifest of i915n, Linux v7.2's i915 (display on Ivy Bridge, every
+# other platform headless; no local memory) built for the illumos-drm
+# facade, misc/linuxkpi and misc/drm_kms (drivers/i915). Publish from a
+# directory holding the module linked by
+# drivers/i915/build.sh as kernel/drv/amd64/i915n and its licence file
+# written by drivers/i915/gen-license.sh as LICENSE.i915n:
+#
+#   drivers/i915/build.sh all      # $OUT/i915n
+#   cp $OUT/i915n <proto>/kernel/drv/amd64/i915n
+#   drivers/i915/gen-license.sh $LINUX <proto>/LICENSE.i915n $OUT/linux-inputs.txt
+#   pkgsend publish -s <repo> -d <proto> packaging/i915n.p5m
+#
+# The driver action has no PCI aliases: the Intel GPU aliases belong to
+# gfx-drm's i915 (driver/graphics/drm) until `drmadm select new` moves them
+# to i915n (and `drmadm select legacy` back), see drmadm(8). Installing the
+# package therefore binds nothing. The card and render nodes get mode 0666
+# as for the other DRM drivers, and the devlink attribute makes devfsadm
+# create /dev/dri/card<N> and /dev/dri/renderD<128+N> where SUNW_drm_link
+# is not installed (packaging/devlink.tab).
+#
+# The module is linked with -N misc/drm_core -N misc/linuxkpi
+# -N misc/drm_helpers -N misc/drm_kms, so the package requires their
+# packages (drm-kms: Linux's mode-setting code, which the display uses).
+# The licence file covers every Linux file compiled in, the display's
+# included (build.sh's linux-inputs.txt). No
+# firmware is delivered: gen6/gen7 submit through rings and gen8 to gen9.5
+# through execlists, neither needs firmware; GuC/HuC firmware is optional
+# there and absent firmware is not an error (i915 logs it and continues).
+#
+set name=pkg.fmri value=pkg:/driver/graphics/i915n@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Intel GPU driver from Linux i915 (i915n)"
+set name=pkg.description value="i915n, the i915 driver of Linux v7.2 built for the illumos-drm DRM core, its Linux compatibility layer and Linux's mode-setting code (misc/drm_kms): GEM, execbuffer, contexts and render nodes for Intel integrated GPUs of gen6 to gen9.5 with a PCH (gen7 and gen9.5 targeted), and mode setting (KMS) on Ivy Bridge; other GPUs run without display. Ships no PCI aliases; select it with drmadm select new."
+set name=info.classification value=org.opensolaris.category.2008:Drivers/Display
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=userland
+dir  path=kernel owner=root group=sys mode=0755
+dir  path=kernel/drv owner=root group=sys mode=0755
+dir  path=kernel/drv/amd64 owner=root group=sys mode=0755
+file path=kernel/drv/amd64/i915n owner=root group=sys mode=0755 preserve=false reboot-needed=true
+# The DRM minors are 0666 (drmadm perms keeps them so); the console minor
+# gfx0 is 0600 and logindevperm gives it to the console user. devfsadm
+# applies the last matching minor_perm entry, and pkg hands the perms to
+# add_drv/update_drv -m in this order: the catch-all first, gfx* last.
+driver name=i915n perms="* 0666 root sys" perms="gfx* 0600 root sys" \
+    devlink=type=ddi_display:drm;name=i915n\tdri/\M0
+depend fmri=pkg:/driver/graphics/drmadm@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+# The facade and the layer are unstable (major version 0): built for these
+# versions only.
+depend fmri=pkg:/driver/graphics/drm-core@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=incorporate
+depend fmri=pkg:/driver/graphics/linuxkpi@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=incorporate
+depend fmri=pkg:/driver/graphics/drm-kms@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=incorporate
+license LICENSE.i915n license=MIT-i915
+# These kernel providers are absent from a non-global build zone. Declare
+# their verified IPS owners explicitly; retain generation for stack imports.
+<transform file path=kernel/.* -> add pkg.depend.bypass-generate gfx_private>
+depend fmri=pkg:/system/kernel/platform type=require
