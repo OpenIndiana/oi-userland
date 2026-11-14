@@ -1,0 +1,27 @@
+select() on the serial and parallel port descriptors with nfds = fd + 1,
+not FD_SETSIZE (65536 on 64-bit illumos), once per emulated scanline.
+
+https://github.com/FrodeSolheim/fs-uae/pull/396
+
+--- fs-uae-3.2.35/src/od-fs/parser.cpp.orig
++++ fs-uae-3.2.35/src/od-fs/parser.cpp
+@@ -590,7 +590,7 @@
+ 		tv.tv_usec = 0;
+ 		FD_ZERO(&fd);
+ 		FD_SET(ser_fd, &fd);
+-		int num_ready = select (FD_SETSIZE, &fd, NULL, NULL, &tv);
++		int num_ready = select (ser_fd + 1, &fd, NULL, NULL, &tv);
+ 		return (num_ready == 1);
+ #endif
+ 	}
+--- fs-uae-3.2.35/src/od-fs/vpar.cpp.orig
++++ fs-uae-3.2.35/src/od-fs/vpar.cpp
+@@ -158,7 +158,7 @@
+     FD_SET(par_fd, &fds);
+     FD_ZERO(&fde);
+     FD_SET(par_fd, &fde);
+-    int num_ready = select (FD_SETSIZE, &fds, NULL, &fde, NULL);
++    int num_ready = select (par_fd + 1, &fds, NULL, &fde, NULL);
+     if (num_ready > 0) {
+         if (FD_ISSET(par_fd, &fde)) {
+             if (vpar_debug) {
