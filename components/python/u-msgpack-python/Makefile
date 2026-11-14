@@ -11,20 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project u-msgpack-python
+#   $WS_TOOLS/python-integrate-project -d python/u-msgpack-python u_msgpack_python
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		u-msgpack-python
-HUMAN_VERSION =			2.8.0
-COMPONENT_REVISION =		1
+COMPONENT_NAME =		u_msgpack_python
+HUMAN_VERSION =			2.9.0
 COMPONENT_SUMMARY =		A portable, lightweight MessagePack serializer and deserializer written in pure Python.
 COMPONENT_PROJECT_URL =		https://github.com/vsergeev/u-msgpack-python
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b801a83d6ed75e6df41e44518b4f2a9c221dc2da4bcd5380e3a0feda520bc61a
+	sha256:3f632940c2db108d71210795463e249b47e89a08eec0d54a5cdc1a202505ede9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
