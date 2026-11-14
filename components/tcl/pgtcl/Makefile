@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgtcl
 COMPONENT_VERSION= 	3.1.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	A Tcl client library for PostgreSQL
 COMPONENT_SRC= 		Pgtcl-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -28,13 +29,11 @@ COMPONENT_CLASSIFICATION= Development/Databases
 COMPONENT_LICENSE= BSD
 COMPONENT_LICENSE_FILE= LICENSE
 
-# Don't depend on host default pg_config
-PATH=$(PG_BINDIR.$(BITS)):$(PATH.illumos)
-
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -fi )
+# We are patching configure.in
+COMPONENT_PREP_ACTION += ( cd $(@D) && $(ENV) autoreconf -fi ) ;
 
 CONFIGURE_OPTIONS += --enable-threads
 CONFIGURE_OPTIONS += --enable-64bit
@@ -44,8 +43,8 @@ ifeq ($(strip $(MACH)),sparc)
 CONFIGURE_OPTIONS += --enable-64bit-vis
 endif
 
-COMPONENT_POST_INSTALL_ACTION= ( mkdir -p $(PROTOUSRSHAREDOCDIR)/pgtcl-$(COMPONENT_VERSION) && \
-	 cp -a $(SOURCE_DIR)/doc/html/* $(PROTOUSRSHAREDOCDIR)/pgtcl-$(COMPONENT_VERSION) )  
+COMPONENT_POST_INSTALL_ACTION += \
+	$(INSTALL) -D -t $(PROTOUSRSHAREDOCDIR)/pgtcl-$(COMPONENT_VERSION) $(SOURCE_DIR)/doc/html/* ;
 
 # Build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
