@@ -11,22 +11,24 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project Chameleon
+#   $WS_TOOLS/python-integrate-project -d python/Chameleon chameleon
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Chameleon
-HUMAN_VERSION =			4.6.0
-COMPONENT_REVISION =		1
+COMPONENT_NAME =		chameleon
+HUMAN_VERSION =			4.6.1
 COMPONENT_SUMMARY =		Fast HTML/XML Template Compiler.
 COMPONENT_PROJECT_URL =		https://chameleon.readthedocs.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:910cd729f6f7f38adad132ee51faa4f3ccc8344a6721aac31aa51a31f5781c1b
+	sha256:c1775d54907966c8e397a1292b1a2755d254b7f070d0719ac9e579d9ab81e5b5
 COMPONENT_LICENSE =		BSD-3-Clause OR PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
+
+# Python 3.9 is not supported by Chameleon >= 4.6.1
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -34,7 +36,6 @@ include $(WS_MAKE_RULES)/common.mk
 PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES.python += library/python/importlib-metadata
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/wheel
 REQUIRED_PACKAGES.python += runtime/python

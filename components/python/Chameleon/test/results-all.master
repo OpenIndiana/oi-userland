@@ -1,4 +1,3 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest --doctest-modules -W 'error:the load_module:DeprecationWarning' -W error:zipimport.zipimporter.load_module:DeprecationWarning -W error:ast.:DeprecationWarning
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -6,7 +5,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: src/chameleon
-collecting ... collected 252 items
+collecting ... collected 259 items
 
 src/chameleon/compiler.py::chameleon.compiler.ExpressionEngine PASSED
 src/chameleon/compiler.py::chameleon.compiler.ExpressionEvaluator PASSED
@@ -53,7 +52,9 @@ src/chameleon/tests/test_bools_plus_sniffing.py::XMLTestCase::test_str_content_t
 src/chameleon/tests/test_bools_plus_sniffing.py::XMLTestCase::test_str_encoding PASSED
 src/chameleon/tests/test_bools_plus_sniffing.py::XMLWithEncodingTestCase::test_bytes_encoding PASSED
 src/chameleon/tests/test_bools_plus_sniffing.py::XMLWithEncodingTestCase::test_str_encoding PASSED
+src/chameleon/tests/test_compiler.py::ExpressionEvaluatorTestCase::test_no_builtins PASSED
 src/chameleon/tests/test_exc.py::TestTemplateError::test_keep_token_location_info PASSED
+src/chameleon/tests/test_exc.py::TestTemplateError::test_render_error_of_non_utf8_file_to_string PASSED
 src/chameleon/tests/test_exc.py::TestTemplateError::test_umlaut_exc_to_string PASSED
 src/chameleon/tests/test_imports.py::TestImports::test_compiler_utils PASSED
 src/chameleon/tests/test_imports.py::TestImports::test_exceptions PASSED
@@ -87,9 +88,11 @@ src/chameleon/tests/test_templates.py::TestTemplateFile::test_auto_reload PASSED
 src/chameleon/tests/test_templates.py::TestTemplateFile::test_cook_check PASSED
 src/chameleon/tests/test_templates.py::TestTemplateFile::test_relative_is_expanded_to_cwd PASSED
 src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_boolean_attributes PASSED
+src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_case_on_same_element_as_switch_raises_language_error PASSED
 src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_compiler_internals_are_disallowed PASSED
 src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_create_formatted_exception PASSED
 src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_create_formatted_exception_no_subclass PASSED
+src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_create_formatted_exception_unicode_error PASSED
 src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_custom_encoding_for_str_or_bytes_in_attributes PASSED
 src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_custom_encoding_for_str_or_bytes_in_content PASSED
 src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_debug_flag_on_file PASSED
@@ -248,10 +251,13 @@ src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_txt_files[inp
 src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_txt_files[inputs/hello_world.txt-outputs/hello_world.txt-None] PASSED
 src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_underscore_variable PASSED
 src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_unicode_decode_error PASSED
+src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_unknown_expression_type_raises_expression_error PASSED
 src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_utf8_encoded PASSED
 src/chameleon/tests/test_templates.py::TestZopePageTemplates::test_windows_line_endings PASSED
 src/chameleon/tests/test_tokenizer.py::TokenizerTest::test_sample_files PASSED
 src/chameleon/tests/test_tokenizer.py::TokenizerTest::test_token PASSED
+src/chameleon/tests/test_utils.py::ResolveDottedTestCase::test_relative_name PASSED
+src/chameleon/tests/test_utils.py::ResolveDottedTestCase::test_relative_name_up_one_level PASSED
 src/chameleon/tests/test_utils.py::ScopeTestCase::test_items PASSED
 src/chameleon/tests/test_utils.py::ScopeTestCase::test_keys PASSED
 src/chameleon/tests/test_utils.py::ScopeTestCase::test_values PASSED
@@ -272,8 +278,8 @@ src/chameleon/tests/test_loader.py::ZPTLoadPageTests::test_load_wheel
           Instead, use pypa/build, pypa/installer or other
           standards-based tools.
   
-          By 2025-Oct-31, you need to update your project and remove deprecated calls
-          or your builds will no longer be supported.
+          This deprecation is overdue, please update your project and remove deprecated
+          calls to avoid build errors in the future.
   
           See https://blog.ganssle.io/articles/2021/10/setup-py-deprecated.html for details.
           ********************************************************************************
@@ -285,7 +291,7 @@ src/chameleon/tests/test_loader.py::LoadPageTests::test_load_egg
 src/chameleon/tests/test_loader.py::LoadPageTests::test_load_wheel
 src/chameleon/tests/test_loader.py::ZPTLoadPageTests::test_load_egg
 src/chameleon/tests/test_loader.py::ZPTLoadPageTests::test_load_wheel
-  $(PYTHON_DIR)/vendor-packages/setuptools/command/build_py.py:212: _Warning: Package 'chameleon_test_pkg.templates' is absent from the `packages` configuration.
+  $(PYTHON_DIR)/vendor-packages/setuptools/command/build_py.py:215: _Warning: Package 'chameleon_test_pkg.templates' is absent from the `packages` configuration.
   !!
   
           ********************************************************************************
@@ -328,6 +334,6 @@ src/chameleon/tests/test_loader.py::ZPTLoadPageTests::test_load_wheel
     check.warn(importable)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 252 passed, 8 warnings ========
+======== 259 passed, 8 warnings ========
   py$(PYV): OK
   congratulations :)
