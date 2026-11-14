@@ -19,13 +19,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
 COMPONENT_VERSION= 21.3.9
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:91fe6f20339884e37a7c47bfba42fb1cd397512c9ed5ad423de369f047cd8b5c
-COMPONENT_ARCHIVE_URL= https://archive.mesa3d.org/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.mesa3d.org/
+COMPONENT_ARCHIVE_URL= https://archive.mesa3d.org/older-versions/21.x/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://www.mesa3d.org/
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -40,32 +40,42 @@ SERVERMOD_SUBDIR= $(SERVERMOD_SUBDIR.$(BITS))
 X11_SERVERMODS_DIR= /usr/lib/xorg/modules
 X11_SERVERLIBS_DIR= /usr/lib/xorg
 
-# Identify source_file files in hard links for manifest generator.
-#PKG_HARDLINKS +=	usr/lib/xorg/modules/dri/radeon_dri.so
-
 CONFIGURE_OPTIONS += --libdir='lib/mesa/amd64'
 
-PKG_HARDLINKS += usr/lib/xorg/modules/dri/$(MACH64)/kms_swrast_dri.so
+# All Gallium DRI drivers are hard links to one megadriver; identify the
+# source file for the manifest generator.
+PKG_HARDLINKS += usr/lib/xorg/modules/dri/$(MACH64)/i915_dri.so
 
-# Command line options to GNU autoconf configure script
-CONFIGURE_OPTIONS += -Dgallium-drivers='swrast, i915, r600'
+# swrast: softpipe (llvmpipe needs LLVM, see below), also kms_swrast.
+# i915: Gallium i915g for gen3.
+# The gfx-drm i915 kernel driver supports gen2 to gen7.5 only and lacks
+# syncobj, execbuf fence arrays and I915_EXEC_BATCH_FIRST, which crocus
+# (gen4 to gen7.5) uses unconditionally; iris needs gen8 or newer.
+# r600 is not built: illumos has no radeon kernel DRM driver.
+CONFIGURE_OPTIONS += -Dgallium-drivers='swrast,i915'
 CONFIGURE_OPTIONS += -Dvulkan-drivers=''
 CONFIGURE_OPTIONS += -Dgbm=enabled
 CONFIGURE_OPTIONS += -Dglvnd=false
 # Wayland currently requires linux specific socket options and epoll for events.
 CONFIGURE_OPTIONS += -Dplatforms='x11'
-# llvm is disabled due to requiring llvm 16 we do not have 16
-CONFIGURE_OPTIONS += -Dllvm=false
+# Mesa 21.3 does not build with the LLVM releases we ship (18 and newer), so
+# llvmpipe needs a newer Mesa.
+CONFIGURE_OPTIONS += -Dllvm=disabled
 CONFIGURE_OPTIONS += -Dglx='auto'
 CONFIGURE_OPTIONS += -Degl=enabled
 CONFIGURE_OPTIONS += -Dgles1=enabled
 CONFIGURE_OPTIONS += -Dgles2=enabled
 CONFIGURE_OPTIONS += -Dosmesa=true
 CONFIGURE_OPTIONS += -Dshared-glapi=enabled
-CONFIGURE_OPTIONS += -Dgallium-xvmc=enabled
+# XvMC and VDPAU were only provided for r600.
+CONFIGURE_OPTIONS += -Dgallium-xvmc=disabled
+CONFIGURE_OPTIONS += -Dgallium-vdpau=disabled
 CONFIGURE_OPTIONS += -Dgallium-xa=enabled
+# Classic i965 for gen4 to gen7.5.
 CONFIGURE_OPTIONS += -Ddri-drivers='i965'
-CONFIGURE_OPTIONS += -Dshader-cache=false
+# The Intel drivers key their on-disk shader cache on a GNU build-id note,
+# which the illumos link-editor does not emit.
+CONFIGURE_OPTIONS += -Dshader-cache=disabled
 CONFIGURE_OPTIONS += -Ddri-drivers-path='$(X11_SERVERMODS_DIR)/dri$(SERVERMOD_SUBDIR)'
 CONFIGURE_OPTIONS += -Delf-tls=false
 
@@ -88,19 +98,20 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 # Add RPATH to xorg lib directory where is libdrm.
 
 COMPONENT_POST_INSTALL_ACTION.64 += \
-	for f in libgbm.so.1.0.0 libEGL.so.1.0.0 libGL.so.1.2.0 libxatracker.so.2.5.0 libXvMCr600.so.1.0.0 vdpau/libvdpau_r600.so.1.0.0; do \
+	for f in libgbm.so.1.0.0 libEGL.so.1.0.0 libGL.so.1.2.0 libxatracker.so.2.5.0; do \
 	elfedit -e "dyn:runpath /usr/lib/mesa/$(MACH64):/usr/lib/xorg/$(MACH64):$(GCC_LIBDIR)" \
 	  $(PROTOUSRLIBDIR)/mesa/$(MACH64)/$$f ; \
 	done ; \
+	for f in i915_dri.so i965_dri.so; do \
 	elfedit -e "dyn:runpath /usr/lib/mesa/$(MACH64):/usr/lib/xorg/$(MACH64):$(GCC_LIBDIR)" \
-	  $(PROTOUSRLIBDIR)/xorg/modules/dri/$(MACH64)/i915_dri.so ; \
+	  $(PROTOUSRLIBDIR)/xorg/modules/dri/$(MACH64)/$$f ; \
+	done ; \
 	mv $(PROTOUSRDIR)/include/GL $(PROTOUSRDIR)/include/mesa
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += x11/header/x11-protocols
 REQUIRED_PACKAGES += x11/library/libpthread-stubs
 REQUIRED_PACKAGES += system/header/header-drm
-REQUIRED_PACKAGES += library/graphics/libvdpau
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -118,6 +129,4 @@ REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxshmfence
-REQUIRED_PACKAGES += x11/library/libxv
-REQUIRED_PACKAGES += x11/library/libxvmc
 REQUIRED_PACKAGES += x11/library/libxxf86vm
