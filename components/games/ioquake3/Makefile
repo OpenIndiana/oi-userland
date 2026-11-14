@@ -22,6 +22,7 @@ COMPONENT_GIT_HASH=	87a99d18206e878a20289f05ac3c16005dcae5c3
 
 COMPONENT_NAME=		ioquake3
 COMPONENT_VERSION=	1.36.20261012
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Quake III Arena engine (game data not included)
 COMPONENT_PROJECT_URL=	https://ioquake3.org/
 COMPONENT_FMRI=		games/ioquake3
@@ -51,6 +52,26 @@ CMAKE_OPTIONS+=		-DSDL2_DIR=$(USRLIBDIR64)/cmake/SDL2
 # libopus (02-voip-without-opusfile.patch).
 CMAKE_OPTIONS+=		-DUSE_CODEC_OPUS=OFF
 CMAKE_OPTIONS+=		-DUSE_FREETYPE=ON
+
+# Upstream has AppStream metadata naming ioquake3.desktop and the icons,
+# but no desktop entry (files/ioquake3.desktop).
+COMPONENT_POST_INSTALL_ACTION += \
+	$(INSTALL) -d $(PROTO_DIR)$(USRSHAREDIR)/applications \
+		$(PROTO_DIR)$(USRSHAREDIR)/metainfo \
+		$(PROTO_DIR)$(USRSHAREDIR)/icons/hicolor/scalable/apps \
+		$(PROTO_DIR)$(USRSHAREDIR)/icons/hicolor/256x256/apps \
+		$(PROTO_DIR)$(USRSHAREDIR)/icons/hicolor/32x32/apps; \
+	$(INSTALL) -m 0444 $(COMPONENT_DIR)/files/ioquake3.desktop \
+		$(PROTO_DIR)$(USRSHAREDIR)/applications/ioquake3.desktop; \
+	$(INSTALL) -m 0444 $(SOURCE_DIR)/misc/linux/org.ioquake3.ioquake3.metainfo.xml \
+		$(PROTO_DIR)$(USRSHAREDIR)/metainfo/org.ioquake3.ioquake3.metainfo.xml; \
+	$(INSTALL) -m 0444 $(SOURCE_DIR)/misc/quake3.svg \
+		$(PROTO_DIR)$(USRSHAREDIR)/icons/hicolor/scalable/apps/ioquake3.svg; \
+	$(INSTALL) -m 0444 $(SOURCE_DIR)/misc/linux/quake3-tango.png \
+		$(PROTO_DIR)$(USRSHAREDIR)/icons/hicolor/256x256/apps/ioquake3.png; \
+	$(INSTALL) -m 0444 $(SOURCE_DIR)/misc/quake3.png \
+		$(PROTO_DIR)$(USRSHAREDIR)/icons/hicolor/32x32/apps/ioquake3.png
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += library/audio/openal
