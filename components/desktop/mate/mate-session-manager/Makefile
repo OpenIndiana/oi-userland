@@ -24,10 +24,9 @@ include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-session-manager
 COMPONENT_MJR_VERSION=	1.28
-COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION= 1
+COMPONENT_MNR_VERSION=	2
 COMPONENT_SUMMARY=	The Session manager and session startup stuff
-COMPONENT_ARCHIVE_HASH= sha256:d32ce4595ba1da65290777203f2bc82bd973b214a3a04080a1ef5c68990a2d7b
+COMPONENT_ARCHIVE_HASH= sha256:22eeef743fa0d665f144419857bcac04a6b3bc26da2e7b6e7326253597e0d255
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_CLASSIFICATION= System/Libraries
 
@@ -44,6 +43,7 @@ REQUIRED_PACKAGES += developer/build/autoconf-archive
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
@@ -54,7 +54,7 @@ REQUIRED_PACKAGES += x11/library/libepoxy
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxau
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxtst
-REQUIRED_PACKAGES += x11/library/mesa
