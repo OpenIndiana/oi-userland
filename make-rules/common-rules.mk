@@ -62,10 +62,41 @@ COMPONENT_INSTALL_ACTION ?= \
 		$(COMPONENT_INSTALL_CMD) $(COMPONENT_INSTALL_ARGS) \
 		$(COMPONENT_INSTALL_TARGETS)
 
+# Convert absolute symlinks to minimal relative symlinks
+INSTALLED_SYMLINKS = $$(cd $(PROTO_DIR) && $(FIND) . -type l | $(CUT) -c 3-)
+COMPONENT_SYMLINKS_MANGLE_ACTION = \
+	for l in $(INSTALLED_SYMLINKS) ; do \
+		[ -L "$(PROTO_DIR)/$$l" ] || continue ; \
+		t="$$($(READLINK) "$(PROTO_DIR)/$$l")" ; \
+		[ "$${t\#/}" == "$$t" ] && continue ; \
+		printf 'Mangle absolute symlink:\n  old: %s -> %s\n' "$$l" "$$t" ; \
+		f="$$($(REALPATH) -mLs --relative-to="$(PROTO_DIR)" "$(PROTO_DIR)/$$l")" ; \
+		t=$$( \
+			cd "$(PROTO_DIR)/$$($(DIRNAME) "$$f")" ; \
+			$(REALPATH) -mLs --relative-to="$(PROTO_DIR)" \
+				--relative-base="$(PROTO_DIR)" "$$t" \
+		) ; \
+		while true ; do \
+			t="$${t\#/}" ; \
+			f1="$${f%%/*}" ; \
+			t1="$${t%%/*}" ; \
+			[ "$$f1" == "$$t1" ] || break ; \
+			[ "$$f1" == "$$f" ] && break ; \
+			f="$${f\#$${f1}/}" ; \
+			t="$${t\#$${t1}}" ; \
+		done ; \
+		t="$$($(GSED) -e 's/[^/]*$$//' -e 's|[^/]\+|..|g' <<< "$$f")$${t:-.}" ; \
+		t="$${t%/.}" ; \
+		printf '  new: %s -> %s\n' "$$l" "$$t" ; \
+		$(RM) "$(PROTO_DIR)/$$l" ; \
+		$(SYMLINK) "$$t" "$(PROTO_DIR)/$$l" ; \
+	done ;
+
 $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
 	$(COMPONENT_INSTALL_ACTION)
 	$(COMPONENT_POST_INSTALL_ACTION)
+	$(COMPONENT_SYMLINKS_MANGLE_ACTION)
 	$(TOUCH) $@
 
 # test the built source
