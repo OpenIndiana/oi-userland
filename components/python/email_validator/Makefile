@@ -19,16 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		email_validator
-HUMAN_VERSION =			2.3.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.4.0
 COMPONENT_SUMMARY =		A robust email address syntax and deliverability validation library.
 COMPONENT_PROJECT_URL =		https://github.com/JoshData/python-email-validator
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9fc05c37f2f6cf439ff414f8fc46d917929974a82244c20eb10231ba60c54426
+	sha256:be487bc50bc3bd832a98515a55a15649d9bec06d954fa178663190714b6c4ee1
 COMPONENT_LICENSE =		Unlicense
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
+
+# Python 3.9 is not supported by email-validator >= 2.4.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
