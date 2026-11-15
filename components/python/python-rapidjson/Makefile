@@ -15,27 +15,26 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		python_rapidjson
-HUMAN_VERSION =			1.21
+HUMAN_VERSION =			1.23
 COMPONENT_SUMMARY =		Python wrapper around rapidjson
 COMPONENT_PROJECT_URL =		https://github.com/python-rapidjson/python-rapidjson
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4d0dd9cf1fcb6f4bf79ee606e6e9be4cfa598f273b91338a6974b6a99309a1e6
+	sha256:0f845daeb26be147f5720a8c410308235092bb4fbb81ea408aa77203e26296fb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
-TEST_REQUIRED_PACKAGES.python += library/python/mypy
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytz
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
