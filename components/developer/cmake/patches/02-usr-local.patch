@@ -117,17 +117,6 @@
              $ENV{GTKMM_BASEPATH}/include
              $ENV{GTKMM_BASEPATH}/lib
              [HKEY_CURRENT_USER\\SOFTWARE\\gtkmm\\2.4;Path]/include
---- cmake-4.0.3/Modules/CMakeDetermineSystem.cmake.orig
-+++ cmake-4.0.3/Modules/CMakeDetermineSystem.cmake
-@@ -9,7 +9,7 @@
- 
- # find out on which system cmake runs
- if(CMAKE_HOST_UNIX)
--  find_program(CMAKE_UNAME NAMES uname PATHS /bin /usr/bin /usr/local/bin)
-+  find_program(CMAKE_UNAME NAMES uname PATHS /bin /usr/bin)
-   if(CMAKE_UNAME)
-     if(CMAKE_HOST_SYSTEM_NAME STREQUAL "AIX")
-       execute_process(COMMAND ${CMAKE_UNAME} -v
 --- cmake-4.0.3/Modules/CMakeGenericSystem.cmake.orig
 +++ cmake-4.0.3/Modules/CMakeGenericSystem.cmake
 @@ -196,7 +196,7 @@
@@ -139,3 +128,14 @@
        CACHE PATH "Install path prefix, prepended onto install directories.")
    else()
      GetDefaultWindowsPrefixBase(CMAKE_GENERIC_PROGRAM_FILES)
+--- cmake-4.5.0/Modules/CMakeDetermineSystem.cmake.orig	2026-11-12 17:22:58.000000000 +0100
++++ cmake-4.5.0/Modules/CMakeDetermineSystem.cmake	2026-11-14 21:52:38.397813563 +0100
+@@ -9,7 +9,7 @@
+ 
+ # find out on which system cmake runs
+ if(CMAKE_HOST_UNIX)
+-  find_program(CMAKE_UNAME NAMES uname PATHS /bin /usr/bin /usr/local/bin NO_CMAKE_FIND_ROOT_PATH)
++  find_program(CMAKE_UNAME NAMES uname PATHS /bin /usr/bin NO_CMAKE_FIND_ROOT_PATH)
+   if(CMAKE_UNAME)
+     if(CMAKE_HOST_SYSTEM_NAME STREQUAL "AIX")
+       execute_process(COMMAND ${CMAKE_UNAME} -v
