@@ -29,12 +29,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groff
-COMPONENT_VERSION=	1.24.2
+COMPONENT_VERSION=	1.25.0
 COMPONENT_SUMMARY=	GNU troff Text Formatting
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/groff/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:f9c1efd5bebbe37fc6e1063db7473ce8df1e3e0be4ff0f43ce04fce57e9c5dd9
+COMPONENT_ARCHIVE_HASH= sha256:24d103a07eb79e418963bce206c8771b649871f83bda2fd4c2e65529c1c56921
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/groff
 COMPONENT_CLASSIFICATION=	System/Text Tools
@@ -54,6 +54,8 @@ CONFIGURE_OPTIONS += --with-urw-fonts-dir=/usr/share/ghostscript/fonts
 COMPONENT_INSTALL_ARGS += legacyfontdir=/usr/share/ghostscript/fonts
 COMPONENT_INSTALL_ARGS += appdefdir=/usr/X11/lib/X11/app-defaults
 COMPONENT_INSTALL_ARGS += sys_tmac_prefix=/usr/share/lib/tmac/
+
+COMPONENT_POST_INSTALL_ACTION += ( $(RM) $(PROTOUSRSHAREDIR)/info/dir ) ;
 
 # Manually added build dependencies
 TEST_REQUIRED_PACKAGES += developer/test/dejagnu
