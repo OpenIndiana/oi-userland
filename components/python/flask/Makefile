@@ -15,30 +15,33 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flask
-HUMAN_VERSION =			3.1.2
+HUMAN_VERSION =			3.1.3
 COMPONENT_SUMMARY =		A simple framework for building complex web applications.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bf656c15c80190ed628ad08cdfd3aaa35beb087855e2f494910aa3774cc4fd87
+	sha256:0ef0e52b8a9cd932855379197dd8f94047b359ca0a78695144304cb45f87c9eb
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/pallets/flask/issues/6092
+PYTEST_ADDOPTS += --deselect tests/test_reqctx.py::test_bad_environ_raises_bad_request
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/blinker
-PYTHON_REQUIRED_PACKAGES += library/python/click
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/itsdangerous
-PYTHON_REQUIRED_PACKAGES += library/python/jinja2
-PYTHON_REQUIRED_PACKAGES += library/python/markupsafe
-PYTHON_REQUIRED_PACKAGES += library/python/werkzeug
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/blinker
+REQUIRED_PACKAGES.python += library/python/click
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += library/python/importlib-metadata
+REQUIRED_PACKAGES.python += library/python/itsdangerous
+REQUIRED_PACKAGES.python += library/python/jinja2
+REQUIRED_PACKAGES.python += library/python/markupsafe
+REQUIRED_PACKAGES.python += library/python/werkzeug
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/asgiref
 TEST_REQUIRED_PACKAGES.python += library/python/greenlet
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/python-dotenv
