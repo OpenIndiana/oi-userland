@@ -1,12 +1,11 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> pytest -v --tb=short --basetemp=$(@D)/.tox/tmp/py$(PYV)
+py$(PYV): commands[0]> python -m pytest -v --tb=short --basetemp=$(@D)/.tox/tmp/py$(PYV)
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 490 items
+collecting ... collected 490 items / 1 deselected / 489 selected
 
 tests/test_appctx.py::test_basic_url_generation PASSED
 tests/test_appctx.py::test_url_generation_requires_server_name PASSED
@@ -45,7 +44,7 @@ tests/test_basic.py::test_disallow_string_for_allowed_methods PASSED
 tests/test_basic.py::test_url_mapping PASSED
 tests/test_basic.py::test_werkzeug_routing PASSED
 tests/test_basic.py::test_endpoint_decorator PASSED
-tests/test_basic.py::test_session PASSED
+tests/test_basic.py::test_session_accessed PASSED
 tests/test_basic.py::test_session_path PASSED
 tests/test_basic.py::test_session_using_application_root PASSED
 tests/test_basic.py::test_session_using_session_settings PASSED
@@ -267,10 +266,11 @@ tests/test_cli.py::TestRoutes::test_all_methods PASSED
 tests/test_cli.py::TestRoutes::test_no_routes PASSED
 tests/test_cli.py::TestRoutes::test_subdomain PASSED
 tests/test_cli.py::TestRoutes::test_host PASSED
-tests/test_cli.py::test_load_dotenv PASSED
-tests/test_cli.py::test_dotenv_path PASSED
+tests/test_cli.py::test_load_dotenv SKIPPED (dotenv is not installed)
+tests/test_cli.py::test_dotenv_path SKIPPED (dotenv is not installed)
 tests/test_cli.py::test_dotenv_optional PASSED
-tests/test_cli.py::test_disable_dotenv_from_env PASSED
+tests/test_cli.py::test_disable_dotenv_from_env SKIPPED (dotenv is not
+installed)
 tests/test_cli.py::test_run_cert_path PASSED
 tests/test_cli.py::test_run_cert_adhoc PASSED
 tests/test_cli.py::test_run_cert_import PASSED
@@ -281,8 +281,7 @@ tests/test_cli.py::test_run_exclude_patterns PASSED
 tests/test_config.py::test_config_from_pyfile PASSED
 tests/test_config.py::test_config_from_object PASSED
 tests/test_config.py::test_config_from_file_json PASSED
-tests/test_config.py::test_config_from_file_toml SKIPPED (tomllib added
-in 3.11)
+tests/test_config.py::test_config_from_file_toml PASSED
 tests/test_config.py::test_from_prefixed_env PASSED
 tests/test_config.py::test_from_prefixed_env_custom_prefix PASSED
 tests/test_config.py::test_from_prefixed_env_nested PASSED
@@ -405,7 +404,6 @@ tests/test_reqctx.py::TestGreenletContextCopying::test_greenlet_context_copying 
 tests/test_reqctx.py::TestGreenletContextCopying::test_greenlet_context_copying_api PASSED
 tests/test_reqctx.py::test_session_error_pops_context PASSED
 tests/test_reqctx.py::test_session_dynamic_cookie_name PASSED
-tests/test_reqctx.py::test_bad_environ_raises_bad_request PASSED
 tests/test_reqctx.py::test_environ_for_valid_idna_completes PASSED
 tests/test_reqctx.py::test_normal_environ_completes PASSED
 tests/test_request.py::test_max_content_length PASSED
@@ -500,6 +498,6 @@ tests/test_views.py::test_multiple_inheritance PASSED
 tests/test_views.py::test_remove_method_from_parent PASSED
 tests/test_views.py::test_init_once PASSED
 
-======== 489 passed, 1 skipped ========
+======== 486 passed, 3 skipped, 1 deselected ========
   py$(PYV): OK
   congratulations :)
