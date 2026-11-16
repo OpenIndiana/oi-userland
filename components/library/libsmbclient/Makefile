@@ -29,12 +29,12 @@ BUILD_STYLE = waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.25.0
+COMPONENT_VERSION=	4.25.1
 COMPONENT_SUMMARY=	A library that permits GPLv2 applications to manipulate CIFS/SMB network resources
 COMPONENT_PROJECT_URL=	https://www.samba.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:2e2cb7296833b35b8f7a7fb76045e0c57adc0c2cd03264b37df5d58e40f28437
+COMPONENT_ARCHIVE_HASH=	sha256:7f367545bca69aa96897628f82f0f04d4b66b3bcb36cb978b9bb952c4b4c428d
 COMPONENT_ARCHIVE_URL=	https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL =     https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI=		library/samba/libsmbclient
@@ -113,11 +113,10 @@ CONFIGURE_ENV +=        CUPS_CONFIG=$(USRBINDIR)/cups-config
 CONFIGURE_ENV +=        PATH=$(GNUBIN.$(BITS)):$(USRBINDIR.$(BITS)):$(PATH.gnu)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += database/lmdb
-REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/icu-79
 REQUIRED_PACKAGES += library/jansson
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
