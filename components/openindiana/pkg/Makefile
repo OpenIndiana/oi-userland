@@ -13,6 +13,8 @@
 # Copyright 2026 Till Wegmüller
 #
 
+# Rebuild: linked-image RPC fix (OpenIndiana/pkg5#135)
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkg
