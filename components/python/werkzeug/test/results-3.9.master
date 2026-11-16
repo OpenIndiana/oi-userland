@@ -1,4 +1,3 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest -v --tb=short --basetemp=$(@D)/.tox/py$(PYV)/tmp
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -6,7 +5,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 948 items / 25 deselected / 923 selected
+collecting ... collected 981 items / 25 deselected / 956 selected
 
 tests/middleware/test_dispatcher.py::test_dispatcher PASSED
 tests/middleware/test_lint.py::test_lint_middleware PASSED
@@ -83,8 +82,17 @@ tests/sansio/test_utils.py::test_get_host[http-None-server11-spam] PASSED
 tests/sansio/test_utils.py::test_get_host[http-None-server12-spam:8080] PASSED
 tests/sansio/test_utils.py::test_get_host[http-None-server13-127.0.0.1:8080] PASSED
 tests/sansio/test_utils.py::test_get_host[http-None-server14-[::1]:8080] PASSED
-tests/sansio/test_utils.py::test_get_host[http-None-server15-unix/socket] PASSED
-tests/sansio/test_utils.py::test_get_host[http-spam-server16-spam] PASSED
+tests/sansio/test_utils.py::test_get_host[http-spam-server15-spam] PASSED
+tests/sansio/test_utils.py::test_get_host_unix PASSED
+tests/sansio/test_utils.py::test_get_host_missing PASSED
+tests/sansio/test_utils.py::test_get_host_invalid[] PASSED
+tests/sansio/test_utils.py::test_get_host_invalid[a.test:8080@b.test] PASSED
+tests/sansio/test_utils.py::test_get_host_invalid[a.test:port] PASSED
+tests/sansio/test_utils.py::test_get_host_invalid[[z:443]:8080] PASSED
+tests/sansio/test_utils.py::test_get_host_invalid[a.test:0] PASSED
+tests/sansio/test_utils.py::test_get_host_invalid[a.test:65536] PASSED
+tests/sansio/test_utils.py::test_get_host_invalid[a.test:0443] PASSED
+tests/sansio/test_utils.py::test_get_host_invalid[a.test:] PASSED
 tests/sansio/test_utils.py::test_get_content_length[2-None-2] PASSED
 tests/sansio/test_utils.py::test_get_content_length[ 2-None-2] PASSED
 tests/sansio/test_utils.py::test_get_content_length[2 -None-2] PASSED
@@ -234,6 +242,8 @@ tests/test_debug.py::test_get_machine_id PASSED
 tests/test_debug.py::test_console_closure_variables PASSED
 tests/test_debug.py::test_chained_exception_cycle PASSED
 tests/test_debug.py::test_exception_without_traceback PASSED
+tests/test_debug.py::test_missing_source_lines PASSED
+tests/test_debug.py::test_debugged_application_pin_security_false PASSED
 tests/test_exceptions.py::test_proxy_exception PASSED
 tests/test_exceptions.py::test_aborter_general[test0] PASSED
 tests/test_exceptions.py::test_aborter_general[test1] PASSED
@@ -330,8 +340,10 @@ tests/test_formparser.py::TestFormParser::test_limiting PASSED
 tests/test_formparser.py::TestFormParser::test_urlencoded_no_max PASSED
 tests/test_formparser.py::TestFormParser::test_urlencoded_silent_decode PASSED
 tests/test_formparser.py::TestFormParser::test_missing_multipart_boundary PASSED
+tests/test_formparser.py::TestFormParser::test_chunk_split_on_line_break_before_epilogue PASSED
 tests/test_formparser.py::TestFormParser::test_parse_form_data_put_without_content PASSED
 tests/test_formparser.py::TestFormParser::test_parse_form_data_get_without_content PASSED
+tests/test_formparser.py::TestFormParser::test_parse_form_post_data_trailing_CR PASSED
 tests/test_formparser.py::TestFormParser::test_default_stream_factory[False-100] PASSED
 tests/test_formparser.py::TestFormParser::test_default_stream_factory[False-3000] PASSED
 tests/test_formparser.py::TestFormParser::test_default_stream_factory[True-100] PASSED
@@ -365,9 +377,13 @@ tests/test_http.py::TestHTTPUtility::test_list_header[a b-expect0] PASSED
 tests/test_http.py::TestHTTPUtility::test_list_header[a b, c-expect1] PASSED
 tests/test_http.py::TestHTTPUtility::test_list_header[a b, "c, d"-expect2] PASSED
 tests/test_http.py::TestHTTPUtility::test_list_header["a\\"b", c-expect3] PASSED
+tests/test_http.py::TestHTTPUtility::test_list_header[a"b,c", "d e"-expect4] PASSED
+tests/test_http.py::TestHTTPUtility::test_list_header[a, ,,b,-expect5] PASSED
+tests/test_http.py::TestHTTPUtility::test_list_header[a, "b, c", "d, e-expect6] PASSED
 tests/test_http.py::TestHTTPUtility::test_dict_header[foo="bar baz", blah=42-expect0] PASSED
 tests/test_http.py::TestHTTPUtility::test_dict_header[foo, bar=-expect1] PASSED
 tests/test_http.py::TestHTTPUtility::test_dict_header[=foo, =-expect2] PASSED
+tests/test_http.py::TestHTTPUtility::test_dict_header[a=1, b="2, 3", c="4, d=5-expect3] PASSED
 tests/test_http.py::TestHTTPUtility::test_cache_control_header PASSED
 tests/test_http.py::TestHTTPUtility::test_csp_header PASSED
 tests/test_http.py::TestHTTPUtility::test_authorization_header PASSED
@@ -375,6 +391,7 @@ tests/test_http.py::TestHTTPUtility::test_authorization_ignore_invalid_parameter
 tests/test_http.py::TestHTTPUtility::test_authorization_token_padding PASSED
 tests/test_http.py::TestHTTPUtility::test_authorization_basic_incorrect_padding PASSED
 tests/test_http.py::TestHTTPUtility::test_bad_authorization_header_encoding PASSED
+tests/test_http.py::TestHTTPUtility::test_authorization_basic_validate PASSED
 tests/test_http.py::TestHTTPUtility::test_authorization_eq PASSED
 tests/test_http.py::TestHTTPUtility::test_www_authenticate_header PASSED
 tests/test_http.py::TestHTTPUtility::test_www_authenticate_token_padding PASSED
@@ -569,9 +586,11 @@ tests/test_routing.py::test_rule_templates PASSED
 tests/test_routing.py::test_non_string_parts PASSED
 tests/test_routing.py::test_complex_routing_rules PASSED
 tests/test_routing.py::test_default_converters PASSED
+tests/test_routing.py::test_int_converter_404[int_max_str_digits] PASSED
 tests/test_routing.py::test_uuid_converter PASSED
 tests/test_routing.py::test_converter_with_tuples PASSED
 tests/test_routing.py::test_nested_regex_groups PASSED
+tests/test_routing.py::test_part_converter_order PASSED
 tests/test_routing.py::test_anyconverter PASSED
 tests/test_routing.py::test_any_converter_build_validates_value PASSED
 tests/test_routing.py::test_part_isolating_default PASSED
@@ -666,6 +685,13 @@ tests/test_security.py::test_safe_join[b\\c-a/b\\c] PASSED
 tests/test_security.py::test_safe_join[//b/c-None] PASSED
 tests/test_security.py::test_safe_join_os_sep PASSED
 tests/test_security.py::test_safe_join_empty_trusted PASSED
+tests/test_security.py::test_safe_join_windows_special[CON] PASSED
+tests/test_security.py::test_safe_join_windows_special[CON.txt] PASSED
+tests/test_security.py::test_safe_join_windows_special[CON.txt.html] PASSED
+tests/test_security.py::test_safe_join_windows_special[CON  ] PASSED
+tests/test_security.py::test_safe_join_windows_special[CON . txt] PASSED
+tests/test_security.py::test_safe_join_windows_special[b/CON] PASSED
+tests/test_security.py::test_safe_join_not_windows_special PASSED
 tests/test_send_file.py::test_path[path0] PASSED
 tests/test_send_file.py::test_path[$(@D)/tests/res/index.html] PASSED
 tests/test_send_file.py::test_x_sendfile PASSED
@@ -781,6 +807,11 @@ tests/test_urls.py::test_uri_iri_normalization[http://f\xf6\xf1.com/\u2610/fred?
 tests/test_urls.py::test_uri_to_iri_dont_unquote_space PASSED
 tests/test_urls.py::test_iri_to_uri_dont_quote_valid_code_points PASSED
 tests/test_urls.py::test_itms_services PASSED
+tests/test_urls.py::test_uri_empty_auth[http://:p@d.test] PASSED
+tests/test_urls.py::test_uri_empty_auth[http://u:@d.test] PASSED
+tests/test_urls.py::test_uri_empty_auth[http://:@d.test] PASSED
+tests/test_urls.py::test_uri_empty_auth[http://u@d.test] PASSED
+tests/test_urls.py::test_uri_port_0 PASSED
 tests/test_utils.py::test_redirect[http://example.com-None-http://example.com] PASSED
 tests/test_utils.py::test_redirect[/f\xfc\xfcb\xe4r-305-/f%C3%BC%C3%BCb%C3%A4r] PASSED
 tests/test_utils.py::test_redirect[http://\u2603.example.com/-307-http://xn--n3h.example.com/] PASSED
@@ -853,6 +884,7 @@ tests/test_wrappers.py::test_data_descriptor_triggers_parsing PASSED
 tests/test_wrappers.py::test_get_data_method_parsing_caching_behavior PASSED
 tests/test_wrappers.py::test_etag_response PASSED
 tests/test_wrappers.py::test_etag_response_412 PASSED
+tests/test_wrappers.py::test_advertise_accept_ranges PASSED
 tests/test_wrappers.py::test_range_request_basic PASSED
 tests/test_wrappers.py::test_range_request_out_of_bound PASSED
 tests/test_wrappers.py::test_range_request_with_file PASSED
@@ -932,6 +964,6 @@ tests/test_wsgi.py::test_get_current_url_invalid_utf8 PASSED
 tests/test_wsgi.py::test_range_wrapper PASSED
 tests/test_wsgi.py::test_closing_iterator PASSED
 
-======== 923 passed, 25 deselected ========
+======== 956 passed, 25 deselected ========
   py$(PYV): OK
   congratulations :)
