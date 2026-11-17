@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         resource-agents
 COMPONENT_VERSION=      4.1.0
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_FMRI=         application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,20 +35,15 @@ CFLAGS += "-lnsl"
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/lib
-CONFIGURE_OPTIONS += --sharedstatedir=/var/hacluster
-CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --sharedstatedir=$(VARDIR)/hacluster
 CONFIGURE_OPTIONS += --enable-fatal-warnings=no
 CONFIGURE_OPTIONS += --enable-ansi
 CONFIGURE_OPTIONS += --with-ocf-root=$(CONFIGURE_PREFIX)/lib/ocf
 
-COMPONENT_PREP_ACTION=(cd $(SOURCE_DIR); ./autogen.sh) 
+COMPONENT_PREP_ACTION += (cd $(SOURCE_DIR); $(ENV) ./autogen.sh) ;
 
-COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
-
-# leaving this folder prevents repeated install actions
-COMPONENT_PRE_INSTALL_ACTION = ( $(RM) -r $(PROTO_DIR)/usr/lib/ocf/; ) 
+CLONEY_MODE =
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
