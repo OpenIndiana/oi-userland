@@ -516,7 +516,7 @@ fi
 
 
 # Create manifests
-if ! $GMAKE sample-manifest > /dev/null 2>&1 ; then
+if ! $GMAKE MAKEFILE_PREREQ= sample-manifest > /dev/null 2>&1 ; then
 	printf "ERROR: 'gmake sample-manifest' failed!\n" >&2
 else
 	MANIFEST="$DISTRIBUTION-PYVER.p5m"
@@ -537,7 +537,7 @@ fi
 
 
 # Generate REQUIRED_PACKAGES
-$GMAKE REQUIRED_PACKAGES > /dev/null 2>&1 || printf "ERROR: 'gmake REQUIRED_PACKAGES' failed!\n" >&2
+$GMAKE MAKEFILE_PREREQ= REQUIRED_PACKAGES > /dev/null 2>&1 || printf "ERROR: 'gmake REQUIRED_PACKAGES' failed!\n" >&2
 git add Makefile
 
 
