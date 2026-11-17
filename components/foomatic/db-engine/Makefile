@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		foomatic-db-engine
 COMPONENT_VERSION=	4.0.13
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Foomatic Database Engine
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -48,10 +49,10 @@ CONFIGURE_OPTIONS += PERL=$(PERL)
 CONFIGURE_OPTIONS += FILEUTIL=/usr/bin/gfile
 
 # the build system does not support building outside of the source tree
-COMPONENT_PRE_CONFIGURE_ACTION += $(CLONEY) $(SOURCE_DIR) $(@D) ;
+CLONEY_MODE =
 
 # setup perl build
-COMPONENT_PRE_CONFIGURE_ACTION += cd $(@D)/lib ; $(PERL) Makefile.PL ;
+COMPONENT_PRE_CONFIGURE_ACTION += (cd $(@D)/lib && $(ENV) $(PERL) Makefile.PL) ;
 
 # Defaults.pm is not built by the perl module, but by external utility, so it's in wrong place
 COMPONENT_POST_INSTALL_ACTION += \
@@ -63,7 +64,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(SYMLINK) ../../../bin/foomatic-ppdfile $(PROTOUSRLIBDIR)/cups/driver/foomatic ;
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += runtime/perl
