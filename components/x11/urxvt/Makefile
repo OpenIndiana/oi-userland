@@ -17,15 +17,15 @@ SINGLE_PERL_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         rxvt-unicode
-COMPONENT_VERSION=      9.31
+COMPONENT_VERSION=	9.32
 COMPONENT_FMRI=         terminal/urxvt
 COMPONENT_SUMMARY=      rxvt-unicode is a fork of the well known terminal emulator rxvt
 COMPONENT_CLASSIFICATION=Applications/System Utilities
-COMPONENT_LICENSE_FILE= urxvt.license
-COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_LICENSE=	GPL-3.0-only
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:aaa13fcbc149fe0f3f391f933279580f74a96fd312d6ed06b8ff03c2d46672e8
+COMPONENT_ARCHIVE_HASH=	sha256:2f81c16bffb16f97c4633032e08a7ef08c000f81eb05853e950febc6c33328dd
 COMPONENT_ARCHIVE_URL=  http://dist.schmorp.de/rxvt-unicode/Attic/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://software.schmorp.de/pkg/rxvt-unicode.html
 
@@ -47,7 +47,6 @@ CONFIGURE_OPTIONS += --enable-smart-resize
 CONFIGURE_OPTIONS += --enable-everything
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/startup-notification
@@ -61,3 +60,4 @@ REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxft
 REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES.perl += runtime/perl
