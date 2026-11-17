@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkgtree
 COMPONENT_VERSION=	1.1
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_SUMMARY=	pkgtree displays the IPS package dependency tree
 COMPONENT_PROJECT_URL=	https://github.com/msmark/pkgtree
 COMPONENT_FMRI=		developer/pkgtree
@@ -59,4 +59,4 @@ $(TEST_$(MK_BITS)): $(INSTALL_$(MK_BITS))
 	$(TOUCH) $@
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += runtime/perl
