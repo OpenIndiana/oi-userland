@@ -49,6 +49,10 @@ stage_setup() {
 	fi
 	echo "jenkinshelper: running gmake setup"
 	gmake setup
+	# Encumbered components publish to a separate repository, which only the
+	# encumbered setup creates.
+	echo "jenkinshelper: running gmake setup for encumbered components"
+	gmake -C components/encumbered setup
 }
 
 # scan the git log for changed components
