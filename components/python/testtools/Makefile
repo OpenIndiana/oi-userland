@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		testtools
-HUMAN_VERSION =			2.9.1
+HUMAN_VERSION =			2.9.2
 COMPONENT_SUMMARY =		Extensions to the Python standard library unit testing framework
 COMPONENT_PROJECT_URL =		https://github.com/testing-cabal/testtools
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:39ad9eb9e1b935d6838f4b3aee4d6e72db65df5602f6feda998dbb4fe8de0b19
+	sha256:64f35fc503ac0e51310e0be9f4336533d26e375f343fda39da72c62d4b9ddb6e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,7 +32,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 # run tests', and 'A ==> B' means 'A needs B for build and/or run'):
 #
 # testtools --> fixtures --> testtools
-# testtools --> testscenarios ==> testtools
+# testtools --> testscenarios --> testtools
 #
 # To break loops we need to allow this project to integrate without testing in
 # a case the required projects are not available yet (bootstrap).
