@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		prettytable
-HUMAN_VERSION =			3.18.0
+HUMAN_VERSION =			3.19.0
 COMPONENT_SUMMARY =		A simple Python library for easily displaying tabular data in a visually appealing ASCII table format
 COMPONENT_PROJECT_URL =		https://github.com/prettytable/prettytable
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:439217116152244369caf3d9f1caf2f9fe29b03bd79e88d2928c8e718c95d680
+	sha256:0ecedd6d9a560b330503bef15791b77954fa46b7123203d91e463330b61959ba
 COMPONENT_LICENSE =		BSD-3-Clause
 
 # Python 3.9 is not supported by prettytable >= 3.17.0
