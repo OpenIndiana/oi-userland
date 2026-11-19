@@ -4,8 +4,8 @@
          DEPENDS ${gir_deps} ${gir_srcs}
          VERBATIM
          COMMAND_EXPAND_LISTS
--        COMMAND ${CMAKE_COMMAND} -E env "CC=${CMAKE_C_COMPILER}" "CFLAGS=${CMAKE_C_FLAGS}"
-+        COMMAND ${CMAKE_COMMAND} -E env "CC=${CMAKE_C_COMPILER}" "CFLAGS=${CMAKE_C_FLAGS}" "LDFLAGS=${CMAKE_EXE_LINKER_FLAGS}"
+-        COMMAND ${CMAKE_COMMAND} -E env ${scanner_env}
++        COMMAND ${CMAKE_COMMAND} -E env ${scanner_env} "LDFLAGS=${CMAKE_EXE_LINKER_FLAGS}"
              "${GI_SCANNER_EXE}" --quiet --warn-all --warn-error --no-libtool
              "--output=${gir_path}"
              "--library=$<TARGET_FILE_BASE_NAME:${opt_TARGET}>"
