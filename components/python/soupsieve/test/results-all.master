@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 708 items
+collecting ... collected 724 items
 
 tests/test_api.py::TestSoupSieve::test_cache PASSED
 tests/test_api.py::TestSoupSieve::test_closest_match_complex_parent PASSED
@@ -24,13 +24,18 @@ tests/test_api.py::TestSoupSieve::test_escape_round_trip PASSED
 tests/test_api.py::TestSoupSieve::test_escape_special PASSED
 tests/test_api.py::TestSoupSieve::test_escape_wide_unicode PASSED
 tests/test_api.py::TestSoupSieve::test_filter_list PASSED
+tests/test_api.py::TestSoupSieve::test_filter_list_mixed PASSED
+tests/test_api.py::TestSoupSieve::test_filter_list_shares_matcher PASSED
 tests/test_api.py::TestSoupSieve::test_filter_tag PASSED
 tests/test_api.py::TestSoupSieve::test_filter_tag_order PASSED
 tests/test_api.py::TestSoupSieve::test_ignore PASSED
+tests/test_api.py::TestSoupSieve::test_ignore_aliases PASSED
+tests/test_api.py::TestSoupSieve::test_ignore_escaped_and_cased_names PASSED
 tests/test_api.py::TestSoupSieve::test_immutable_dict_size PASSED
 tests/test_api.py::TestSoupSieve::test_iselect PASSED
 tests/test_api.py::TestSoupSieve::test_iselect_order PASSED
 tests/test_api.py::TestSoupSieve::test_match PASSED
+tests/test_api.py::TestSoupSieve::test_nocache_tree_changes_during_iselect PASSED
 tests/test_api.py::TestSoupSieve::test_pickle_nested PASSED
 tests/test_api.py::TestSoupSieve::test_pickle_null_and_selector PASSED
 tests/test_api.py::TestSoupSieve::test_pickle_shared PASSED
@@ -41,6 +46,7 @@ tests/test_api.py::TestSoupSieve::test_select_one PASSED
 tests/test_api.py::TestSoupSieve::test_select_one_none PASSED
 tests/test_api.py::TestSoupSieve::test_select_order PASSED
 tests/test_api.py::TestSoupSieve::test_unescaped_non_ascii_identifiers PASSED
+tests/test_api.py::TestSoupSieve::test_uses_scope PASSED
 tests/test_api.py::TestInvalid::test_excessive_custom_and_normal_selectors PASSED
 tests/test_api.py::TestInvalid::test_excessive_custom_selectors PASSED
 tests/test_api.py::TestInvalid::test_excessive_group_selectors PASSED
@@ -98,16 +104,20 @@ tests/test_extra/test_iframe.py::TestIframe::test_parsers_do_not_escape_contents
 tests/test_extra/test_iframe.py::TestIframe::test_parsers_escape_contents PASSED
 tests/test_extra/test_iframe.py::TestIframe::test_template_in_iframe PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains PASSED
+tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_across_boundaries PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_bad PASSED
+tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_cache_drops_ends PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_cdata_html5 SKIPPED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_cdata_lxml_html PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_cdata_py_html PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_cdata_xhtml PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_cdata_xml PASSED
+tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_deeply_nested PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_escapes PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_iframe PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_iframe_xml PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_list PASSED
+tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_many_values PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_multiple PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_multiple_not_match PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_multiple_not_no_match PASSED
@@ -115,6 +125,7 @@ tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_quoted_w
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_quoted_with_escaped_newline_with_carriage_return PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_quoted_with_space PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_quoted_without_space PASSED
+tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_values_across_boundaries PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_warn PASSED
 tests/test_extra/test_soup_contains.py::TestSoupContains::test_contains_with_descendants PASSED
 tests/test_extra/test_soup_contains_own.py::TestSoupContainsOwn::test_contains_own PASSED
@@ -364,8 +375,11 @@ tests/test_level3/test_nth_child.py::TestNthChild::test_nth_child PASSED
 tests/test_level3/test_nth_child.py::TestNthChild::test_nth_child_an_plus_b_boundaries PASSED
 tests/test_level3/test_nth_child.py::TestNthChild::test_nth_child_complex PASSED
 tests/test_level3/test_nth_child.py::TestNthChild::test_nth_child_even PASSED
+tests/test_level3/test_nth_child.py::TestNthChild::test_nth_child_huge_values PASSED
+tests/test_level3/test_nth_child.py::TestNthChild::test_nth_child_imprecise_float_values PASSED
 tests/test_level3/test_nth_child.py::TestNthChild::test_nth_child_no_parent PASSED
 tests/test_level3/test_nth_child.py::TestNthChild::test_nth_child_odd PASSED
+tests/test_level3/test_nth_child.py::TestNthChild::test_nth_child_too_many_digits PASSED
 tests/test_level3/test_nth_child.py::TestNthChild::test_nth_child_with_bad_parameters PASSED
 tests/test_level3/test_nth_last_child.py::TestNthLastChild::test_nth_last_child PASSED
 tests/test_level3/test_nth_last_child.py::TestNthLastChild::test_nth_last_child_complex PASSED
@@ -617,6 +631,7 @@ tests/test_level4/test_lang.py::TestLang::test_language_ill_formed_subtag_length
 tests/test_level4/test_lang.py::TestLang::test_language_ill_formed_tag PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_ill_formed_xml PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_in_header PASSED
+tests/test_level4/test_lang.py::TestLang::test_language_in_header_of_each_root PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_in_xhtml PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_in_xhtml_without_html_style_lang PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_list PASSED
@@ -625,6 +640,7 @@ tests/test_level4/test_lang.py::TestLang::test_language_quoted_with_escaped_newl
 tests/test_level4/test_lang.py::TestLang::test_language_shared_ancestors PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_und PASSED
 tests/test_level4/test_lang.py::TestLang::test_language_well_formed_unregistered_tag PASSED
+tests/test_level4/test_lang.py::TestLang::test_long_inherited_language PASSED
 tests/test_level4/test_lang.py::TestLang::test_no_language_in_header PASSED
 tests/test_level4/test_lang.py::TestLang::test_only_wildcard PASSED
 tests/test_level4/test_lang.py::TestLang::test_svg_language_in_html5 SKIPPED
@@ -718,4 +734,4 @@ tests/test_versions.py::TestVersion::test_version_comparison PASSED
 tests/test_versions.py::TestVersion::test_version_output PASSED
 tests/test_versions.py::TestVersion::test_version_parsing PASSED
 
-======== 646 passed, 62 skipped, 12 subtests passed ========
+======== 662 passed, 62 skipped, 12 subtests passed ========
