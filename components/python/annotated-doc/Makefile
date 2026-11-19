@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		annotated_doc
-HUMAN_VERSION =			0.0.6
+HUMAN_VERSION =			0.0.7
 COMPONENT_SUMMARY =		Document parameters, class attributes, return types, and variables inline, with Annotated.
 COMPONENT_PROJECT_URL =		https://github.com/fastapi/annotated-doc
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7969bb69912085b2285849c0dcac0b4b374fd180c13cf10a87f284ffcf347bbf
+	sha256:0a30ef8f5322a4173720ae6712dc9a5e58f5a19868f3f167b4b5778db066c2b5
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
