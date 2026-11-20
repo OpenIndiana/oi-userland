@@ -1,0 +1,21 @@
+
+webkitgtk-2.54.3/Source/WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:3849:82: error: passing 'const sk_sp<SkImage>' as 'this' argument discards qualifiers [-fpermissive]
+ 3849 |         platformImage = SkiaUtilities::scaleImagePixels(platformImage, scaledSize);
+      |                                                                                  ^
+
+Revert to earlier releases functionality where there is no scale support.
+
+--- webkitgtk-2.54.3/Source/WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp.old	2026-11-18 17:46:29.098192347 -0500
++++ webkitgtk-2.54.3/Source/WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp	2026-11-18 17:50:09.446409400 -0500
+@@ -3845,10 +3845,7 @@
+         gtk_widget_set_cursor(GTK_WIDGET(webViewBase), newCursor.get());
+         return;
+ #else
+-        auto scaledSize = expandedIntSize(FloatSize(nativeImage->size()).scaled(1 / cursorScale));
+-        platformImage = SkiaUtilities::scaleImagePixels(platformImage, scaledSize);
+-        if (!platformImage)
+-            return;
++        return;
+ #endif
+     }
+ 
