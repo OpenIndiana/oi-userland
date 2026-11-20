@@ -1,0 +1,15 @@
+venus: illumos has no SYS_gettid; use the pthread id as the thread id.
+
+Upstreamable.
+
+--- src/virtio/vulkan/vn_common.h.orig
++++ src/virtio/vulkan/vn_common.h
+@@ -616,6 +616,8 @@
+    return gettid();
+ #elif defined(__FreeBSD__)
+    return syscall(SYS_thr_self);
++#elif DETECT_OS_SOLARIS
++   return (pid_t)pthread_self();
+ #else
+    return syscall(SYS_gettid);
+ #endif
