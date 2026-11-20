@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Convert-ASN1
-HUMAN_VERSION =			0.36
+HUMAN_VERSION =			0.37
 COMPONENT_SUMMARY =		Convert between perl data structures and ASN.1 encoded packets
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:50439aedff4b403f24c9373eefd3c25770e33a9190d93a331e7a744f8b4e7cd3
+	sha256:012b90bbb931e049340a114dbc510f845309d9ca76cc6c4fad751d317b4bf0fa
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
