@@ -39,6 +39,13 @@ link path=usr/jdk/$(COMPONENT_NAME)$(OPENJDK_VERSION) target=instances/$(OPENJDK
 # link path=usr/jdk/latest target=$(OPENJDK_INSTANCE) pkg.linted.userland.action002.0=true
 # link path=usr/java target=jdk/$(OPENJDK_INSTANCE)
 
+# (work around symlink dangling PR 28182 breakage):
+# oi-userland/components/runtime/openjdk-27/build/manifest-i386-openjdk.depend has unresolved dependency '
+#     depend type=require fmri=__TBD \
+#       pkg.debug.depend.file=usr/jdk/instances/openjdk27.0.1.1 \
+#       pkg.debug.depend.reason=usr/jdk/openjdk27 pkg.debug.depend.type=link'.  
+<transform link -> default pkg.tmp.allow-dangling true>
+
 # ls ..|xargs -n1 basename|awk '{ print "link path=usr/bin/"$1" target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/"$1" mediator=java mediator-version=27" }'
 link path=usr/bin/jar target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jar mediator=java mediator-version=27
 link path=usr/bin/jarsigner target=../jdk/instances/$(OPENJDK_INSTANCE)/bin/jarsigner mediator=java mediator-version=27
