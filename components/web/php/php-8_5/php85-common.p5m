@@ -59,10 +59,14 @@ file files/xsl.ini path=etc/php/8.5/conf.d/xsl.ini preserve=true
 file files/zip.ini path=etc/php/8.5/conf.d/zip.ini preserve=true
 file files/zlib.ini path=etc/php/8.5/conf.d/zlib.ini preserve=true
 
-link path=usr/php/bin target=./8.5/bin mediator=php mediator-version=8.5
-link path=usr/php/include target=./8.5/include mediator=php mediator-version=8.5
-link path=usr/php/lib target=./8.5/lib mediator=php mediator-version=8.5
-link path=usr/php/man target=./8.5/share/man mediator=php mediator-version=8.5
+link path=usr/php/bin target=8.5/bin mediator=php mediator-version=8.5 \
+    pkg.tmp.allow-dangling=true
+link path=usr/php/include target=8.5/include mediator=php mediator-version=8.5 \
+    pkg.tmp.allow-dangling=true
+link path=usr/php/lib target=8.5/lib mediator=php mediator-version=8.5 \
+    pkg.tmp.allow-dangling=true
+link path=usr/php/man target=8.5/share/man mediator=php mediator-version=8.5 \
+    pkg.tmp.allow-dangling=true
 link path=usr/share/man/man1/php-config.1 \
     target=../../../php/8.5/share/man/man1/php-config.1 mediator=php \
     mediator-version=8.5
