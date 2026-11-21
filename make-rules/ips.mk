@@ -531,6 +531,7 @@ $(RESOLVE_DEPS):	Makefile $(BUILD_DIR) $(DEPENDED)
 FAKE_MANIFESTS += ogl-select.p5m
 FAKE_MANIFESTS += runtime-perl.p5m
 FAKE_MANIFESTS += runtime-ruby.p5m
+FAKE_MANIFESTS += system-mta.p5m
 
 $(BUILD_DIR)/%.p5m: $(WS_TOOLS)/%.p5m
 	$(CP) $< $@
