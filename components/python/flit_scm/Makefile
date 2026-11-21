@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flit_scm
 HUMAN_VERSION =			1.7.0
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		A PEP 518 build backend that uses setuptools_scm to generate a version file from your version control system, then flit to build the package.
 COMPONENT_PROJECT_URL =		https://gitlab.com/WillDaSilva/flit_scm
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,11 +29,6 @@ COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = none
-
-# This component is required by following bootstrapped components so it must be
-# bootstrapped too.
-# - exceptiongroup (test bootstrap)
-PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
