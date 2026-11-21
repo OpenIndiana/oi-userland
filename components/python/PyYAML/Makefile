@@ -19,16 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyyaml
-HUMAN_VERSION =			6.0.3
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			6.0.4
 COMPONENT_SUMMARY =		YAML parser and emitter for Python
 COMPONENT_PROJECT_URL =		https://pyyaml.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f
+	sha256:e24bf71af8a432d7808fabff134d38dfe16d3cbb41f2873bb4b1e42422de0a1a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
+
+# Python 3.9 is not supported by PyYAML >= 6.0.4
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
