@@ -1,0 +1,39 @@
+#
+# SPDX-License-Identifier: MIT
+# Copyright 2026 The illumos-drm authors
+#
+# IPS manifest of misc/linuxkpi (linuxkpi/), the illumos Linux
+# compatibility layer that Linux DRM drivers built for the illumos-drm
+# facade (today i915n) and misc/drm_helpers link against with
+# -N misc/linuxkpi. Publish from a directory holding the module built by
+# linuxkpi/build.sh as kernel/misc/amd64/linuxkpi, with this repository as
+# the second directory for the MIT notice (include/drm/LICENSE):
+#
+#   linuxkpi/build.sh all          # $OUT/linuxkpi
+#   cp $OUT/linuxkpi <proto>/kernel/misc/amd64/linuxkpi
+#   pkgsend publish -s <repo> -d <proto> -d . packaging/linuxkpi.p5m
+#
+# The module is linked with -N misc/drm_core (fences, reservations, the
+# DRM device of the drivers it serves), so it belongs to the illumos-drm
+# stack: drmadm's exclusion of misc/drm_core under `drmadm select legacy`
+# keeps it from loading with the legacy stack. It has no device nodes and
+# no driver action; the kernel loads it with the first module that depends
+# on it. The test driver linuxkpi_selftest is not packaged
+# (tools/test/run-r5c-test.sh installs and removes it).
+#
+set name=pkg.fmri value=pkg:/driver/graphics/linuxkpi@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Linux kernel interfaces for DRM drivers (misc/linuxkpi)"
+set name=pkg.description value="misc/linuxkpi, the illumos LinuxKPI layer of illumos-drm: MIT-licensed implementations of the Linux kernel interfaces (memory, pages, DMA, locks, wait queues, RCU, timers, workqueues, PCI, interrupts, firmware) that Linux DRM drivers on the illumos-drm facade use, over the DDI."
+set name=info.classification value=org.opensolaris.category.2008:Drivers/Display
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=userland
+dir  path=kernel owner=root group=sys mode=0755
+dir  path=kernel/misc owner=root group=sys mode=0755
+dir  path=kernel/misc/amd64 owner=root group=sys mode=0755
+file path=kernel/misc/amd64/linuxkpi owner=root group=sys mode=0755 preserve=false reboot-needed=true
+# Built against facade 1.1 of this version of the core (major version 0).
+depend fmri=pkg:/driver/graphics/drm-core@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=incorporate
+license include/drm/LICENSE license=MIT
+# LINUXKPI_ABI 2: keep the Linux consumers at the same build.
+depend fmri=pkg:/driver/graphics/drm-kms@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=incorporate
+depend fmri=pkg:/driver/graphics/i915n@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=incorporate

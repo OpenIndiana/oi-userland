@@ -1,0 +1,26 @@
+--- a/linuxkpi/kflags.sh
++++ b/linuxkpi/kflags.sh
+@@ -15,10 +15,10 @@
+ # Only the kernel header directories of the system include tree, so a
+ # Linux header the layer lacks is an error and not a userland header.
+ for d in sys vm asm ia32 amd64 netinet inet net rpc; do
+-	[ -e "$SYSINC/$d" ] && ln -sfn "$SYSINC/$d" "$OUT/sysinc/$d"
++	[ -e "$SYSINC/$d" ] && /usr/gnu/bin/ln -sfn "$SYSINC/$d" "$OUT/sysinc/$d"
+ done
+ 
+-_lkpi_tmp=$(mktemp -d /tmp/lkpi-flags.XXXXXX)
++_lkpi_tmp=$(mktemp -d ${TMPDIR:-/tmp}/lkpi-flags.XXXXXX)
+ printf 'int probe;\n' > "$_lkpi_tmp/probe.c"
+ _lkpi_probe() {
+ 	"$CC" -m64 -Werror "$@" -c -o "$_lkpi_tmp/probe.o" "$_lkpi_tmp/probe.c" >/dev/null 2>&1
+--- a/carried/fetch-and-patch
++++ b/carried/fetch-and-patch
+@@ -89,7 +89,7 @@
+ URL=$(pin url)
+ [ -n "$REV" ] && [ -n "$URL" ] || die "linux.pin lacks rev= or url="
+ 
+-TMPD=$(mktemp -d /tmp/fetch-and-patch.XXXXXX)
++TMPD=$(mktemp -d ${TMPDIR:-/tmp}/fetch-and-patch.XXXXXX)
+ trap 'rm -rf "$TMPD"' EXIT
+ trap 'exit 1' INT TERM
+ 
