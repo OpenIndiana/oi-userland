@@ -23,38 +23,29 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		flex
-COMPONENT_VERSION=	2.6.4
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.7.3
 COMPONENT_PROJECT_URL=	https://github.com/westes/flex/releases
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:e87aae032bf07c26f85ac0ed3250998c37621d95f8bd748b31f15b33c45ee995
+COMPONENT_ARCHIVE_HASH=	sha256:b18bbc3622b2b9ebecd0423f4e110adfad8db51d0c5ada3f26660c7cb7c735ec
 COMPONENT_ARCHIVE_URL=	https://github.com/westes/flex/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 LDFLAGS += $(CC_BITS)
 
 include $(WS_MAKE_RULES)/common.mk
 
+PATH= $(PATH.gnu)
+
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		M4="$(GNUBIN)/m4"
+CONFIGURE_OPTIONS  += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS  += M4="$(GNUBIN)/m4"
 
-COMPONENT_TEST_ENV +=		PATH=$(GNUBIN):$(USRBINDIR)
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/=====/p" ' \
-	'-e "/TOTAL/p" ' \
-	'-e "/SKIP/p" ' \
-	'-e "/PASS/p" ' \
-	'-e "/FAIL/p" ' \
-	'-e "/ERROR/p" '
+COMPONENT_TEST_ENV += PATH=$(PATH)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += developer/macro/gnu-m4
