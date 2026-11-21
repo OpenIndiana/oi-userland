@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         quilt
 COMPONENT_VERSION=      0.69
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=      Quilt - tool to manage series of patches
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://savannah.nongnu.org/projects/quilt/
@@ -37,16 +37,18 @@ COMPONENT_ARCHIVE_HASH=	sha256:555ddffde22da3c86d1caf5a9c1fb8a152ac2b84730437bd3
 COMPONENT_ARCHIVE_URL= 	https://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/quilt
 COMPONENT_CLASSIFICATION= Development/Source Code Management
-COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE=	GPL-2.0-only
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+# GNU gettext is expected
 PATH= $(PATH.gnu)
 
-COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
+CLONEY_MODE =
 
-COMPONENT_PREP_ACTION= ( cd $(@D) ; autoconf )
+# We are patching configure.ac
+COMPONENT_PREP_ACTION += ( cd $(@D) ; $(ENV) autoconf ) ;
 
 PATCH_LEVEL= 0
 
@@ -54,6 +56,7 @@ PATCH_LEVEL= 0
 # generated README and man pages.
 COMPONENT_BUILD_ARGS += --no-print-directory
 
+CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)/$(COMPONENT_NAME)-$(HUMAN_VERSION)
 CONFIGURE_OPTIONS += --with-cp=$(GNUBIN)/cp
 CONFIGURE_OPTIONS += --with-date=$(GNUBIN)/date
 CONFIGURE_OPTIONS += --with-getopt=$(GNUBIN)/getopt
@@ -67,12 +70,10 @@ CONFIGURE_OPTIONS += --with-find=$(GNUBIN)/find
 CONFIGURE_OPTIONS += --with-patch=$(GNUBIN)/patch
 CONFIGURE_OPTIONS += --with-column=$(USRBINDIR)/column
 CONFIGURE_OPTIONS += --with-diffstat=$(USRBINDIR)/diffstat
-CONFIGURE_OPTIONS += --with-perl=$(PERL)
+CONFIGURE_OPTIONS += --with-perl=$(USRBINDIR)/perl
 CONFIGURE_OPTIONS += --with-pod2man=$(POD2MAN)
-CONFIGURE_OPTIONS += --with-xgettext=/usr/bin/gxgettext
-CONFIGURE_OPTIONS += --with-msgfmt=/usr/bin/gmsgfmt
+CONFIGURE_OPTIONS += --with-sendmail=$(USRLIBDIR)/sendmail
 CONFIGURE_OPTIONS += --without-rpmbuild
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
 COMPONENT_INSTALL_ARGS += BUILD_ROOT=$(PROTO_DIR)
 
@@ -85,6 +86,7 @@ REQUIRED_PACKAGES += archiver/gnu-tar
 REQUIRED_PACKAGES += compress/p7zip
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += file/gnu-findutils
+REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/gnu-getopt
 REQUIRED_PACKAGES += shell/ksh93
@@ -96,4 +98,3 @@ REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += text/gnu-patch
 REQUIRED_PACKAGES += text/gnu-sed
 REQUIRED_PACKAGES += text/text-utilities
-REQUIRED_PACKAGES.perl += runtime/perl
