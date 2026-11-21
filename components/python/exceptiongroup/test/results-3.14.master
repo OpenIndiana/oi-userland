@@ -5,9 +5,10 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 103 items
+collecting ... collected 144 items
 
 tests/test_apport_monkeypatching.py::test_apport_excepthook_monkeypatch_interaction SKIPPED
+tests/test_apport_monkeypatching.py::test_apport_excepthook_no_patch SKIPPED
 tests/test_catch.py::test_bad_arg PASSED
 tests/test_catch.py::test_bad_handler PASSED
 tests/test_catch.py::test_catch_exceptiongroup[naked_basegroup] PASSED
@@ -22,9 +23,29 @@ tests/test_catch.py::test_catch_single_no_match PASSED
 tests/test_catch.py::test_catch_full_match PASSED
 tests/test_catch.py::test_catch_handler_raises PASSED
 tests/test_catch.py::test_bare_raise_in_handler PASSED
+tests/test_catch.py::test_handler_raises_subgroup_preserves_group PASSED
+tests/test_catch.py::test_handler_raises_subgroup_from_none PASSED
+tests/test_catch.py::test_handler_raises_subgroup_from_matched PASSED
+tests/test_catch.py::test_bare_raise_in_handler_preserves_original_chaining PASSED
+tests/test_catch.py::test_multiple_handlers_raise_not_chained_to_original PASSED
 tests/test_catch.py::test_catch_subclass PASSED
 tests/test_catch.py::test_async_handler PASSED
 tests/test_catch.py::test_bare_reraise_from_naked_exception PASSED
+tests/test_catch.py::test_bare_reraise_from_naked_exception_exact_type PASSED
+tests/test_catch.py::test_handler_raises_preserves_unmatched[False-RuntimeError] PASSED
+tests/test_catch.py::test_handler_raises_preserves_unmatched[False-KeyboardInterrupt] PASSED
+tests/test_catch.py::test_handler_raises_preserves_unmatched[True-RuntimeError] PASSED
+tests/test_catch.py::test_handler_raises_preserves_unmatched[True-KeyboardInterrupt] PASSED
+tests/test_catch.py::test_handler_raises_group_preserves_unmatched[new_group] PASSED
+tests/test_catch.py::test_handler_raises_group_preserves_unmatched[bare_raise] PASSED
+tests/test_catch.py::test_catch_equivalent_keys[keys0] PASSED
+tests/test_catch.py::test_catch_equivalent_keys[keys1] PASSED
+tests/test_catch.py::test_handler_raises_from_naked_exception_preserves_chaining[implicit-ValueError] PASSED
+tests/test_catch.py::test_handler_raises_from_naked_exception_preserves_chaining[implicit-KeyboardInterrupt] PASSED
+tests/test_catch.py::test_handler_raises_from_naked_exception_preserves_chaining[explicit-ValueError] PASSED
+tests/test_catch.py::test_handler_raises_from_naked_exception_preserves_chaining[explicit-KeyboardInterrupt] PASSED
+tests/test_catch.py::test_handler_raises_from_naked_exception_preserves_chaining[suppressed-ValueError] PASSED
+tests/test_catch.py::test_handler_raises_from_naked_exception_preserves_chaining[suppressed-KeyboardInterrupt] PASSED
 tests/test_catch_py311.py::test_catch_ungrouped PASSED
 tests/test_catch_py311.py::test_catch_group PASSED
 tests/test_catch_py311.py::test_catch_nested_group PASSED
@@ -34,7 +55,22 @@ tests/test_catch_py311.py::test_catch_full_match PASSED
 tests/test_catch_py311.py::test_catch_handler_raises PASSED
 tests/test_catch_py311.py::test_catch_subclass PASSED
 tests/test_catch_py311.py::test_bare_raise_in_handler PASSED
+tests/test_catch_py311.py::test_handler_raises_subgroup_preserves_group PASSED
+tests/test_catch_py311.py::test_handler_raises_subgroup_from_none PASSED
+tests/test_catch_py311.py::test_handler_raises_subgroup_from_matched PASSED
+tests/test_catch_py311.py::test_bare_raise_in_handler_preserves_original_chaining PASSED
+tests/test_catch_py311.py::test_multiple_handlers_raise_not_chained_to_original PASSED
 tests/test_catch_py311.py::test_bare_reraise_from_naked_exception PASSED
+tests/test_catch_py311.py::test_handler_raises_preserves_unmatched_native[RuntimeError] PASSED
+tests/test_catch_py311.py::test_handler_raises_preserves_unmatched_native[KeyboardInterrupt] PASSED
+tests/test_catch_py311.py::test_handler_raises_group_preserves_unmatched[new_group] PASSED
+tests/test_catch_py311.py::test_handler_raises_group_preserves_unmatched[bare_raise] PASSED
+tests/test_catch_py311.py::test_handler_raises_from_naked_exception_preserves_chaining[implicit-ValueError] PASSED
+tests/test_catch_py311.py::test_handler_raises_from_naked_exception_preserves_chaining[implicit-KeyboardInterrupt] PASSED
+tests/test_catch_py311.py::test_handler_raises_from_naked_exception_preserves_chaining[explicit-ValueError] PASSED
+tests/test_catch_py311.py::test_handler_raises_from_naked_exception_preserves_chaining[explicit-KeyboardInterrupt] PASSED
+tests/test_catch_py311.py::test_handler_raises_from_naked_exception_preserves_chaining[suppressed-ValueError] PASSED
+tests/test_catch_py311.py::test_handler_raises_from_naked_exception_preserves_chaining[suppressed-KeyboardInterrupt] PASSED
 tests/test_exceptions.py::TestExceptionGroupTypeHierarchy::test_exception_group_is_generic_type PASSED
 tests/test_exceptions.py::TestExceptionGroupTypeHierarchy::test_exception_group_types PASSED
 tests/test_exceptions.py::BadConstructorArgs::test_bad_EG_construction__bad_excs_sequence PASSED
@@ -61,6 +97,7 @@ tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_t
 tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_type__no_match PASSED
 tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_type__passthrough PASSED
 tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_split__bad_arg_type PASSED
+tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_subgroup_always_calls_derive_on_condition_mismatch PASSED
 tests/test_exceptions.py::ExceptionGroupSplitTests::test_basics_split_by_predicate__match PASSED
 tests/test_exceptions.py::ExceptionGroupSplitTests::test_basics_split_by_predicate__no_match PASSED
 tests/test_exceptions.py::ExceptionGroupSplitTests::test_basics_split_by_predicate__passthrough PASSED
@@ -74,6 +111,8 @@ tests/test_exceptions.py::NestedExceptionGroupBasicsTest::test_iteration_full_tr
 tests/test_exceptions.py::NestedExceptionGroupBasicsTest::test_nested_exception_group_tracebacks PASSED
 tests/test_exceptions.py::NestedExceptionGroupBasicsTest::test_nested_group_chaining PASSED
 tests/test_exceptions.py::NestedExceptionGroupBasicsTest::test_nested_group_matches_template PASSED
+tests/test_exceptions.py::NestedExceptionGroupSplitTest::test_bad_condition PASSED
+tests/test_exceptions.py::NestedExceptionGroupSplitTest::test_derive_invalid_return_value PASSED
 tests/test_exceptions.py::NestedExceptionGroupSplitTest::test_split_BaseExceptionGroup PASSED
 tests/test_exceptions.py::NestedExceptionGroupSplitTest::test_split_by_type PASSED
 tests/test_exceptions.py::NestedExceptionGroupSubclassSplitTest::test_split_BaseExceptionGroup_subclass_no_derive_new_override PASSED
@@ -83,6 +122,7 @@ tests/test_exceptions.py::test_repr PASSED
 tests/test_exceptions.py::test_bug_exceptiongroup_has_no_init PASSED
 tests/test_exceptions.py::test_exceptions_mutate_original_sequence PASSED
 tests/test_formatting.py::test_unpatched_tracebackexception_format SKIPPED
+tests/test_formatting.py::test_no_patch_env_var SKIPPED (No patching...)
 tests/test_formatting.py::test_exceptionhook PASSED
 tests/test_formatting.py::test_exceptiongroup_as_cause PASSED
 tests/test_formatting.py::test_exceptiongroup_loop PASSED
@@ -92,6 +132,7 @@ tests/test_formatting.py::test_format_exception[patched-newstyle] PASSED
 tests/test_formatting.py::test_format_exception[patched-oldstyle] PASSED
 tests/test_formatting.py::test_format_exception[unpatched-newstyle] SKIPPED
 tests/test_formatting.py::test_format_exception[unpatched-oldstyle] SKIPPED
+tests/test_formatting.py::test_format_exception_limit PASSED
 tests/test_formatting.py::test_format_nested PASSED
 tests/test_formatting.py::test_format_exception_only[patched-newstyle] PASSED
 tests/test_formatting.py::test_format_exception_only[patched-oldstyle] PASSED
@@ -113,6 +154,6 @@ tests/test_formatting.py::test_works_around_httperror_bug PASSED
 tests/test_suppress.py::test_suppress_exception PASSED
 
 =========================== short test summary info ============================
-======== 91 passed, 12 skipped, 3 subtests passed ========
+======== 130 passed, 14 skipped, 3 subtests passed ========
   py$(PYV): OK
   congratulations :)
