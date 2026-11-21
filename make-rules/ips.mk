@@ -710,3 +710,7 @@ REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/c++\/spdlog-/{p;s/-[^-]*$$//}'
 # wxWidgets development files for building.  Add such dependency automatically
 # here.
 REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/wxwidgets-3/{p;s/.*/library\/graphics\/wxwidgets-3/}'
+
+# If a component needs a runtime yaml-cpp library then it also needs the yaml-cpp
+# development files for building.  Add such dependency automatically here.
+REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/yaml-cpp-/{p;s/-[^-]*$$//}'
