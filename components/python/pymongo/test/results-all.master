@@ -5,12 +5,13 @@ rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: test
 asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=session, asyncio_default_test_loop_scope=function
-collecting ... collected 9419 items / 953 deselected / 1 skipped / 8466 selected
+collecting ... collected 9565 items / 959 deselected / 1 skipped / 8606 selected
 
 test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_cancellation_aborts_transaction SKIPPED
 test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_cancellation_closes_change_stream SKIPPED
 test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_cancellation_closes_connection SKIPPED
 test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_cancellation_closes_cursor SKIPPED
+test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_cancellation_publishes_command_failed_event SKIPPED
 test/asynchronous/test_async_contextvars_reset.py::TestAsyncContextVarsReset::test_context_vars_are_reset_in_executor SKIPPED
 test/asynchronous/test_async_loop_safety.py::TestClientLoopSafety::test_client_errors_on_different_loop PASSED
 test/asynchronous/test_async_loop_unblocked.py::TestClientLoopUnblocked::test_client_does_not_block_loop SKIPPED
@@ -416,6 +417,8 @@ test/asynchronous/test_client_backpressure.py::AsyncTestClientBackpressure::test
 test/asynchronous/test_client_backpressure.py::TestBackpressure::test_retry_overload_error_command SKIPPED
 test/asynchronous/test_client_backpressure.py::TestBackpressure::test_retry_overload_error_find SKIPPED
 test/asynchronous/test_client_backpressure.py::TestBackpressure::test_retry_overload_error_getMore SKIPPED
+test/asynchronous/test_client_backpressure.py::TestBackpressure::test_retry_overload_error_getMore_exhaust_receive_only SKIPPED
+test/asynchronous/test_client_backpressure.py::TestBackpressure::test_retry_overload_error_getMore_pinned_connection SKIPPED
 test/asynchronous/test_client_backpressure.py::TestBackpressure::test_retry_overload_error_insert_one SKIPPED
 test/asynchronous/test_client_backpressure.py::TestBackpressure::test_retry_overload_error_update_many SKIPPED
 test/asynchronous/test_client_backpressure.py::TestClientBackpressureBackpressureConnectionCheckin::test_overload_error_retry_attempts_return_connections_to_the_pool SKIPPED
@@ -3944,6 +3947,22 @@ test/test_bson.py::TestBSON::test_uuid PASSED
 test/test_bson.py::TestBSON::test_uuid_legacy PASSED
 test/test_bson.py::TestBSON::test_vector PASSED
 test/test_bson.py::TestBSON::test_vector_from_numpy SKIPPED (numpy o...)
+test/test_bson.py::TestBSONEncodeDecodeBoundaries::test_round_trip_size_boundaries 
+test/test_bson.py::TestBSONEncodeDecodeBoundaries::test_round_trip_size_boundaries PASSED
+test/test_bson.py::TestBSONEncodeDecodeBoundaries::test_round_trip_value_extremes 
+test/test_bson.py::TestBSONEncodeDecodeBoundaries::test_round_trip_value_extremes PASSED
+test/test_bson.py::TestBSONHostileLengths::test_declared_document_lengths 
+test/test_bson.py::TestBSONHostileLengths::test_declared_document_lengths PASSED
+test/test_bson.py::TestBSONHostileLengths::test_element_binary_lengths 
+test/test_bson.py::TestBSONHostileLengths::test_element_binary_lengths PASSED
+test/test_bson.py::TestBSONHostileLengths::test_element_string_lengths 
+test/test_bson.py::TestBSONHostileLengths::test_element_string_lengths PASSED
+test/test_bson.py::TestBSONHostileLengths::test_element_subdocument_lengths 
+test/test_bson.py::TestBSONHostileLengths::test_element_subdocument_lengths PASSED
+test/test_bson.py::TestBSONHostileLengths::test_truncated_documents 
+test/test_bson.py::TestBSONHostileLengths::test_truncated_documents PASSED
+test/test_bson.py::TestBSONMutations::test_mutations_decode_cleanly 
+test/test_bson.py::TestBSONMutations::test_mutations_decode_cleanly PASSED
 test/test_bson.py::TestCodecOptions::test_bson_encode_decode PASSED
 test/test_bson.py::TestCodecOptions::test_codec_options_repr PASSED
 test/test_bson.py::TestCodecOptions::test_dbref_pickling PASSED
@@ -4386,6 +4405,8 @@ test/test_client.py::TestMongoClientFailover::test_reconnect SKIPPED
 test/test_client_backpressure.py::TestBackpressure::test_retry_overload_error_command SKIPPED
 test/test_client_backpressure.py::TestBackpressure::test_retry_overload_error_find SKIPPED
 test/test_client_backpressure.py::TestBackpressure::test_retry_overload_error_getMore SKIPPED
+test/test_client_backpressure.py::TestBackpressure::test_retry_overload_error_getMore_exhaust_receive_only SKIPPED
+test/test_client_backpressure.py::TestBackpressure::test_retry_overload_error_getMore_pinned_connection SKIPPED
 test/test_client_backpressure.py::TestBackpressure::test_retry_overload_error_insert_one SKIPPED
 test/test_client_backpressure.py::TestBackpressure::test_retry_overload_error_update_many SKIPPED
 test/test_client_backpressure.py::TestClientBackpressure::test_01_operation_retry_uses_exponential_backoff SKIPPED
@@ -4805,6 +4826,109 @@ test/test_connections_survive_primary_stepdown_spec.py::TestConnectionsSurvivePr
 test/test_connections_survive_primary_stepdown_spec.py::TestConnectionsSurvivePrimaryStepDown::test_shutdown_in_progress SKIPPED
 test/test_create_entities.py::TestCreateEntities::test_store_all_others_as_entities SKIPPED
 test/test_create_entities.py::TestCreateEntities::test_store_events_as_entities SKIPPED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-badoptvalue PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-badoptvalue-unknownopt PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-badport PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-badscheme PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-dbbadchar PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-dbbadchar-emptyhost-unixsocket PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-dbbadchar-unixsocket PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-emptyhost PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-emptyuser PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-ipv6 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-long PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-opt PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-portzero PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-seedlist-other-badport PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-seedlist-other-opt PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-srv PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-srv-badoptvalue PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-srv-emptyhost PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-srv-opt PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-srv-seedlist-other PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-unixsocket-opt PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_correctly_encoded_password_with_an_unrelated_error_elsewhere:_pw-clean-unknownopt PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_as_the_argument_of_a_known_integer_option,_where_it_fails_integer_conversion:_optarg-known-integer-unparsable PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_as_the_argument_of_a_sensitive_option:_optarg-sensitive PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_as_the_argument_of_an_unrecognized_option:_optarg-unrecognized PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_as_the_argument_of_authMechanism,_naming_no_mechanism_the_driver_knows:_optarg-unknown-mechanism PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_merged_into_an_option_key_by_a_missing_equals_sign:_optkey-merged PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_present_with_no_at-sign_to_delimit_it_from_the_host_information:_noat-bare-1 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_present_with_no_at-sign_to_delimit_it_from_the_host_information:_noat-bare-2 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_present_with_no_at-sign_to_delimit_it_from_the_host_information:_noat-bare-pctenc PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_present_with_no_at-sign_to_delimit_it_from_the_host_information:_noat-ipv6 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_present_with_no_at-sign_to_delimit_it_from_the_host_information:_noat-seedlist-first PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_present_with_no_at-sign_to_delimit_it_from_the_host_information:_noat-seedlist-first-withdb PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_present_with_no_at-sign_to_delimit_it_from_the_host_information:_noat-seedlist-later PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_present_with_no_at-sign_to_delimit_it_from_the_host_information:_noat-seedlist-later-withdb PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_present_with_no_at-sign_to_delimit_it_from_the_host_information:_noat-srv-withdb PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_present_with_no_at-sign_to_delimit_it_from_the_host_information:_noat-srv-withdb-pctenc PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_present_with_no_at-sign_to_delimit_it_from_the_host_information:_noat-withdb PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_present_with_no_at-sign_to_delimit_it_from_the_host_information:_noat-withdb-pctenc PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_credential_present_with_no_at-sign_to_delimit_it_from_the_host_information:_noat-withdb-withopts PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_invalid_percent-escape_in_the_password:_pw-percent-after PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_invalid_percent-escape_in_the_password:_pw-percent-after-badport PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_invalid_percent-escape_in_the_password:_pw-percent-after-empty-head PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_invalid_percent-escape_in_the_password:_pw-percent-after-empty-head-badport PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_invalid_percent-escape_in_the_password:_pw-percent-after-empty-head-opt PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_invalid_percent-escape_in_the_password:_pw-percent-after-opt PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_invalid_percent-escape_in_the_password:_pw-percent-after-unknownopt PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_invalid_percent-escape_in_the_password:_pw-percent-before PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_invalid_percent-escape_in_the_password:_pw-percent-before-badport PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_invalid_percent-escape_in_the_password:_pw-percent-before-unknownopt PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_sentinel_carried_in_the_username_component_of_the_userinfo:_sentinel-in-username-1 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_sentinel_carried_in_the_username_component_of_the_userinfo:_sentinel-in-username-2 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_sentinel_carried_in_the_username_component_of_the_userinfo:_sentinel-in-username-3 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_sentinel_carried_in_the_username_component_of_the_userinfo:_sentinel-in-username-srv PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_string_representation_redacted PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_at-sign_in_the_password:_pw-at-after-1 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_at-sign_in_the_password:_pw-at-after-2 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_at-sign_in_the_password:_pw-at-after-3 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_at-sign_in_the_password:_pw-at-after-badport PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_at-sign_in_the_password:_pw-at-after-badport-pctenc PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_at-sign_in_the_password:_pw-at-after-pctenc-1 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_at-sign_in_the_password:_pw-at-after-pctenc-2 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_at-sign_in_the_password:_pw-at-before-1 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_at-sign_in_the_password:_pw-at-before-2 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_at-sign_in_the_password:_pw-at-before-3 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_at-sign_in_the_password:_pw-at-before-4 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_delimiter_in_the_password:_pw-amp-after PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_delimiter_in_the_password:_pw-amp-before PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_delimiter_in_the_password:_pw-colon-after PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_delimiter_in_the_password:_pw-colon-before PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_delimiter_in_the_password:_pw-comma-after PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_delimiter_in_the_password:_pw-comma-before PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_delimiter_in_the_password:_pw-equals-after PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_delimiter_in_the_password:_pw-equals-before PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_delimiter_in_the_password:_pw-hash-after PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_delimiter_in_the_password:_pw-hash-before PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_delimiter_in_the_password:_pw-plus-after PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_delimiter_in_the_password:_pw-plus-before PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_question_mark_in_the_password:_pw-question-after PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_question_mark_in_the_password:_pw-question-after-badoptvalue PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_question_mark_in_the_password:_pw-question-after-badport PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_question_mark_in_the_password:_pw-question-after-empty-head PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_question_mark_in_the_password:_pw-question-after-numeric-head PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_question_mark_in_the_password:_pw-question-after-numeric-head-srv PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_question_mark_in_the_password:_pw-question-after-opt PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_question_mark_in_the_password:_pw-question-after-srv PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_question_mark_in_the_password:_pw-question-after-unknownopt PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_question_mark_in_the_password:_pw-question-before PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_slash_in_the_password:_pw-slash-after PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_slash_in_the_password:_pw-slash-after-badoptvalue PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_slash_in_the_password:_pw-slash-after-badport PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_slash_in_the_password:_pw-slash-after-empty-head PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_slash_in_the_password:_pw-slash-after-empty-head-badscheme PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_slash_in_the_password:_pw-slash-after-emptyhost-unixsocket PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_slash_in_the_password:_pw-slash-after-numeric-head PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_slash_in_the_password:_pw-slash-after-numeric-head-srv PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_slash_in_the_password:_pw-slash-after-opt PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_slash_in_the_password:_pw-slash-after-srv PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_slash_in_the_password:_pw-slash-before PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_slash_in_the_password:_pw-slash-before-ipv6 PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_slash_in_the_password:_pw-slash-before-opt PASSED
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_unencoded_slash_in_the_password:_pw-slash-before-srv PASSED
 test/test_crud_unified.py::TestUnifiedAggregate::test_Aggregate_with_multiple_stages SKIPPED
 test/test_crud_unified.py::TestUnifiedAggregate::test_aggregate_with_a_document_comment SKIPPED
 test/test_crud_unified.py::TestUnifiedAggregate::test_aggregate_with_a_document_comment_-_pre_4_4 SKIPPED
@@ -6278,6 +6402,15 @@ test/test_examples.py::TestVersionedApiExamples::test_versioned_api_migration SK
 test/test_fork.py::TestFork::test_lock_client SKIPPED (Cannot connec...)
 test/test_fork.py::TestFork::test_lock_object_id SKIPPED (Cannot con...)
 test/test_fork.py::TestFork::test_topology_reset SKIPPED (Cannot con...)
+test/test_fuzz_capture.py::test_captures_new_units PASSED
+test/test_fuzz_capture.py::test_dedups_identical_candidates_within_run PASSED
+test/test_fuzz_capture.py::test_no_new_units_writes_summary_and_empty_out PASSED
+test/test_fuzz_capture.py::test_per_run_cap_prefers_smallest PASSED
+test/test_fuzz_capture.py::test_rejects_nonpositive_max_unit_bytes PASSED
+test/test_fuzz_capture.py::test_rejects_nonpositive_max_units PASSED
+test/test_fuzz_capture.py::test_skips_baseline_units PASSED
+test/test_fuzz_capture.py::test_skips_committed_units PASSED
+test/test_fuzz_capture.py::test_skips_oversize_units PASSED
 test/test_gcp_helpers.py::TestGetGcpResponse::test_custom_timeout_is_forwarded PASSED
 test/test_gcp_helpers.py::TestGetGcpResponse::test_default_timeout_is_five_seconds PASSED
 test/test_gcp_helpers.py::TestGetGcpResponse::test_non_200_status_raises_value_error 
@@ -6447,6 +6580,7 @@ test/test_json_util.py::TestJsonUtil::test_loads_bytes PASSED
 test/test_json_util.py::TestJsonUtil::test_loads_document_class PASSED
 test/test_json_util.py::TestJsonUtil::test_maxkey PASSED
 test/test_json_util.py::TestJsonUtil::test_minkey PASSED
+test/test_json_util.py::TestJsonUtil::test_minkey_maxkey_errors PASSED
 test/test_json_util.py::TestJsonUtil::test_numberlong PASSED
 test/test_json_util.py::TestJsonUtil::test_objectid PASSED
 test/test_json_util.py::TestJsonUtil::test_parse_invalid_date PASSED
@@ -6547,6 +6681,14 @@ test/test_message.py::TestMessage::test_raise_document_too_large_update_generic_
 test/test_message.py::TestMessage::test_secondary_adds_read_preference PASSED
 test/test_message.py::TestMessage::test_secondary_preferred_no_tags_does_not_add PASSED
 test/test_message.py::TestMessage::test_secondary_preferred_with_tags_adds_read_preference PASSED
+test/test_message.py::TestOpMsgBuilders::test_batched_op_msg_insert PASSED
+test/test_message.py::TestOpMsgBuilders::test_batched_op_msg_split_on_batch_size PASSED
+test/test_message.py::TestOpMsgBuilders::test_batched_op_msg_split_on_message_size PASSED
+test/test_message.py::TestOpMsgBuilders::test_batched_op_msg_update PASSED
+test/test_message.py::TestOpMsgBuilders::test_op_msg_empty_docs PASSED
+test/test_message.py::TestOpMsgBuilders::test_op_msg_multiple_buffer_doublings PASSED
+test/test_message.py::TestOpMsgBuilders::test_op_msg_no_identifier PASSED
+test/test_message.py::TestOpMsgBuilders::test_op_msg_with_identifier PASSED
 test/test_mongos_load_balancing.py::TestMongosLoadBalancing::test_failover SKIPPED
 test/test_mongos_load_balancing.py::TestMongosLoadBalancing::test_lazy_connect SKIPPED
 test/test_mongos_load_balancing.py::TestMongosLoadBalancing::test_load_balancing SKIPPED
@@ -8200,10 +8342,12 @@ test/test_unified_format.py::TestUnifiedTestFormatValidPassPocTransactionsMongos
 test/test_unified_format.py::TestUnifiedTestFormatValidPassPocTransactionsMongosPinAuto::test_unpin_after_transient_error_within_a_transaction SKIPPED
 test/test_uri_parser.py::TestMainBlock::test_invalid_uri_prints_error PASSED
 test/test_uri_parser.py::TestMainBlock::test_valid_uri_prints_parsed_dict PASSED
+test/test_uri_parser.py::TestURI::test_bad_database_name_is_not_echoed PASSED
 test/test_uri_parser.py::TestURI::test_check_options_conflicts PASSED
 test/test_uri_parser.py::TestURI::test_do_not_include_password_in_port_message PASSED
 test/test_uri_parser.py::TestURI::test_handle_colon PASSED
 test/test_uri_parser.py::TestURI::test_normalize_options PASSED
+test/test_uri_parser.py::TestURI::test_parse_error_does_not_echo_value PASSED
 test/test_uri_parser.py::TestURI::test_parse_host_case_normalization PASSED
 test/test_uri_parser.py::TestURI::test_parse_host_port_boundaries PASSED
 test/test_uri_parser.py::TestURI::test_parse_ipv6_literal_host_direct PASSED
@@ -8211,6 +8355,7 @@ test/test_uri_parser.py::TestURI::test_parse_ssl_paths PASSED
 test/test_uri_parser.py::TestURI::test_parse_uri PASSED
 test/test_uri_parser.py::TestURI::test_parse_uri_options_returns_dict PASSED
 test/test_uri_parser.py::TestURI::test_port_with_whitespace PASSED
+test/test_uri_parser.py::TestURI::test_read_preference_mode_error_message PASSED
 test/test_uri_parser.py::TestURI::test_redact_AWS_SESSION_TOKEN PASSED
 test/test_uri_parser.py::TestURI::test_special_chars PASSED
 test/test_uri_parser.py::TestURI::test_split_hosts PASSED
@@ -8222,6 +8367,9 @@ test/test_uri_parser.py::TestURI::test_split_options_empty_authsource PASSED
 test/test_uri_parser.py::TestURI::test_split_options_mixed_delimiters PASSED
 test/test_uri_parser.py::TestURI::test_tls_option_conflicts PASSED
 test/test_uri_parser.py::TestURI::test_tlsinsecure_simple PASSED
+test/test_uri_parser.py::TestURI::test_unknown_option_from_dns_is_named PASSED
+test/test_uri_parser.py::TestURI::test_unknown_option_from_kwargs_is_named PASSED
+test/test_uri_parser.py::TestURI::test_unknown_option_from_uri_is_not_named PASSED
 test/test_uri_parser.py::TestURI::test_unquote_during_parsing PASSED
 test/test_uri_parser.py::TestURI::test_unquoted_percent PASSED
 test/test_uri_parser.py::TestURI::test_validate_uri_edge_cases PASSED
@@ -8502,6 +8650,75 @@ test/asynchronous/test_grid_file.py::AsyncTestGridFileNoConnect::test_grid_in_cu
   $(@D)/test/asynchronous/test_grid_file.py:88: DeprecationWarning: GridIn property 'contentType' is deprecated and will be removed in PyMongo 5.0
     self.assertEqual("text/html", a.content_type)
 
+test/test_credential_disclosure.py::TestCredentialDisclosure::test_string_representation_redacted
+  $(PYTHON_DIR)/unittest/case.py:615: ResourceWarning: Unclosed MongoClient opened at:
+    File "<frozen runpy>", line 203, in _run_module_as_main
+    File "<frozen runpy>", line 88, in _run_code
+    File "$(PYTHON_DIR)/vendor-packages/pytest/__main__.py", line 9, in <module>
+      raise SystemExit(_console_main())
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py", line 253, in _console_main
+      code = _main(prog=_get_prog_name(sys.argv))
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py", line 229, in _main
+      ret: ExitCode | int = config.hook.pytest_cmdline_main(config=config)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_caller.py", line 197, in __call__
+      return self._hookexec(
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 183, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_execution.py", line 147, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 377, in pytest_cmdline_main
+      return wrap_session(config, _main)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 330, in wrap_session
+      session.exitstatus = doit(config, session) or 0
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 384, in _main
+      config.hook.pytest_runtestloop(session=session)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_caller.py", line 197, in __call__
+      return self._hookexec(
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 183, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_execution.py", line 147, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 408, in pytest_runtestloop
+      item.config.hook.pytest_runtest_protocol(item=item, nextitem=nextitem)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_caller.py", line 197, in __call__
+      return self._hookexec(
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 183, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_execution.py", line 147, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 118, in pytest_runtest_protocol
+      runtestprotocol(item, nextitem=nextitem)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 139, in runtestprotocol
+      reports.append(call_and_report(item, "call", log))
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 249, in call_and_report
+      call = CallInfo.from_call(
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 361, in from_call
+      result: TResult | None = func()
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 250, in <lambda>
+      lambda: runtest_hook(item=item, **kwds),
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_caller.py", line 197, in __call__
+      return self._hookexec(
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 183, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_execution.py", line 147, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 184, in pytest_runtest_call
+      item.runtest()
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/unittest.py", line 410, in runtest
+      testcase(result=self)
+    File "$(PYTHON_DIR)/unittest/case.py", line 725, in __call__
+      return self.run(*args, **kwds)
+    File "$(PYTHON_DIR)/unittest/case.py", line 669, in run
+      self._callTestMethod(testMethod)
+    File "$(PYTHON_DIR)/unittest/case.py", line 615, in _callTestMethod
+      result = method()
+    File "$(@D)/test/test_credential_disclosure.py", line 91, in test_string_representation_redacted
+      client = MongoClient(
+    File "$(@D)/pymongo/synchronous/mongo_client.py", line 984, in __init__
+      self._init_based_on_options(
+  Call MongoClient.close() to safely shut down your client and free up resources.
+    result = method()
+
 test/test_grid_file.py::TestGridFileNoConnect::test_grid_in_custom_opts
   $(@D)/test/test_grid_file.py:88: DeprecationWarning: GridIn property 'contentType' is deprecated and will be removed in PyMongo 5.0
     self.assertEqual("text/html", a.content_type)
@@ -8509,4 +8726,4 @@ test/test_grid_file.py::TestGridFileNoConnect::test_grid_in_custom_opts
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/xunit-results/TEST-results.xml -
 =========================== short test summary info ============================
-======== 1720 passed, 6749 skipped, 953 deselected, 2 warnings, 82 subtests passed ========
+======== 1855 passed, 6754 skipped, 959 deselected, 3 warnings, 5282 subtests passed ========
