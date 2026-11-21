@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fetchmail
 COMPONENT_VERSION=	6.6.9
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	fetch mail from a POP, IMAP, ETRN, or ODMR-capable server
 COMPONENT_DESCRIPTION=	Fetchmail is a full-featured, robust, well-documented remote-mail retrieval and forwarding utility intended \
 to be used over on-demand TCP/IP links (such as SLIP or PPP connections). It supports every remote-mail protocol now in use on \
@@ -49,31 +50,25 @@ include $(WS_MAKE_RULES)/common.mk
 # gcc 14 complains about this
 CFLAGS += -Wno-error=implicit-function-declaration
 
-COMPONENT_PREP_ACTION= (cd $(@D); sh autogen.sh)
-
-# Change the shebang line to use our default Python version explicitly, drop the fixed file into /usr/bin,
-# where our package manifest expects it, and remove the superfluous script from the site-packages folder.
-COMPONENT_POST_INSTALL_ACTION += \
-	$(GSED) -e "s|/usr/bin/env python|$(PYTHON)|" \
-		$(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/site-packages/fetchmailconf.py && \
-    $(GSED) -i -e 's?\/usr\/bin\/python?\/usr\/bin\/python$(PYTHON_VERSION)?' \
-    	$(PROTOUSRBINDIR)/fetchmailconf && \
-    $(GSED) -i -e 's?site-packages?vendor-packages?' \
-    	$(PROTOUSRBINDIR)/fetchmailconf && \
-	if [ -d  $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)  ]; then \
-        $(MKDIR) -p  $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages && \
-        $(MV) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/site-packages/* $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages && \
-    	$(RM) -fr  $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/site-packages && \
-        $(PYTHON) -m compileall $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages ; \
-    fi ;
+COMPONENT_PREP_ACTION= (cd $(@D); $(ENV) ./autogen.sh)
 
 CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --with-kerberos5
 CONFIGURE_OPTIONS += --with-ssl=$(OPENSSL_PREFIX)
+CONFIGURE_OPTIONS += --disable-rpath
 CONFIGURE_OPTIONS += --enable-NTLM
+CONFIGURE_OPTIONS += PYTHON=$(PYTHON)
+CONFIGURE_OPTIONS += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_OPTIONS += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
+
+PYTHON_SCRIPTS += $(PYTHON_VENDOR_PACKAGES)/fetchmailconf.py
+
+# We don't have some modules fetchmailconf uses and it's outdated, too. Thus, drop the tool.
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRBINDIR)/fetchmailconf ;
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREMAN1DIR)/fetchmailconf.1 ;
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOPYTHONVENDORDIR) ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
-REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += system/library
