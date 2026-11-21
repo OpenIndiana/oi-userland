@@ -22,13 +22,16 @@ include ../../../make-rules/shared-macros.mk
 ABIVER = 2.91
 
 COMPONENT_NAME=			vte
-HUMAN_VERSION=			0.84.1
+HUMAN_VERSION=			0.84.2
 COMPONENT_SUMMARY=		Virtual terminal widget for GTK applications
 COMPONENT_ARCHIVE_HASH= \
-	sha256:aca1caa8478aebcdbb1d67897fb3511eb7601debae6810e16a15b6fa25f31ac8
+	sha256:ff79a833c0faba8d6888db788dbe850f6ffd1ff916c799e6ffdb30c782537abf
 COMPONENT_FMRI=			library/desktop/vte-291
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		CC-BY-4.0 AND GPL-3.0-only AND LGPL-3.0-only AND MIT
+
+# https://gitlab.gnome.org/GNOME/vte/-/work_items/2979
+COMPONENT_ARCHIVE_URL=	https://gitlab.gnome.org/api/v4/projects/1893/packages/generic/vte/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
