@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		certifi
-HUMAN_VERSION =			2026.10.23
+HUMAN_VERSION =			2026.11.20
 COMPONENT_SUMMARY =		Python package for providing Mozilla's CA Bundle.
 COMPONENT_PROJECT_URL =		https://github.com/certifi/python-certifi
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/certifi/python-certifi/archive/refs/tags/$(GITHUB_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2780dc8e8ee06a835e0f0285d9e234edc56dbabdfbc0ec2195b9ee93dc0f8ff8
+	sha256:dad3e34e9f6a26b7f30881556bd6d3f79ccf15fd0d88c8f9e565be4f0fb28835
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
