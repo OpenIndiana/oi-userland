@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zodbpickle
-HUMAN_VERSION =			4.5
+HUMAN_VERSION =			4.6
 COMPONENT_SUMMARY =		Fork of Python 3 pickle module
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:67d4295ddb68b2410fe417094ffe1a8b0ed41834ee308020f58ee1b633e1f751
+	sha256:f66b7edc293c3f71dedd9f9181c96ccecb583560f5132de0fbfd0727b9f6eaa1
 COMPONENT_LICENSE =		PSF-2.0 OR ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
