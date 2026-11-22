@@ -19,17 +19,16 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Data-Dump
-HUMAN_VERSION =			1.25
-COMPONENT_REVISION =		4
+HUMAN_VERSION =			1.26
 COMPONENT_SUMMARY =		Pretty printing of data structures
 COMPONENT_CPAN_AUTHOR =		GARU
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a4aa6e0ddbf39d5ad49bddfe0f89d9da864e3bc00f627125d1bc580472f53fbd
+	sha256:9f967e70383f1dd4e4065eab5e7f7418854dcbb1edd9c8045f43a38d0e7340b1
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/mime-base64
+REQUIRED_PACKAGES.perl += runtime/perl
