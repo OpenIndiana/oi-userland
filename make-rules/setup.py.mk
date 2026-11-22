@@ -419,6 +419,9 @@ PYTEST_ADDOPTS += --color=no
 # previous one
 PYTEST_ADDOPTS += --cache-clear
 
+# Make sure we test installed modules
+PYTEST_ADDOPTS += --import-mode=append
+
 # Create list of required pytest plugins.
 define pytest-plugin
 PYTEST_PLUGINS += $$(if $$(filter library/python/$(1)-$$(subst .,,$$(PYTHON_VERSION)), $$(REQUIRED_PACKAGES) $$(TEST_REQUIRED_PACKAGES) $$(COMPONENT_FMRI)-$$(subst .,,$$(PYTHON_VERSION))),$(2))
