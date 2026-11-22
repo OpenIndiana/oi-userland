@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		watchdog
-HUMAN_VERSION =			7.1.0
+HUMAN_VERSION =			7.1.1
 COMPONENT_SUMMARY =		Filesystem events monitoring
 COMPONENT_PROJECT_URL =		https://github.com/gorakhargosh/watchdog
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d3861e255416f49a1384474cb2efa097de165fb330d4c5432ce6708b509ed922
+	sha256:d7dc3bf0c3417c002ee976e958479c54d8ca18cbb3532fadbe69511fa389da15
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,9 +34,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # https://github.com/gorakhargosh/watchdog/issues/10
 PYTEST_ADDOPTS += --ignore=tests/test_emitter.py
-
-# https://github.com/gorakhargosh/watchdog/issues/973
-PYTEST_ADDOPTS += --deselect tests/test_0_watchmedo.py::test_auto_restart_on_file_change_debounce
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
