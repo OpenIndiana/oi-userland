@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-X workers [354 items]
+X workers [439 items]
 
 scheduling tests via LoadScheduling
 
@@ -18,6 +18,7 @@ tests/test_0_watchmedo.py::test_auto_restart_events_echoed PASSED
 tests/test_0_watchmedo.py::test_auto_restart_negative_debounce_interval PASSED
 tests/test_0_watchmedo.py::test_auto_restart_not_happening_on_file_opened_event PASSED
 tests/test_0_watchmedo.py::test_auto_restart_on_file_change PASSED
+tests/test_0_watchmedo.py::test_auto_restart_on_file_change_debounce PASSED
 tests/test_0_watchmedo.py::test_auto_restart_stop_signal_is_delivered PASSED
 tests/test_0_watchmedo.py::test_auto_restart_subprocess_termination[False] PASSED
 tests/test_0_watchmedo.py::test_auto_restart_subprocess_termination[True] PASSED
@@ -52,9 +53,12 @@ tests/test_0_watchmedo.py::test_log_events_at_cli_verbosity[verbosity0-True] PAS
 tests/test_0_watchmedo.py::test_log_events_at_cli_verbosity[verbosity1-False] PASSED
 tests/test_0_watchmedo.py::test_log_events_at_cli_verbosity[verbosity2-True] PASSED
 tests/test_0_watchmedo.py::test_logger_events_echoed PASSED
+tests/test_0_watchmedo.py::test_logger_events_lost_echoed PASSED
 tests/test_0_watchmedo.py::test_observe_with PASSED
 tests/test_0_watchmedo.py::test_shell_command_arg_parsing PASSED
 tests/test_0_watchmedo.py::test_shell_command_custom_shell_and_cwd PASSED
+tests/test_0_watchmedo.py::test_shell_command_default_command[event0-echo "modified file foo/bar.baz"] PASSED
+tests/test_0_watchmedo.py::test_shell_command_default_command[event1-echo "moved file from foo/bar.baz to foo/qux.baz"] PASSED
 tests/test_0_watchmedo.py::test_shell_command_subprocess_termination_not_happening_on_file_opened_event PASSED
 tests/test_0_watchmedo.py::test_shell_command_subprocess_termination_nowait PASSED
 tests/test_0_watchmedo.py::test_shell_command_wait_for_completion PASSED
@@ -123,6 +127,8 @@ tests/test_delayed_queue.py::test_delay_ignores_wall_clock_adjustments[0] PASSED
 tests/test_delayed_queue.py::test_delay_ignores_wall_clock_adjustments[3600] PASSED
 tests/test_delayed_queue.py::test_delayed_get PASSED
 tests/test_delayed_queue.py::test_deprecated_delay_sec_attribute PASSED
+tests/test_delayed_queue.py::test_mixed_delays[False] PASSED
+tests/test_delayed_queue.py::test_mixed_delays[True] PASSED
 tests/test_delayed_queue.py::test_nondelayed_get PASSED
 tests/test_echo.py::test_format_arg_value[value0-x=(1, 2, 3)] PASSED
 tests/test_event_debouncer.py::test_debounce_interval_and_deprecated_name_conflict PASSED
@@ -132,6 +138,9 @@ tests/test_event_debouncer.py::test_deprecated_debounce_interval_seconds_argumen
 tests/test_event_debouncer.py::test_deprecated_debounce_interval_seconds_attribute PASSED
 tests/test_event_debouncer.py::test_event_debouncer_coalesce_and_drain PASSED
 tests/test_event_debouncer.py::test_event_debouncer_starvation PASSED
+tests/test_event_debouncer.py::test_event_debouncer_stop_during_debounce PASSED
+tests/test_event_debouncer.py::test_event_debouncer_stop_while_idle PASSED
+tests/test_event_debouncer.py::test_event_debouncer_zero_interval PASSED
 tests/test_event_debouncer.py::test_missing_arguments PASSED
 tests/test_event_debouncer.py::test_no_warning_with_new_names PASSED
 tests/test_events.py::test_attrib_event_dispatch PASSED
@@ -140,6 +149,7 @@ tests/test_events.py::test_dir_created_event PASSED
 tests/test_events.py::test_dir_deleted_event PASSED
 tests/test_events.py::test_dir_modified_event PASSED
 tests/test_events.py::test_event_comparison PASSED
+tests/test_events.py::test_events_lost_event_dispatch PASSED
 tests/test_events.py::test_file_attrib_event PASSED
 tests/test_events.py::test_file_closed_event PASSED
 tests/test_events.py::test_file_closed_no_write_event PASSED
@@ -152,6 +162,7 @@ tests/test_events.py::test_file_moved_event PASSED
 tests/test_events.py::test_file_opened_event PASSED
 tests/test_events.py::test_file_system_event_handler_dispatch PASSED
 tests/test_events.py::test_generate_sub_moved_events_repeated_dirname PASSED
+tests/test_examples.py::test_example[docs/source/examples/callable_event_handler.py] PASSED
 tests/test_examples.py::test_example[docs/source/examples/debounced.py] PASSED
 tests/test_examples.py::test_example[docs/source/examples/file_organizer.py] PASSED
 tests/test_examples.py::test_example[docs/source/examples/logger.py] PASSED
@@ -161,6 +172,7 @@ tests/test_examples.py::test_example[docs/source/examples/single_file.py] PASSED
 tests/test_examples.py::test_tricks_example[docs/source/examples/tricks.json] PASSED
 tests/test_examples.py::test_tricks_example[docs/source/examples/tricks.yaml] PASSED
 tests/test_logging_event_handler.py::test_logging_event_handler_dispatch PASSED
+tests/test_logging_event_handler.py::test_logging_event_handler_warns_on_events_lost PASSED
 tests/test_observer.py::test_2_observers_on_the_same_path PASSED
 tests/test_observer.py::test_context_manager_handles_exceptions PASSED
 tests/test_observer.py::test_context_manager_starts_observer PASSED
@@ -183,6 +195,7 @@ tests/test_observers_api.py::test_event_dispatcher PASSED
 tests/test_observers_api.py::test_event_dispatcher_timeout_rejects_bool PASSED
 tests/test_observers_api.py::test_event_emitter PASSED
 tests/test_observers_api.py::test_event_emitter_timeout_rejects_bool PASSED
+tests/test_observers_api.py::test_lock_not_held_during_handler_dispatch PASSED
 tests/test_observers_api.py::test_observed_watch_single_file PASSED
 tests/test_observers_api.py::test_observer__eq__ PASSED
 tests/test_observers_api.py::test_observer__eq__ignores_follow_symlink PASSED
@@ -192,6 +205,7 @@ tests/test_observers_api.py::test_observer_basic PASSED
 tests/test_observers_api.py::test_observer_constructor PASSED
 tests/test_observers_api.py::test_observer_marks_every_queued_item_done PASSED
 tests/test_observers_api.py::test_observer_schedule_respects_second_follow_symlink PASSED
+tests/test_observers_api.py::test_observer_start_and_schedule_race PASSED
 tests/test_observers_api.py::test_remove_handler_for_watch_does_not_resurrect_unscheduled_watch PASSED
 tests/test_observers_api.py::test_schedule_defers_emitter_start PASSED
 tests/test_observers_api.py::test_single_file_dispatch_events PASSED
@@ -201,7 +215,11 @@ tests/test_observers_api.py::test_stale_event_does_not_resurrect_an_unscheduled_
 tests/test_observers_api.py::test_symlinked_directory_not_treated_as_file PASSED
 tests/test_observers_polling.py::test___init__ PASSED
 tests/test_observers_polling.py::test_delete_watched_dir PASSED
+tests/test_observers_polling.py::test_hard_link_rename_emits_only_move[a-c] PASSED
+tests/test_observers_polling.py::test_hard_link_rename_emits_only_move[c-a] PASSED
 tests/test_observers_polling.py::test_polling_emitter_attrib PASSED
+tests/test_observers_polling.py::test_reused_inode_replacement_emits_delete_and_create[False-FileDeletedEvent-DirCreatedEvent] PASSED
+tests/test_observers_polling.py::test_reused_inode_replacement_emits_delete_and_create[True-DirDeletedEvent-FileCreatedEvent] PASSED
 tests/test_observers_polling.py::test_transient_error_in_subdirectory PASSED
 tests/test_observers_polling.py::test_transient_error_on_watched_dir[EACCES] PASSED
 tests/test_observers_polling.py::test_transient_error_on_watched_dir[EBUSY] PASSED
@@ -211,6 +229,7 @@ tests/test_pattern_matching_event_handler.py::test_conflicting_patterns[None-ign
 tests/test_pattern_matching_event_handler.py::test_conflicting_patterns[patterns0-ignore_patterns0-True] PASSED
 tests/test_pattern_matching_event_handler.py::test_conflicting_patterns[patterns1-ignore_patterns1-False] PASSED
 tests/test_pattern_matching_event_handler.py::test_dispatch PASSED
+tests/test_pattern_matching_event_handler.py::test_events_lost_ignores_patterns PASSED
 tests/test_pattern_matching_event_handler.py::test_handler PASSED
 tests/test_pattern_matching_event_handler.py::test_ignore_directories PASSED
 tests/test_pattern_matching_event_handler.py::test_ignore_patterns PASSED
@@ -232,16 +251,22 @@ tests/test_patterns.py::test_match_any_paths[None-None-True-True] PASSED
 tests/test_patterns.py::test_match_any_paths[included_patterns2-excluded_patterns2-True-True] PASSED
 tests/test_patterns.py::test_match_any_paths[included_patterns3-None-False-False] PASSED
 tests/test_patterns.py::test_match_any_paths[included_patterns4-None-True-False] PASSED
-tests/test_patterns.py::test_match_path[/users/gorakhargosh/-included_patterns2-excluded_patterns2-False-False] PASSED
-tests/test_patterns.py::test_match_path[/users/gorakhargosh/[[file]][][].txt-included_patterns9-excluded_patterns9-True-True] PASSED
-tests/test_patterns.py::test_match_path[/users/gorakhargosh/[test].txt-included_patterns6-excluded_patterns6-True-True] PASSED
-tests/test_patterns.py::test_match_path[/users/gorakhargosh/[test].txt-included_patterns8-excluded_patterns8-True-True] PASSED
-tests/test_patterns.py::test_match_path[/users/gorakhargosh/file3.py-included_patterns4-excluded_patterns4-True-True] PASSED
-tests/test_patterns.py::test_match_path[/users/gorakhargosh/filea.py-included_patterns5-excluded_patterns5-True-False] PASSED
-tests/test_patterns.py::test_match_path[/users/gorakhargosh/foobar.py-included_patterns0-excluded_patterns0-True-True] PASSED
-tests/test_patterns.py::test_match_path[/users/gorakhargosh/foobar.py-included_patterns1-excluded_patterns1-True-False] PASSED
-tests/test_patterns.py::test_match_path[/users/gorakhargosh/foobar.py-included_patterns3-excluded_patterns3-False-ValueError] PASSED
-tests/test_patterns.py::test_match_path[/users/gorakhargosh/t.txt-included_patterns7-excluded_patterns7-True-False] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/-included_patterns2-excluded_patterns2-False-None-False] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/[[file]][][].txt-included_patterns15-excluded_patterns15-True-None-True] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/[test].txt-included_patterns12-excluded_patterns12-True-None-True] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/[test].txt-included_patterns14-excluded_patterns14-True-None-True] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/file3.py-included_patterns10-excluded_patterns10-True-None-True] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/filea.py-included_patterns11-excluded_patterns11-True-None-False] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/foobar.py-included_patterns0-excluded_patterns0-True-None-True] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/foobar.py-included_patterns1-excluded_patterns1-True-None-False] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/foobar.py-included_patterns3-excluded_patterns3-False-None-ValueError] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/foobar.py-included_patterns4-excluded_patterns4-True-/users/gorakhargosh-True] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/foobar.py-included_patterns5-excluded_patterns5-True-/users/gorakhargosh-True] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/foobar.pyc-included_patterns9-excluded_patterns9-True-/users/gorakhargosh-False] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/sub/foobar.py-included_patterns6-excluded_patterns6-True-/users/gorakhargosh-False] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/sub/foobar.py-included_patterns7-excluded_patterns7-True-/users/gorakhargosh-True] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/sub/foobar.py-included_patterns8-excluded_patterns8-True-/users/gorakhargosh-True] PASSED
+tests/test_patterns.py::test_match_path[/users/gorakhargosh/t.txt-included_patterns13-excluded_patterns13-True-None-False] PASSED
 tests/test_patterns.py::test_match_path_case_sensitivity[/users/gorakhargosh/FOOBAR.PY-**/*.py-False-True] PASSED
 tests/test_patterns.py::test_match_path_case_sensitivity[/users/gorakhargosh/FOOBAR.PY-**/*.py-True-False] PASSED
 tests/test_patterns.py::test_match_path_case_sensitivity[/users/gorakhargosh/foobar.py-**/*.PY-False-True] PASSED
@@ -251,6 +276,7 @@ tests/test_regex_matching_event_handler.py::test_conflicting_regexes[None-ignore
 tests/test_regex_matching_event_handler.py::test_conflicting_regexes[regexes1-ignore_regexes1-False] PASSED
 tests/test_regex_matching_event_handler.py::test_dispatch PASSED
 tests/test_regex_matching_event_handler.py::test_dispatch_ignores_empty_dest_path PASSED
+tests/test_regex_matching_event_handler.py::test_events_lost_ignores_regexes PASSED
 tests/test_regex_matching_event_handler.py::test_handler PASSED
 tests/test_regex_matching_event_handler.py::test_ignore_directories PASSED
 tests/test_regex_matching_event_handler.py::test_ignore_policy[None-any] PASSED
@@ -262,6 +288,7 @@ tests/test_regex_matching_event_handler.py::test_ignore_regexes PASSED
 tests/test_regex_matching_event_handler.py::test_logging_event_handler_dispatch PASSED
 tests/test_regex_matching_event_handler.py::test_regex_cross_boundary_moves PASSED
 tests/test_regex_matching_event_handler.py::test_regexes PASSED
+tests/test_regex_matching_event_handler.py::test_str_ignore_regexes PASSED
 tests/test_regex_matching_event_handler.py::test_str_regexes PASSED
 tests/test_skip_repeats_queue.py::test_allow_nonconsecutive PASSED
 tests/test_skip_repeats_queue.py::test_basic_queue PASSED
@@ -344,8 +371,29 @@ tests/test_snapshot_diff.py::test_empty_snapshot[False-False] PASSED
 tests/test_snapshot_diff.py::test_empty_snapshot[False-True] PASSED
 tests/test_snapshot_diff.py::test_empty_snapshot[True-False] PASSED
 tests/test_snapshot_diff.py::test_empty_snapshot[True-True] PASSED
+tests/test_snapshot_diff.py::test_freebsd_backdated_birthtime_is_not_a_replacement[2500-False-freebsd14] PASSED
+tests/test_snapshot_diff.py::test_freebsd_backdated_birthtime_is_not_a_replacement[2500-False-freebsd15] PASSED
+tests/test_snapshot_diff.py::test_freebsd_backdated_birthtime_is_not_a_replacement[2500-True-freebsd14] PASSED
+tests/test_snapshot_diff.py::test_freebsd_backdated_birthtime_is_not_a_replacement[2500-True-freebsd15] PASSED
+tests/test_snapshot_diff.py::test_freebsd_backdated_birthtime_is_not_a_replacement[500-False-freebsd14] PASSED
+tests/test_snapshot_diff.py::test_freebsd_backdated_birthtime_is_not_a_replacement[500-False-freebsd15] PASSED
+tests/test_snapshot_diff.py::test_freebsd_backdated_birthtime_is_not_a_replacement[500-True-freebsd14] PASSED
+tests/test_snapshot_diff.py::test_freebsd_backdated_birthtime_is_not_a_replacement[500-True-freebsd15] PASSED
+tests/test_snapshot_diff.py::test_freebsd_touch_backdated_file SKIPPED
+tests/test_snapshot_diff.py::test_hard_link_rename_has_no_duplicate_create_or_delete[a-c-False] PASSED
+tests/test_snapshot_diff.py::test_hard_link_rename_has_no_duplicate_create_or_delete[a-c-True] PASSED
+tests/test_snapshot_diff.py::test_hard_link_rename_has_no_duplicate_create_or_delete[c-a-False] PASSED
+tests/test_snapshot_diff.py::test_hard_link_rename_has_no_duplicate_create_or_delete[c-a-True] PASSED
 tests/test_snapshot_diff.py::test_ignore_device PASSED
 tests/test_snapshot_diff.py::test_ignore_device_preserves_hard_link_moves PASSED
+tests/test_snapshot_diff.py::test_inode_reuse_is_not_a_move[spec_old0-spec_new0-False-False] PASSED
+tests/test_snapshot_diff.py::test_inode_reuse_is_not_a_move[spec_old1-spec_new1-False-True] PASSED
+tests/test_snapshot_diff.py::test_linux_birthtime_does_not_retry_snapshot_lookup[0] PASSED
+tests/test_snapshot_diff.py::test_linux_birthtime_does_not_retry_snapshot_lookup[None] PASSED
+tests/test_snapshot_diff.py::test_linux_birthtime_is_captured_before_inode_reuse[False] PASSED
+tests/test_snapshot_diff.py::test_linux_birthtime_is_captured_before_inode_reuse[True] PASSED
+tests/test_snapshot_diff.py::test_linux_birthtime_survives_rename SKIPPED
+tests/test_snapshot_diff.py::test_matching_birthtime_is_detected_as_move PASSED
 tests/test_snapshot_diff.py::test_move_from PASSED
 tests/test_snapshot_diff.py::test_move_internal PASSED
 tests/test_snapshot_diff.py::test_move_replace PASSED
@@ -359,25 +407,63 @@ tests/test_snapshot_diff.py::test_move_with_changed_device[True-False-False] PAS
 tests/test_snapshot_diff.py::test_move_with_changed_device[True-False-True] PASSED
 tests/test_snapshot_diff.py::test_move_with_changed_device[True-True-False] PASSED
 tests/test_snapshot_diff.py::test_move_with_changed_device[True-True-True] PASSED
+tests/test_snapshot_diff.py::test_non_freebsd_older_birthtime_is_a_replacement PASSED
 tests/test_snapshot_diff.py::test_permission_error PASSED
 tests/test_snapshot_diff.py::test_pickle PASSED
 tests/test_snapshot_diff.py::test_replace_dir_with_file PASSED
+tests/test_snapshot_diff.py::test_same_path_replacement[False-False-False-0-200] PASSED
+tests/test_snapshot_diff.py::test_same_path_replacement[False-False-False-100-200] PASSED
+tests/test_snapshot_diff.py::test_same_path_replacement[False-False-True-None-None] PASSED
+tests/test_snapshot_diff.py::test_same_path_replacement[False-True-False-None-None] PASSED
+tests/test_snapshot_diff.py::test_same_path_replacement[False-True-True-100-200] PASSED
+tests/test_snapshot_diff.py::test_same_path_replacement[True-False-False-0-200] PASSED
+tests/test_snapshot_diff.py::test_same_path_replacement[True-False-False-100-200] PASSED
+tests/test_snapshot_diff.py::test_same_path_replacement[True-False-True-None-None] PASSED
+tests/test_snapshot_diff.py::test_same_path_replacement[True-True-False-None-None] PASSED
+tests/test_snapshot_diff.py::test_same_path_replacement[True-True-True-100-200] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[False-birthtimes0-False] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[False-birthtimes0-True] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[False-birthtimes1-False] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[False-birthtimes1-True] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[False-birthtimes2-False] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[False-birthtimes2-True] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[False-birthtimes3-False] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[False-birthtimes3-True] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[False-birthtimes4-False] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[False-birthtimes4-True] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[True-birthtimes0-False] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[True-birthtimes0-True] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[True-birthtimes1-False] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[True-birthtimes1-True] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[True-birthtimes2-False] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[True-birthtimes2-True] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[True-birthtimes3-False] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[True-birthtimes3-True] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[True-birthtimes4-False] PASSED
+tests/test_snapshot_diff.py::test_same_path_unchanged_identity[True-birthtimes4-True] PASSED
+tests/test_snapshot_diff.py::test_windows_birthtime_does_not_populate_cache PASSED
+tests/test_statx.py::test_get_statx_birthtime_ns[False-0-2048-None] PASSED
+tests/test_statx.py::test_get_statx_birthtime_ns[True--1-2048-None] PASSED
+tests/test_statx.py::test_get_statx_birthtime_ns[True-0-0-None] PASSED
+tests/test_statx.py::test_get_statx_birthtime_ns[True-0-2048-1700000000123456789] PASSED
+tests/test_statx.py::test_statx_abi PASSED
 
 test_delayed_get passed 1 out of the required 1 times. Success!
 test_nondelayed_get passed 1 out of the required 1 times. Success!
+test___init__ passed 1 out of the required 1 times. Success!
+test_transient_error_on_watched_dir[EACCES] passed 1 out of the required 1 times. Success!
+test_transient_error_on_watched_dir[EBUSY] passed 1 out of the required 1 times. Success!
 test_transient_error_on_watched_dir[EHOSTDOWN] passed 1 out of the required 1 times. Success!
 test_transient_error_on_watched_dir[ESTALE] passed 1 out of the required 1 times. Success!
 test_transient_error_in_subdirectory passed 1 out of the required 1 times. Success!
 test_delete_watched_dir passed 1 out of the required 1 times. Success!
-test___init__ passed 1 out of the required 1 times. Success!
-test_transient_error_on_watched_dir[EACCES] passed 1 out of the required 1 times. Success!
-test_transient_error_on_watched_dir[EBUSY] passed 1 out of the required 1 times. Success!
 test_auto_restart_on_file_change passed 1 out of the required 1 times. Success!
+test_auto_restart_on_file_change_debounce passed 1 out of the required 1 times. Success!
 test_auto_restart_subprocess_termination[True] passed 1 out of the required 1 times. Success!
 test_auto_restart_subprocess_termination[False] passed 1 out of the required 1 times. Success!
 
 ===End Flaky Test Report===
 
-======== 353 passed, 7 skipped ========
+======== 436 passed, 9 skipped ========
   py$(PYV): OK
   congratulations :)
