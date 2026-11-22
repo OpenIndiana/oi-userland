@@ -32,8 +32,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=usr/share/quilt/scripts/patchfns$ -> default mode 0444 >
 <transform file path=usr/share/quilt/.+ ->default mode 0555>
+<transform link path=usr/share/quilt/compat/.+ -> default pkg.linted.userland.action002.0 true >
 
 file etc/bash_completion.d/quilt path=usr/share/bash-completion/completions/quilt
 file path=etc/quilt.quiltrc \
@@ -41,12 +42,9 @@ file path=etc/quilt.quiltrc \
     mode=0644
 file path=usr/bin/guards
 file path=usr/bin/quilt
-file usr/share/doc/quilt/README \
-    path=usr/share/doc/quilt-$(COMPONENT_VERSION)/README
-file usr/share/doc/quilt/README.MAIL \
-    path=usr/share/doc/quilt-$(COMPONENT_VERSION)/README.MAIL
-file usr/share/doc/quilt/quilt.pdf \
-    path=usr/share/doc/quilt-$(COMPONENT_VERSION)/quilt.pdf
+file path=usr/share/doc/quilt-$(HUMAN_VERSION)/README
+file path=usr/share/doc/quilt-$(HUMAN_VERSION)/README.MAIL
+file path=usr/share/doc/quilt-$(HUMAN_VERSION)/quilt.pdf
 file path=usr/share/emacs/site-lisp/quilt.el
 file path=usr/share/locale/de/LC_MESSAGES/quilt.mo
 file path=usr/share/locale/fr/LC_MESSAGES/quilt.mo
@@ -57,6 +55,23 @@ file path=usr/share/man/man1/quilt.1
 file path=usr/share/quilt/add
 file path=usr/share/quilt/annotate
 file path=usr/share/quilt/applied
+link path=usr/share/quilt/compat/7z target=../../../bin/7zr
+link path=usr/share/quilt/compat/awk target=../../../bin/gawk
+link path=usr/share/quilt/compat/column target=../../../bin/column
+link path=usr/share/quilt/compat/cp target=../../../gnu/bin/cp
+link path=usr/share/quilt/compat/date target=../../../gnu/bin/date
+link path=usr/share/quilt/compat/diff target=../../../gnu/bin/diff
+link path=usr/share/quilt/compat/diffstat target=../../../bin/diffstat
+link path=usr/share/quilt/compat/find target=../../../gnu/bin/find
+link path=usr/share/quilt/compat/getopt target=../../../gnu/bin/getopt
+link path=usr/share/quilt/compat/grep target=../../../gnu/bin/grep
+link path=usr/share/quilt/compat/patch target=../../../gnu/bin/patch
+link path=usr/share/quilt/compat/perl target=../../../bin/perl
+link path=usr/share/quilt/compat/sed target=../../../gnu/bin/sed
+link path=usr/share/quilt/compat/sendmail target=../../../lib/sendmail
+link path=usr/share/quilt/compat/tail target=../../../gnu/bin/tail
+link path=usr/share/quilt/compat/tar target=../../../gnu/bin/tar
+link path=usr/share/quilt/compat/tr target=../../../gnu/bin/tr
 file path=usr/share/quilt/delete
 file path=usr/share/quilt/diff
 file path=usr/share/quilt/edit
@@ -82,7 +97,7 @@ file path=usr/share/quilt/scripts/backup-files
 file path=usr/share/quilt/scripts/dependency-graph
 file path=usr/share/quilt/scripts/edmail
 file path=usr/share/quilt/scripts/inspect-wrapper
-file path=usr/share/quilt/scripts/patchfns mode=444
+file path=usr/share/quilt/scripts/patchfns
 file path=usr/share/quilt/scripts/remove-trailing-ws
 file path=usr/share/quilt/scripts/utilfns
 file path=usr/share/quilt/series
@@ -92,39 +107,3 @@ file path=usr/share/quilt/spec-filters/obs
 file path=usr/share/quilt/top
 file path=usr/share/quilt/unapplied
 file path=usr/share/quilt/upgrade
-
-link path=usr/share/quilt/compat/7zr target=../../../bin/7zr pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/awk target=../../../gnu/bin/awk pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/column target=../../../bin/column pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/cp target=../../../gnu/bin/cp pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/date target=../../../gnu/bin/date pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/diff target=../../../gnu/bin/diff pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/diffstat target=../../../bin/diffstat pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/find target=../../../gnu/bin/find pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/getopt target=../../../gnu/bin/getopt pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/grep target=../../../gnu/bin/grep pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/patch target=../../../gnu/bin/patch pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/perl target=../../../perl5/$(PERL_VERSION)/bin/perl pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/sed target=../../../gnu/bin/sed pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/sendmail target=../../../sbin/sendmail pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/tail target=../../../gnu/bin/tail pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/tar target=../../../gnu/bin/tar pkg.linted.userland.action002.0=true
-link path=usr/share/quilt/compat/tr target=../../../gnu/bin/tr pkg.linted.userland.action002.0=true
-
-depend fmri=pkg:/system/mta pkg.debug.depend.file=usr/lib/sendmail type=require
-
-depend fmri=__TBD pkg.debug.depend.file=usr/bin/7zr type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/awk type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/cp type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/bin/column type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/date type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/diff type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/bin/diffstat type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/find type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/getopt type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/grep type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/patch type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/sed type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/tail type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/tar type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/tr type=require
