@@ -43,15 +43,21 @@ file files/mariadb_114.xml \
 file files/mariadb_114 path=lib/svc/method/mariadb_114 mode=0555
 
 
-link path=etc/mysql/my.cnf target=../mariadb/11.4/my.cnf mediator=mysql mediator-version=11.4 mediator-implementation=mariadb
-link path=usr/mysql/bin target=../mariadb/11.4/bin mediator=mysql mediator-version=11.4 mediator-implementation=mariadb
-link path=usr/mysql/docs target=../mariadb/11.4/docs mediator=mysql mediator-version=11.4 mediator-implementation=mariadb
-link path=usr/mysql/man target=../mariadb/11.4/man mediator=mysql mediator-version=11.4 mediator-implementation=mariadb
-link path=usr/mysql/share target=../mariadb/11.4/share mediator=mysql mediator-version=11.4 mediator-implementation=mariadb
-link path=var/mysql/data target=../mariadb/11.4/data mediator=mysql mediator-version=11.4 mediator-implementation=mariadb
+link path=etc/mysql/my.cnf target=../mariadb/11.4/my.cnf mediator=mysql \
+    mediator-version=11.4 mediator-implementation=mariadb pkg.tmp.allow-dangling=true
+link path=usr/mysql/bin target=../mariadb/11.4/bin mediator=mysql \
+    mediator-version=11.4 mediator-implementation=mariadb pkg.tmp.allow-dangling=true
+link path=usr/mysql/docs target=../mariadb/11.4/docs mediator=mysql \
+    mediator-version=11.4 mediator-implementation=mariadb pkg.tmp.allow-dangling=true
+link path=usr/mysql/man target=../mariadb/11.4/man mediator=mysql \
+    mediator-version=11.4 mediator-implementation=mariadb pkg.tmp.allow-dangling=true
+link path=usr/mysql/share target=../mariadb/11.4/share mediator=mysql \
+    mediator-version=11.4 mediator-implementation=mariadb pkg.tmp.allow-dangling=true
+link path=var/mysql/data target=../mariadb/11.4/data mediator=mysql \
+    mediator-version=11.4 mediator-implementation=mariadb pkg.tmp.allow-dangling=true
 
 depend fmri=database/mysql-common type=require
-depend fmri=database/mariadb-114/client@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+#depend fmri=database/mariadb-114/client@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
 
 file path=usr/mariadb/11.4/COPYING
 file path=usr/mariadb/11.4/CREDITS
@@ -153,7 +159,6 @@ link path=usr/mariadb/11.4/bin/wsrep_sst_rsync_wan target=wsrep_sst_rsync
 file path=usr/mariadb/11.4/man/man1/wsrep_sst_rsync_wan.1
 
 dir  path=usr/mariadb/11.4/docs
-file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/auth_pam_tool_dir/auth_pam_tool
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/adt_null.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/auth_0x0100.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/auth_ed25519.so
@@ -161,6 +166,7 @@ file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/auth_gssapi.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/auth_gssapi_client.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/auth_mysql_sha2.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/auth_pam.so
+file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/auth_pam_tool_dir/auth_pam_tool
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/auth_pam_v1.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/caching_sha2_password.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/client_ed25519.so
@@ -181,11 +187,19 @@ file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/ha_s3.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/ha_sphinx.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/ha_spider.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/handlersocket.so
+file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/hashicorp_key_management.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/libdaemon_example.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/locales.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/metadata_lock_info.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/mypluglib.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/mysql_clear_password.so
+file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/password_reuse_check.so
+file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/plugin_name_ascii.so
+file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/plugin_name_non_ascii.so
+file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/provider_bzip2.so
+file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/provider_lz4.so
+file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/provider_lzma.so
+file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/provider_lzo.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/qa_auth_client.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/qa_auth_interface.so
 file path=usr/mariadb/11.4/lib/$(MACH64)/plugin/qa_auth_server.so

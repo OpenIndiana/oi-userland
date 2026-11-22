@@ -1,13 +1,13 @@
 diff -wpruN --no-dereference '--exclude=*.orig' a~/cmake/plugin.cmake a/cmake/plugin.cmake
 --- a~/cmake/plugin.cmake	1970-01-01 00:00:00
 +++ a/cmake/plugin.cmake	1970-01-01 00:00:00
-@@ -145,7 +145,7 @@ MACRO(MYSQL_ADD_PLUGIN)
+@@ -209,7 +209,7 @@ MACRO(MARIADB_ADD_PLUGIN)
      ENDIF()
  
      ADD_LIBRARY(${target} STATIC ${SOURCES})
 -    DTRACE_INSTRUMENT(${target})
 +    #DTRACE_INSTRUMENT(${target})
-     ADD_DEPENDENCIES(${target} GenError ${ARG_DEPENDS})
+     ADD_DEPENDENCIES(${target} ${ARG_DEPENDS})
      RESTRICT_SYMBOL_EXPORTS(${target})
      IF(WITH_EMBEDDED_SERVER AND (NOT ARG_NOT_EMBEDDED))
 @@ -155,7 +155,7 @@ MACRO(MYSQL_ADD_PLUGIN)

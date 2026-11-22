@@ -27,10 +27,12 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-link path=usr/mysql/lib target=../mariadb/11.4/lib mediator=mysql mediator-version=11.4 mediator-implementation=mariadb
-link path=usr/mysql/include target=../mariadb/11.4/include mediator=mysql mediator-version=11.4 mediator-implementation=mariadb
+link path=usr/mysql/lib target=../mariadb/11.4/lib mediator=mysql mediator-version=11.4 \
+     mediator-implementation=mariadb pkg.tmp.allow-dangling=true
+link path=usr/mysql/include target=../mariadb/11.4/include mediator=mysql mediator-version=11.4 \
+     mediator-implementation=mariadb pkg.tmp.allow-dangling=true
 
-link path=usr/mariadb/11.4/include/mysql target=. 
+#link path=usr/mariadb/11.4/include/mysql target=. 
 
 file path=usr/mariadb/11.4/include/errmsg.h
 file path=usr/mariadb/11.4/include/ma_list.h
@@ -53,14 +55,12 @@ file path=usr/mariadb/11.4/include/mysql.h mode=0444
 file path=usr/mariadb/11.4/include/mysql_com.h
 file path=usr/mariadb/11.4/include/mysql_version.h mode=0444
 file path=usr/mariadb/11.4/include/mysqld_error.h mode=0444
-file path=usr/mariadb/11.4/include/server/big_endian.h
 file path=usr/mariadb/11.4/include/server/decimal.h
 file path=usr/mariadb/11.4/include/server/errmsg.h
 file path=usr/mariadb/11.4/include/server/handler_ername.h
 file path=usr/mariadb/11.4/include/server/handler_state.h
 file path=usr/mariadb/11.4/include/server/json_lib.h
 file path=usr/mariadb/11.4/include/server/keycache.h
-file path=usr/mariadb/11.4/include/server/little_endian.h
 file path=usr/mariadb/11.4/include/server/m_ctype.h
 file path=usr/mariadb/11.4/include/server/m_string.h
 file path=usr/mariadb/11.4/include/server/ma_dyncol.h
@@ -161,7 +161,6 @@ file path=usr/mariadb/11.4/include/server/private/char_buffer.h
 file path=usr/mariadb/11.4/include/server/private/charset_collations.h
 file path=usr/mariadb/11.4/include/server/private/client_settings.h
 file path=usr/mariadb/11.4/include/server/private/compat56.h
-file path=usr/mariadb/11.4/include/server/private/config.h
 file path=usr/mariadb/11.4/include/server/private/contributors.h
 file path=usr/mariadb/11.4/include/server/private/create_options.h
 file path=usr/mariadb/11.4/include/server/private/create_tmp_table.h
@@ -472,7 +471,45 @@ file path=usr/mariadb/11.4/include/server/private/welcome_copyright_notice.h
 file path=usr/mariadb/11.4/include/server/private/winservice.h
 file path=usr/mariadb/11.4/include/server/private/wqueue.h
 file path=usr/mariadb/11.4/include/server/private/wsrep.h
+file path=usr/mariadb/11.4/include/server/private/wsrep/allowlist_service.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/atomic.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/buffer.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/chrono.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/client_id.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/client_service.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/client_state.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/compiler.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/condition_variable.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/connection_monitor_service.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/encryption_service.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/event_service.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/exception.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/gtid.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/high_priority_service.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/id.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/key.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/lock.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/logger.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/mutex.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/provider.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/provider_options.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/reporter.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/seqno.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/server_service.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/server_state.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/sr_key_set.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/storage_service.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/streaming_context.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/thread.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/thread_service.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/tls_service.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/transaction.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/transaction_id.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/version.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/view.hpp
+file path=usr/mariadb/11.4/include/server/private/wsrep/xid.hpp
 file path=usr/mariadb/11.4/include/server/private/wsrep_allowlist_service.h
+file path=usr/mariadb/11.4/include/server/private/wsrep_api.h
 file path=usr/mariadb/11.4/include/server/private/wsrep_applier.h
 file path=usr/mariadb/11.4/include/server/private/wsrep_binlog.h
 file path=usr/mariadb/11.4/include/server/private/wsrep_client_service.h
