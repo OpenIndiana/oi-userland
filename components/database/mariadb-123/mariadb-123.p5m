@@ -42,11 +42,16 @@ file files/mariadb_123 path=lib/svc/method/mariadb_123 mode=0555
 
 
 link path=etc/mysql/my.cnf target=../mariadb/12.3/my.cnf mediator=mysql mediator-version=12.3 mediator-implementation=mariadb
-link path=usr/mysql/bin target=../mariadb/12.3/bin mediator=mysql mediator-version=12.3 mediator-implementation=mariadb
-link path=usr/mysql/docs target=../mariadb/12.3/docs mediator=mysql mediator-version=12.3 mediator-implementation=mariadb
-link path=usr/mysql/man target=../mariadb/12.3/man mediator=mysql mediator-version=12.3 mediator-implementation=mariadb
-link path=usr/mysql/share target=../mariadb/12.3/share mediator=mysql mediator-version=12.3 mediator-implementation=mariadb
-link path=var/mysql/data target=../mariadb/12.3/data mediator=mysql mediator-version=12.3 mediator-implementation=mariadb
+link path=usr/mysql/bin target=../mariadb/12.3/bin mediator=mysql mediator-version=12.3 mediator-implementation=mariadb \
+    pkg.tmp.allow-dangling=true
+link path=usr/mysql/docs target=../mariadb/12.3/docs mediator=mysql mediator-version=12.3 mediator-implementation=mariadb \
+    pkg.tmp.allow-dangling=true
+link path=usr/mysql/man target=../mariadb/12.3/man mediator=mysql mediator-version=12.3 mediator-implementation=mariadb \
+    pkg.tmp.allow-dangling=true
+link path=usr/mysql/share target=../mariadb/12.3/share mediator=mysql mediator-version=12.3 mediator-implementation=mariadb \
+    pkg.tmp.allow-dangling=true
+link path=var/mysql/data target=../mariadb/12.3/data mediator=mysql mediator-version=12.3 mediator-implementation=mariadb \
+    pkg.tmp.allow-dangling=true
 
 depend fmri=database/mysql-common type=require
 depend fmri=database/mariadb-123/client@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
@@ -158,6 +163,8 @@ file path=usr/mariadb/12.3/lib/$(MACH64)/plugin/mypluglib.so
 file path=usr/mariadb/12.3/lib/$(MACH64)/plugin/mysql_clear_password.so
 file path=usr/mariadb/12.3/lib/$(MACH64)/plugin/parsec.so
 file path=usr/mariadb/12.3/lib/$(MACH64)/plugin/password_reuse_check.so
+file path=usr/mariadb/12.3/lib/$(MACH64)/plugin/plugin_name_ascii.so
+file path=usr/mariadb/12.3/lib/$(MACH64)/plugin/plugin_name_non_ascii.so
 file path=usr/mariadb/12.3/lib/$(MACH64)/plugin/provider_bzip2.so
 file path=usr/mariadb/12.3/lib/$(MACH64)/plugin/provider_lz4.so
 file path=usr/mariadb/12.3/lib/$(MACH64)/plugin/provider_lzma.so
