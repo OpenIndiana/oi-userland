@@ -20,10 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		decorator
-HUMAN_VERSION =			5.3.1
+HUMAN_VERSION =			5.3.2
 COMPONENT_SUMMARY =		Decorators for Humans
+COMPONENT_PROJECT_URL =		https://github.com/micheles/decorator
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4cbcdd55a6efadb9dbea26b858f4fb3264567b52d69ca0d25b721b553f60ea82
+	sha256:d9883f1b8259e3bfc42565d0bc6fdc760012008552aa449f75efd2d48319b82b
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
