@@ -19,18 +19,20 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Bit-Vector
-HUMAN_VERSION =			7.4
-COMPONENT_REVISION =		4
+HUMAN_VERSION =			7.5
 COMPONENT_SUMMARY =		Efficient bit vector, set of integers and \\\\\\\"big int\\\\\\\" math library
-COMPONENT_CPAN_AUTHOR =		STBEY
+COMPONENT_CPAN_AUTHOR =		SHLOMIF
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3c6daa671fecfbc35f92a9385b563d65f50dfc6bdc8b4805f9ef46c0d035a926
+	sha256:23979226b47db204b80eb3358fa49bd27322a239dc109b51bcdebb91548e818e
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-2.0-only OR LGPL-2.0-only
 
 include $(WS_MAKE_RULES)/common.mk
 
+# The argument can vary
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(Argument \"\)[^ ]\+\(\" isn'\''t numeric\)/\1XXXXXXXX\2/g'"
+
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/carp-clan
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/carp-clan
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
