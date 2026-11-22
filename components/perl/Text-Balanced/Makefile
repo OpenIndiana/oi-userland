@@ -19,16 +19,16 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Text-Balanced
-HUMAN_VERSION =			2.07
+HUMAN_VERSION =			2.08
 COMPONENT_SUMMARY =		Extract delimited text sequences from strings.
 COMPONENT_CPAN_AUTHOR =		SHAY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7c5d81bd8d6b2cddbf60cef66d7f9f6af417412e5eb24e87a5a197c311e330cf
+	sha256:adb4e896c003cd2c7c9a1b08a6d9660f44d12a4058c2746815f215325da3ecb8
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
