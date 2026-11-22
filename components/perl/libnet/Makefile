@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		libnet
-HUMAN_VERSION =			3.16
+HUMAN_VERSION =			3.17
 COMPONENT_SUMMARY =		Collection of network protocol modules
 COMPONENT_CPAN_AUTHOR =		SHAY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:41472b0047cba02c203d3d02b9d4cf72b41346997b26c79b459be6159b0c0875
+	sha256:6f48e0f37174251eced89b975cb4dc6b9c7e4a82fd1c0337b545308e8d87e7df
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
