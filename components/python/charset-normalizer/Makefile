@@ -20,10 +20,10 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		charset_normalizer
-HUMAN_VERSION =			3.5.2
+HUMAN_VERSION =			3.5.3
 COMPONENT_SUMMARY =		The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:39de2a259fc954455c57274dc94c79d5842774e1247a016aff30bc0efed0f4ef
+	sha256:a250888753faa289e2997962fbb17c4960cbdb58575533ca6fceee68c224bdff
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
