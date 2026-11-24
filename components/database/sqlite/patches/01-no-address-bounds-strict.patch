@@ -1,0 +1,14 @@
+during gmake test:
+gcc: error: -fsanitize=address is not supported in this configuration
+
+--- sqlite-src-3530400/main.mk.old	2026-11-18 09:32:10.475374033 -0500
++++ sqlite-src-3530400/main.mk	2026-11-18 09:32:27.209526972 -0500
+@@ -2261,7 +2261,7 @@
+ xbin: fuzzcheck$(T.exe)
+ 
+ # -fsanitize=... flags for fuzzcheck-asan.
+-CFLAGS.fuzzcheck-asan.fsanitize ?= -fsanitize=address
++CFLAGS.fuzzcheck-asan.fsanitize =
+ 
+ fuzzcheck-asan$(T.exe):	$(FUZZCHECK_SRC) $(FUZZCHECK_DEP)
+ 	$(T.link) -o $@ $(CFLAGS.fuzzcheck-asan.fsanitize) $(FUZZCHECK_OPT) $(FUZZCHECK_SRC) \

@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
 COMPONENT_VERSION=      3.53.4
+COMPONENT_REVISION=     1
 TARBALL_VERSION=        3530400
 COMPONENT_SUMMARY=      in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
@@ -92,10 +93,14 @@ COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)$(USRSHAREMAN1DIR) ; $(CP)
 # Move tcl components to expected location
 COMPONENT_POST_INSTALL_ACTION.64 += $(MKDIR) $(PROTO_DIR)/usr/lib/tcl8.6/sqlite3/$(MACH64) ; /usr/bin/mv $(PROTOUSRLIBDIR.64)/sqlite$(COMPONENT_VERSION)/* $(PROTO_DIR)/usr/lib/tcl8.6/sqlite3/$(MACH64)/ ;
 
+# Add lemon (parser generator) to installed files
+COMPONENT_POST_INSTALL_ACTION.64 += $(CP) $(BUILD_DIR_64)/lemon $(PROTO_DIR)/usr/bin/lemon ; $(MKDIR) $(PROTO_DIR)/usr/share/lemon ; $(CP) $(SOURCE_DIR)/tool/lempar.c $(PROTO_DIR)/usr/share/lemon/lempar.c ; $(MKDIR) $(PROTO_DIR)/usr/share/doc/lemon ; $(CP) $(SOURCE_DIR)/doc/lemon.html $(PROTO_DIR)/usr/share/doc/lemon/lemon.html ;
+
 COMPONENT_TEST_TARGETS= test
 # Note that the user running the tests needs more privileges in order to run them successfully.
 COMPONENT_TEST_TRANSFORMS= \
 	' -e "s/in [0-9]*\.[0-9]* seconds//" ' \
+	' -e "s/in [0-9]*.*bit//" ' \
 	' -e "s/tests on .*/tests/" ' \
 	' -n ' \
 	' -e "/errors out of/p" ' \
