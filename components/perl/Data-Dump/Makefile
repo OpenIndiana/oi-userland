@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Data-Dump
-HUMAN_VERSION =			1.26
+HUMAN_VERSION =			1.28
 COMPONENT_SUMMARY =		Pretty printing of data structures
 COMPONENT_CPAN_AUTHOR =		GARU
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9f967e70383f1dd4e4065eab5e7f7418854dcbb1edd9c8045f43a38d0e7340b1
+	sha256:2ce73373892b9b70170678530dac192ec3dfe9148bb06fec7becba536fc040df
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
