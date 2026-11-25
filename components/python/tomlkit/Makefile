@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tomlkit
-HUMAN_VERSION =			0.15.2
+HUMAN_VERSION =			0.15.3
 COMPONENT_SUMMARY =		Style preserving TOML library
 COMPONENT_PROJECT_URL =		https://github.com/python-poetry/tomlkit
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:83e32755ba1d20d9340bd069ee97e9f6232ba2346b63ffcba425de01f7e327a6
+	sha256:b3c3020ec1a4bd469d12e31fb4da938e7f6ba758cdbec3fd9047db63120eaf81
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
