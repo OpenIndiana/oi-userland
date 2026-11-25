@@ -15,15 +15,14 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		packaging
-HUMAN_VERSION =			26.3
+HUMAN_VERSION =			26.4
 COMPONENT_SUMMARY =		Core utilities for Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79
+	sha256:c4b671c41ddb9bf26e543c37723610d28fb6bf7affc4da17cf048d419d2c062a
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-2-Clause
 
 TEST_STYLE = pytest
@@ -34,11 +33,16 @@ TEST_STYLE = pytest
 # - hatchling (test bootstrap)
 # - pyproject_api (test bootstrap)
 # - pytest (test bootstrap)
+# - python-sbom (test bootstrap)
 # - setuptools-scm
 # - tox (test bootstrap)
+# - virtualenv (test bootstrap)
 # - wheel (test bootstrap)
 # - Userland build framework (see setup.py.mk)
 PYTHON_BOOTSTRAP = yes
+
+# Python 3.9 is not supported by packaging >= 26.4
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -55,5 +59,4 @@ REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/pretend
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/tomli
 TEST_REQUIRED_PACKAGES.python += library/python/tomli-w
