@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+    This file and its contents are supplied under the terms of the
+    Common Development and Distribution License ("CDDL"), version 1.0.
+    You may only use this file in accordance with the terms of version
+    1.0 of the CDDL.
+
+    A full copy of the text of the CDDL should have accompanied this
+    source.  A copy of the CDDL is also available via the Internet at
+    http://www.illumos.org/license/CDDL.
+
+    Copyright 2026 isoriano1968
+
+    geoclue, the location service.  OpenIndiana's system bus does not
+    activate services (no setuid launch helper), so geoclue runs under SMF,
+    as root like its D-Bus activation file says.
+-->
+<service_bundle type='manifest' name='geoclue'>
+
+<service name='system/geoclue' type='service' version='1'>
+
+	<create_default_instance enabled='true' />
+
+	<single_instance />
+
+	<dependency name='multi-user' type='service'
+	    grouping='require_all' restart_on='none'>
+		<service_fmri value='svc:/milestone/multi-user' />
+	</dependency>
+
+	<dependency name='name-services' type='service'
+	    grouping='require_all' restart_on='none'>
+		<service_fmri value='svc:/milestone/name-services' />
+	</dependency>
+
+	<dependency name='dbus' type='service'
+	    grouping='require_all' restart_on='restart'>
+		<service_fmri value='svc:/system/dbus' />
+	</dependency>
+
+	<exec_method type='method' name='start'
+	    exec='/lib/svc/method/svc-geoclue' timeout_seconds='60' />
+
+	<exec_method type='method' name='stop'
+	    exec=':kill' timeout_seconds='60' />
+
+	<exec_method type='method' name='refresh'
+	    exec=':true' timeout_seconds='60' />
+
+	<property_group name='options' type='application'>
+		<propval name='debug' type='boolean' value='false' />
+	</property_group>
+
+	<stability value='Unstable' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>GeoClue location service</loctext>
+		</common_name>
+		<documentation>
+			<manpage title='geoclue' section='5'
+			    manpath='/usr/share/man' />
+		</documentation>
+	</template>
+</service>
+
+</service_bundle>
