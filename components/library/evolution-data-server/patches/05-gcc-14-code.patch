@@ -1,0 +1,126 @@
+Origin: solaris-userland@9d7a655 components/gnome/evolution-data-server/patches/05-gcc-14-code.patch
+
+Patches to fix builds with gcc 14, submitted & accepted upstream for 3.54.1+
+https://gitlab.gnome.org/GNOME/evolution-data-server/-/merge_requests/163
+
+
+From 34adc37f978ff2fb7f92cbd44c57dfd69bc4f559 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Subject: [PATCH 2/3] I#563 - Fix argument types in ENABLE_BROKEN_SPOOL code
+
+Apparently this code (which by default is only built on Solaris)
+was missed when the types were changed from gint to gsize in
+commit 3fd3f0a82a5c636d5c48baf2c2997542dd1569f8.
+
+Closes https://gitlab.gnome.org/GNOME/evolution-data-server/-/issues/563
+---
+ src/camel/camel-movemail.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/camel/camel-movemail.c b/src/camel/camel-movemail.c
+index 4483453cd..d76625575 100644
+--- a/src/camel/camel-movemail.c
++++ b/src/camel/camel-movemail.c
+@@ -367,7 +367,7 @@ camel_movemail_copy_filter (gint fromfd,
+ 	gchar buffer[4096 + PRE_SIZE];
+ 	gint written = 0;
+ 	gchar *filterbuffer;
+-	gint filterlen, filterpre;
++	gsize filterlen, filterpre;
+ 
+ 	d (printf ("writing %d bytes ... ", bytes));
+ 
+@@ -487,7 +487,7 @@ camel_movemail_solaris (gint oldsfd,
+ {
+ 	CamelMimeParser *mp;
+ 	gchar *buffer;
+-	gint len;
++	gsize len;
+ 	gint sfd;
+ 	CamelMimeFilter *ffrom;
+ 	gint ret = 1;
+-- 
+2.45.2
+
+From 112656a7cbc29dbde9514164fcb3338104104168 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Subject: [PATCH 3/3] I#564 - Use GIConv instead of iconv_t with iconv wrappers
+
+Closes https://gitlab.gnome.org/GNOME/evolution-data-server/-/issues/564
+---
+ src/camel/camel-mime-filter-charset.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/src/camel/camel-mime-filter-charset.c b/src/camel/camel-mime-filter-charset.c
+index 45d26f3b9..31dd2d6af 100644
+--- a/src/camel/camel-mime-filter-charset.c
++++ b/src/camel/camel-mime-filter-charset.c
+@@ -30,7 +30,7 @@
+ #define w(x)
+ 
+ struct _CamelMimeFilterCharsetPrivate {
+-	iconv_t ic;
++	GIConv ic;
+ 	gchar *from;
+ 	gchar *to;
+ };
+@@ -47,9 +47,9 @@ mime_filter_charset_finalize (GObject *object)
+ 	g_free (priv->from);
+ 	g_free (priv->to);
+ 
+-	if (priv->ic != (iconv_t) -1) {
++	if (priv->ic != (GIConv) -1) {
+ 		camel_iconv_close (priv->ic);
+-		priv->ic = (iconv_t) -1;
++		priv->ic = (GIConv) -1;
+ 	}
+ 
+ 	/* Chain up to parent's finalize() method. */
+@@ -72,7 +72,7 @@ mime_filter_charset_complete (CamelMimeFilter *mime_filter,
+ 
+ 	priv = CAMEL_MIME_FILTER_CHARSET (mime_filter)->priv;
+ 
+-	if (priv->ic == (iconv_t) -1)
++	if (priv->ic == (GIConv) -1)
+ 		goto noop;
+ 
+ 	camel_mime_filter_set_size (mime_filter, len * 5 + 16, FALSE);
+@@ -163,7 +163,7 @@ mime_filter_charset_filter (CamelMimeFilter *mime_filter,
+ 
+ 	priv = CAMEL_MIME_FILTER_CHARSET (mime_filter)->priv;
+ 
+-	if (priv->ic == (iconv_t) -1)
++	if (priv->ic == (GIConv) -1)
+ 		goto noop;
+ 
+ 	camel_mime_filter_set_size (mime_filter, len * 5 + 16, FALSE);
+@@ -227,7 +227,7 @@ mime_filter_charset_reset (CamelMimeFilter *mime_filter)
+ 	priv = CAMEL_MIME_FILTER_CHARSET (mime_filter)->priv;
+ 
+ 	/* what happens with the output bytes if this resets the state? */
+-	if (priv->ic != (iconv_t) -1) {
++	if (priv->ic != (GIConv) -1) {
+ 		buffer = buf;
+ 		camel_iconv (priv->ic, NULL, NULL, &buffer, &outlen);
+ 	}
+@@ -252,7 +252,7 @@ static void
+ camel_mime_filter_charset_init (CamelMimeFilterCharset *filter)
+ {
+ 	filter->priv = camel_mime_filter_charset_get_instance_private (filter);
+-	filter->priv->ic = (iconv_t) -1;
++	filter->priv->ic = (GIConv) -1;
+ }
+ 
+ /**
+@@ -276,7 +276,7 @@ camel_mime_filter_charset_new (const gchar *from_charset,
+ 	priv = CAMEL_MIME_FILTER_CHARSET (new)->priv;
+ 
+ 	priv->ic = camel_iconv_open (to_charset, from_charset);
+-	if (priv->ic == (iconv_t) -1) {
++	if (priv->ic == (GIConv) -1) {
+ 		w (g_warning (
+ 			"Cannot create charset conversion from %s to %s: %s",
+ 			from_charset ? from_charset : "(null)",
+-- 
+2.45.2
+

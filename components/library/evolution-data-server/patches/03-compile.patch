@@ -1,0 +1,35 @@
+Origin: solaris-userland@9d7a655 components/gnome/evolution-data-server/patches/03-compile.patch
+
+Fix undef symbol during compile. Submitted & accepted upstream for 3.54.1+:
+https://gitlab.gnome.org/GNOME/evolution-data-server/-/merge_requests/163
+
+From 3ab823342fab808a94b14961cbc91e97b8bf9a79 Mon Sep 17 00:00:00 2001
+From: Niveditha Rau <Niveditha.Rau@Oracle.COM>
+Subject: [PATCH 1/3] I#562 - Pass GError instead of CamelException to
+ camel_movemail_solaris
+
+Apparently this code (which by default is only built on Solaris) was
+missed when the arguments were changed from CamelException to GError
+in commit 46938c348728d1c8bcacf6df9e0788b39783bd07.
+
+Closes https://gitlab.gnome.org/GNOME/evolution-data-server/-/issues/562
+---
+ src/camel/camel-movemail.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/camel/camel-movemail.c b/src/camel/camel-movemail.c
+index a07e4e4ae..4483453cd 100644
+--- a/src/camel/camel-movemail.c
++++ b/src/camel/camel-movemail.c
+@@ -146,7 +146,7 @@ camel_movemail (const gchar *source,
+ 	}
+ 
+ #ifdef ENABLE_BROKEN_SPOOL
+-	res = camel_movemail_solaris (sfd, dfd, ex);
++	res = camel_movemail_solaris (sfd, dfd, error);
+ #else
+ 	res = camel_movemail_copy_file (sfd, dfd, error);
+ #endif
+-- 
+2.45.2
+
