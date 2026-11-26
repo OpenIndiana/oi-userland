@@ -1,0 +1,16 @@
+Not upstream: OpenIndiana.
+
+On illumos struct winsize and TIOCGWINSZ come from <termios.h>.
+
+--- a/src/libtracker-common/tracker-term-utils.c
++++ b/src/libtracker-common/tracker-term-utils.c
+@@ -24,6 +24,9 @@
+ #include <gio/gio.h>
+ #include <glib-unix.h>
+ #include <sys/ioctl.h>
++#ifdef __sun
++#include <termios.h>	/* struct winsize, TIOCGWINSZ on illumos */
++#endif
+ #include <unistd.h>
+ #include <fcntl.h>
+ #include <stdio.h>

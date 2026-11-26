@@ -1,0 +1,41 @@
+Build directory paths out of the installed binaries.
+
+libtracker-common and libtracker-http compile the build directory into the
+library (BUILDROOT, BUILD_LIBDIR) to load their modules from the build tree
+when run uninstalled (tests, introspection): a build-host path in every
+installed binary.  Point both at a path that never exists, so the installed
+code always takes the installed modules (PRIVATE_LIBDIR), as before.
+Local to OpenIndiana (OI Mac r1 clean rebuild); not for upstream as is.
+
+diff -ru a/src/libtracker-common/meson.build b/src/libtracker-common/meson.build
+--- a/src/libtracker-common/meson.build	Fri Nov 20 16:07:43 2026
++++ b/src/libtracker-common/meson.build	Fri Nov 20 16:07:52 2026
+@@ -51,10 +51,10 @@
+   dependencies: [tracker_common_dependencies, gmodule],
+   c_args: [
+     '-DPRIVATE_LIBDIR="@0@"'.format(tracker_internal_libs_dir),
+-    '-DBUILD_LIBDIR="@0@"'.format(meson.current_build_dir()),
++    '-DBUILD_LIBDIR="/nonexistent/tinysparql-build/lib"',
+     # Global build root is required to detect noinst situations (tests/introspection),
+     # event when built as a subproject
+-    '-DBUILDROOT="@0@"'.format(meson.global_build_root()),
++    '-DBUILDROOT="/nonexistent/tinysparql-build"',
+   ] + tracker_c_args,
+   include_directories: [configinc, srcinc],
+   gnu_symbol_visibility: 'hidden',
+diff -ru a/src/libtracker-http/meson.build b/src/libtracker-http/meson.build
+--- a/src/libtracker-http/meson.build	Fri Nov 20 16:07:43 2026
++++ b/src/libtracker-http/meson.build	Fri Nov 20 16:07:52 2026
+@@ -7,10 +7,10 @@
+   dependencies: [gobject, gmodule],
+   c_args: [
+     '-DPRIVATE_LIBDIR="@0@"'.format(tracker_internal_libs_dir),
+-    '-DBUILD_LIBDIR="@0@"'.format(meson.current_build_dir()),
++    '-DBUILD_LIBDIR="/nonexistent/tinysparql-build/lib"',
+     # Global build root is required to detect noinst situations (tests/introspection),
+     # event when built as a subproject
+-    '-DBUILDROOT="@0@"'.format(meson.global_build_root()),
++    '-DBUILDROOT="/nonexistent/tinysparql-build"',
+   ] + tracker_c_args,
+   include_directories: [configinc, srcinc],
+   gnu_symbol_visibility: 'hidden',
