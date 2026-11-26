@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fs-uae
 COMPONENT_VERSION=	3.2.35
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Accurate Amiga Emulation
 COMPONENT_PROJECT_URL=	https://fs-uae.net/
 COMPONENT_FMRI=		emulators/$(COMPONENT_NAME)
@@ -38,7 +39,13 @@ COMPONENT_PREP_ACTION += ( cd $(@D) && PATH="$(PATH)" $(AUTORECONF) -fi ) ;
 
 # The 68k JIT compiler (x86-64); patches/illumos-build.patch makes it build
 # on illumos.
-CONFIGURE_OPTIONS += --enable-jit
+# The 68k JIT compiler exists for x86 only (configure.ac refuses
+# --enable-jit elsewhere); on SPARC FS-UAE runs the interpreter, and
+# patches/no-jit-warning.patch makes a configuration that asks for the JIT
+# say so and carry on.
+CONFIGURE_OPTIONS.i386 += --enable-jit
+CONFIGURE_OPTIONS.sparc += --disable-jit
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(MACH))
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
