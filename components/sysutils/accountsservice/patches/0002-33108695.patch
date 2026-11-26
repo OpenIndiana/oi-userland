@@ -1,0 +1,22 @@
+Origin: solaris-userland@9d7a655 components/desktop/accountsservice/patches/0002-33108695.patch
+
+Upstream changes made in accountsservice > 0.6.50 result in a regression in Solaris 
+with lock/unlock.  These changes are being made upstream for the switch-user option
+in gnome-shell which is explicitly disabled on Solaris.  
+
+https://gitlab.freedesktop.org/accountsservice/accountsservice/-/commit/cd83d3d6fd5059b2e5283707c30f4af972631644
+https://gitlab.freedesktop.org/accountsservice/accountsservice/-/commit/c7fa612023a163e8b2352e1170c6df3fceb19b27
+
+Revert the changeset causing the regression - not suitable for upstream
+ 
+--- a/src/libaccountsservice/act-user-manager.c	2021-07-13 12:07:16.827870844 -0700
++++ b/src/libaccountsservice/act-user-manager.c	2021-07-13 12:08:15.753377916 -0700
+@@ -2442,7 +2442,7 @@
+         /* Don't set is_loaded yet unless the seat is already loaded enough
+          * or failed to load.
+          */
+-        if (priv->seat.state > ACT_USER_MANAGER_SEAT_STATE_GET_ID) {
++        if (priv->seat.state >= ACT_USER_MANAGER_SEAT_STATE_GET_ID) {
+                 g_debug ("ActUserManager: Seat loaded, so now setting loaded property");
+         } else if (priv->seat.state == ACT_USER_MANAGER_SEAT_STATE_UNLOADED) {
+                 g_debug ("ActUserManager: Seat wouldn't load, so giving up on it and setting loaded property");

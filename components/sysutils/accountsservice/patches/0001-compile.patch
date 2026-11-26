@@ -1,0 +1,28 @@
+Origin: solaris-userland@9d7a655 components/desktop/accountsservice/patches/0001-compile.patch
+
+Solaris shadow.h definition is:
+extern struct spwd *fgetspent_r(FILE *, struct spwd *, char *, int);
+
+This is due to a difference between the Solaris & Linux definitions of
+fgetspent_r - Solaris returns a pointer on success & NULL on failure,
+Linux returns 0 on success and -1 for failure.
+
+The fix was offered to upstream here:
+https://gitlab.freedesktop.org/accountsservice/accountsservice/-/issues/128
+
+--- accountsservice-0.6.55/src/daemon.c
++++ accountsservice-0.6.55/src/daemon.c
+@@ -201,8 +201,13 @@ entry_generator_fgetpwent (Daemon
+ 
+                         shadow_entry_buffers = g_malloc0 (sizeof (*shadow_entry_buffers));
+ 
++#if defined(__sun)
++                        shadow_entry = fgetspent_r (fp, &shadow_entry_buffers->spbuf, shadow_entry_buffers->buf, sizeof (shadow_entry_buffers->buf));
++                        if (shadow_entry != NULL) {
++#else
+                         ret = fgetspent_r (fp, &shadow_entry_buffers->spbuf, shadow_entry_buffers->buf, sizeof (shadow_entry_buffers->buf), &shadow_entry);
+                         if (ret == 0) {
++#endif
+                                 g_hash_table_insert (shadow_users, g_strdup (shadow_entry->sp_namp), shadow_entry_buffers);
+                         } else {
+                                 g_free (shadow_entry_buffers);

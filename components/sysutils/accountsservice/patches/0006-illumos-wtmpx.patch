@@ -1,0 +1,19 @@
+illumos' <utmpx.h> names the wtmpx file WTMPX_FILE (/var/adm/wtmpx), not
+glibc's WTMPX_FILENAME, and has no _PATH_WTMPX in <paths.h>: without this
+meson stops with "Do not know which filename to watch for wtmp changes".
+
+Written for OpenIndiana (packages/sysutils/accountsservice); suitable for
+upstream (later accountsservice releases have the same check).
+
+--- a/meson.build
++++ b/meson.build
+@@ -79,6 +79,9 @@
+ 
+ if cc.has_header_symbol('utmpx.h', 'WTMPX_FILENAME', prefix: '#define _GNU_SOURCE')
+   config_h.set('PATH_WTMP', 'WTMPX_FILENAME')
++elif cc.has_header_symbol('utmpx.h', 'WTMPX_FILE')
++  # illumos and Solaris: /var/adm/wtmpx
++  config_h.set('PATH_WTMP', 'WTMPX_FILE')
+ elif cc.has_header_symbol('paths.h', '_PATH_WTMPX')
+   config_h.set('PATH_WTMP', '_PATH_WTMPX')
+ else

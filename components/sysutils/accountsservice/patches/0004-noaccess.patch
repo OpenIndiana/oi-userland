@@ -1,0 +1,38 @@
+Origin: solaris-userland@9d7a655 components/desktop/accountsservice/patches/0004-noaccess.patch
+
+Patch submitted upstream in:
+https://gitlab.freedesktop.org/accountsservice/accountsservice/-/merge_requests/156
+
+From 050ad50f327ed0968280235404425754d1a9e86e Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Mon, 7 Oct 2024 14:09:29 -0700
+Subject: [PATCH] Restore "noaccess" and "nobody4" to the user exclusion list
+ on Solaris
+
+These were removed in commit ca3199f91378a03037140f7fbd79424c9ea92751
+because they're not commonly seen on Linux distros, but they are present
+on all Solaris & illumos distros.
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+---
+ src/user-classify.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/user-classify.c b/src/user-classify.c
+index 2a38a77..d32d58a 100644
+--- a/src/user-classify.c
++++ b/src/user-classify.c
+@@ -40,6 +40,10 @@ static const char *default_excludes[] = {
+         "news",
+         "uucp",
+         "nobody",
++#ifdef __sun
++        "nobody4",
++        "noaccess",
++#endif
+         "postgres",
+         "pvm",
+         "rpm",
+-- 
+GitLab
+
