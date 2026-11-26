@@ -1,0 +1,37 @@
+Not upstream: OpenIndiana.
+
+illumos has no memfd_create(): fall back to an unlinked mkstemp() file
+(no sealing; nothing here adds seals).
+
+--- a/libportal/notification.c
++++ b/libportal/notification.c
+@@ -28,6 +28,29 @@
+ #include <sys/mman.h>
+ #include <fcntl.h>
+ 
++#ifndef MFD_ALLOW_SEALING
++/*
++ * illumos has no memfd_create(): use an unlinked temporary file, without
++ * sealing.  The portal reads the data from the fd either way.
++ */
++#include <stdlib.h>
++#include <unistd.h>
++#define MFD_ALLOW_SEALING 0
++static int
++memfd_create (const char *name, unsigned int flags)
++{
++  char tmpl[] = "/tmp/libportal-memfd-XXXXXX";
++  int fd;
++
++  (void) name;
++  (void) flags;
++  fd = mkstemp (tmpl);
++  if (fd != -1)
++    unlink (tmpl);
++  return fd;
++}
++#endif
++
+ #include <glib/gstdio.h>
+ #include <gio/gunixfdlist.h>
+ #include <gio/gunixoutputstream.h>
