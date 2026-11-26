@@ -1,0 +1,70 @@
+Origin: solaris-userland@9d7a655 components/gnome/libgweather/patches/01-alloca.patch
+
+Patch submitted upstream in:
+https://gitlab.gnome.org/GNOME/libgweather/-/merge_requests/326
+
+From 0212b600a9720a175104fd2751880b7f698a7285 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Tue, 15 Oct 2024 14:35:24 -0700
+Subject: [PATCH] kdtree: include alloca.h if the system has it
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes build error on Solaris with gcc 14:
+
+../libgweather/third-party/kdtree.c: In function ‘kd_insertf’:
+../libgweather/third-party/kdtree.c:224:38: error: implicit declaration
+ of function ‘alloca’ [-Wimplicit-function-declaration]
+  224 |                         bptr = buf = alloca(dim * sizeof *bptr);
+      |                                      ^~~~~~
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+---
+ libgweather/meson.build          | 4 ++++
+ libgweather/third-party/kdtree.c | 6 ++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/libgweather/meson.build b/libgweather/meson.build
+index 07f657b9..a32ae4c4 100644
+--- a/libgweather/meson.build
++++ b/libgweather/meson.build
+@@ -57,6 +57,10 @@ config_h.set_quoted('G_LOG_DOMAIN', 'GWeather')
+ config_h.set_quoted('GWEATHER_BIN_LOCATION_DIR', pkglibdir)
+ config_h.set_quoted('LIBGWEATHER_VERSION', meson.project_version())
+ 
++if c_compiler.has_header('alloca.h')
++  config_h.set('HAVE_ALLOCA_H', 1)
++endif
++
+ if c_compiler.has_member('struct tm', 'tm_gmtoff', prefix: '#include <time.h>')
+   config_h.set('HAVE_TM_TM_GMOFF', 1)
+ endif
+diff --git a/libgweather/third-party/kdtree.c b/libgweather/third-party/kdtree.c
+index 6d329d8d..e05cb1ce 100644
+--- a/libgweather/third-party/kdtree.c
++++ b/libgweather/third-party/kdtree.c
+@@ -26,9 +26,7 @@ OF SUCH DAMAGE.
+ */
+ /* single nearest neighbor search written by Tamas Nepusz <tamas@cs.rhul.ac.uk> */
+ 
+-#ifdef HAVE_CONFIG_H
+ #include <config.h>
+-#endif
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -36,6 +34,10 @@ OF SUCH DAMAGE.
+ #include <math.h>
+ #include "kdtree.h"
+ 
++#ifdef HAVE_ALLOCA_H
++#include <alloca.h>
++#endif
++
+ #if defined(WIN32) || defined(__WIN32__)
+ #include <malloc.h>
+ #endif
+-- 
+2.45.2
+
