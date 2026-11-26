@@ -74,8 +74,10 @@ LDFLAGS += -lsocket -lxnet -lnsl
 # Assumes "make" is GNU make, turns into fork bomb if it finds illumos make
 COMPONENT_BUILD_ENV += PATH=$(PATH)
 
+# byte-compile with the installed path (-s strips the proto prefix), so the
+# .pyc names /usr/lib/... and not the build directory
 COMPONENT_POST_INSTALL_ACTION=  \
-    [ $(BITS) -eq 64 ] && $(PYTHON) -m py_compile $(PROTO_DIR)/$(PYTHON_LIB)/libproxy.py || true ;
+    [ $(BITS) -eq 64 ] && $(PYTHON) -m compileall -q -s $(PROTO_DIR) $(PROTO_DIR)/$(PYTHON_LIB)/libproxy.py || true ;
 
 # Drop 32-bit binaries
 COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
