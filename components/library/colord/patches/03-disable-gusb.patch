@@ -1,0 +1,302 @@
+Origin: solaris-userland@9d7a655 components/desktop/colord/patches/03-disable-gusb.patch
+
+Disable gusb support in colord as we do not have gusb in Solaris.
+Not suitable for upstream.
+
+diff -ur a/meson.build b/meson.build
+--- a/meson.build	2022-03-14 07:34:06.769548565 -0700
++++ b/meson.build	2022-03-14 07:34:43.290364671 -0700
+@@ -117,7 +117,6 @@
+ giounix = dependency('gio-unix-2.0', version : '>= 2.45.8')
+ lcms = dependency('lcms2', version : '>= 2.6')
+ sqlite = dependency('sqlite3')
+-gusb = dependency('gusb', version : '>= 0.2.7')
+ gudev = dependency('gudev-1.0')
+ libm = cc.find_library('m', required: false)
+ libudev = dependency('libudev')
+diff -ur a/lib/colorhug/meson.build b/lib/colorhug/meson.build
+--- a/lib/colorhug/meson.build	2022-03-14 07:34:06.709953241 -0700
++++ b/lib/colorhug/meson.build	2022-03-14 07:45:28.167912512 -0700
+@@ -42,7 +42,6 @@
+   version : lt_version,
+   dependencies : [
+     giounix,
+-    gusb,
+     lcms,
+     libm,
+     libudev,
+@@ -65,7 +64,7 @@
+ pkgg = import('pkgconfig')
+ pkgg.generate(
+   libraries : colorhug,
+-  requires : [ 'gio-2.0', 'gobject-2.0', 'gusb', 'colord' ],
++  requires : [ 'gio-2.0', 'gobject-2.0', 'colord' ],
+   subdirs : 'colord-1/colorhug',
+   version : meson.project_version(),
+   name : 'colorhug',
+@@ -99,7 +98,6 @@
+   includes : [
+     'Gio-2.0',
+     'GObject-2.0',
+-    'GUsb-1.0',
+     libcolord_gir,
+   ],
+   extra_args : [
+@@ -123,7 +121,6 @@
+     ],
+     dependencies : [
+       gio,
+-      gusb,
+       lcms,
+     ],
+     link_with : [
+diff -ur a/src/meson.build b/src/meson.build
+--- a/src/meson.build	2022-03-14 07:34:06.731396635 -0700
++++ b/src/meson.build	2022-03-14 07:43:28.744020220 -0700
+@@ -61,7 +61,6 @@
+     giounix,
+     gmodule,
+     gudev,
+-    gusb,
+     lcms,
+     polkit,
+     sqlite,
+@@ -99,7 +98,6 @@
+       giounix,
+       gmodule,
+       gudev,
+-      gusb,
+       lcms,
+       polkit,
+       sqlite,
+diff -ur a/src/sensors/argyll/meson.build b/src/sensors/argyll/meson.build
+--- a/src/sensors/argyll/meson.build	2022-03-14 07:34:06.740713518 -0700
++++ b/src/sensors/argyll/meson.build	2022-03-14 07:43:56.774153558 -0700
+@@ -14,7 +14,6 @@
+   c_args : cargs,
+   dependencies : [
+     gio,
+-    gusb,
+     gudev,
+   ],
+ )
+diff -ur a/src/sensors/colorhug/meson.build b/src/sensors/colorhug/meson.build
+--- a/src/sensors/colorhug/meson.build	2022-03-14 07:34:06.738441438 -0700
++++ b/src/sensors/colorhug/meson.build	2022-03-14 07:44:33.313012903 -0700
+@@ -14,7 +14,6 @@
+   link_with : colorhug,
+   dependencies : [
+     gio,
+-    gusb,
+     gudev,
+   ],
+ )
+diff -ur a/src/sensors/dtp94/meson.build b/src/sensors/dtp94/meson.build
+--- a/src/sensors/dtp94/meson.build	2022-03-14 07:34:06.734512145 -0700
++++ b/src/sensors/dtp94/meson.build	2022-03-14 07:43:44.161844430 -0700
+@@ -15,7 +15,6 @@
+   c_args : cargs,
+   dependencies : [
+     gio,
+-    gusb,
+     gudev,
+   ],
+ )
+diff -ur a/src/sensors/dummy/meson.build b/src/sensors/dummy/meson.build
+--- a/src/sensors/dummy/meson.build	2022-03-14 07:34:06.740193214 -0700
++++ b/src/sensors/dummy/meson.build	2022-03-14 07:44:44.302220481 -0700
+@@ -13,7 +13,6 @@
+   c_args : cargs,
+   dependencies : [
+     gio,
+-    gusb,
+     gudev,
+   ],
+ )
+diff -ur a/src/sensors/huey/meson.build b/src/sensors/huey/meson.build
+--- a/src/sensors/huey/meson.build	2022-03-14 07:34:06.737238648 -0700
++++ b/src/sensors/huey/meson.build	2022-03-14 07:39:35.087617972 -0700
+@@ -16,7 +16,6 @@
+   c_args : cargs,
+   dependencies : [
+     gio,
+-    gusb,
+     gudev,
+   ],
+ )
+diff -ur a/src/sensors/huey2/meson.build b/src/sensors/huey2/meson.build
+--- a/src/sensors/huey2/meson.build	2022-03-14 07:34:06.742732976 -0700
++++ b/src/sensors/huey2/meson.build	2022-03-14 07:44:19.992709070 -0700
+@@ -13,7 +13,6 @@
+   ],
+   dependencies : [
+     gio,
+-    gusb,
+     libm,
+   ],
+   link_with : colord,
+diff -ur a/lib/colorhug/ch-common.h b/lib/colorhug/ch-common.h
+--- a/lib/colorhug/ch-common.h	2022-03-14 10:13:53.085432266 -0700
++++ b/lib/colorhug/ch-common.h	2022-03-14 10:25:45.510324578 -0700
+@@ -27,7 +27,6 @@
+ #define CH_COMMON_H
+ 
+ #include <glib.h>
+-#include <gusb.h>
+ 
+ G_BEGIN_DECLS
+ 
+diff -ur a/lib/colorhug/ch-device-queue.c b/lib/colorhug/ch-device-queue.c
+--- a/lib/colorhug/ch-device-queue.c	2022-03-14 10:13:53.087426860 -0700
++++ b/lib/colorhug/ch-device-queue.c	2022-03-14 10:27:29.908880944 -0700
+@@ -23,7 +23,6 @@
+ 
+ #include <glib-object.h>
+ #include <gio/gio.h>
+-#include <gusb.h>
+ #include <string.h>
+ #include <lcms2.h>
+ 
+diff -ur a/lib/colorhug/ch-device-queue.h b/lib/colorhug/ch-device-queue.h
+--- a/lib/colorhug/ch-device-queue.h	2022-03-14 10:13:53.085582074 -0700
++++ b/lib/colorhug/ch-device-queue.h	2022-03-14 10:25:01.883597260 -0700
+@@ -27,7 +27,6 @@
+ #define __CH_DEVICE_QUEUE_H
+ 
+ #include <glib-object.h>
+-#include <gusb.h>
+ #include <colord-private.h>
+ 
+ #include "ch-common.h"
+diff -ur a/lib/colorhug/ch-device.c b/lib/colorhug/ch-device.c
+--- a/lib/colorhug/ch-device.c	2022-03-14 10:13:53.086033066 -0700
++++ b/lib/colorhug/ch-device.c	2022-03-14 10:25:23.741167342 -0700
+@@ -22,7 +22,6 @@
+ #include "config.h"
+ 
+ #include <glib.h>
+-#include <gusb.h>
+ #include <string.h>
+ #include <lcms2.h>
+ 
+diff -ur a/lib/colorhug/ch-device.h b/lib/colorhug/ch-device.h
+--- a/lib/colorhug/ch-device.h	2022-03-14 10:13:53.087083326 -0700
++++ b/lib/colorhug/ch-device.h	2022-03-14 10:26:12.983649615 -0700
+@@ -27,7 +27,6 @@
+ #define CH_DEVICE_H
+ 
+ #include <glib.h>
+-#include <gusb.h>
+ #include <colord-private.h>
+ 
+ #include "ch-common.h"
+diff -ur a/lib/colorhug/ch-self-test.c b/lib/colorhug/ch-self-test.c
+--- a/lib/colorhug/ch-self-test.c	2022-03-14 10:13:53.086227581 -0700
++++ b/lib/colorhug/ch-self-test.c	2022-03-14 10:27:03.070014944 -0700
+@@ -24,7 +24,6 @@
+ #include <string.h>
+ #include <glib.h>
+ #include <glib-object.h>
+-#include <gusb.h>
+ #include <math.h>
+ #include <colord.h>
+ 
+diff -ur a/src/cd-sensor.h b/src/cd-sensor.h
+--- a/src/cd-sensor.h	2022-03-14 10:13:53.113790468 -0700
++++ b/src/cd-sensor.h	2022-03-14 10:24:31.953441250 -0700
+@@ -29,7 +29,6 @@
+ #include <colord-private.h>
+ 
+ #include <gudev/gudev.h>
+-#include <gusb.h>
+ 
+ #include "cd-common.h"
+ 
+diff -ur a/src/sensors/colorhug/cd-sensor-colorhug.c b/src/sensors/colorhug/cd-sensor-colorhug.c
+--- a/src/sensors/colorhug/cd-sensor-colorhug.c	2022-03-14 10:13:53.102301236 -0700
++++ b/src/sensors/colorhug/cd-sensor-colorhug.c	2022-03-14 10:24:02.338223781 -0700
+@@ -23,7 +23,6 @@
+ #include "config.h"
+ 
+ #include <glib-object.h>
+-#include <gusb.h>
+ #include <string.h>
+ #include <colorhug/colorhug.h>
+ 
+diff -ur a/src/sensors/dtp94/cd-sensor-dtp94.c b/src/sensors/dtp94/cd-sensor-dtp94.c
+--- a/src/sensors/dtp94/cd-sensor-dtp94.c	2022-03-14 10:13:53.100344570 -0700
++++ b/src/sensors/dtp94/cd-sensor-dtp94.c	2022-03-14 10:15:17.675768309 -0700
+@@ -23,7 +23,6 @@
+ #include "config.h"
+ 
+ #include <glib-object.h>
+-#include <gusb.h>
+ #include <string.h>
+ 
+ #include "../src/cd-sensor.h"
+diff -ur a/src/sensors/dtp94/dtp94-device.h b/src/sensors/dtp94/dtp94-device.h
+--- a/src/sensors/dtp94/dtp94-device.h	2022-03-14 10:13:53.099972956 -0700
++++ b/src/sensors/dtp94/dtp94-device.h	2022-03-14 10:19:07.639934572 -0700
+@@ -23,7 +23,6 @@
+ #define __DTP94_DEVICE_H
+ 
+ #include <glib-object.h>
+-#include <gusb.h>
+ #include <colord-private.h>
+ 
+ G_BEGIN_DECLS
+diff -ur a/src/sensors/huey/cd-sensor-huey.c b/src/sensors/huey/cd-sensor-huey.c
+--- a/src/sensors/huey/cd-sensor-huey.c	2022-03-14 10:13:53.106499086 -0700
++++ b/src/sensors/huey/cd-sensor-huey.c	2022-03-14 10:22:39.015926824 -0700
+@@ -23,7 +23,6 @@
+ #include "config.h"
+ 
+ #include <glib-object.h>
+-#include <gusb.h>
+ #include <colord-private.h>
+ 
+ #include "../src/cd-sensor.h"
+diff -ur a/src/sensors/huey/huey-ctx.h b/src/sensors/huey/huey-ctx.h
+--- a/src/sensors/huey/huey-ctx.h	2022-03-14 10:13:53.106375682 -0700
++++ b/src/sensors/huey/huey-ctx.h	2022-03-14 10:22:13.155444945 -0700
+@@ -24,7 +24,6 @@
+ 
+ #include <glib-object.h>
+ #include <gio/gio.h>
+-#include <gusb.h>
+ #include <colord-private.h>
+ 
+ G_BEGIN_DECLS
+diff -ur a/src/sensors/huey/huey-device.h b/src/sensors/huey/huey-device.h
+--- a/src/sensors/huey/huey-device.h	2022-03-14 10:13:53.109021742 -0700
++++ b/src/sensors/huey/huey-device.h	2022-03-14 10:21:49.869765119 -0700
+@@ -23,7 +23,6 @@
+ #define __HUEY_DEVICE_H
+ 
+ #include <glib-object.h>
+-#include <gusb.h>
+ #include <colord-private.h>
+ 
+ G_BEGIN_DECLS
+diff -ur a/src/sensors/huey2/huey-device.h b/src/sensors/huey2/huey-device.h
+--- a/src/sensors/huey2/huey-device.h	2022-03-14 10:13:53.102546198 -0700
++++ b/src/sensors/huey2/huey-device.h	2022-03-14 10:23:05.372858823 -0700
+@@ -23,7 +23,6 @@
+ #define __HUEY_DEVICE_H
+ 
+ #include <glib-object.h>
+-#include <gusb.h>
+ #include <colord-private.h>
+ 
+ G_BEGIN_DECLS
+diff -ur a/src/sensors/munki/cd-sensor-munki.c b/src/sensors/munki/cd-sensor-munki.c
+--- a/src/sensors/munki/cd-sensor-munki.c	2022-03-14 10:13:53.105069474 -0700
++++ b/src/sensors/munki/cd-sensor-munki.c	2022-03-14 10:21:26.504501184 -0700
+@@ -23,7 +23,6 @@
+ #include "config.h"
+ 
+ #include <glib-object.h>
+-#include <gusb.h>
+ #include <munki/munki.h>
+ 
+ #include "cd-buffer.h"

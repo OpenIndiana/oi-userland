@@ -1,0 +1,16 @@
+cd-sensor-dummy.c includes <lcms2.h>, but the module does not depend on
+lcms, so it misses lcms2's include path where lcms2.h is not in
+/usr/include (OpenIndiana: /usr/include/lcms2).  Solaris worked around
+this with #include <lcms/lcms2.h>; add the dependency instead.
+
+Written for OpenIndiana (packages/library/colord); suitable for upstream.
+
+--- a/src/sensors/dummy/meson.build
++++ b/src/sensors/dummy/meson.build
+@@ -13,5 +13,6 @@
+   c_args : cargs,
+   dependencies : [
+     gio,
++    lcms,
+   ],
+ )

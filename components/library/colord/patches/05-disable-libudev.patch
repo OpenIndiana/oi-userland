@@ -1,0 +1,57 @@
+Origin: solaris-userland@9d7a655 components/desktop/colord/patches/05-disable-libudev.patch
+
+Disable libudev support in colord as we do not have libudev in Solaris.
+Not suitable for upstream.
+
+diff -ur a/meson.build b/meson.build
+--- a/meson.build	2022-03-14 08:40:49.538812461 -0700
++++ b/meson.build	2022-03-14 08:41:23.469797179 -0700
+@@ -118,7 +118,6 @@
+ lcms = dependency('lcms2', version : '>= 2.6')
+ sqlite = dependency('sqlite3')
+ libm = cc.find_library('m', required: false)
+-libudev = dependency('libudev')
+ 
+ if get_option('udev_rules')
+   udev = dependency('udev')
+diff -ur a/lib/colord/meson.build b/lib/colord/meson.build
+--- a/lib/colord/meson.build	2022-03-14 08:40:49.550708596 -0700
++++ b/lib/colord/meson.build	2022-03-14 08:42:40.444136181 -0700
+@@ -84,7 +84,6 @@
+     giounix,
+     lcms,
+     libm,
+-    libudev,
+   ],
+   c_args : [
+       cargs,
+@@ -117,7 +116,6 @@
+     giounix,
+     lcms,
+     libm,
+-    libudev,
+   ],
+   c_args : [
+       cargs,
+diff -ur a/lib/colorhug/meson.build b/lib/colorhug/meson.build
+--- a/lib/colorhug/meson.build	2022-03-14 08:40:49.547594950 -0700
++++ b/lib/colorhug/meson.build	2022-03-14 08:42:19.623711729 -0700
+@@ -44,7 +44,6 @@
+     giounix,
+     lcms,
+     libm,
+-    libudev,
+   ],
+   c_args : [
+       cargs,
+diff -ur a/lib/colord/cd-edid.c b/lib/colord/cd-edid.c
+--- a/lib/colord/cd-edid.c	2022-03-14 10:09:24.920039345 -0700
++++ b/lib/colord/cd-edid.c	2022-03-14 10:09:46.055011989 -0700
+@@ -25,7 +25,6 @@
+ #include <string.h>
+ #include <glib-object.h>
+ #include <math.h>
+-#include <libudev.h>
+ 
+ #include "cd-edid.h"
+ #include "cd-quirk.h"

@@ -1,0 +1,162 @@
+Origin: solaris-userland@9d7a655 components/desktop/colord/patches/07-gusb-gudev-errors.patch
+OpenIndiana: dropped the cd-sensor-dummy.c hunk (#include <lcms/lcms2.h>);
+OI's lcms2.pc adds -I/usr/include/lcms2, so upstream's <lcms2.h> is right.
+
+Fix build issues resulting after disabling gudev and gusb 
+in colord.
+Not suitable for upstream.
+
+--- a/src/cd-sensor.h	2022-04-16 09:27:23.268745996 -0700
++++ b/src/cd-sensor.h	2022-04-16 09:27:32.833815968 -0700
+@@ -28,8 +28,6 @@
+ #include <gio/gio.h>
+ #include <colord-private.h>
+ 
+-#include <gudev/gudev.h>
+-
+ #include "cd-common.h"
+ 
+ G_BEGIN_DECLS
+@@ -63,16 +63,20 @@
+ 						 GDBusConnection	*connection,
+ 						 GDBusInterfaceInfo	*info,
+ 						 GError			**error);
++#ifdef HAVE_UDEV
+ gboolean	 cd_sensor_set_from_device	(CdSensor		*sensor,
+ 						 GUdevDevice		*device,
+ 						 GError			**error);
+ GUdevDevice	*cd_sensor_get_device		(CdSensor		*sensor);
++#endif
+ void		 cd_sensor_set_index		(CdSensor		*sensor,
+ 						 guint			 idx);
++#ifdef HAVE_GUSB
+ GUsbDevice	*cd_sensor_open_usb_device	(CdSensor		*sensor,
+ 						 gint			 config,
+ 						 gint			 interface,
+ 						 GError			**error);
++#endif
+ void		 cd_sensor_button_pressed	(CdSensor		*sensor);
+ gboolean	 cd_sensor_dump			(CdSensor		*sensor,
+ 						 GString		*data,
+--- a/src/cd-sensor.c	2022-04-16 09:44:46.376956992 -0700
++++ b/src/cd-sensor.c	2022-04-16 09:59:26.160413694 -0700
+@@ -89,7 +89,9 @@
+ 	gchar				*serial;
+ 	gchar				*model;
+ 	gchar				*vendor;
++#ifdef HAVE_UDEV
+ 	GUdevDevice			*device;
++#endif
+ 	gboolean			 native;
+ 	gboolean			 embedded;
+ 	gboolean			 locked;
+@@ -103,7 +105,9 @@
+ 	CdSensorIface			*desc;
+ 	GHashTable			*options;
+ 	GHashTable			*metadata;
++#ifdef HAVE_GUSB
+ 	GUsbContext			*usb_ctx;
++#endif
+ } CdSensorPrivate;
+ 
+ enum {
+@@ -1229,8 +1233,12 @@
+ const gchar *
+ cd_sensor_get_device_path (CdSensor *sensor)
+ {
++#ifdef HAVE_UDEV
+ 	CdSensorPrivate *priv = GET_PRIVATE (sensor);
+ 	return g_udev_device_get_sysfs_path (priv->device);
++#else	
++	return NULL;
++#endif
+ }
+ 
+ const gchar *
+@@ -1240,6 +1248,7 @@
+ 	return priv->usb_path;
+ }
+ 
++#ifdef HAVE_GUSB
+ GUsbDevice *
+ cd_sensor_open_usb_device (CdSensor *sensor,
+ 			   gint config,
+@@ -1271,6 +1280,7 @@
+ 	}
+ 	return g_object_ref (device);
+ }
++#endif
+ 
+ void
+ cd_sensor_add_cap (CdSensor *sensor, CdSensorCap cap)
+@@ -1283,6 +1293,7 @@
+ 
+ }
+ 
++#ifdef HAVE_UDEV
+ GUdevDevice *
+ cd_sensor_get_device (CdSensor *sensor)
+ {
+@@ -1411,6 +1422,7 @@
+ 	/* success */
+ 	return TRUE;
+ }
++#endif
+ 
+ void
+ cd_sensor_set_index (CdSensor *sensor,
+@@ -1655,9 +1667,13 @@
+ 	g_free (priv->usb_path);
+ 	g_hash_table_unref (priv->options);
+ 	g_hash_table_unref (priv->metadata);
++#ifdef HAVE_GUSB
+ 	g_object_unref (priv->usb_ctx);
++#endif
++#ifdef HAVE_UDEV
+ 	if (priv->device != NULL)
+ 		g_object_unref (priv->device);
++#endif
+ 
+ 	G_OBJECT_CLASS (cd_sensor_parent_class)->finalize (object);
+ }
+--- a/src/cd-sensor.c	2022-04-16 11:03:08.401765756 -0700
++++ b/src/cd-sensor.c	2022-04-16 11:06:09.041250293 -0700
+@@ -1631,7 +1631,9 @@
+ 	CdSensorPrivate *priv = GET_PRIVATE (sensor);
+ 	priv->state = CD_SENSOR_STATE_IDLE;
+ 	priv->mode = CD_SENSOR_CAP_UNKNOWN;
++#ifdef HAVE_GUSB
+ 	priv->usb_ctx = g_usb_context_new (NULL);
++#endif
+ 	priv->options = g_hash_table_new_full (g_str_hash,
+ 					       g_str_equal,
+ 					       (GDestroyNotify) g_free,
+--- a/src/cd-main.c	2022-04-18 16:44:36.779126839 -0700
++++ b/src/cd-main.c	2022-04-18 16:46:40.907222132 -0700
+@@ -1904,8 +1904,10 @@
+ 		cd_main_add_disk_device (priv, device_id);
+ 	}
+ 
++#ifdef HAVE_UDEV
+ 	/* add sensor devices */
+ 	cd_sensor_client_coldplug (priv->sensor_client);
++#endif
+ 
+ 	/* coldplug plugin devices */
+ 	cd_main_plugin_phase (priv, CD_PLUGIN_PHASE_COLDPLUG);
+@@ -2389,6 +2391,7 @@
+ 	priv->devices_array = cd_device_array_new ();
+ 	priv->profiles_array = cd_profile_array_new ();
+ 	priv->sensors = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
++#ifdef HAVE_UDEV
+ 	priv->sensor_client = cd_sensor_client_new ();
+ 	g_signal_connect (priv->sensor_client, "sensor-added",
+ 			  G_CALLBACK (cd_main_client_sensor_added_cb),
+@@ -2396,6 +2399,7 @@
+ 	g_signal_connect (priv->sensor_client, "sensor-removed",
+ 			  G_CALLBACK (cd_main_client_sensor_removed_cb),
+ 			  priv);
++#endif
+ 
+ 	/* connect to the mapping db */
+ 	priv->mapping_db = cd_mapping_db_new ();

@@ -1,0 +1,84 @@
+Origin: solaris-userland@9d7a655 components/desktop/colord/patches/06-udev-rules.patch
+
+Not suitable for upstream.
+
+--- a/src/plugins/meson.build	2022-04-16 06:52:30.264189750 -0700
++++ b/src/plugins/meson.build	2022-04-16 07:07:28.418634635 -0700
+@@ -15,7 +15,8 @@
+     gio,
+   ],
+ )
+-shared_module('colord_sensor_camera',
++if get_option('udev_rules')
++ shared_module('colord_sensor_camera',
+   sources : [
+     'cd-plugin-camera.c',
+   ],
+@@ -32,7 +33,7 @@
+     gio,
+   ],
+ )
+-shared_module('colord_sensor_scanner',
++ shared_module('colord_sensor_scanner',
+   sources : [
+     'cd-plugin-scanner.c',
+   ],
+@@ -49,7 +50,7 @@
+     gio,
+   ],
+ )
+-if get_option('sane')
++ if get_option('sane')
+   shared_module('colord_sensor_sane',
+     sources : [
+       'cd-plugin-sane.c',
+@@ -70,4 +71,6 @@
+       gio,
+     ],
+   )
++ endif
+ endif
++
+--- a/src/sensors/meson.build	2022-04-16 07:14:58.721718828 -0700
++++ b/src/sensors/meson.build	2022-04-16 07:16:33.214550676 -0700
+@@ -1,8 +1,11 @@
+-subdir('argyll')
+-subdir('colorhug')
+-subdir('dtp94')
++if get_option('udev_rules')
++ subdir('argyll')
++ subdir('colorhug')
++ subdir('dtp94')
++endif
+ subdir('dummy')
+-subdir('huey')
+-subdir('huey2')
+-
++if get_option('udev_rules')
++ subdir('huey')
++ subdir('huey2')
++endif
+ cargs = ['-DG_LOG_DOMAIN="Cd"']
+--- a/lib/meson.build	2022-04-16 07:25:13.889432833 -0700
++++ b/lib/meson.build	2022-04-16 07:25:47.815899860 -0700
+@@ -1,7 +1,9 @@
+ lib_incdir = include_directories('.')
+ 
+ subdir('colord')
+-subdir('colorhug')
++if get_option('udev_rules')
++  subdir('colorhug')
++endif
+ 
+ if get_option('libcolordcompat')
+   subdir('compat')
+--- a/src/meson.build	2022-04-16 09:47:05.572844035 -0700
++++ b/src/meson.build	2022-04-16 09:47:56.087236757 -0700
+@@ -49,7 +49,6 @@
+     'cd-profile.c',
+     'cd-profile-db.c',
+     'cd-sensor.c',
+-    'cd-sensor-client.c',
+   ],
+   include_directories : [
+     colord_incdir,

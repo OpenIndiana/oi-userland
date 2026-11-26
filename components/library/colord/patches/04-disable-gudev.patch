@@ -1,0 +1,152 @@
+Origin: solaris-userland@9d7a655 components/desktop/colord/patches/04-disable-gudev.patch
+
+Disable gudev support in colord as we do not have gudev in Solaris.
+Not suitable for upstream.
+
+diff -ur a/meson.build b/meson.build
+--- a/meson.build	2022-03-14 08:34:17.587408461 -0700
++++ b/meson.build	2022-03-14 08:34:32.188835352 -0700
+@@ -117,7 +117,6 @@
+ giounix = dependency('gio-unix-2.0', version : '>= 2.45.8')
+ lcms = dependency('lcms2', version : '>= 2.6')
+ sqlite = dependency('sqlite3')
+-gudev = dependency('gudev-1.0')
+ libm = cc.find_library('m', required: false)
+ libudev = dependency('libudev')
+ 
+diff -ur a/contrib/colord-sane/meson.build b/contrib/colord-sane/meson.build
+--- a/contrib/colord-sane/meson.build	2022-03-14 08:34:17.630364356 -0700
++++ b/contrib/colord-sane/meson.build	2022-03-14 08:37:46.659538014 -0700
+@@ -13,7 +13,6 @@
+   dependencies : [
+     dbus,
+     gio,
+-    gudev,
+     sane,
+   ],
+   link_with : colord,
+diff -ur a/lib/colord/meson.build b/lib/colord/meson.build
+--- a/lib/colord/meson.build	2022-03-14 08:34:17.561833885 -0700
++++ b/lib/colord/meson.build	2022-03-14 08:38:29.353742871 -0700
+@@ -82,7 +82,6 @@
+   version : lt_version,
+   dependencies : [
+     giounix,
+-    gudev,
+     lcms,
+     libm,
+     libudev,
+@@ -116,7 +115,6 @@
+   version : lt_version,
+   dependencies : [
+     giounix,
+-    gudev,
+     lcms,
+     libm,
+     libudev,
+diff -ur a/lib/compat/meson.build b/lib/compat/meson.build
+--- a/lib/compat/meson.build	2022-03-14 08:34:17.555486280 -0700
++++ b/lib/compat/meson.build	2022-03-14 08:38:03.383425927 -0700
+@@ -18,6 +18,5 @@
+   link_with : colord,
+   dependencies : [
+     gio,
+-    gudev,
+   ],
+ )
+diff -ur a/src/meson.build b/src/meson.build
+--- a/src/meson.build	2022-03-14 08:34:17.616306053 -0700
++++ b/src/meson.build	2022-03-14 08:35:06.255701881 -0700
+@@ -60,7 +60,6 @@
+     colord_extra_deps,
+     giounix,
+     gmodule,
+-    gudev,
+     lcms,
+     polkit,
+     sqlite,
+@@ -97,7 +96,6 @@
+     dependencies : [
+       giounix,
+       gmodule,
+-      gudev,
+       lcms,
+       polkit,
+       sqlite,
+diff -ur a/src/plugins/meson.build b/src/plugins/meson.build
+--- a/src/plugins/meson.build	2022-03-14 08:34:17.618864049 -0700
++++ b/src/plugins/meson.build	2022-03-14 08:37:30.990357868 -0700
+@@ -30,7 +30,6 @@
+   c_args : cargs,
+   dependencies : [
+     gio,
+-    gudev,
+   ],
+ )
+ shared_module('colord_sensor_scanner',
+@@ -48,7 +47,6 @@
+   c_args : cargs,
+   dependencies : [
+     gio,
+-    gudev,
+   ],
+ )
+ if get_option('sane')
+@@ -70,7 +68,6 @@
+     ],
+     dependencies : [
+       gio,
+-      gudev,
+     ],
+   )
+ endif
+diff -ur a/src/sensors/argyll/meson.build b/src/sensors/argyll/meson.build
+--- a/src/sensors/argyll/meson.build	2022-03-14 08:34:17.612065297 -0700
++++ b/src/sensors/argyll/meson.build	2022-03-14 08:35:47.083675233 -0700
+@@ -14,6 +14,5 @@
+   c_args : cargs,
+   dependencies : [
+     gio,
+-    gudev,
+   ],
+ )
+diff -ur a/src/sensors/colorhug/meson.build b/src/sensors/colorhug/meson.build
+--- a/src/sensors/colorhug/meson.build	2022-03-14 08:34:17.606364719 -0700
++++ b/src/sensors/colorhug/meson.build	2022-03-14 08:36:48.632745725 -0700
+@@ -14,6 +14,5 @@
+   link_with : colorhug,
+   dependencies : [
+     gio,
+-    gudev,
+   ],
+ )
+diff -ur a/src/sensors/dtp94/meson.build b/src/sensors/dtp94/meson.build
+--- a/src/sensors/dtp94/meson.build	2022-03-14 08:34:17.607131867 -0700
++++ b/src/sensors/dtp94/meson.build	2022-03-14 08:35:31.596273060 -0700
+@@ -15,6 +15,5 @@
+   c_args : cargs,
+   dependencies : [
+     gio,
+-    gudev,
+   ],
+ )
+diff -ur a/src/sensors/dummy/meson.build b/src/sensors/dummy/meson.build
+--- a/src/sensors/dummy/meson.build	2022-03-14 08:34:17.616025887 -0700
++++ b/src/sensors/dummy/meson.build	2022-03-14 08:37:11.708035823 -0700
+@@ -13,6 +13,5 @@
+   c_args : cargs,
+   dependencies : [
+     gio,
+-    gudev,
+   ],
+ )
+diff -ur a/src/sensors/huey/meson.build b/src/sensors/huey/meson.build
+--- a/src/sensors/huey/meson.build	2022-03-14 08:34:17.608434028 -0700
++++ b/src/sensors/huey/meson.build	2022-03-14 08:36:11.277408553 -0700
+@@ -16,6 +16,5 @@
+   c_args : cargs,
+   dependencies : [
+     gio,
+-    gudev,
+   ],
+ )

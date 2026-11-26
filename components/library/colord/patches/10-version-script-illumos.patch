@@ -1,0 +1,34 @@
+colord links libcolord, libcolordprivate and libcolorhug with GNU ld's
+-Wl,--version-script.  illumos ld does not have that option (Solaris 11.4's
+ld takes it with -z gnu-version-script-compat; illumos' does not), so the
+link fails.  Use the version script only where the linker accepts it; on
+illumos the libraries are linked without symbol versioning.
+
+Written for OpenIndiana (packages/library/colord); suitable for upstream.
+
+--- a/lib/colord/meson.build
++++ b/lib/colord/meson.build
+@@ -75,6 +75,10 @@
+ 
+ mapfile = 'colord.map'
+ vflag = '-Wl,--version-script,@0@/@1@'.format(meson.current_source_dir(), mapfile)
++# illumos ld has no --version-script: link without symbol versioning there.
++if not cc.has_link_argument(vflag)
++  vflag = []
++endif
+ colordprivate = shared_library(
+   'colordprivate',
+   sources : shared_src,
+--- a/lib/colorhug/meson.build
++++ b/lib/colorhug/meson.build
+@@ -28,6 +28,10 @@
+ 
+ mapfile = 'colorhug.map'
+ vflag = '-Wl,--version-script,@0@/@1@'.format(meson.current_source_dir(), mapfile)
++# illumos ld has no --version-script: link without symbol versioning there.
++if not cc.has_link_argument(vflag)
++  vflag = []
++endif
+ colorhug = shared_library(
+   'colorhug',
+   sources : [
