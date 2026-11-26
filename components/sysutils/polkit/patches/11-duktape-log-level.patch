@@ -1,0 +1,33 @@
+polkit 125's duktape backend: three polkit_backend_authority_log() calls
+inside #ifdef HAVE_PTHREAD_CONDATTR_SETCLOCK leave out the log level
+argument, so the format string lands in "const guint message_log_level".
+gcc 14 makes that int-conversion an error.  Pass LOG_LEVEL_ERROR, as every
+other call in the file does.
+
+Written for OpenIndiana (packages/sysutils/polkit); suitable for upstream.
+
+--- a/src/polkitbackend/polkitbackendduktapeauthority.c	2024-08-08 15:12:35.000000000 +0200
++++ b/src/polkitbackend/polkitbackendduktapeauthority.c	2026-11-08 22:54:09.815357621 +0100
+@@ -767,12 +767,14 @@
+ #ifdef HAVE_PTHREAD_CONDATTR_SETCLOCK
+   if ((pthread_err = pthread_condattr_init(&attr))) {
+     polkit_backend_authority_log (POLKIT_BACKEND_AUTHORITY (authority),
++                                  LOG_LEVEL_ERROR,
+                                   "Error initializing condition variable attributes: %s",
+                                   strerror(pthread_err));
+     return FALSE;
+   }
+   if ((pthread_err = pthread_condattr_setclock(&attr, PK_CLOCK))) {
+     polkit_backend_authority_log (POLKIT_BACKEND_AUTHORITY (authority),
++                                  LOG_LEVEL_ERROR,
+                                   "Error setting condition variable attributes: %s",
+                                   strerror(pthread_err));
+     goto err_clean_condattr;
+@@ -780,6 +782,7 @@
+   /* Init again, with needed attr */
+   if ((pthread_err = pthread_cond_init(&ctx->cond, &attr))) {
+     polkit_backend_authority_log (POLKIT_BACKEND_AUTHORITY (authority),
++                                  LOG_LEVEL_ERROR,
+                                   "Error initializing condition variable: %s",
+                                   strerror(pthread_err));
+     goto err_clean_condattr;
