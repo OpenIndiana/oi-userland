@@ -1,0 +1,39 @@
+From fe1eca74e1b6d75941d56088ea2aeca97b639926 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Marco=20Trevisan=20=28Trevi=C3=B1o=29?= <mail@3v1n0.net>
+Date: Wed, 24 Sep 2025 21:44:18 +0200
+Subject: [PATCH] libmenu: Use GioUnix-2.0 to introspect the header
+
+gmenu_tree_entry_get_app_info() returns a GDesktopAppInfo that is
+part of GioUnix since GLib 2.80 and only supported by GioUnix in 2.86
+
+So, update the dependencies and the gir incluedes
+
+Closes: https://gitlab.gnome.org/GNOME/gnome-menus/-/issues/25
+Related-to: https://gitlab.gnome.org/GNOME/glib/-/merge_requests/4761
+
+diff --git a/configure.ac b/configure.ac
+index eb92e45..e83c6bb 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -36,7 +36,7 @@ AC_ARG_PROGRAM
+ AC_LIBTOOL_WIN32_DLL
+ AM_PROG_LIBTOOL
+ 
+-PKG_CHECK_MODULES(GIO_UNIX, gio-unix-2.0 >= 2.29.15)
++PKG_CHECK_MODULES(GIO_UNIX, gio-unix-2.0 >= 2.80.0)
+ AC_SUBST(GIO_UNIX_CFLAGS)
+ AC_SUBST(GIO_UNIX_LIBS)
+ 
+diff --git a/libmenu/Makefile.am b/libmenu/Makefile.am
+index 6b911e7..871e9ec 100644
+--- a/libmenu/Makefile.am
++++ b/libmenu/Makefile.am
+@@ -56,7 +56,7 @@ if HAVE_INTROSPECTION
+ introspection_sources = $(libgnome_menu_3_include_HEADERS) gmenu-tree.c
+ 
+ GMenu-3.0.gir: libgnome-menu-3.la
+-GMenu_3_0_gir_INCLUDES = Gio-2.0
++GMenu_3_0_gir_INCLUDES = Gio-2.0 GioUnix-2.0
+ GMenu_3_0_gir_CFLAGS = $(AM_CPPFLAGS)
+ GMenu_3_0_gir_LIBS = libgnome-menu-3.la
+ GMenu_3_0_gir_SCANNERFLAGS = --identifier-prefix=GMenu --symbol-prefix=gmenu --pkg-export=libgnome-menu-3.0 --c-include=gmenu-tree.h
