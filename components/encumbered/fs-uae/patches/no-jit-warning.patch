@@ -1,0 +1,43 @@
+Without the JIT compiler (every CPU but x86: configure.ac builds it only
+for __i386__/__x86_64__), a configuration with "jit_compiler = 1" still
+marked the JIT as wanted: main.c set g_fs_uae_jit_compiler, so board RAM
+was reserved as "32-bit memory" for a JIT that does not exist, and
+config.c set cachesize 8192, which main.cpp then reset to 0 without a
+word.  Now such a build ignores jit_compiler, says so on screen and runs
+the interpreter; the configuration itself stays as it is, so the same
+files work on x86 (with JIT) and on SPARC, ARM, PowerPC (without).
+Builds with JIT compile exactly the same code as before.
+
+Upstream: not yet sent (FrodeSolheim/fs-uae).
+
+--- fs-uae-3.2.35/src/fs-uae/main.c	2026-11-23 22:11:40.091614400 +0100
++++ fs-uae-3.2.35/src/fs-uae/main.c	2026-11-23 22:11:40.135614428 +0100
+@@ -1380,7 +1380,12 @@
+     amiga_set_init_function(on_init);
+ 
+     if (fs_config_get_boolean(OPTION_JIT_COMPILER) == 1) {
++#ifdef JIT
+         amiga_init_jit_compiler();
++#else
++        fs_emu_warning(_("JIT compiler is not available on this CPU, "
++                         "using the interpreter"));
++#endif
+     }
+ 
+ #ifdef WITH_LUA
+--- fs-uae-3.2.35/src/fs-uae/config.c	2026-11-23 22:11:40.091614400 +0100
++++ fs-uae-3.2.35/src/fs-uae/config.c	2026-11-23 22:11:40.135614428 +0100
+@@ -144,9 +144,12 @@
+ 
+     amiga_quickstart(c->quickstart_model, c->quickstart_config, 1);
+ 
++#ifdef JIT
+     if (fs_config_get_boolean(OPTION_JIT_COMPILER) == 1) {
+         amiga_set_option("cachesize", "8192");
+-    } else {
++    } else
++#endif
++    {
+         amiga_set_option("cachesize", "0");
+     }
+     const char *jit_memory = fs_config_get_const_string(OPTION_JIT_MEMORY);

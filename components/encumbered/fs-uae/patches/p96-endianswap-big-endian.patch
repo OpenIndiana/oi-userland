@@ -1,0 +1,44 @@
+uaegfx (Picasso96) pens on big-endian hosts: endianswap() swaps the pen and
+colour-index values unconditionally before they are stored with native
+16/32-bit writes into the Amiga board memory. That is right on little-endian
+hosts only; on big-endian hosts (SPARC, PowerPC) the native store already
+gives Amiga byte order, and the swap reverses it. FillRect, BlitPattern,
+BlitTemplate and BlitPlanar2Direct then paint wrong colours in 15/16/32-bit
+RTG modes: in A8R8G8B8 a grey 0x00AAAAAA lands as AA AA AA 00 and shows
+yellowish, while blitted images stay right. No change on little-endian hosts.
+
+Upstream: submitted as https://github.com/FrodeSolheim/fs-uae/pull/400
+(src/od-win32/picasso96_win.cpp,
+taken from WinUAE, which only runs on little-endian hosts).
+
+--- fs-uae-3.2.35/src/od-win32/picasso96_win.cpp
++++ fs-uae-3.2.35/src/od-win32/picasso96_win.cpp
+@@ -196,8 +196,20 @@
+ static uaecptr oldscr = 0;
+ 
+ 
++/*
++ * Pens and colour-index-mapping values arrive as numbers (Amiga register or
++ * get_long() value) and are stored with native 16/32-bit writes into the
++ * Amiga board memory, which holds big-endian (Amiga) byte order. Only a
++ * little-endian host has to swap; on a big-endian host the native store
++ * already produces Amiga order, and swapping would reverse it (32-bit A8R8G8B8
++ * grey 0x00AAAAAA lands as AA AA AA 00 and shows yellowish).
++ */
+ STATIC_INLINE void endianswap (uae_u32 *vp, int bpp)
+ {
++#ifdef WORDS_BIGENDIAN
++	(void)vp;
++	(void)bpp;
++#else
+ 	uae_u32 v = *vp;
+ 	switch (bpp)
+ 	{
+@@ -208,6 +220,7 @@
+ 		*vp = ((v >> 24) & 0x000000ff) | ((v >> 8) & 0x0000ff00) | ((v << 8) & 0x00ff0000) | ((v << 24) & 0xff000000);
+ 		break;
+ 	}
++#endif
+ }
+ 
+ #if P96TRACING_ENABLED
