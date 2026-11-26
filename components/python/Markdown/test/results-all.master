@@ -50,7 +50,7 @@ testVerboseOption (test_apis.TestCliOptionParsing.testVerboseOption) ... ok
 testBooleansParsing (test_apis.TestConfigParsing.testBooleansParsing) ... ok
 testInvalidBooleansParsing (test_apis.TestConfigParsing.testInvalidBooleansParsing) ... ok
 testPreserveNone (test_apis.TestConfigParsing.testPreserveNone) ... ok
-testFileNames (test_apis.TestConvertFile.testFileNames) ... $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/markdown/core.py:457: DeprecationWarning: codecs.open() is deprecated. Use open() instead.
+testFileNames (test_apis.TestConvertFile.testFileNames) ... $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/markdown/core.py:466: DeprecationWarning: codecs.open() is deprecated. Use open() instead.
   output_file = codecs.open(output, "w",
 ok
 testFileObjects (test_apis.TestConvertFile.testFileObjects) ... ok
@@ -77,6 +77,8 @@ testStoreMore (test_apis.TestHtmlStash.testStoreMore)
 Test `HtmlStash.store` with additional blocks. ... ok
 testBlankInput (test_apis.TestMarkdownBasics.testBlankInput)
 Test blank input. ... ok
+testConvertReleasesDocument (test_apis.TestMarkdownBasics.testConvertReleasesDocument)
+The parsed tree and source lines are released by `reset()`. ... ok
 testDotNotationExtension (test_apis.TestMarkdownBasics.testDotNotationExtension)
 Test Extension loading with Name (`path.to.module`). ... ok
 testDotNotationExtensionWithClass (test_apis.TestMarkdownBasics.testDotNotationExtensionWithClass)
@@ -346,6 +348,8 @@ test_no_blank_lines_between_hashs (test_syntax.blocks.test_headers.TestHashHeade
 test_p_followed_by_hash (test_syntax.blocks.test_headers.TestHashHeaders.test_p_followed_by_hash) ... ok
 test_random_hash_levels (test_syntax.blocks.test_headers.TestHashHeaders.test_random_hash_levels) ... ok
 test_unescaped_hash (test_syntax.blocks.test_headers.TestHashHeaders.test_unescaped_hash) ... ok
+test_many_setext_headers_in_one_block (test_syntax.blocks.test_headers.TestSetextHeaders.test_many_setext_headers_in_one_block)
+Each header returns the rest of the block to be parsed again, so testing ... ok
 test_p_followed_by_setext_h1 (test_syntax.blocks.test_headers.TestSetextHeaders.test_p_followed_by_setext_h1) ... skipped 'This is broken in Python-Markdown'
 test_p_followed_by_setext_h2 (test_syntax.blocks.test_headers.TestSetextHeaders.test_p_followed_by_setext_h2) ... skipped 'This is broken in Python-Markdown'
 test_setext_h1 (test_syntax.blocks.test_headers.TestSetextHeaders.test_setext_h1) ... ok
@@ -551,6 +555,11 @@ test_unterminated_endtag (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.tes
 Ensure an unterminated end tag is treated as text. ... ok
 test_unterminated_endtag_in_code_span (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_unterminated_endtag_in_code_span)
 Ensure an unterminated end tag does not swallow the remaining content. ... ok
+test_deeply_indented_list_does_not_raise (test_syntax.blocks.test_list_nesting.TestListNestingLimit.test_deeply_indented_list_does_not_raise) ... ok
+test_deeply_nested_list_does_not_raise (test_syntax.blocks.test_list_nesting.TestListNestingLimit.test_deeply_nested_list_does_not_raise) ... ok
+test_deeply_nested_ordered_list_does_not_raise (test_syntax.blocks.test_list_nesting.TestListNestingLimit.test_deeply_nested_ordered_list_does_not_raise) ... ok
+test_nesting_below_the_limit_is_unchanged (test_syntax.blocks.test_list_nesting.TestListNestingLimit.test_nesting_below_the_limit_is_unchanged) ... ok
+test_nesting_stops_short_of_the_recursion_limit (test_syntax.blocks.test_list_nesting.TestListNestingLimit.test_nesting_stops_short_of_the_recursion_limit) ... ok
 test_2_paragraphs_long_line (test_syntax.blocks.test_paragraphs.TestParagraphBlocks.test_2_paragraphs_long_line) ... ok
 test_blank_line_before_paragraph (test_syntax.blocks.test_paragraphs.TestParagraphBlocks.test_blank_line_before_paragraph) ... ok
 test_consecutive_multiline_paragraphs (test_syntax.blocks.test_paragraphs.TestParagraphBlocks.test_consecutive_multiline_paragraphs) ... ok
@@ -598,6 +607,7 @@ test_header_and_paragraph_no_blank_line_loose_list (test_syntax.blocks.test_ul.T
 test_header_and_paragraph_no_blank_line_loose_list_no_indent (test_syntax.blocks.test_ul.TestUnorderedLists.test_header_and_paragraph_no_blank_line_loose_list_no_indent) ... ok
 test_header_and_paragraph_no_blank_line_tight_list (test_syntax.blocks.test_ul.TestUnorderedLists.test_header_and_paragraph_no_blank_line_tight_list) ... skipped 'This behaves as a loose list in Python-Markdown'
 test_header_and_paragraph_no_blank_line_tight_list_no_indent (test_syntax.blocks.test_ul.TestUnorderedLists.test_header_and_paragraph_no_blank_line_tight_list_no_indent) ... skipped 'This behaves as a loose list in Python-Markdown'
+test_abbr_after_bracket_line (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_after_bracket_line) ... ok
 test_abbr_bracket (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_bracket) ... ok
 test_abbr_carrot (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_carrot) ... ok
 test_abbr_clear (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_clear) ... ok
@@ -613,6 +623,8 @@ test_abbr_ignore_backslash (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_
 test_abbr_ignore_unmatched_case (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_ignore_unmatched_case) ... ok
 test_abbr_line_break (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_line_break) ... ok
 test_abbr_lower (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_lower) ... ok
+test_abbr_many_bracket_lines (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_many_bracket_lines)
+Lines which start with `*[` but are not definitions should each be ... ok
 test_abbr_multiple_in_tail (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_multiple_in_tail) ... ok
 test_abbr_multiple_in_text (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_multiple_in_text) ... ok
 test_abbr_multiple_nested (test_syntax.extensions.test_abbr.TestAbbr.test_abbr_multiple_nested) ... ok
@@ -632,6 +644,8 @@ test_ignore_atomic (test_syntax.extensions.test_abbr.TestAbbr.test_ignore_atomic
 test_admonition_first_indented (test_syntax.extensions.test_admonition.TestAdmonition.test_admonition_first_indented) ... ok
 test_admontion_detabbing (test_syntax.extensions.test_admonition.TestAdmonition.test_admontion_detabbing) ... ok
 test_definition_list (test_syntax.extensions.test_admonition.TestAdmonition.test_definition_list) ... ok
+test_many_lines_in_one_block (test_syntax.extensions.test_admonition.TestAdmonition.test_many_lines_in_one_block)
+Each header returns the rest of the block to be parsed again, so testing ... ok
 test_with_big_lists (test_syntax.extensions.test_admonition.TestAdmonition.test_with_big_lists) ... ok
 test_with_complex_lists (test_syntax.extensions.test_admonition.TestAdmonition.test_with_complex_lists) ... ok
 test_with_lists (test_syntax.extensions.test_admonition.TestAdmonition.test_with_lists) ... ok
@@ -711,7 +725,12 @@ test_def_list_with_nesting (test_syntax.extensions.test_def_list.TestDefList.tes
 test_def_list_with_nesting_self (test_syntax.extensions.test_def_list.TestDefList.test_def_list_with_nesting_self) ... ok
 test_def_list_with_ol (test_syntax.extensions.test_def_list.TestDefList.test_def_list_with_ol) ... ok
 test_def_list_with_ul (test_syntax.extensions.test_def_list.TestDefList.test_def_list_with_ul) ... ok
+test_deeply_nested_definitions_do_not_raise (test_syntax.extensions.test_def_list.TestDefListNestingLimit.test_deeply_nested_definitions_do_not_raise) ... ok
+test_nesting_stops_short_of_the_recursion_limit (test_syntax.extensions.test_def_list.TestDefListNestingLimit.test_nesting_stops_short_of_the_recursion_limit) ... ok
+test_shallow_definition_nesting_still_nests (test_syntax.extensions.test_def_list.TestDefListNestingLimit.test_shallow_definition_nesting_still_nests) ... ok
+testAdjacentFencedBlocks (test_syntax.extensions.test_fenced_code.TestFencedCode.testAdjacentFencedBlocks) ... ok
 testBasicFence (test_syntax.extensions.test_fenced_code.TestFencedCode.testBasicFence) ... ok
+testFencedBlockAtEndWithoutNewline (test_syntax.extensions.test_fenced_code.TestFencedCode.testFencedBlockAtEndWithoutNewline) ... ok
 testFencedCodeAttrNameSanitizedNoCodehiliteWithAttrList (test_syntax.extensions.test_fenced_code.TestFencedCode.testFencedCodeAttrNameSanitizedNoCodehiliteWithAttrList) ... ok
 testFencedCodeCurlyInAttrs (test_syntax.extensions.test_fenced_code.TestFencedCode.testFencedCodeCurlyInAttrs) ... ok
 testFencedCodeEscapedAttrs (test_syntax.extensions.test_fenced_code.TestFencedCode.testFencedCodeEscapedAttrs) ... ok
@@ -731,6 +750,8 @@ testFencedLanguagePygmentsEnabledInAttrNoCodehiliteWithAttrList (test_syntax.ext
 testFencedLanguageWithDot (test_syntax.extensions.test_fenced_code.TestFencedCode.testFencedLanguageWithDot) ... ok
 testFencedMultipleClassesInAttr (test_syntax.extensions.test_fenced_code.TestFencedCode.testFencedMultipleClassesInAttr) ... ok
 testFencedTildes (test_syntax.extensions.test_fenced_code.TestFencedCode.testFencedTildes) ... ok
+testManyFencedBlocks (test_syntax.extensions.test_fenced_code.TestFencedCode.testManyFencedBlocks) ... ok
+testMultipleFencedBlocks (test_syntax.extensions.test_fenced_code.TestFencedCode.testMultipleFencedBlocks) ... ok
 testNestedFence (test_syntax.extensions.test_fenced_code.TestFencedCode.testNestedFence) ... ok
 test_fenced_code_in_raw_html (test_syntax.extensions.test_fenced_code.TestFencedCode.test_fenced_code_in_raw_html) ... ok
 testCustomPygmentsFormatter (test_syntax.extensions.test_fenced_code.TestFencedCodeWithCodehilite.testCustomPygmentsFormatter) ... skipped 'Pygments== is required'
@@ -797,6 +818,8 @@ test_footnote_references_within_loose_list (test_syntax.extensions.test_footnote
 Test footnote references within loose list items. ... ok
 test_footnote_separator (test_syntax.extensions.test_footnotes.TestFootnotes.test_footnote_separator)
 Test separator configuration. ... ok
+test_many_duplicate_footnote_references (test_syntax.extensions.test_footnotes.TestFootnotes.test_many_duplicate_footnote_references)
+Test that many references to one footnote get sequential ids. ... ok
 test_many_footnote_definitions (test_syntax.extensions.test_footnotes.TestFootnotes.test_many_footnote_definitions)
 Consecutive footnote definitions should be consumed together rather ... ok
 test_multiple_footnotes (test_syntax.extensions.test_footnotes.TestFootnotes.test_multiple_footnotes) ... ok
@@ -1056,9 +1079,15 @@ test_inline_code_blocks (test_syntax.extensions.test_tables.TestTableBlocks.test
 test_issue_440 (test_syntax.extensions.test_tables.TestTableBlocks.test_issue_440) ... ok
 test_issue_449 (test_syntax.extensions.test_tables.TestTableBlocks.test_issue_449) ... ok
 test_lists_not_tables (test_syntax.extensions.test_tables.TestTableBlocks.test_lists_not_tables) ... ok
+test_many_lines_in_one_block (test_syntax.extensions.test_tables.TestTableBlocks.test_many_lines_in_one_block)
+Testing a block for a table should only look at the first rows, as the ... ok
 test_no_sides (test_syntax.extensions.test_tables.TestTableBlocks.test_no_sides) ... ok
+test_no_single_column_table_with_row_without_pipe (test_syntax.extensions.test_tables.TestTableBlocks.test_no_single_column_table_with_row_without_pipe) ... ok
+test_no_table_after_paragraph_line_in_same_block (test_syntax.extensions.test_tables.TestTableBlocks.test_no_table_after_paragraph_line_in_same_block) ... ok
+test_single_column_table_after_header_in_same_block (test_syntax.extensions.test_tables.TestTableBlocks.test_single_column_table_after_header_in_same_block) ... ok
 test_single_column_tables (test_syntax.extensions.test_tables.TestTableBlocks.test_single_column_tables) ... ok
 test_styles_in_tables (test_syntax.extensions.test_tables.TestTableBlocks.test_styles_in_tables) ... ok
+test_table_after_header_in_same_block (test_syntax.extensions.test_tables.TestTableBlocks.test_table_after_header_in_same_block) ... ok
 test_three_columns (test_syntax.extensions.test_tables.TestTableBlocks.test_three_columns) ... ok
 test_three_spaces_prefix (test_syntax.extensions.test_tables.TestTableBlocks.test_three_spaces_prefix) ... ok
 testAlternateTOCMarker (test_syntax.extensions.test_toc.TestTOC.testAlternateTOCMarker) ... ok
@@ -1118,6 +1147,10 @@ testUniqueIds (test_syntax.extensions.test_toc.TestTOC.testUniqueIds) ... ok
 test_escaped_char_in_attr_list (test_syntax.extensions.test_toc.TestTOC.test_escaped_char_in_attr_list) ... ok
 test_escaped_char_in_id (test_syntax.extensions.test_toc.TestTOC.test_escaped_char_in_id) ... ok
 test_escaped_code (test_syntax.extensions.test_toc.TestTOC.test_escaped_code) ... ok
+testBareDataTocLabelAttribute (test_syntax.extensions.test_toc.TestTOCWithAttrList.testBareDataTocLabelAttribute) ... ok
+testBareDataTocLabelAttributeWithTOCMarker (test_syntax.extensions.test_toc.TestTOCWithAttrList.testBareDataTocLabelAttributeWithTOCMarker) ... ok
+testBareIdAttribute (test_syntax.extensions.test_toc.TestTOCWithAttrList.testBareIdAttribute) ... ok
+testBareIdAttributeWithTOCMarker (test_syntax.extensions.test_toc.TestTOCWithAttrList.testBareIdAttributeWithTOCMarker) ... ok
 testDontStripCloseBracket (test_syntax.extensions.test_toc.testStripTags.testDontStripCloseBracket) ... ok
 testDontStripHTMLEntities (test_syntax.extensions.test_toc.testStripTags.testDontStripHTMLEntities) ... ok
 testDontStripOpenBracket (test_syntax.extensions.test_toc.testStripTags.testDontStripOpenBracket) ... ok
@@ -1165,6 +1198,34 @@ test_nested_patterns (test_syntax.inline.test_emphasis.TestEmphasis.test_nested_
 test_non_english (test_syntax.inline.test_emphasis.TestEmphasis.test_non_english) ... ok
 test_strong_and_em_together (test_syntax.inline.test_emphasis.TestEmphasis.test_strong_and_em_together) ... ok
 test_underscore_legacy (test_syntax.inline.test_emphasis.TestEmphasis.test_underscore_legacy) ... ok
+test_ambiguous_closer_pairs_with_partially_consumed_opener (test_syntax.inline.test_emphasis.TestEmphasisRuleOfThree.test_ambiguous_closer_pairs_with_partially_consumed_opener)
+Test that the rule of 3 uses the original run length of a partially consumed opener. ... ok
+test_ambiguous_closer_rejected_by_original_run_length (test_syntax.inline.test_emphasis.TestEmphasisRuleOfThree.test_ambiguous_closer_rejected_by_original_run_length)
+Test that the rule of 3 still rejects a pairing based on the original run lengths. ... ok
+test_ambiguous_closer_skips_rejected_opener (test_syntax.inline.test_emphasis.TestEmphasisRuleOfThree.test_ambiguous_closer_skips_rejected_opener)
+Test that an ambiguous closer can skip an opener rejected by the rule of 3. ... ok
+test_ambiguous_closer_skips_rejected_opener_asterisk (test_syntax.inline.test_emphasis.TestEmphasisRuleOfThree.test_ambiguous_closer_skips_rejected_opener_asterisk)
+Test the rule of 3 with asterisks. ... ok
+test_attribute_list_like_content (test_syntax.inline.test_emphasis.TestEmphasisRuleOfThree.test_attribute_list_like_content)
+Test the rule of 3 with a link followed by attribute list like content. ... ok
+test_placeholder_treated_as_punctuation (test_syntax.inline.test_emphasis.TestEmphasisRuleOfThree.test_placeholder_treated_as_punctuation)
+Test that a placeholder from a different delimiter is still treated as punctuation. ... ok
+test_rejected_opener_is_original_run_length (test_syntax.inline.test_emphasis.TestEmphasisRuleOfThree.test_rejected_opener_is_original_run_length)
+Test that the original length of a partially consumed run is used for the rule of 3. ... ok
+test_remainder_classified_by_original_context (test_syntax.inline.test_emphasis.TestEmphasisRuleOfThree.test_remainder_classified_by_original_context)
+Test that the unused part of a closing run is classified by what preceded the run. ... ok
+test_remainder_classified_by_original_context_three (test_syntax.inline.test_emphasis.TestEmphasisRuleOfThree.test_remainder_classified_by_original_context_three)
+Test the unused part of a longer closing run. ... ok
+test_rule_of_3_many_unclosed_openers (test_syntax.inline.test_emphasis.TestEmphasisRuleOfThree.test_rule_of_3_many_unclosed_openers)
+Test that unclosed openers rejected by the rule of 3 are not searched again for every closer. ... ok
+test_rule_of_3_skipped_opener_removed (test_syntax.inline.test_emphasis.TestEmphasisRuleOfThree.test_rule_of_3_skipped_opener_removed)
+Test that openers skipped by the rule of 3 are not paired with the closer. ... ok
+test_stray_token_before_cached_region (test_syntax.inline.test_emphasis.TestEmphasisRuleOfThree.test_stray_token_before_cached_region)
+Test that a stray token between cached regions does not corrupt the cached region's offset. ... ok
+test_unambiguous_closer_unaffected (test_syntax.inline.test_emphasis.TestEmphasisRuleOfThree.test_unambiguous_closer_unaffected)
+Test that an unambiguous closer is not subject to the rule of 3. ... ok
+test_unused_tokens_in_returned_element_tail (test_syntax.inline.test_emphasis.TestEmphasisRuleOfThree.test_unused_tokens_in_returned_element_tail)
+Test tokens inside an element's tail are not processed against regions cached for the parent text. ... ok
 test_standalone_asterisk (test_syntax.inline.test_emphasis.TestNotEmphasis.test_standalone_asterisk) ... ok
 test_standalone_asterisk_at_end (test_syntax.inline.test_emphasis.TestNotEmphasis.test_standalone_asterisk_at_end) ... ok
 test_standalone_asterisk_in_text (test_syntax.inline.test_emphasis.TestNotEmphasis.test_standalone_asterisk_in_text) ... ok
@@ -1213,6 +1274,7 @@ test_amp_in_url (test_syntax.inline.test_links.TestInlineLinks.test_amp_in_url)
 Test amp in URLs. ... ok
 test_angle_with_mixed_title_quotes (test_syntax.inline.test_links.TestInlineLinks.test_angle_with_mixed_title_quotes) ... ok
 test_angles_and_nonsense_url (test_syntax.inline.test_links.TestInlineLinks.test_angles_and_nonsense_url) ... ok
+test_many_unclosed_square_brackets (test_syntax.inline.test_links.TestInlineLinks.test_many_unclosed_square_brackets) ... ok
 test_mixed_title_quotes1 (test_syntax.inline.test_links.TestInlineLinks.test_mixed_title_quotes1) ... ok
 test_mixed_title_quotes2 (test_syntax.inline.test_links.TestInlineLinks.test_mixed_title_quotes2) ... ok
 test_mixed_title_quotes3 (test_syntax.inline.test_links.TestInlineLinks.test_mixed_title_quotes3) ... ok
@@ -1226,6 +1288,7 @@ test_nested_square_brackets (test_syntax.inline.test_links.TestInlineLinks.test_
 test_nested_unescaped_brackets (test_syntax.inline.test_links.TestInlineLinks.test_nested_unescaped_brackets) ... ok
 test_nested_unescaped_brackets_and_angles (test_syntax.inline.test_links.TestInlineLinks.test_nested_unescaped_brackets_and_angles) ... ok
 test_single_quote (test_syntax.inline.test_links.TestInlineLinks.test_single_quote) ... ok
+test_unclosed_square_brackets (test_syntax.inline.test_links.TestInlineLinks.test_unclosed_square_brackets) ... ok
 test_uneven_brackets_with_titles1 (test_syntax.inline.test_links.TestInlineLinks.test_uneven_brackets_with_titles1) ... ok
 test_uneven_brackets_with_titles2 (test_syntax.inline.test_links.TestInlineLinks.test_uneven_brackets_with_titles2) ... ok
 test_uneven_brackets_with_titles3 (test_syntax.inline.test_links.TestInlineLinks.test_uneven_brackets_with_titles3) ... ok
@@ -1259,7 +1322,7 @@ test_markdown_nested_in_inline_comment (test_syntax.inline.test_raw_html.TestRaw
 test_noname_tag (test_syntax.inline.test_raw_html.TestRawHtml.test_noname_tag) ... ok
 
 ----------------------------------------------------------------------
-Ran 1141 tests
+Ran 1184 tests
 
 OK (skipped=65)
   py$(PYV): OK
