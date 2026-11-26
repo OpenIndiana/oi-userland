@@ -15,18 +15,19 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_schema
-HUMAN_VERSION =			8.1
+HUMAN_VERSION =			8.2
 COMPONENT_SUMMARY =		zope.interface extension for defining data schemas
-COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.schema
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2d9faa7f91a7bf09fcab2c039d9182fcc9ce7042dc77e18d3df277904aee0948
+	sha256:16902a4bfb2b49c7c8a8bd4c2f817420700d0b39ab53040ce18a003f5f709198
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
+
+# Python 3.9 is not supported by zope.schema >= 8.2
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
