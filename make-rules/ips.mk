@@ -505,8 +505,9 @@ $(MANIFEST_BASE)-%.mogrified.transform:	$(MANIFEST_BASE)-%.mogrified
 		| while read f ; do \
 			r="$$($(REALPATH) -mLs --relative-to=. "$$f")" ; \
 			[ "$$f" == "$$r" ] && continue ; \
+			f=$$($(PYTHON) -c "import re; print(re.escape(\"$$f\"))") ; \
 			printf '<transform depend type=require pkg.debug.depend.type=link \\\n' ; \
-			printf '    pkg.debug.depend.file=%s$$ -> \\\n' "$${f//./\\.}" ; \
+			printf '    pkg.debug.depend.file=%s$$ -> \\\n' "$$f" ; \
 			printf '    edit pkg.debug.depend.file ^.*$$ %s >\n' "$$r" ; \
 		done > $@
 	# Drop link depend actions that point to directories provided by the
@@ -523,10 +524,10 @@ $(MANIFEST_BASE)-%.mogrified.transform:	$(MANIFEST_BASE)-%.mogrified
 			done ; \
 		done \
 		| $(SORT) -u \
+		| $(PYTHON) -c 'import re,sys; [print(re.escape(s.rstrip("\n"))) for s in sys.stdin]' \
 		| while read d ; do \
-			d="$${d#/}" ; \
 			printf '<transform depend type=require pkg.debug.depend.type=link \\\n' ; \
-			printf '    pkg.debug.depend.file=%s$$ -> drop >\n' "$${d//./\\.}" ; \
+			printf '    pkg.debug.depend.file=%s$$ -> drop >\n' "$${d#/}" ; \
 		done >> $@
 
 # Pre-resolve dependencies that can and should be resolved individually, as
