@@ -21,6 +21,7 @@ COMPONENT_NAME=         geocode-glib
 COMPONENT_MJR_VERSION=  3.26
 COMPONENT_MNR_VERSION=  4
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      A library for geocode and reverse geocoding
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -36,13 +37,19 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
+# libsoup 3 (geocode-glib-2.0 API, needed by libgweather 4)
+CONFIGURE_OPTIONS +=	-Dsoup2=false
+
 # gobject-introspection
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
+# the API documentation
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libsoup
+REQUIRED_PACKAGES += library/libsoup3
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
