@@ -1,0 +1,372 @@
+Showtime 48.1 on Python 3.9: OpenIndiana's PyGObject (library/python/pygobject-39)
+exists only for Python 3.9, and Showtime uses Python 3.10 syntax.
+
+- "match" statements become if/elif/else on the same values (all patterns are
+  literals, dotted constants or the "_" wildcard).
+- Modules with "X | None" annotations get "from __future__ import annotations",
+  so the annotations are not evaluated.
+
+Not for upstream (Showtime requires Python >= 3.10); drop it once
+OpenIndiana ships PyGObject for a newer Python.
+Upstream: https://gitlab.gnome.org/GNOME/showtime
+
+diff -ru showtime-48.1.orig/showtime/drag_overlay.py showtime-48.1/showtime/drag_overlay.py
+--- showtime-48.1.orig/showtime/drag_overlay.py	2025-05-03 17:21:59.000000000 +0200
++++ showtime-48.1/showtime/drag_overlay.py	2026-11-19 05:45:30.795893934 +0100
+@@ -8,6 +8,8 @@
+ 
+ """A widget that shows an overlay when dragging a video over the window."""
+ 
++from __future__ import annotations
++
+ from typing import Any
+ 
+ from gi.repository import Adw, GObject, Gtk
+diff -ru showtime-48.1.orig/showtime/logging/color_log_formatter.py showtime-48.1/showtime/logging/color_log_formatter.py
+--- showtime-48.1.orig/showtime/logging/color_log_formatter.py	2025-05-03 17:21:59.000000000 +0200
++++ showtime-48.1/showtime/logging/color_log_formatter.py	2026-11-19 05:45:30.799893935 +0100
+@@ -17,14 +17,14 @@
+     def format(self, record: LogRecord) -> str:
+         """Format log messages."""
+         super_format = super().format(record)
+-        match record.levelname:
+-            case "CRITICAL":
+-                return self.BOLD + self.RED + super_format + self.RESET
+-            case "ERROR":
+-                return self.RED + super_format + self.RESET
+-            case "WARNING":
+-                return self.YELLOW + super_format + self.RESET
+-            case "DEBUG":
+-                return self.DIM + super_format + self.RESET
+-            case _other:
+-                return super_format
++        _match = record.levelname
++        if _match == "CRITICAL":
++            return self.BOLD + self.RED + super_format + self.RESET
++        elif _match == "ERROR":
++            return self.RED + super_format + self.RESET
++        elif _match == "WARNING":
++            return self.YELLOW + super_format + self.RESET
++        elif _match == "DEBUG":
++            return self.DIM + super_format + self.RESET
++        else:
++            return super_format
+diff -ru showtime-48.1.orig/showtime/logging/session_file_handler.py showtime-48.1/showtime/logging/session_file_handler.py
+--- showtime-48.1.orig/showtime/logging/session_file_handler.py	2025-05-03 17:21:59.000000000 +0200
++++ showtime-48.1/showtime/logging/session_file_handler.py	2026-11-19 05:45:30.799893935 +0100
+@@ -2,6 +2,8 @@
+ # SPDX-FileCopyrightText: Copyright 2023 Geoffrey Coulaud
+ # SPDX-FileCopyrightText: Copyright 2024-2025 kramo
+ 
++
++from __future__ import annotations
+ import lzma
+ from io import TextIOWrapper
+ from logging import StreamHandler
+diff -ru showtime-48.1.orig/showtime/main.py showtime-48.1/showtime/main.py
+--- showtime-48.1.orig/showtime/main.py	2025-05-03 17:21:59.000000000 +0200
++++ showtime-48.1/showtime/main.py	2026-11-19 05:45:30.795893934 +0100
+@@ -3,6 +3,8 @@
+ 
+ """The main application singleton class."""
+ 
++from __future__ import annotations
++
+ import logging
+ import lzma
+ import pickle
+diff -ru showtime-48.1.orig/showtime/messenger.py showtime-48.1/showtime/messenger.py
+--- showtime-48.1.orig/showtime/messenger.py	2025-05-03 17:21:59.000000000 +0200
++++ showtime-48.1/showtime/messenger.py	2026-11-19 05:45:30.787893934 +0100
+@@ -44,53 +44,53 @@
+             bus.connect("message", self._on_pipeline_bus_message)
+ 
+     def _on_play_bus_message(self, _bus: Gst.Bus, msg: GstPlay.PlayMessage) -> None:
+-        match GstPlay.PlayMessage.parse_type(msg):
+-            case GstPlay.PlayMessage.STATE_CHANGED:
+-                self.emit(
+-                    "state-changed",
+-                    GstPlay.PlayMessage.parse_state_changed(msg),
+-                )
+-
+-            case GstPlay.PlayMessage.DURATION_CHANGED:
+-                self.emit(
+-                    "duration-changed",
+-                    (
+-                        GstPlay.PlayMessage.parse_duration_changed
+-                        if (
+-                            (((version := Gst.version())[0] == 1) and (version[1] > 24))
+-                            or version[0] > 1
+-                        )
+-                        else GstPlay.PlayMessage.parse_duration_updated
+-                    )(msg),
+-                )
+-
+-            case GstPlay.PlayMessage.POSITION_UPDATED:
+-                self.emit(
+-                    "position-updated",
+-                    GstPlay.PlayMessage.parse_position_updated(msg),
+-                )
+-
+-            case GstPlay.PlayMessage.SEEK_DONE:
+-                self.emit("seek-done")
+-
+-            case GstPlay.PlayMessage.MEDIA_INFO_UPDATED:
+-                self.emit(
+-                    "media-info-updated",
+-                    GstPlay.PlayMessage.parse_media_info_updated(msg),
+-                )
+-
+-            case GstPlay.PlayMessage.VOLUME_CHANGED:
+-                self.emit("volume-changed")
+-
+-            case GstPlay.PlayMessage.END_OF_STREAM:
+-                self.emit("end-of-stream")
+-
+-            case GstPlay.PlayMessage.WARNING:
+-                self.emit("warning", GstPlay.PlayMessage.parse_warning(msg))
+-
+-            case GstPlay.PlayMessage.ERROR:
+-                error, _details = GstPlay.PlayMessage.parse_error(msg)
+-                self.emit("error", error)
++        _match = GstPlay.PlayMessage.parse_type(msg)
++        if _match == GstPlay.PlayMessage.STATE_CHANGED:
++            self.emit(
++                "state-changed",
++                GstPlay.PlayMessage.parse_state_changed(msg),
++            )
++
++        elif _match == GstPlay.PlayMessage.DURATION_CHANGED:
++            self.emit(
++                "duration-changed",
++                (
++                    GstPlay.PlayMessage.parse_duration_changed
++                    if (
++                        (((version := Gst.version())[0] == 1) and (version[1] > 24))
++                        or version[0] > 1
++                    )
++                    else GstPlay.PlayMessage.parse_duration_updated
++                )(msg),
++            )
++
++        elif _match == GstPlay.PlayMessage.POSITION_UPDATED:
++            self.emit(
++                "position-updated",
++                GstPlay.PlayMessage.parse_position_updated(msg),
++            )
++
++        elif _match == GstPlay.PlayMessage.SEEK_DONE:
++            self.emit("seek-done")
++
++        elif _match == GstPlay.PlayMessage.MEDIA_INFO_UPDATED:
++            self.emit(
++                "media-info-updated",
++                GstPlay.PlayMessage.parse_media_info_updated(msg),
++            )
++
++        elif _match == GstPlay.PlayMessage.VOLUME_CHANGED:
++            self.emit("volume-changed")
++
++        elif _match == GstPlay.PlayMessage.END_OF_STREAM:
++            self.emit("end-of-stream")
++
++        elif _match == GstPlay.PlayMessage.WARNING:
++            self.emit("warning", GstPlay.PlayMessage.parse_warning(msg))
++
++        elif _match == GstPlay.PlayMessage.ERROR:
++            error, _details = GstPlay.PlayMessage.parse_error(msg)
++            self.emit("error", error)
+ 
+     def _on_pipeline_bus_message(self, _bus: Gst.Bus, msg: Gst.Message) -> None:
+         if GstPbutils.is_missing_plugin_message(msg):
+diff -ru showtime-48.1.orig/showtime/mpris.py showtime-48.1/showtime/mpris.py
+--- showtime-48.1.orig/showtime/mpris.py	2025-05-03 17:21:59.000000000 +0200
++++ showtime-48.1/showtime/mpris.py	2026-11-19 05:45:30.787893934 +0100
+@@ -5,6 +5,8 @@
+ # A lot of the code is taken from GNOME Music
+ # https://gitlab.gnome.org/GNOME/gnome-music/-/blob/6a32efb74ff4107d1e4a288184e21c43f5dd877f/gnomemusic/mpris.py
+ 
++
++from __future__ import annotations
+ import logging
+ import re
+ from typing import Any
+diff -ru showtime-48.1.orig/showtime/utils.py showtime-48.1/showtime/utils.py
+--- showtime-48.1.orig/showtime/utils.py	2025-05-03 17:21:59.000000000 +0200
++++ showtime-48.1/showtime/utils.py	2026-11-19 05:45:30.779893934 +0100
+@@ -3,6 +3,8 @@
+ 
+ """Utilities used across the app."""
+ 
++from __future__ import annotations
++
+ import datetime
+ import logging
+ from pathlib import Path
+diff -ru showtime-48.1.orig/showtime/window.py showtime-48.1/showtime/window.py
+--- showtime-48.1.orig/showtime/window.py	2025-05-03 17:21:59.000000000 +0200
++++ showtime-48.1/showtime/window.py	2026-11-19 05:45:30.779893934 +0100
+@@ -5,6 +5,8 @@
+ 
+ """The main application window."""
+ 
++from __future__ import annotations
++
+ import logging
+ import pickle
+ from functools import partial
+@@ -508,41 +510,41 @@
+ 
+     @Gtk.Template.Callback()
+     def _set_rate(self, button: Gtk.ToggleButton) -> None:
+-        match button.get_label():
+-            case "0.5×":
+-                self.rate = 0.5
+-            case "1.25×":
+-                self.rate = 1.25
+-            case "1.5×":
+-                self.rate = 1.5
+-            case "2.0×":
+-                self.rate = 2
+-            case _:
+-                self.rate = 1
++        _match = button.get_label()
++        if _match == "0.5×":
++            self.rate = 0.5
++        elif _match == "1.25×":
++            self.rate = 1.25
++        elif _match == "1.5×":
++            self.rate = 1.5
++        elif _match == "2.0×":
++            self.rate = 2
++        else:
++            self.rate = 1
+ 
+     @Gtk.Template.Callback()
+     def _rotate_left(self, *_args: Any) -> None:
+-        match int((props := self.paintable.props).orientation):
+-            case 0:
+-                props.orientation = 4
+-            case 1:
+-                props.orientation = 4
+-            case 5:
+-                props.orientation = 8
+-            case _:
+-                props.orientation -= 1
++        _match1 = int((props := self.paintable.props).orientation)
++        if _match1 == 0:
++            props.orientation = 4
++        elif _match1 == 1:
++            props.orientation = 4
++        elif _match1 == 5:
++            props.orientation = 8
++        else:
++            props.orientation -= 1
+ 
+     @Gtk.Template.Callback()
+     def _rotate_right(self, *_args: Any) -> None:
+-        match int((props := self.paintable.props).orientation):
+-            case 0:
+-                props.orientation = 2
+-            case 4:
+-                props.orientation = 1
+-            case 8:
+-                props.orientation = 5
+-            case _:
+-                props.orientation += 1
++        _match2 = int((props := self.paintable.props).orientation)
++        if _match2 == 0:
++            props.orientation = 2
++        elif _match2 == 4:
++            props.orientation = 1
++        elif _match2 == 8:
++            props.orientation = 5
++        else:
++            props.orientation += 1
+ 
+     @Gtk.Template.Callback()
+     def _on_drop(self, _target: Any, gfile: Gio.File, _x: Any, _y: Any) -> None:
+@@ -720,13 +722,13 @@
+         )
+ 
+     def _set_end_timestamp_label(self, pos: int, dur: int) -> None:
+-        match shared.end_timestamp_type:
+-            case 0:  # Duration
+-                self.end_timestamp_button.set_label(nanoseconds_to_timestamp(dur))
+-            case 1:  # Remaining
+-                self.end_timestamp_button.set_label(
+-                    "-" + nanoseconds_to_timestamp(dur - pos)
+-                )
++        _match3 = shared.end_timestamp_type
++        if _match3 == 0:  # Duration
++            self.end_timestamp_button.set_label(nanoseconds_to_timestamp(dur))
++        elif _match3 == 1:  # Remaining
++            self.end_timestamp_button.set_label(
++                "-" + nanoseconds_to_timestamp(dur - pos)
++            )
+ 
+     @Gtk.Template.Callback()
+     def _schedule_volume_change(self, adj: Gtk.Adjustment, _: Any) -> None:
+@@ -845,14 +847,14 @@
+         self.buffering = False
+         self._hide_overlay(self.spinner)
+ 
+-        match state:
+-            case GstPlay.PlayState.PAUSED:
+-                self.paused = True
+-            case GstPlay.PlayState.STOPPED:
+-                self.paused = True
+-                self.stopped = True
+-            case GstPlay.PlayState.PLAYING:
+-                self.paused = False
++        _match4 = state
++        if _match4 == GstPlay.PlayState.PAUSED:
++            self.paused = True
++        elif _match4 == GstPlay.PlayState.STOPPED:
++            self.paused = True
++            self.stopped = True
++        elif _match4 == GstPlay.PlayState.PLAYING:
++            self.paused = False
+ 
+     def _on_duration_changed(self, _obj: Any, dur: int) -> None:
+         self._set_end_timestamp_label(self.play.get_position(), dur)
+@@ -958,23 +960,23 @@
+             return
+ 
+         def on_install_done(result: GstPbutils.InstallPluginsReturn) -> None:
+-            match result:
+-                case GstPbutils.InstallPluginsReturn.SUCCESS:
+-                    logging.debug("Plugin installed.")
+-                    self.stack.set_visible_child(self.video_page)
+-                    self.pause()
+-
+-                case GstPbutils.InstallPluginsReturn.NOT_FOUND:
+-                    logging.error("Plugin installation failed: Not found.")
+-                    self.missing_plugin_status_page.set_description(
+-                        _("No plugin available for this media type")
+-                    )
++            _match5 = result
++            if _match5 == GstPbutils.InstallPluginsReturn.SUCCESS:
++                logging.debug("Plugin installed.")
++                self.stack.set_visible_child(self.video_page)
++                self.pause()
+ 
+-                case _:
+-                    logging.error("Plugin installation failed, result: %d", int(result))
+-                    self.missing_plugin_status_page.set_description(
+-                        _("Unable to install the required plugin")
+-                    )
++            elif _match5 == GstPbutils.InstallPluginsReturn.NOT_FOUND:
++                logging.error("Plugin installation failed: Not found.")
++                self.missing_plugin_status_page.set_description(
++                    _("No plugin available for this media type")
++                )
++
++            else:
++                logging.error("Plugin installation failed, result: %d", int(result))
++                self.missing_plugin_status_page.set_description(
++                    _("Unable to install the required plugin")
++                )
+ 
+         button = Gtk.Button(halign=Gtk.Align.CENTER, label=_("Install Plugin"))
+         button.add_css_class("pill")
