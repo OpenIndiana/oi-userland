@@ -23,6 +23,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# transforms/symlinks cannot resolve a link to a directory
+<transform link path=usr/lib/(.+/)?icu/current$ -> default pkg.tmp.allow-dangling true>
+
 # Make sure common ICU developer files (includes, man page, etc.) are always
 # installed
 depend type=require fmri=developer/icu

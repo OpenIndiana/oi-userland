@@ -24,6 +24,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# transforms/symlinks cannot resolve a link to a directory
+<transform link path=usr/lib/(.+/)?icu/current$ -> default pkg.tmp.allow-dangling true>
+
 # 32 bit files used to live in this package
 #
 # The dependency should be removed once these components are rebuilt:
