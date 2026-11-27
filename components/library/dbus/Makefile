@@ -32,7 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= dbus
 COMPONENT_VERSION= 1.16.2
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Simple IPC library based on messages
 COMPONENT_PROJECT_URL= https://dbus.freedesktop.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -66,6 +66,9 @@ CONFIGURE_OPTIONS += -Ddbus_user=root
 CONFIGURE_OPTIONS += -Depoll=disabled
 CONFIGURE_OPTIONS += -Dinotify=disabled
 CONFIGURE_OPTIONS += -Dc_link_args=-lsocket
+
+# Without the console owner check at_console policies are never true (hal.conf).
+CONFIGURE_OPTIONS += -Dsolaris_console_owner_file=/dev/vt/console_user
 
 # We do not need to build these for 32-bit.  They are either overwritten by the
 # 64-bit build, or unused.
