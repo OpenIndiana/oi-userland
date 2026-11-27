@@ -1,0 +1,17 @@
+pow(double, size_t) is ambiguous with the C++ overloads of illumos'
+<iso/math_iso.h> (pow(double, int) and pow(double, double)); make the
+exponent a double.
+
+Upstream status: to be offered upstream (https://github.com/libjxl/libjxl)
+
+--- a/tools/speed_stats.cc	2026-11-27 15:52:21.501767613 +0100
++++ b/tools/speed_stats.cc	2026-11-27 17:50:11.159997763 +0100
+@@ -43,7 +43,7 @@
+   }
+ 
+   // Prefer geomean unless numerically unreliable (too many reps)
+-  if (pow(elapsed_[0], elapsed_.size()) < 1E100) {
++  if (pow(elapsed_[0], static_cast<double>(elapsed_.size())) < 1E100) {
+     double product = 1.0;
+     for (size_t i = 1; i < elapsed_.size(); ++i) {
+       product *= elapsed_[i];
