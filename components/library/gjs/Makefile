@@ -18,8 +18,13 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include ../../../make-rules/shared-macros.mk
 
+ifeq ($(MACH),sparc)
+ADDITIONAL_PATCHES += patches/20-sparc-addr32.sparc
+endif
+
 COMPONENT_NAME =		gjs
 HUMAN_VERSION =			1.90.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY =		GNOME Javascript bindings
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:05ceaa80f48e3782e5c44938572fad863e02b8c4a6c55657a99aa81db8ce9efa
@@ -41,11 +46,23 @@ CFLAGS += $(XPG7MODE)
 CONFIGURE_OPTIONS += -Dprofiler=disabled
 CONFIGURE_OPTIONS += -Dinstalled_tests=false
 
+# g-ir-scanner links its introspection dump program with LDFLAGS, and the
+# dump program loads libmozjs (ADDR32)
+ifeq ($(MACH),sparc)
+COMPONENT_BUILD_ENV +=	LDFLAGS="$(LDFLAGS) -Wl,-M,$(SOURCE_DIR)/build/sparc-addr32.mapfile"
+endif
+
 # Testing needs an X server
 TEST_REQUIRED_PACKAGES += x11/server/xvfb
 COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :1 >/dev/null 2>&1 &
 COMPONENT_TEST_ENV += DISPLAY=:1
 COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
+
+ifeq ($(MACH),sparc)
+# libgjs links libgcc_s and libm on SPARC only (gmake REQUIRED_PACKAGES runs on x86)
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library/math
+endif
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)

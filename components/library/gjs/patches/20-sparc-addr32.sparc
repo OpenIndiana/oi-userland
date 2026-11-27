@@ -1,0 +1,86 @@
+gjs on 64-bit SPARC illumos: link gjs-console and the test programs with
+the ADDR32 software capability, and run meson's SpiderMonkey sanity check
+with it too.
+
+libmozjs-140 is tagged ADDR32 on sparcv9 (library/mozjs-140 in this repo,
+patches/10-sparc-addr32.patch), because SpiderMonkey's Values need pointers
+below 2^47 and 64-bit SPARC maps near the top of the address space
+(https://bugzilla.mozilla.org/show_bug.cgi?id=577056).  The runtime linker
+refuses an ADDR32 library in a process that is not ADDR32 itself.
+Oracle Solaris does the same with a RESERVE_SEGMENT mapfile
+(oracle/solaris-userland components/gnome/gjs/patches/01-mozjs-workaround.sparc);
+illumos ld has no RESERVE_SEGMENT.  Only active for host sunos/sparc64.
+Applied on SPARC only (Makefile, ADDITIONAL_PATCHES).  Not submitted upstream.
+--- /dev/null
++++ b/build/sparc-addr32.mapfile
+@@ -0,0 +1,8 @@
++# illumos/Solaris 64-bit SPARC: SpiderMonkey's Values hold pointers of at
++# most 47 bits, and libmozjs is tagged ADDR32, so every program that loads
++# it must run in a 32-bit address space (the runtime linker refuses
++# libmozjs otherwise).
++$mapfile_version 2
++CAPABILITY {
++	SF += ADDR32;
++};
+--- a/installed-tests/js/meson.build
++++ b/installed-tests/js/meson.build
+@@ -9,6 +9,7 @@
+ 
+ minijasmine = executable('minijasmine', '../minijasmine.cpp',
+     jsunit_resources_files, dependencies: libgjs_dep,
++    link_args: addr32_link_args,
+     cpp_args: [
+         '-DINSTTESTDIR="@0@"'.format(prefix / installed_tests_execdir),
+     ],
+--- a/meson.build
++++ b/meson.build
+@@ -42,6 +42,13 @@
+ ### Check for compiler args ####################################################
+ 
+ cxx = meson.get_compiler('cpp')
++
++# 64-bit SPARC on illumos/Solaris: libmozjs is tagged ADDR32, so programs
++# linking it must be too (build/sparc-addr32.mapfile).
++addr32_link_args = []
++if host_machine.system() == 'sunos' and host_machine.cpu_family() == 'sparc64'
++    addr32_link_args = ['-Wl,-M,' + (meson.project_source_root() / 'build' / 'sparc-addr32.mapfile')]
++endif
+ cc = meson.get_compiler('c')
+ 
+ if cc.get_id() == 'msvc'
+@@ -293,7 +300,7 @@
+     return 0;
+ }
+ ''',
+-    args: debug_arg, dependencies: spidermonkey,
++    args: debug_arg + addr32_link_args, dependencies: spidermonkey,
+     name: 'SpiderMonkey sanity check')
+ 
+ recommended_configuration = ''' Check the recommended configuration:
+@@ -599,7 +606,7 @@
+ gjs_console_srcs = ['gjs/console.cpp']
+ 
+ gjs_console = executable('gjs-console', gjs_console_srcs,
+-    dependencies: libgjs_dep, install: true)
++    dependencies: libgjs_dep, link_args: addr32_link_args, install: true)
+ 
+ meson.add_install_script('build/symlink-gjs.py', bindir)
+ 
+--- a/test/meson.build
++++ b/test/meson.build
+@@ -29,6 +29,7 @@
+ gjs_tests = executable('gjs-tests', gjs_tests_sources, mock_js_resources_files,
+     include_directories: top_include, dependencies: gjs_tests_deps,
+     link_whole: [module_resource_lib],
++    link_args: addr32_link_args,
+     link_with: [libgjs_tests_common, libgjs_internal])
+ 
+ test('API tests', gjs_tests, args: ['--tap', '--keep-going', '--verbose'],
+@@ -48,6 +49,7 @@
+     include_directories: top_include,
+     cpp_args: libgjs_cpp_args,
+     dependencies: [libgjs_dependencies, libgjstesttools_dep],
++    link_args: addr32_link_args,
+     link_with: [libgjs_tests_common, libgjs_internal])
+ 
+ test('Internal API tests', gjs_tests_internal,
