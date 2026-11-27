@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glslang
 COMPONENT_VERSION=	14.3.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	OpenGL and OpenGL ES shader front end and validator
 COMPONENT_PROJECT_URL=	https://github.com/KhronosGroup/glslang
 COMPONENT_SRC=		glslang-$(COMPONENT_VERSION)
