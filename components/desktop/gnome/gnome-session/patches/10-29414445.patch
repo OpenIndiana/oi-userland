@@ -1,0 +1,49 @@
+Origin: solaris-userland@9d7a655 components/gnome/gnome-session/patches/10-29414445.patch
+
+Change for consolekit CanStop, CanRestart, CanHibernate and CanSuspend
+warnings into debug messages to avoid console log filled with these
+when the power icon is clicked.
+
+Not suitable for upstream
+
+reference bug 29414445 where customer complains about these
+Upstream status: not for upstream (ConsoleKit log noise).
+
+--- a/gnome-session/gsm-consolekit.c	2020-07-14 16:01:46.130328601 -0700
++++ b/gnome-session/gsm-consolekit.c	2020-07-14 16:02:43.350390021 -0700
+@@ -496,7 +496,7 @@
+                                       NULL,
+                                       NULL);
+         if (!res) {
+-                g_warning ("Calling CanRestart failed. Check that ConsoleKit is "
++                g_debug ("Calling CanRestart failed. Check that ConsoleKit is "
+                            "properly installed.");
+                 return FALSE;
+         }
+@@ -522,7 +522,7 @@
+                                       NULL,
+                                       NULL);
+         if (!res) {
+-                g_warning ("Calling CanStop failed. Check that ConsoleKit is "
++                g_debug ("Calling CanStop failed. Check that ConsoleKit is "
+                            "properly installed.");
+                 return FALSE;
+         }
+@@ -600,7 +600,7 @@
+                                       NULL,
+                                       NULL);
+         if (!res) {
+-                g_warning ("Calling CanSuspend failed. Check that ConsoleKit is "
++                g_debug ("Calling CanSuspend failed. Check that ConsoleKit is "
+                            "properly installed.");
+                 return FALSE;
+         }
+@@ -632,7 +632,7 @@
+                                       NULL,
+                                       NULL);
+         if (!res) {
+-                g_warning ("Calling CanHibernate failed. Check that ConsoleKit is "
++                g_debug ("Calling CanHibernate failed. Check that ConsoleKit is "
+                            "properly installed.");
+                 return FALSE;
+         }

@@ -1,0 +1,21 @@
+Origin: solaris-userland@9d7a655 components/gnome/gnome-session/patches/09-envvar.patch
+
+Upstream has removed this, but we will maintain it for now to potentially
+avoid https://bugzilla.gnome.org/show_bug.cgi?id=790387
+
+Evaluate the need once gnome 3.34 update is complete
+
+--- a/gnome-session/main.c	2020-03-25 14:24:06.365970801 -0700
++++ b/gnome-session/main.c	2020-03-25 14:40:11.683336166 -0700
+@@ -576,6 +578,11 @@
+                 g_free (ibus_path);
+         }
+ 
++        /* Some third-party programs rely on GNOME_DESKTOP_SESSION_ID to
++         * detect if GNOME is running. We keep this for compatibility reasons.
++         */
++        gsm_util_setenv ("GNOME_DESKTOP_SESSION_ID", "this-is-deprecated");
++
+         /* We want to use the GNOME menus which has the designed categories.
+          */
+         gsm_util_setenv ("XDG_MENU_PREFIX", "gnome-");

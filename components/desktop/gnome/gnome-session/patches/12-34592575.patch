@@ -1,0 +1,20 @@
+Origin: solaris-userland@9d7a655 components/gnome/gnome-session/patches/12-34592575.patch
+
+Post mutter and gnome-shell updates to >= 3.38, users have observed stalls
+specifically seen with xterm and scrolling.
+
+This is still seen with the current version, so adding in the workaround as
+a default which has worked in most cases and hasn't shown performance issues,
+and has improved the observed refresh issues.
+
+https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/3369
+
+--- a/gnome-session/gnome-session.in	2024-02-02 07:27:43.081579210 -0800
++++ b/gnome-session/gnome-session.in	2024-02-02 07:39:35.595843029 -0800
+@@ -50,4 +50,6 @@
+   fi
+ fi
+ 
++export MUTTER_SYNC=1 
++
+ exec @libexecdir@/gnome-session-binary "$@"
