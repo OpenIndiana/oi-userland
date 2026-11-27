@@ -1,0 +1,35 @@
+illumos ld has no --version-script. The libraries are built with hidden
+visibility and HWY_DLLEXPORT annotations, so the script only adds a version
+node; skip it on illumos, as upstream does on Apple and Windows.
+
+Upstream status: to be offered upstream (https://github.com/google/highway)
+
+--- a/CMakeLists.txt	2026-11-27 15:52:21.477767565 +0100
++++ b/CMakeLists.txt	2026-11-27 15:52:21.501767613 +0100
+@@ -557,7 +557,7 @@
+ # For GCC __atomic_store_8, see #887
+ target_link_libraries(hwy PRIVATE ${ATOMICS_LIBRARIES})
+ # not supported by MSVC/Clang, safe to skip (we use DLLEXPORT annotations)
+-if(UNIX AND NOT APPLE)
++if(UNIX AND NOT APPLE AND NOT CMAKE_SYSTEM_NAME STREQUAL "SunOS")
+   set_property(TARGET hwy APPEND_STRING PROPERTY
+     LINK_FLAGS " -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/hwy/hwy.version")
+ endif()
+@@ -588,7 +588,7 @@
+ endif()
+ 
+ # not supported by MSVC/Clang, safe to skip (we use DLLEXPORT annotations)
+-if(UNIX AND NOT APPLE)
++if(UNIX AND NOT APPLE AND NOT CMAKE_SYSTEM_NAME STREQUAL "SunOS")
+   set_property(TARGET hwy_contrib APPEND_STRING PROPERTY
+     LINK_FLAGS " -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/hwy/hwy.version")
+ endif()
+@@ -609,7 +609,7 @@
+ set_target_properties(hwy_test PROPERTIES
+   LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/hwy/hwy.version)
+ # not supported by MSVC/Clang, safe to skip (we use DLLEXPORT annotations)
+-if(UNIX AND NOT APPLE)
++if(UNIX AND NOT APPLE AND NOT CMAKE_SYSTEM_NAME STREQUAL "SunOS")
+   set_property(TARGET hwy_test APPEND_STRING PROPERTY
+     LINK_FLAGS " -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/hwy/hwy.version")
+ endif()
