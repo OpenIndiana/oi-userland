@@ -1,0 +1,19 @@
+Origin: solaris-userland@9d7a655 components/desktop/polkit/patches/00-solaris.patch
+
+Our patch files have HAVE_SOLARIS checks so instead of changing all patches,
+define HAVE_SOLARIS if meson detects sunos
+Upstream status: not for upstream (Solaris/illumos build glue).
+
+--- a/meson.build	2024-09-12 16:39:38.827182295 -0700
++++ b/meson.build	2024-09-12 16:41:35.592197377 -0700
+@@ -166,6 +166,10 @@
+ host_system = host_machine.system()
+ config_data.set('HAVE_' + host_system.to_upper(), true)
+
++if host_system == 'sunos'
++  config_data.set('HAVE_SOLARIS', 1)
++endif
++
+ # Check whether setnetgrent has a return value
+ config_data.set('HAVE_NETGROUP_H', cc.has_header('netgroup.h'))
+ 

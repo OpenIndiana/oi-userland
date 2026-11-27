@@ -1,0 +1,80 @@
+Origin: solaris-userland@9d7a655 components/desktop/polkit/patches/01-34135740-procfs.patch
+
+#
+# Support for Solaris /proc
+#
+Upstream status: not submitted (illumos /proc support).
+
+--- polkit-0.118/src/polkit/polkitunixprocess.c	Fri May  3 04:41:10 2019
++++ polkit-0.118/src/polkit/polkitunixprocess.c	Thu May  5 05:07:32 2022
+@@ -36,6 +36,10 @@
+ #ifdef HAVE_OPENBSD
+ #include <sys/sysctl.h>
+ #endif
++#ifdef HAVE_SOLARIS
++#include <procfs.h>
++#include <fcntl.h>
++#endif
+ #ifdef HAVE_PIDFD_OPEN
+ #include <sys/syscall.h>
+ #endif /* HAVE_PIDFD_OPEN */
+@@ -611,7 +615,7 @@
+   int  procfd;
+ 
+   (void) snprintf(pname, sizeof(pname), "/proc/%d/psinfo", pid);
+-  if ((procfd = open(pname, O_RDONLY)) == -1)
++  if ((procfd = open(pname, O_RDONLY | O_CLOEXEC)) == -1)
+     {
+       return -1;
+     }
+@@ -683,7 +687,8 @@
+                         GError **error)
+ {
+   guint64 start_time;
+-#if !defined(HAVE_FREEBSD) && !defined(HAVE_NETBSD) && !defined(HAVE_OPENBSD)
++#if !defined(HAVE_FREEBSD) && !defined(HAVE_NETBSD) && !defined(HAVE_OPENBSD) \
++    && !defined(HAVE_SOLARIS)
+   gchar *filename;
+   gchar *contents;
+   size_t length;
+@@ -755,6 +760,14 @@
+  out:
+   g_free (filename);
+   g_free (contents);
++#elif defined(HAVE_SOLARIS)
++  psinfo_t psinfo;
++
++  if (get_pid_psinfo (pid, &psinfo) != 0)
++    start_time = 0;
++  else
++    start_time = (guint64) psinfo.pr_start.tv_sec;
++
+ #else
+ #ifdef HAVE_NETBSD
+   struct kinfo_proc2 p;
+@@ -837,6 +850,14 @@
+   result = p.p_uid;
+   start_time = (guint64) p.p_ustart_sec;
+ #endif
++#elif defined(HAVE_SOLARIS)
++  psinfo_t psinfo;
++
++  if (get_pid_psinfo (process->pid, &psinfo) != 0)
++    goto out;
++
++  result = psinfo.pr_uid;
++  start_time = (guint64) psinfo.pr_start.tv_sec;
+ #else
+ 
+   /* see 'man proc' for layout of the status file
+@@ -902,8 +923,10 @@
+     }
+ 
+ out:
++#if !defined(HAVE_SOLARIS)
+   g_strfreev (lines);
+   g_free (contents);
++#endif
+   return result;
+ }
+ 
