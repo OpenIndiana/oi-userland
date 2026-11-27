@@ -1,0 +1,405 @@
+Big-endian hosts (SPARC): byte-swap the big-endian MOD data only on
+little-endian hosts, swap the little-endian WAV/FLAC/IFF fields there,
+and open the audio devices as AUDIO_S16SYS (the mixer writes native
+int16; AUDIO_S16 is little-endian). No change on little-endian hosts.
+
+Upstream status: declined upstream (https://github.com/8bitbubsy/pt2-clone/pull/53), kept for big-endian hosts (SPARC)
+
+diff --git a/src/pt2_audio.c b/src/pt2_audio.c
+--- a/src/pt2_audio.c
++++ b/src/pt2_audio.c
+@@ -458,7 +458,7 @@ bool setupAudio(void)
+ 
+ 	want.freq = config.soundFrequency;
+ 	want.samples = (uint16_t)config.soundBufferSize;
+-	want.format = AUDIO_S16;
++	want.format = AUDIO_S16SYS;
+ 	want.channels = 2;
+ 	want.callback = audioCallback;
+ 	want.userdata = NULL;
+diff --git a/src/pt2_helpers.h b/src/pt2_helpers.h
+--- a/src/pt2_helpers.h
++++ b/src/pt2_helpers.h
+@@ -3,13 +3,13 @@
+ #include <stdint.h>
+ #include <stdbool.h>
+ 
+-#define SWAP16(value) \
++#define BSWAP16(value) \
+ ( \
+ 	(((uint16_t)((value) & 0x00FF)) << 8) | \
+ 	(((uint16_t)((value) & 0xFF00)) >> 8)   \
+ )
+ 
+-#define SWAP32(value) \
++#define BSWAP32(value) \
+ ( \
+ 	(((uint32_t)((value) & 0x000000FF)) << 24) | \
+ 	(((uint32_t)((value) & 0x0000FF00)) <<  8) | \
+@@ -17,7 +17,7 @@
+ 	(((uint32_t)((value) & 0xFF000000)) >> 24)   \
+ )
+ 
+-#define SWAP64(x) \
++#define BSWAP64(x) \
+ ( \
+ 	(((x) << 56) & 0xFF00000000000000ULL) | \
+ 	(((x) << 40) & 0x00FF000000000000ULL) | \
+@@ -29,6 +29,58 @@
+ 	(((x) >> 56) & 0x00000000000000FFULL)  \
+ )
+ 
++/* Byte order.  SWAP16/32/64 are used throughout for BIG-endian file data
++** (MOD, IFF, AIFF, XPK, PT.Config) on a little-endian host; LE16/32 are for
++** LITTLE-endian file data (WAV, FLAC chunks, IDs read with fread).  On a
++** big-endian host (AMIX on the 68060) the roles swap. */
++#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
++#define PT2_BIG_ENDIAN 1
++#define SWAP16(value) ((uint16_t)(value))
++#define SWAP32(value) ((uint32_t)(value))
++#define SWAP64(value) ((uint64_t)(value))
++#define LE16(value) BSWAP16(value)
++#define LE32(value) BSWAP32(value)
++#define LE64(value) BSWAP64((uint64_t)(value))
++#else
++#define SWAP16(value) BSWAP16(value)
++#define SWAP32(value) BSWAP32(value)
++#define SWAP64(value) BSWAP64(value)
++#define LE16(value) ((uint16_t)(value))
++#define LE32(value) ((uint32_t)(value))
++#define LE64(value) ((uint64_t)(value))
++#endif
++
++// convert arrays of little-endian words in place (no-ops on little-endian hosts)
++static inline void le16Array(void *p, uint32_t n)
++{
++#ifdef PT2_BIG_ENDIAN
++	uint16_t *w = (uint16_t *)p;
++	for (uint32_t i = 0; i < n; i++) w[i] = LE16(w[i]);
++#else
++	(void)p; (void)n;
++#endif
++}
++
++static inline void le32Array(void *p, uint32_t n)
++{
++#ifdef PT2_BIG_ENDIAN
++	uint32_t *w = (uint32_t *)p;
++	for (uint32_t i = 0; i < n; i++) w[i] = LE32(w[i]);
++#else
++	(void)p; (void)n;
++#endif
++}
++
++static inline void le64Array(void *p, uint32_t n)
++{
++#ifdef PT2_BIG_ENDIAN
++	uint64_t *w = (uint64_t *)p;
++	for (uint32_t i = 0; i < n; i++) w[i] = LE64(w[i]);
++#else
++	(void)p; (void)n;
++#endif
++}
++
+ #define SGN(x) (((x) >= 0) ? 1 : -1)
+ #define ABS(a) (((a) < 0) ? -(a) : (a))
+ #define MIN(a, b) (((a) < (b)) ? (a) : (b))
+diff --git a/src/pt2_mod2wav.c b/src/pt2_mod2wav.c
+--- a/src/pt2_mod2wav.c
++++ b/src/pt2_mod2wav.c
+@@ -254,7 +254,10 @@ static int32_t mod2WavThreadFunc(void *ptr)
+ 
+ 		// write buffer to disk
+ 		if (samplesInChunk > 0)
++		{
++			le16Array(mod2WavBuffer, samplesInChunk * 2); // WAV is little-endian
+ 			fwrite(mod2WavBuffer, sizeof (int16_t), samplesInChunk * 2, f);
++		}
+ 	}
+ 
+ 	ui.updateMod2WavDialog = true;
+@@ -283,6 +286,7 @@ static int32_t mod2WavThreadFunc(void *ptr)
+ 	wavHeader.subchunk2Size = sampleCounter * sizeof (int16_t) * 2;
+ 
+ 	// write main header
++	WAVHEADER_LE(wavHeader);
+ 	fwrite(&wavHeader, sizeof (wavHeader_t), 1, f);
+ 	fclose(f);
+ 
+@@ -308,6 +312,7 @@ static int32_t mod2WavThreadFunc(void *ptr)
+ 				samplesTodo = samplesLeft;
+ 
+ 			fread(fadeOutBuffer, sizeof (int16_t), samplesTodo * 2, f);
++			le16Array(fadeOutBuffer, samplesTodo * 2);
+ 			fseek(f, 0 - (samplesTodo * sizeof (int16_t) * 2), SEEK_CUR);
+ 
+ 			// apply fadeout
+@@ -318,6 +323,7 @@ static int32_t mod2WavThreadFunc(void *ptr)
+ 				dFadeOutVal -= dFadeOutDelta;
+ 			}
+ 
++			le16Array(fadeOutBuffer, samplesTodo * 2);
+ 			fwrite(fadeOutBuffer, sizeof (int16_t), samplesTodo * 2, f);
+ 
+ 			samplesLeft -= samplesTodo;
+diff --git a/src/pt2_module_loader.c b/src/pt2_module_loader.c
+--- a/src/pt2_module_loader.c
++++ b/src/pt2_module_loader.c
+@@ -54,6 +54,7 @@ module_t *modLoad(UNICHAR *fileName)
+ 
+ 	// check if mod is a powerpacker mod
+ 	fread(&powerPackerID, 4, 1, f);
++	powerPackerID = LE32(powerPackerID);
+ 	if (powerPackerID == 0x30325850) // "PX20"
+ 	{
+ 		displayErrorMsg("ENCRYPTED MOD !");
+diff --git a/src/pt2_sample_loader.c b/src/pt2_sample_loader.c
+--- a/src/pt2_sample_loader.c
++++ b/src/pt2_sample_loader.c
+@@ -78,6 +78,7 @@ bool loadSample(UNICHAR *fileName, char *entryName)
+ 	{
+ 		uint32_t ID;
+ 		fread(&ID, 4, 1, f);
++		ID = LE32(ID);
+ 
+ 		if (ID == 0x43614C66) // "fLaC" (XXX: weak detection)
+ 		{
+@@ -87,6 +88,7 @@ bool loadSample(UNICHAR *fileName, char *entryName)
+ 		{
+ 			fseek(f, 4, SEEK_CUR);
+ 			fread(&ID, 4, 1, f);
++			ID = LE32(ID);
+ 
+ 			if (ID == 0x45564157) // "WAVE"
+ 				sampleType = SAMPLETYPE_WAV;
+@@ -95,6 +97,7 @@ bool loadSample(UNICHAR *fileName, char *entryName)
+ 		{
+ 			fseek(f, 4, SEEK_CUR);
+ 			fread(&ID, 4, 1, f);
++			ID = LE32(ID);
+ 
+ 			// check if it's an Amiga IFF sample
+ 			if (ID == 0x58565338 || ID == 0x56533631) // "8SVX" (normal) and "16SV" (FT2 sample)
+diff --git a/src/pt2_sample_saver.c b/src/pt2_sample_saver.c
+--- a/src/pt2_sample_saver.c
++++ b/src/pt2_sample_saver.c
+@@ -188,6 +188,7 @@ bool saveSample(bool checkIfFileExist, bool giveNewFreeFilename)
+ 			mptExtraChunk.defaultVolume = s->volume * 4; // 0..256
+ 			mptExtraChunk.globalVolume = 64; // 0..64
+ 
++			WAVHEADER_LE(wavHeader);
+ 			fwrite(&wavHeader, sizeof (wavHeader_t), 1, f);
+ 
+ 			for (uint32_t i = 0; i < sampleLength; i++)
+@@ -197,8 +198,12 @@ bool saveSample(bool checkIfFileExist, bool giveNewFreeFilename)
+ 				fputc(0, f); // pad byte needed for 8-bit samples
+ 
+ 			if (loopStart+loopLength > 2) // loop enabled?
++			{
++				SAMPLERCHUNK_LE(samplerChunk);
+ 				fwrite(&samplerChunk, sizeof (samplerChunk), 1, f);
++			}
+ 
++			MPTEXTRACHUNK_LE(mptExtraChunk);
+ 			fwrite(&mptExtraChunk, sizeof (mptExtraChunk), 1, f);
+ 		}
+ 		break;
+diff --git a/src/pt2_sampling.c b/src/pt2_sampling.c
+--- a/src/pt2_sampling.c
++++ b/src/pt2_sampling.c
+@@ -261,7 +261,7 @@ static void startInputAudio(void)
+ 
+ 	memset(&want, 0, sizeof (SDL_AudioSpec));
+ 	want.freq = config.audioInputFrequency;
+-	want.format = AUDIO_S16;
++	want.format = AUDIO_S16SYS;
+ 	want.channels = 2;
+ 	want.callback = samplingCallback;
+ 	want.userdata = NULL;
+diff --git a/src/pt2_structs.h b/src/pt2_structs.h
+--- a/src/pt2_structs.h
++++ b/src/pt2_structs.h
+@@ -10,6 +10,7 @@
+ #include "pt2_header.h"
+ #include "pt2_hpc.h"
+ #include "pt2_paula.h"
++#include "pt2_helpers.h"
+ 
+ // for .WAV sample loading/saving
+ typedef struct wavHeader_t
+@@ -41,6 +42,17 @@ typedef struct mptExtraChunk_t
+ 	uint16_t defaultPan, defaultVolume, globalVolume, reserved;
+ 	uint8_t vibratoType, vibratoSweep, vibratoDepth, vibratoRate;
+ } mptExtraChunk_t;
++
++// host <-> little-endian (the same operation both ways), before fwrite
++#define WAVHEADER_LE(h) do { \
++	(h).chunkID = LE32((h).chunkID); (h).chunkSize = LE32((h).chunkSize); (h).format = LE32((h).format); \
++	(h).subchunk1ID = LE32((h).subchunk1ID); (h).subchunk1Size = LE32((h).subchunk1Size); \
++	(h).audioFormat = LE16((h).audioFormat); (h).numChannels = LE16((h).numChannels); \
++	(h).sampleRate = LE32((h).sampleRate); (h).byteRate = LE32((h).byteRate); \
++	(h).blockAlign = LE16((h).blockAlign); (h).bitsPerSample = LE16((h).bitsPerSample); \
++	(h).subchunk2ID = LE32((h).subchunk2ID); (h).subchunk2Size = LE32((h).subchunk2Size); } while (0)
++#define SAMPLERCHUNK_LE(c) le32Array(&(c), sizeof (samplerChunk_t) / 4)
++#define MPTEXTRACHUNK_LE(c) do { le32Array(&(c), 3); le16Array(&(c).defaultPan, 4); } while (0)
+ // -----------------------------------------
+ 
+ typedef struct note_t
+diff --git a/src/smploaders/pt2_load_flac.c b/src/smploaders/pt2_load_flac.c
+--- a/src/smploaders/pt2_load_flac.c
++++ b/src/smploaders/pt2_load_flac.c
+@@ -93,15 +93,15 @@ bool loadFLACSample(FILE *f, uint32_t filesize, moduleSample_t *s)
+ 		{
+ 			const uint8_t *data = bufferPtr + 4;
+ 
+-			uint32_t chunkID  = *(uint32_t *)data; data += 4;
+-			uint32_t chunkLen = *(uint32_t *)data; data += 4;
++			uint32_t chunkID  = LE32(*(uint32_t *)data); data += 4;
++			uint32_t chunkLen = LE32(*(uint32_t *)data); data += 4;
+ 
+ 			if (chunkID == 0x61727478 && chunkLen >= 8) // "xtra"
+ 			{
+ 				data += 6;
+ 
+ 				// volume (0..256)
+-				uint16_t tmpVol = *(uint16_t *)data;
++				uint16_t tmpVol = LE16(*(uint16_t *)data);
+ 				if (tmpVol > 256)
+ 					tmpVol = 256;
+ 
+@@ -112,13 +112,13 @@ bool loadFLACSample(FILE *f, uint32_t filesize, moduleSample_t *s)
+ 			{
+ 				data += 28; // seek to first wanted byte
+ 
+-				uint32_t numLoops = *(uint32_t *)data; data += 4;
++				uint32_t numLoops = LE32(*(uint32_t *)data); data += 4;
+ 				if (numLoops == 1)
+ 				{
+ 					data += 4+4+4; // skip "samplerData", "identifier" and "loopType"
+ 
+-					         loopStart = *(uint32_t *)data; data += 4;
+-					uint32_t loopEnd   = *(uint32_t *)data; data += 4;
++					         loopStart = LE32(*(uint32_t *)data); data += 4;
++					uint32_t loopEnd   = LE32(*(uint32_t *)data); data += 4;
+ 
+ 					loopLength = (loopEnd+1) - loopStart;
+ 				}
+diff --git a/src/smploaders/pt2_load_wav.c b/src/smploaders/pt2_load_wav.c
+--- a/src/smploaders/pt2_load_wav.c
++++ b/src/smploaders/pt2_load_wav.c
+@@ -41,8 +41,8 @@ bool loadWAVSample(FILE *f, uint32_t filesize, moduleSample_t *s)
+ 	{
+ 		uint32_t chunkID, chunkSize;
+ 
+-		fread(&chunkID, 4, 1, f); if (feof(f)) break;
+-		fread(&chunkSize, 4, 1, f); if (feof(f)) break;
++		fread(&chunkID, 4, 1, f); chunkID = LE32(chunkID); if (feof(f)) break;
++		fread(&chunkSize, 4, 1, f); chunkSize = LE32(chunkSize); if (feof(f)) break;
+ 
+ 		uint32_t endOfChunk = (ftell(f) + chunkSize) + (chunkSize & 1);
+ 		switch (chunkID)
+@@ -65,14 +65,14 @@ bool loadWAVSample(FILE *f, uint32_t filesize, moduleSample_t *s)
+ 			{
+ 				if (chunkSize >= 4)
+ 				{
+-					fread(&chunkID, 4, 1, f);
++					fread(&chunkID, 4, 1, f); chunkID = LE32(chunkID);
+ 					if (chunkID == 0x4F464E49) // "INFO"
+ 					{
+ 						bytesRead = 0;
+ 						while (!feof(f) && bytesRead < chunkSize)
+ 						{
+-							fread(&chunkID, 4, 1, f);
+-							fread(&chunkSize, 4, 1, f);
++							fread(&chunkID, 4, 1, f); chunkID = LE32(chunkID);
++							fread(&chunkSize, 4, 1, f); chunkSize = LE32(chunkSize);
+ 
+ 							switch (chunkID)
+ 							{
+@@ -123,18 +123,18 @@ bool loadWAVSample(FILE *f, uint32_t filesize, moduleSample_t *s)
+ 
+ 	// ---- READ "fmt " CHUNK ----
+ 	fseek(f, fmtPtr, SEEK_SET);
+-	fread(&audioFormat, 2, 1, f);
+-	fread(&numChannels, 2, 1, f);
+-	fread(&sampleRate,  4, 1, f);
++	fread(&audioFormat, 2, 1, f); audioFormat = LE16(audioFormat);
++	fread(&numChannels, 2, 1, f); numChannels = LE16(numChannels);
++	fread(&sampleRate, 4, 1, f); sampleRate = LE32(sampleRate);
+ 	fseek(f, 6, SEEK_CUR);
+-	fread(&bitsPerSample, 2, 1, f);
++	fread(&bitsPerSample, 2, 1, f); bitsPerSample = LE16(bitsPerSample);
+ 
+ 	int32_t sampleLength = dataLen;
+ 
+ 	if (audioFormat == WAV_FORMAT_EXTENSIBLE)
+ 	{
+ 		fseek(f, 8, SEEK_CUR);
+-		fread(&audioFormat, 2, 1, f);
++		fread(&audioFormat, 2, 1, f); audioFormat = LE16(audioFormat);
+ 	}
+ 	// ---------------------------
+ 
+@@ -248,6 +248,7 @@ bool loadWAVSample(FILE *f, uint32_t filesize, moduleSample_t *s)
+ 			displayErrorMsg("I/O ERROR !");
+ 			return false;
+ 		}
++		le16Array(audioDataS16, sampleLength); // little-endian file data
+ 
+ 		// convert from stereo to mono (if needed)
+ 		if (numChannels == 2)
+@@ -310,6 +311,7 @@ bool loadWAVSample(FILE *f, uint32_t filesize, moduleSample_t *s)
+ 			fread(&audioDataU8[1], 3, 1, f);
+ 			audioDataU8 += sizeof (int32_t);
+ 		}
++		le32Array(audioDataS32, sampleLength); // bytes 0,b0,b1,b2 as a little-endian word: sample << 8
+ 
+ 		// convert from stereo to mono (if needed)
+ 		if (numChannels == 2)
+@@ -374,6 +376,7 @@ bool loadWAVSample(FILE *f, uint32_t filesize, moduleSample_t *s)
+ 			displayErrorMsg("I/O ERROR !");
+ 			return false;
+ 		}
++		le32Array(audioDataS32, sampleLength);
+ 
+ 		// convert from stereo to mono (if needed)
+ 		if (numChannels == 2)
+@@ -438,6 +441,7 @@ bool loadWAVSample(FILE *f, uint32_t filesize, moduleSample_t *s)
+ 			displayErrorMsg("I/O ERROR !");
+ 			return false;
+ 		}
++		le32Array(audioDataU32, sampleLength);
+ 
+ 		float *fAudioDataFloat = (float *)audioDataU32;
+ 
+@@ -494,6 +498,7 @@ bool loadWAVSample(FILE *f, uint32_t filesize, moduleSample_t *s)
+ 			displayErrorMsg("I/O ERROR !");
+ 			return false;
+ 		}
++		le64Array(audioDataU32, sampleLength);
+ 
+ 		double *dAudioDataDouble = (double *)audioDataU32;
+ 
+@@ -553,10 +558,10 @@ bool loadWAVSample(FILE *f, uint32_t filesize, moduleSample_t *s)
+ 
+ 		fseek(f, smplPtr + 28, SEEK_SET); // seek to first wanted byte
+ 
+-		fread(&loopFlags, 4, 1, f);
++		fread(&loopFlags, 4, 1, f); loopFlags = LE32(loopFlags);
+ 		fseek(f, 12, SEEK_CUR);
+-		fread(&loopStart, 4, 1, f);
+-		fread(&loopEnd, 4, 1, f);
++		fread(&loopStart, 4, 1, f); loopStart = LE32(loopStart);
++		fread(&loopEnd, 4, 1, f); loopEnd = LE32(loopEnd);
+ 		loopEnd++;
+ 
+ 		if (loopFlags) // loop enabled?
+@@ -594,7 +599,7 @@ bool loadWAVSample(FILE *f, uint32_t filesize, moduleSample_t *s)
+ 
+ 		// volume (0..256)
+ 		fseek(f, 2, SEEK_CUR);
+-		fread(&tempVol, 2, 1, f);
++		fread(&tempVol, 2, 1, f); tempVol = LE16(tempVol);
+ 		if (tempVol > 256)
+ 			tempVol = 256;
+ 
