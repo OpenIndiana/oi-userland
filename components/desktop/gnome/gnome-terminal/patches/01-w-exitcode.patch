@@ -1,0 +1,16 @@
+W_EXITCODE is a glibc/BSD macro; illumos <sys/wait.h> does not have it.
+Upstream status: not yet sent (https://gitlab.gnome.org/GNOME/gnome-terminal).
+
+--- a/src/terminal.cc
++++ b/src/terminal.cc
+@@ -28,6 +28,10 @@
+ #include <unistd.h>
+ #include <sys/wait.h>
+ 
++#ifndef W_EXITCODE /* glibc/BSD only; illumos has no W_EXITCODE */
++#define W_EXITCODE(ret, sig) (((ret) << 8) | (sig))
++#endif
++
+ #include <glib.h>
+ #include <glib/gstdio.h>
+ #include <gio/gio.h>
