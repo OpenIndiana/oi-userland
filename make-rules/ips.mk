@@ -492,6 +492,48 @@ $(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.p5m $(BUILD_DIR) $(MAKEFILE_PRE
 		$(PUBLISH_TRANSFORMS) | \
 		$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
+# The transforms/symlinks file generates depend actions for symlink targets,
+# including directories, to ensure that no targets are dangling. Since
+# pkgdepend cannot resolve dependencies on directories, we need to handle
+# depend actions for directory targets manually here.
+$(MANIFEST_BASE)-%.mogrified.transform:	$(MANIFEST_BASE)-%.mogrified
+	# Convert symlink targets to real paths in link depend actions.  This
+	# is a prerequisite for the next step.
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $< $(WS_TRANSFORMS)/print-depend-link-targets \
+		| $(GSED) -e '/^$$/d' -e '/^#.*$$/d' \
+		| $(SORT) -u \
+		| while read f ; do \
+			r="$$($(REALPATH) -mLs --relative-to=. "$$f")" ; \
+			[ "$$f" == "$$r" ] && continue ; \
+			printf '<transform depend type=require pkg.debug.depend.type=link \\\n' ; \
+			printf '    pkg.debug.depend.file=%s$$ -> \\\n' "$${f//./\\.}" ; \
+			printf '    edit pkg.debug.depend.file ^.*$$ %s >\n' "$$r" ; \
+		done > $@
+	# Drop link depend actions that point to directories provided by the
+	# current package.
+	echo '<transform dir -> print /%(path)/ >' \
+		| $(PKGMOGRIFY) $(PKG_OPTIONS) $< /dev/fd/0 $(WS_TRANSFORMS)/print-paths \
+		| $(GSED) -e 's/\/[^/]*$$//' -e '/^$$/d' -e '/^#/d' \
+		| $(SORT) -u \
+		| while read d ; do \
+			r="$$($(REALPATH) -mLs "$$d")" ; \
+			while [ "$$r" ] ; do \
+				echo "$$r" ; \
+				r="$${r%/*}" ; \
+			done ; \
+		done \
+		| $(SORT) -u \
+		| while read d ; do \
+			d="$${d#/}" ; \
+			printf '<transform depend type=require pkg.debug.depend.type=link \\\n' ; \
+			printf '    pkg.debug.depend.file=%s$$ -> drop >\n' "$${d//./\\.}" ; \
+		done >> $@
+
+# Pre-resolve dependencies that can and should be resolved individually, as
+# well as those that pkgdepend cannot resolve
+$(MANIFEST_BASE)-%.mogrified.res:	$(MANIFEST_BASE)-%.mogrified $(MANIFEST_BASE)-%.mogrified.transform
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $^ > $@
+
 # mangle the file contents
 $(BUILD_DIR) $(MANGLED_DIR):
 	$(MKDIR) $@
@@ -500,7 +542,7 @@ PKGMANGLE_OPTIONS = -D $(MANGLED_DIR) $(PKG_PROTO_DIRS:%=-d %)
 ifeq ($(strip $(USE_CTF)),yes)
 PKGMANGLE_OPTIONS += -c $(CTFCONVERT)
 endif
-$(MANIFEST_BASE)-%.mangled:	$(MANIFEST_BASE)-%.mogrified $(MANGLED_DIR)
+$(MANIFEST_BASE)-%.mangled:	$(MANIFEST_BASE)-%.mogrified.res $(MANGLED_DIR)
 	$(PKGMANGLE) $(PKGMANGLE_OPTIONS) -m $< >$@
 
 # generate dependencies
