@@ -1,0 +1,18 @@
+FindLCMS2.cmake asks pkg-config for "libLCMS2", but Little CMS installs
+lcms2.pc, so the include directory hint is lost and lcms2.h is not found
+where it is not in a default include directory (OpenIndiana:
+/usr/include/lcms2).
+
+Upstream status: to be offered upstream (https://github.com/libjxl/libjxl)
+
+--- a/cmake/FindLCMS2.cmake	2026-11-27 15:52:21.485767581 +0100
++++ b/cmake/FindLCMS2.cmake	2026-11-27 17:47:27.408543056 +0100
+@@ -5,7 +5,7 @@
+ 
+ find_package(PkgConfig QUIET)
+ if (PkgConfig_FOUND)
+-  pkg_check_modules(PC_LCMS2 QUIET libLCMS2)
++  pkg_check_modules(PC_LCMS2 QUIET lcms2)
+   set(LCMS2_VERSION ${PC_LCMS2_VERSION})
+ endif ()
+ 
