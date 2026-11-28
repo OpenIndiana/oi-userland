@@ -1,6 +1,6 @@
-     Running unittests crates/core/main.rs (target/release/deps/rg-XXXXXXXXXXXXXXXX)
+     Running unittests crates/core/main.rs (target/release/build/ripgrep/86aca6e999022897/out/rg-XXXXXXXXXXXXXXXX)
 
-running 114 tests
+running 118 tests
 test flags::config::tests::basic ... ok
 test flags::config::tests::error ... ok
 test flags::defs::test_after_context ... ok
@@ -33,6 +33,7 @@ test flags::defs::test_follow ... ok
 test flags::defs::test_generate ... ok
 test flags::defs::test_glob ... ok
 test flags::defs::test_glob_case_insensitive ... ok
+test flags::defs::test_glob_not ... ok
 test flags::defs::test_heading ... ok
 test flags::defs::test_help ... ok
 test flags::defs::test_hidden ... ok
@@ -42,12 +43,14 @@ test flags::defs::test_iglob ... ok
 test flags::defs::test_ignore_case ... ok
 test flags::defs::test_ignore_file ... ok
 test flags::defs::test_ignore_file_case_insensitive ... ok
+test flags::defs::test_in_in0 ... ok
 test flags::defs::test_include_zero ... ok
 test flags::defs::test_invert_match ... ok
 test flags::defs::test_json ... ok
 test flags::defs::test_line_buffered ... ok
 test flags::defs::test_line_number ... ok
 test flags::defs::test_line_regexp ... ok
+test flags::defs::test_max_bytes ... ok
 test flags::defs::test_max_columns ... ok
 test flags::defs::test_max_columns_preview ... ok
 test flags::defs::test_max_count ... ok
@@ -115,12 +118,13 @@ test flags::defs::tests::non_switches_have_variable_names ... ok
 test flags::defs::tests::shorts_all_ascii_alphanumeric ... ok
 test flags::defs::tests::shorts_no_duplicates ... ok
 test flags::defs::tests::switches_have_no_choices ... ok
+test messages::tests::escape_error_paths ... ok
 
-test result: ok. 114 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
+test result: ok. 118 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
 
-     Running tests/tests.rs (target/release/deps/integration-XXXXXXXXXXXXXXXX)
+     Running tests/tests.rs (target/release/build/ripgrep/873e3dd0928d3ab7/out/integration-XXXXXXXXXXXXXXXX)
 
-running 332 tests
+running 385 tests
 test binary::after_match1_explicit ... ok
 test binary::after_match1_explicit_count ... ok
 test binary::after_match1_explicit_text ... ok
@@ -189,6 +193,9 @@ test feature::f243_column_line ... ok
 test feature::f263_sort_files ... ok
 test feature::f263_sort_files_reverse ... ok
 test feature::f275_pathsep ... ok
+test feature::f3317_ripgrep_threads_cli_overrides_env ... ok
+test feature::f3317_ripgrep_threads_env ... ok
+test feature::f3317_ripgrep_threads_env_invalid ... ok
 test feature::f34_only_matching ... ok
 test feature::f34_only_matching_line_column ... ok
 test feature::f362_dfa_size_limit ... ok
@@ -231,15 +238,50 @@ test feature::no_context_sep_overridden ... ok
 test feature::no_context_sep_overrides ... ok
 test feature::no_unicode ... ok
 test feature::stop_on_nonmatch ... ok
+test input::arg_stdin_consumed_by_file ... ok
+test input::arg_stdin_consumed_by_in ... ok
+test input::arg_stdin_consumed_by_in0 ... ok
+test input::arg_stdin_consumed_by_search ... ok
+test input::in0_contains_non_existing_file ... ok
+test input::in0_non_existing_file ... ok
+test input::in0_stdin_consumed_by_file ... ok
+test input::in0_stdin_consumed_by_in ... ok
+test input::in0_stdin_consumed_by_in0 ... ok
+test input::in0_stdin_consumed_by_search ... ok
+test input::in0_terminated ... ok
+test input::in0_unterminated ... ok
+test input::in_contains_non_existing_file ... ok
+test input::in_contains_stdin_in0_in ... ok
+test input::in_contains_stdin_in_in0 ... ok
+test input::in_empty ... ok
+test input::in_non_existing_file ... ok
+test input::in_stdin_consumed_by_file ... ok
+test input::in_stdin_consumed_by_in ... ok
+test input::in_stdin_consumed_by_in0 ... ok
+test input::in_stdin_consumed_by_search ... ok
+test input::in_terminated ... ok
+test input::in_unterminated ... ok
+test input::in_with_nul_byte ... ok
+test input::input_order ... ok
+test input::positional_args ... ok
 test json::basic ... ok
 test json::crlf ... ok
+test json::multiline_empty_matches ... ok
+test json::multiline_line_terminators ... ok
+test json::multiline_match_groups ... ok
 test json::notutf8 ... ok
 test json::notutf8_file ... ok
 test json::quiet_stats ... ok
 test json::r1095_crlf_empty_match ... ok
 test json::r1095_missing_crlf ... ok
 test json::r1412_look_behind_match_missing ... ok
+test json::r1983_multiline_adjacent_matches ... ok
+test json::r3364_multiline_adjacent_matches ... ok
 test json::replacement ... ok
+test max_bytes::max_bytes_binary_quick ... ok
+test max_bytes::max_bytes_full ... ok
+test max_bytes::max_bytes_limit ... ok
+test max_bytes::max_bytes_stdin ... ok
 test misc::after_context ... ok
 test misc::after_context_line_numbers ... ok
 test misc::before_context ... ok
@@ -257,8 +299,11 @@ test misc::compressed_brotli ... ok
 test misc::compressed_bzip2 ... ok
 test misc::compressed_failing_gzip ... ok
 test misc::compressed_gzip ... ok
+test misc::compressed_gzip_by_magic ... ok
 test misc::compressed_lz4 ... ok
 test misc::compressed_lzma ... ok
+test misc::compressed_magic_plain_passthru ... ok
+test misc::compressed_magic_requires_search_zip ... ok
 test misc::compressed_uncompress ... ok
 test misc::compressed_xz ... ok
 test misc::compressed_zstd ... ok
@@ -284,6 +329,9 @@ test misc::glob_always_case_insensitive ... ok
 test misc::glob_case_insensitive ... ok
 test misc::glob_case_sensitive ... ok
 test misc::glob_negate ... ok
+test misc::glob_not ... ok
+test misc::glob_not_long ... ok
+test misc::glob_not_negated ... ok
 test misc::ignore_generic ... ok
 test misc::ignore_git ... ok
 test misc::ignore_git_multi_root_order ... ok
@@ -381,6 +429,7 @@ test regression::r1573 ... ok
 test regression::r16 ... ok
 test regression::r1638 ... ok
 test regression::r1739_replacement_lineterm_match ... ok
+test regression::r1764_glob_matches_cwd ... ok
 test regression::r1765 ... ok
 test regression::r1838_nul_error_with_binary_detection ... ok
 test regression::r184 ... ok
@@ -401,6 +450,8 @@ test regression::r229 ... ok
 test regression::r2480 ... ok
 test regression::r25 ... ok
 test regression::r251 ... ok
+test regression::r2552_broken_symlink_root_follow ... ok
+test regression::r2552_ignored_broken_symlink_follow ... ok
 test regression::r256 ... ok
 test regression::r256_j1 ... ok
 test regression::r2574 ... ok
@@ -409,6 +460,7 @@ test regression::r270 ... ok
 test regression::r2711 ... ok
 test regression::r2770_gitignore_error ... ok
 test regression::r279 ... ok
+test regression::r2832_null_data_fast_path ... ok
 test regression::r2944_incorrect_bytes_searched ... ok
 test regression::r2990_trip_over_trailing_dot ... ok
 test regression::r30 ... ok
@@ -421,6 +473,11 @@ test regression::r3173_hidden_whitelist_only_dot ... ok
 test regression::r3179_global_gitignore_cwd ... ok
 test regression::r3180_look_around_panic ... ok
 test regression::r3275_git_global_config_env ... ok
+test regression::r3382_truncated_zstd ... ok
+test regression::r3503 ... ok
+test regression::r3527 ... ok
+test regression::r3591_excludes_file_inner_tilde ... ok
+test regression::r3593 ... ok
 test regression::r391 ... ok
 test regression::r405 ... ok
 test regression::r428_color_context_path ... ok
@@ -454,5 +511,5 @@ test regression::r900 ... ok
 test regression::r93 ... ok
 test regression::r99 ... ok
 
-test result: ok. 332 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
+test result: ok. 385 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
 
