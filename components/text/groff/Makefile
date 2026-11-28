@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groff
 COMPONENT_VERSION=	1.25.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU troff Text Formatting
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/groff/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -40,9 +41,6 @@ COMPONENT_FMRI=		text/groff
 COMPONENT_CLASSIFICATION=	System/Text Tools
 COMPONENT_LICENSE=	GPL-3.0-only
 COMPONENT_LICENSE_FILE=	COPYING
-
-COMPONENT_FMRI.groff-core =	$(COMPONENT_FMRI)/groff-core
-COMPONENT_SUMMARY.groff-core =	$(COMPONENT_SUMMARY) (core system components)
 
 include $(WS_TOP)/make-rules/common.mk
 
@@ -76,7 +74,6 @@ REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
