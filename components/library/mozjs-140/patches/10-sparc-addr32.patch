@@ -1,0 +1,62 @@
+SpiderMonkey on 64-bit SPARC illumos: run in a 32-bit address space.
+
+JS::Value (NaN boxing, JSVAL_TAG_SHIFT 47) needs every pointer it holds to
+have the top 16 bits clear (Value.h IsValidUserModePointer); that covers
+private pointers too, not only the GC heap. 64-bit illumos/Solaris on SPARC
+puts the stack, shared libraries and mmap() memory just below
+0xFFFFFFFF80000000, so such pointers break the boxing at run time.
+
+Mozilla bug 577056 ("Memory layout for 64-bit Solaris is different than
+other 64-bit systems"): https://bugzilla.mozilla.org/show_bug.cgi?id=577056
+Oracle Solaris reserves the upper address range with a RESERVE_SEGMENT
+mapfile in each program (oracle/solaris-userland gjs and gnome-shell); the
+illumos link-editor has no RESERVE_SEGMENT. It has the SF1_SUNW_ADDR32
+software capability: an executable tagged ADDR32 runs with USERLIMIT32,
+its stack below 4 GB, and the runtime linker refuses a shared object
+tagged ADDR32 in any process that is not.
+
+Tag libmozjs and the js shell. Programs linking libmozjs (gjs-console,
+gnome-shell) must be tagged ADDR32 as well; ld warns when they are not.
+Only for TARGET_CPU sparc64, so other platforms are unchanged.
+
+Upstream status: to be reported to Mozilla (bugzilla.mozilla.org).
+
+--- a/js/src/build/moz.build
++++ b/js/src/build/moz.build
+@@ -82,6 +82,9 @@
+         "nsl",
+         "socket",
+     ]
++    # Values need 47-bit pointers: keep sparc64 processes below 4 GB (bug 577056)
++    if CONFIG["TARGET_CPU"] == "sparc64" and CONFIG["JS_SHARED_LIBRARY"]:
++        LDFLAGS += ["-Wl,-M,%s/sparc-addr32.mapfile" % SRCDIR]
+ 
+ if CONFIG["OS_ARCH"] == "WINNT":
+     OS_LIBS += [
+--- /dev/null
++++ b/js/src/build/sparc-addr32.mapfile
+@@ -0,0 +1,11 @@
++#
++# This Source Code Form is subject to the terms of the Mozilla Public
++# License, v. 2.0. If a copy of the MPL was not distributed with this
++# file, You can obtain one at http://mozilla.org/MPL/2.0/.
++#
++# illumos/Solaris sparc64: run in a 32-bit address space (ADDR32)
++#
++$mapfile_version 2
++CAPABILITY {
++	SF += ADDR32;
++};
+--- a/js/src/shell/moz.build
++++ b/js/src/shell/moz.build
+@@ -59,6 +59,10 @@
+     LDFLAGS += ["-Wl,-z,stack-size=1048576", "-Wl,--stack-first"]
+     OS_LIBS += ["wasi-emulated-process-clocks", "wasi-emulated-getpid"]
+ 
++# sparc64: 32-bit address space, see js/src/build/moz.build
++if CONFIG["OS_ARCH"] == "SunOS" and CONFIG["TARGET_CPU"] == "sparc64":
++    LDFLAGS += ["-Wl,-M,%s/js/src/build/sparc-addr32.mapfile" % TOPSRCDIR]
++
+ # Make JS Shell builds run without LD_LIBRARY_PATH
+ if CONFIG["OS_TARGET"] == "Android":
+     LDFLAGS += [

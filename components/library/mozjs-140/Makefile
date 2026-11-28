@@ -18,9 +18,8 @@
 # Copyright 2021 Carsten Grzemba
 #
 
-# USE_PARALLEL_BUILD = yes
+USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
-ENV = /usr/bin/env
 
 # ESR should be set to esr for esr build, or an empty string for other builds
 ESR = esr
@@ -37,6 +36,7 @@ ESR = esr
 
 COMPONENT_NAME =        mozjs
 COMPONENT_VERSION =     140.17.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      JavaScript interpreter and libraries
 COMPONENT_PROJECT_URL = https://spidermonkey.dev/
 COMPONENT_SRC_NAME =    firefox-$(COMPONENT_VERSION)
@@ -79,8 +79,6 @@ COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=         library/desktop/mozjs-140
 COMPONENT_CLASSIFICATION = System/Libraries
 
-RUST_VERSION = 1.86.0
-
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
 export ALLOW_UNVERIFIED_DOWNLOADS
@@ -110,13 +108,10 @@ CONFIGURE_DEFAULT_DIRS=no
 
 include $(WS_MAKE_RULES)/common.mk
 
-RUSTUP_HOME = $(BUILD_DIR)/.rust_up
-CARGO_HOME  = $(BUILD_DIR)/.cargo
-
-PATH = $(CARGO_HOME)/bin:$(PATH.gnu)
-
 MOZCONFIG = $(SOURCE_DIR)/mozconfig
-GNU_ARCH= x86_64-unknown-illumos
+GNU_ARCH.i386=  x86_64-unknown-illumos
+GNU_ARCH.sparc= sparcv9-unknown-illumos
+GNU_ARCH=       $(GNU_ARCH.$(MACH))
 
 ifdef DEBUG
 # disable code optimization
@@ -152,7 +147,7 @@ FIREFOX_LIBDIR =        $(CONFIGURE_LIBDIR.$(BITS))
 COMPONENT_PRE_CONFIGURE_ACTION += \
         rm -f  $(MOZCONFIG); \
         echo "ac_add_options --enable-application=js" >> $(MOZCONFIG) ; \
-        echo "ac_add_options PKG_CONFIG=/usr/bin/amd64/pkg-config" >> $(MOZCONFIG) ; \
+        echo "ac_add_options PKG_CONFIG=/usr/bin/$(MACH64)/pkg-config" >> $(MOZCONFIG) ; \
         echo "ac_add_options CC_TYPE=$(CC_TYPE)" >> $(MOZCONFIG) ; \
         echo "ac_add_options CC=$(CC)" >> $(MOZCONFIG) ; \
         echo "ac_add_options CXX=$(CXX)" >> $(MOZCONFIG) ; \
@@ -175,6 +170,10 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
         echo "ac_add_options --enable-install-strip" >> $(MOZCONFIG) ; \
         echo "ac_add_options --enable-shared-js" >> $(MOZCONFIG) ; \
 
+# SpiderMonkey has no JIT for SPARC: the interpreter only.
+COMPONENT_PRE_CONFIGURE_ACTION.sparc += \
+        echo "ac_add_options --disable-jit" >> $(MOZCONFIG) ;
+
 #       echo "ac_add_options --with-system-icu" >> $(MOZCONFIG) ; \
 LD_SECEXT_OPTIONS += $(SSBD_ENABLE)
 
@@ -184,47 +183,18 @@ LD_MAP_NOEXBSS.sparc=
 # rust dynamic library work around
 LD_Z_IGNORE=
 
-# hope to get args data in stacks of core dumps
-LD_OPTIONS += -msave-args
-
-# use a local installed rust since the system version may not be compatible
-COMPONENT_PRE_CONFIGURE_ACTION += ( \
-        export RUSTUP_HOME=$(RUSTUP_HOME); \
-        export CARGO_HOME=$(CARGO_HOME); \
-        export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
-        export LD_LIBRARY_PATH=$(GCC_LIBDIR); \
-        curl https://sh.rustup.rs -sSf | bash -s -- -y --no-modify-path; \
-        source $(CARGO_HOME)/env; \
-        rustup install $(RUST_VERSION); \
-        rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
-        rustup show; \
-        cargo install --root=$(CARGO_HOME) --vers 0.28.0 cbindgen; \
-        );
-
-ENV += CC="$(CC)"
-ENV += CFLAGS="$(CFLAGS)"
-ENV += CXXFLAGS="$(CXXFLAGS)"
-ENV += PKG_CONFIG=/usr/bin/amd64/pkg-config
-ENV += RUSTUP_HOME=$(RUSTUP_HOME)
-ENV += CARGO_HOME=$(CARGO_HOME)
-
-# This is needed to run bins/libs in .rustup
-ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
-
-COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
-
-CONFIGURE_ENV = $(ENV)
-COMPONENT_BUILD_ENV =   $(ENV)
 COMPONENT_INSTALL_ENV += HOME=/tmp
 
+# shared-macros sets CARGO_HOME for build, install and test only; mozbuild's
+# configure looks for rustup in CARGO_HOME as well (else in ~/.cargo)
+CONFIGURE_ENV += CARGO_HOME="$(CARGO_HOME)"
 CONFIGURE_ENV += PYTHON3="$(PYTHON)"
 CONFIGURE_ENV += LDSHARED="$(CC) -shared"
 CONFIGURE_ENV += NSPR_CONFIG="/usr/bin/pkg-config nspr"
 
-
-COMPONENT_POST_BUILD_ACTION = \
+COMPONENT_POST_BUILD_ACTION += \
         (cd $(@D)/browser/installer ; $(ENV) $(COMPONENT_BUILD_ENV) \
-                $(GMAKE) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))
+                $(GMAKE) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS)) ;
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
@@ -236,17 +206,16 @@ COMPONENT_TEST_TRANSFORMS = \
         '-e "/.*/d" '
 
 # Build dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/psutil
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/psutil
+REQUIRED_PACKAGES.python += runtime/python
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/build/autoconf-213
 REQUIRED_PACKAGES += developer/lang/rustc
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/http-parser
-REQUIRED_PACKAGES += runtime/nodejs-24
-REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += web/browser/lynx
+REQUIRED_PACKAGES += developer/rust/cbindgen
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
