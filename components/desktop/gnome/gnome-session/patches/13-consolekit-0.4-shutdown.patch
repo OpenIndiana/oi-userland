@@ -1,0 +1,88 @@
+Power off and restart with ConsoleKit 0.4 (OpenIndiana, Solaris).
+
+gnome-session 45 shuts down only through the ConsoleKit2/logind API:
+Inhibit(delay), then PowerOff(b)/Reboot(b) in prepare_shutdown.
+ConsoleKit 0.4 has none of these (its D-Bus policy allows only
+Stop/Restart/CanStop/CanRestart/Suspend...), so the call fails and
+gnome-session cancels the end of the session: only "Log Out" works.
+attempt_stop/attempt_restart, which call Stop/Restart, are never used.
+
+When Inhibit is unknown (ConsoleKit 0.4), report the shutdown as
+prepared and call Stop or Restart in complete_shutdown, after the
+session has ended.
+
+Upstream status: not for upstream (upstream supports ConsoleKit2 and logind only).
+
+diff --git a/gnome-session/gsm-consolekit.c b/gnome-session/gsm-consolekit.c
+--- a/gnome-session/gsm-consolekit.c
++++ b/gnome-session/gsm-consolekit.c
+@@ -57,6 +57,9 @@ struct _GsmConsolekitPrivate
+ 
+         gint             delay_inhibit_fd;
+         gboolean         prepare_for_shutdown_expected;
++
++        /* ConsoleKit 0.4: "Stop" or "Restart" once the session has ended */
++        const gchar     *legacy_shutdown_method;
+ };
+ 
+ enum {
+@@ -819,6 +822,14 @@ reboot_or_poweroff_done (GObject      *source,
+         }
+ }
+ 
++static gboolean
++emit_shutdown_prepared_idle (gpointer user_data)
++{
++        g_signal_emit_by_name (user_data, "shutdown-prepared", TRUE);
++        g_object_unref (user_data);
++        return G_SOURCE_REMOVE;
++}
++
+ static void
+ gsm_consolekit_prepare_shutdown (GsmSystem *system,
+                                  gboolean   restart)
+@@ -844,7 +855,15 @@ gsm_consolekit_prepare_shutdown (GsmSystem *system,
+                                                         &fd_list,
+                                                         NULL,
+                                                         &error);
+-        if (res == NULL) {
++        if (res == NULL && g_error_matches (error, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD)) {
++                /* ConsoleKit 0.4 has no Inhibit, PowerOff or Reboot */
++                g_debug ("GsmConsolekit: no delay inhibitors, will call %s at the end of the session",
++                         restart ? "Restart" : "Stop");
++                g_error_free (error);
++                consolekit->priv->legacy_shutdown_method = restart ? "Restart" : "Stop";
++                g_idle_add (emit_shutdown_prepared_idle, g_object_ref (consolekit));
++                return;
++        } else if (res == NULL) {
+                 g_warning ("Failed to get delay inhibitor: %s", error->message);
+                 g_error_free (error);
+                 /* We may fail here with CK and that's ok */
+@@ -878,6 +897,27 @@ gsm_consolekit_complete_shutdown (GsmSystem *system)
+ 
+         /* remove delay inhibitor, if any */
+         drop_delay_inhibitor (consolekit);
++
++        if (consolekit->priv->legacy_shutdown_method != NULL) {
++                GVariant *res;
++                GError *error = NULL;
++
++                res = g_dbus_proxy_call_sync (consolekit->priv->ck_proxy,
++                                              consolekit->priv->legacy_shutdown_method,
++                                              NULL,
++                                              G_DBUS_CALL_FLAGS_NONE,
++                                              G_MAXINT,
++                                              NULL,
++                                              &error);
++                if (res == NULL) {
++                        g_warning ("Calling %s failed: %s",
++                                   consolekit->priv->legacy_shutdown_method, error->message);
++                        g_error_free (error);
++                } else {
++                        g_variant_unref (res);
++                }
++                consolekit->priv->legacy_shutdown_method = NULL;
++        }
+ }
+ 
+ static gboolean

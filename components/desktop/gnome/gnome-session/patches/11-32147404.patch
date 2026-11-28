@@ -1,0 +1,40 @@
+Origin: solaris-userland@9d7a655 components/gnome/gnome-session/patches/11-32147404.patch
+
+Revert ff9e91f8b17192ff730a6ecb64dc76bfc1d27c83 
+
+This commit causes a regression on Solaris with VNC 
+over xdmcp where the session doesn't start.
+Since we don't support wayland, the original issue that
+this was added for doesn't apply to Solaris.
+
+https://gitlab.gnome.org/GNOME/gnome-session/-/issues/15
+
+Not suitable for upstream
+
+--- a/gnome-session/gsm-util.c	2020-11-18 10:31:01.955134731 -0800
++++ b/gnome-session/gsm-util.c	2020-11-18 10:35:05.738619638 -0800
+@@ -555,9 +555,11 @@
+                 return FALSE;
+         }
+ 
++#ifdef ENABLE_SYSTEMD_SESSION
+         if (child_environment == NULL) {
+                 child_environment = g_listenv ();
+         }
++#endif
+ 
+         g_variant_builder_init (&builder, G_VARIANT_TYPE ("a{ss}"));
+         for (entry_names = g_listenv (); entry_names[i] != NULL; i++) {
+@@ -579,9 +581,12 @@
+                 if (!g_regex_match (value_regex, entry_value, 0, NULL))
+                     continue;
+ 
++#ifdef ENABLE_SYSTEMD_SESSION
++
+                 child_environment = g_environ_setenv (child_environment,
+                                                       entry_name, entry_value,
+                                                       TRUE);
++#endif
+                 g_variant_builder_add (&builder, "{ss}", entry_name, entry_value);
+         }
+         g_regex_unref (name_regex);

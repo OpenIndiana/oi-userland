@@ -1,0 +1,50 @@
+Origin: solaris-userland@9d7a655 components/gnome/gnome-session/patches/08-28751504.patch
+
+Suppress warning messages from gsd-* plugins which occur during a 
+gdm start/restart.  
+
+Some distros also continue to see these warnings
+ - https://www.centos.org/forums//viewtopic.php?p=291090
+
+Guess is there is a race condition between gnome-session/gnome-shell starting
+up and the gnome-settings-daemons plugins getting exec'ed because in debug
+mode this doesn't happen
+
+We have tried to tell the customer that these should be ignored if there 
+is no functionality loss, but the customer is persistent about suppressing
+these warnings, so turning them into debug messages instead.
+
+Not suitable for upstream and needs to be evaluated/dropped when updating 
+to 3.32 (with gnome-session and gnome-settings-daemon changes)
+
+--- a/gnome-session/gsm-manager.c	2019-07-08 09:36:56.866563851 -0700
++++ b/gnome-session/gsm-manager.c	2019-07-08 09:35:57.041033913 -0700
+@@ -654,7 +654,7 @@
+           int         signal,
+           GsmManager *manager)
+ {
+-        g_warning ("Application '%s' killed by signal %d", gsm_app_peek_app_id (app), signal);
++        g_debug ("Application '%s' killed by signal %d", gsm_app_peek_app_id (app), signal);
+ 
+         if (gsm_app_get_registered (app) && gsm_app_peek_autorestart (app)) {
+                 g_debug ("Component '%s' is autorestart, ignoring died signal",
+@@ -680,7 +680,7 @@
+             GsmManager *manager)
+ {
+         if (exit_code != 0)
+-                g_warning ("App '%s' exited with code %d", gsm_app_peek_app_id (app), exit_code);
++                g_debug ("App '%s' exited with code %d", gsm_app_peek_app_id (app), exit_code);
+         else
+                 g_debug ("App %s exited successfully", gsm_app_peek_app_id (app));
+ 
+--- a/gnome-session/main.c	2024-01-14 18:29:12.884466112 -0800
++++ b/gnome-session/main.c	2024-01-14 18:29:25.214971844 -0800
+@@ -86,7 +86,7 @@
+                 if (gsm_manager_get_dbus_disconnected (manager))
+                         gsm_quit ();
+                 else {
+-                        g_warning ("Lost name on bus: %s", name);
++                        g_debug ("Lost name on bus: %s", name);
+                         gsm_fail_whale_dialog_we_failed (TRUE, TRUE, NULL);
+                 }
+         } else {

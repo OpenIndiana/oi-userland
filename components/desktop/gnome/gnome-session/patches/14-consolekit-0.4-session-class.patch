@@ -1,0 +1,47 @@
+Session class with ConsoleKit 0.4 (OpenIndiana, Solaris).
+
+gnome-session asks ConsoleKit for the session class (GetSessionClass, a
+ConsoleKit2 method) to know whether it runs the login screen.  ConsoleKit
+0.4 has no such method, so every session logs "Calling GetSessionClass
+failed" / "Could not get session class" and is never treated as a greeter.
+Fall back to GetSessionType: gdm registers its greeter session with type
+"LoginWindow" in ConsoleKit 0.4.
+
+Upstream status: not for upstream (upstream supports ConsoleKit2 and logind only).
+
+diff --git a/gnome-session/gsm-consolekit.c b/gnome-session/gsm-consolekit.c
+--- a/gnome-session/gsm-consolekit.c
++++ b/gnome-session/gsm-consolekit.c
+@@ -548,12 +548,31 @@ ck_session_get_class (GsmConsolekit *manager,
+                                       0,
+                                       -1,
+                                       NULL, NULL);
++        if (res) {
++                g_variant_get (res, "(s)", session_class);
++                g_variant_unref (res);
++                return 0;
++        }
++
++        /* ConsoleKit 0.4 has no session class; its greeter session type
++         * is "LoginWindow" */
++        res = g_dbus_proxy_call_sync (manager->priv->ck_session_proxy,
++                                      "GetSessionType",
++                                      g_variant_new ("()"),
++                                      0,
++                                      -1,
++                                      NULL, NULL);
+         if (!res) {
+                 g_warning ("GsmConsoleKit: Calling GetSessionClass failed.");
+                 return -1;
+         }
+ 
+-        g_variant_get (res, "(s)", session_class);
++        {
++                const gchar *type;
++
++                g_variant_get (res, "(&s)", &type);
++                *session_class = g_strdup (g_strcmp0 (type, "LoginWindow") == 0 ? "greeter" : "user");
++        }
+         g_variant_unref (res);
+ 
+         return 0;

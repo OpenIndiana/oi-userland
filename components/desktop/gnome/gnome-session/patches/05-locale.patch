@@ -1,0 +1,33 @@
+Origin: solaris-userland@9d7a655 components/gnome/gnome-session/patches/05-locale.patch
+
+Solaris-specific fix for:
+27155344 gnome-terminal will not start in a non-UTF-8 locale
+
+Not likely to be accepted upstream, since they expect systemd to have already
+configured the system locale to a UTF-8 locale already and refuse to support
+any non-UTF-8 locales.
+Upstream status: not for upstream (non-UTF-8 locales, https://gitlab.gnome.org/GNOME/gnome-session).
+
+--- a/gnome-session/gnome-session.in
++++ b/gnome-session/gnome-session.in
+@@ -17,6 +17,20 @@ SETTING=$(gsettings get org.gnome.system.locale region)
+ REGION=${SETTING#\'}
+ REGION=${REGION%\'}
+ 
++# Ensure GNOME is started in a UTF-8 locale
++case "${REGION}" in
++    *.UTF-8*)	;;
++    C|POSIX)	REGION="C.UTF-8" ;;
++    *.*@*)	REGION="${REGION/.*@/.UTF-8@}" ;;
++    *.*)	REGION="${REGION/%.*/.UTF-8}" ;;
++    *_*)	REGION="${REGION}.UTF-8" ;;
++    *)		REGION="C.UTF-8" ;;
++esac
++
++if [ -z "$LANG" ]; then
++  export LANG="$REGION"
++fi
++
+ if [ -n "$REGION" ]; then
+   export LC_TIME=$REGION
+   export LC_NUMERIC=$REGION
