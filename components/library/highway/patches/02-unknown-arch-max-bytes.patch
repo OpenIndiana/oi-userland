@@ -1,0 +1,18 @@
+Architectures that Highway does not detect (e.g. SPARC) are allowed ("OK to
+detect none of the above"), but HWY_ARCH_MAX_BYTES has no case for them.
+They only have the EMU128 and SCALAR targets, so use 16 bytes.
+
+Upstream status: to be offered upstream (https://github.com/google/highway)
+
+--- a/hwy/detect_compiler_arch.h	2026-11-27 15:52:21.481767573 +0100
++++ b/hwy/detect_compiler_arch.h	2026-11-27 16:03:59.934772184 +0100
+@@ -442,7 +442,8 @@
+ #elif HWY_ARCH_PPC || HWY_ARCH_S390X || HWY_ARCH_ARM_V7 || HWY_ARCH_ARM_OLD
+ #define HWY_ARCH_MAX_BYTES 16
+ #else
+-#error "Missing case for HWY_ARCH_*"
++// Other architectures (e.g. SPARC) only have EMU128 and SCALAR.
++#define HWY_ARCH_MAX_BYTES 16
+ #endif
+ 
+ //------------------------------------------------------------------------------
