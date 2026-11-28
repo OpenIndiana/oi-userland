@@ -1,0 +1,18 @@
+With -DWITH_DUKTAPE=OFF, DUKTAPE_FOUND is never set, and modules.cmk's
+math(EXPR NUM_PACRUNNER "...+${DUKTAPE_FOUND}") fails ("0+0+0+": syntax
+error).  Set it to 0 when the search is switched off.
+
+libproxy 0.4.x is no longer developed upstream (0.5 moved to meson and
+dropped the PAC runner modules, https://github.com/libproxy/libproxy), so
+this is not sent upstream.
+
+--- libproxy-0.4.18/libproxy/cmake/modules/pacrunner_duktape.cmk
++++ libproxy-0.4.18/libproxy/cmake/modules/pacrunner_duktape.cmk
+@@ -17,5 +17,7 @@
+       link_directories(${DUKTAPE_LIBRARIES})
+       link_libraries(duktape)
+     endif()
++  else()
++    set(DUKTAPE_FOUND 0)
+   endif()
+ endif()

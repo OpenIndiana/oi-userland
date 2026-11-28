@@ -23,7 +23,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libproxy
 COMPONENT_VERSION=      0.4.18
-COMPONENT_REVISION=		3
+COMPONENT_REVISION=		4
 COMPONENT_SUMMARY=      Libproxy is a library that provides automatic proxy configuration management
 COMPONENT_PROJECT_URL=  https://libproxy.github.io/libproxy/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -54,6 +54,8 @@ CMAKE_OPTIONS.64 = -DWITH_PYTHON3=ON
 CMAKE_OPTIONS.64 += -DPYTHON3_EXECUTABLE="$(PYTHON)"
 CMAKE_OPTIONS.64 += -DPYTHON3_SITEPKG_DIR=$(PYTHON_LIB)
 
+# the 32-bit build would pick up the 64-bit-only library/duktape
+CMAKE_OPTIONS +=	-DWITH_DUKTAPE=OFF
 CMAKE_OPTIONS += -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 CMAKE_OPTIONS += -DINCLUDE_INSTALL_DIR="$(USRINCDIR)/$(COMPONENT_NAME)"
 CMAKE_OPTIONS += -DPERL_VENDORINSTALL=ON
@@ -71,8 +73,9 @@ LDFLAGS += -lsocket -lxnet -lnsl
 # Assumes "make" is GNU make, turns into fork bomb if it finds illumos make
 COMPONENT_BUILD_ENV += PATH=$(PATH)
 
+# .pyc with the installed path, not the proto path
 COMPONENT_POST_INSTALL_ACTION=  \
-    [ $(BITS) -eq 64 ] && $(PYTHON) -m py_compile $(PROTO_DIR)/$(PYTHON_LIB)/libproxy.py || true ;
+    [ $(BITS) -eq 64 ] && $(PYTHON) -m compileall -f -q -s $(PROTO_DIR) $(PROTOPYTHONVENDORDIR)/libproxy.py || true ;
 
 # Drop 32-bit binaries
 COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
