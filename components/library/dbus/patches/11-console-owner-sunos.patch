@@ -1,0 +1,22 @@
+meson: accept solaris_console_owner_file on illumos
+
+Meson's host_machine.system() is "sunos" on illumos and Solaris
+(https://mesonbuild.com/Reference-tables.html#operating-system-names), so
+the check for "solaris" rejects the option everywhere it is meant for, and
+at_console policies can never match there. Accept "sunos" as well.
+
+Backport of upstream 14917abf
+(https://gitlab.freedesktop.org/dbus/dbus/-/commit/14917abf), which is not in
+the 1.16.x branch; drop it with the move to dbus 1.17/1.18.
+
+--- dbus-1.16.2/meson.build
++++ dbus-1.16.2/meson.build
+@@ -532,7 +532,7 @@
+ have_console_owner_file = false
+ console_owner_file = get_option('solaris_console_owner_file')
+ if console_owner_file != ''
+-  if not host_os.contains('solaris')
++  if not (host_os.contains('solaris') or host_os == 'sunos')
+     error('solaris_console_owner_file is only supported on Solaris)')
+   endif
+   have_console_owner_file = true
